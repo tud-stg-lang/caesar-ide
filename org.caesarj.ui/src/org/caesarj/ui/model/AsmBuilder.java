@@ -61,6 +61,9 @@ public class AsmBuilder extends CaesarVisitor {
         JCompilationUnit unit,
         StructureModel structureModel
     ) {
+        if(unit==null)
+            return;
+            
         setStructureModel(structureModel);
         asmStack.push(structureModel.getRoot());
         
