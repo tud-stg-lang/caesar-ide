@@ -15,8 +15,8 @@ import org.aspectj.asm.StructureNode;
 import org.aspectj.bridge.ISourceLocation;
 import org.aspectj.bridge.SourceLocation;
 import org.caesarj.compiler.ast.AdviceDeclaration;
-import org.caesarj.compiler.ast.CaesarVisitor;
-import org.caesarj.compiler.ast.FjClassDeclaration;
+import org.caesarj.compiler.ast.BodyVisitor;
+import org.caesarj.compiler.ast.FjCleanClassDeclaration;
 import org.caesarj.compiler.ast.FjMethodDeclaration;
 import org.caesarj.compiler.ast.JBlock;
 import org.caesarj.compiler.ast.JClassDeclaration;
@@ -48,7 +48,7 @@ import org.caesarj.util.TokenReference;
  * 
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
-public class AsmBuilder extends CaesarVisitor {
+public class AsmBuilder extends BodyVisitor {
 
 	private static final String REGISTRY_CLASS_NAME = "Registry";
 
@@ -250,7 +250,10 @@ public class AsmBuilder extends CaesarVisitor {
 		getCurrentStructureNode().addChild(peNode);
 		asmStack.push(peNode);
 
-		super.visitInterfaceDeclaration(self, modifiers, ident, interfaces, body, methods);
+		JTypeDeclaration inners[] = self.getInners();
+		for (int i = 0; i < inners.length; i++) {
+			inners[i].accept(this);
+		}
 
 		asmStack.pop();
 	}
@@ -317,8 +320,8 @@ public class AsmBuilder extends CaesarVisitor {
 		}
 
 		// get advices and pointcuts visit
-		if (self instanceof FjClassDeclaration) {
-			FjClassDeclaration clazz = (FjClassDeclaration) self;
+		if (self instanceof FjCleanClassDeclaration) {
+			FjCleanClassDeclaration clazz = (FjCleanClassDeclaration) self;
 
 			AdviceDeclaration[] advices = clazz.getAdvices();
 			for (int i = 0; i < advices.length; i++) {
