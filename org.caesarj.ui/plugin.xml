@@ -156,7 +156,7 @@
    </perspective>
    </extension>	
    <extension point="org.eclipse.ui.actionSets">
-		<actionSet label="CaesarJ" visible="false" id="org.caesarj.actionSet">
+		<actionSet label="CaesarJ" visible="true" id="org.caesarj.actionSet">
   		<action label="CaesarJAnnotation" tooltip="CaesarJ: Enables/Disables live annotation" class="org.caesarj.ui.actionsets.AnnotationShortCut" toolbarPath="Normal/additions" icon="icons/annotation.gif" id="org.caesarj.ui.actionsets.Annotation" />
   		<action label="CaesarJPreferences" tooltip="CaesarJ Preferences" class="org.caesarj.ui.actionsets.PreferenceShortCut" toolbarPath="Normal/additions" icon="icons/pref.gif" id="org.caesarj.ui.actionsets.Preference" />  
    </actionSet>
