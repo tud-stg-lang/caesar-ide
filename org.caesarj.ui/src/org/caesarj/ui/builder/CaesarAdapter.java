@@ -22,7 +22,10 @@ import org.caesarj.compiler.PositionedError;
 import org.caesarj.compiler.aspectj.CaesarBcelWorld;
 import org.caesarj.kjc.JCompilationUnit;
 import org.caesarj.kjc.KjcEnvironment;
-import org.caesarj.ui.util.StructureModelDump;
+import org.caesarj.ui.model.AdviceNameVisitor;
+import org.caesarj.ui.model.AsmBuilder;
+import org.caesarj.ui.model.RegistryNodeEliminator;
+import org.caesarj.ui.model.StructureModelDump;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -31,6 +34,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
 public final class CaesarAdapter extends Main {
+    
+    public static IProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
     
     private Collection       errors;
     private IProgressMonitor progressMonitor;                          
@@ -41,6 +46,16 @@ public final class CaesarAdapter extends Main {
             
     public void inform(PositionedError error) {
         errors.add(error);
+    }
+
+    public boolean compile(        
+        Collection sourceFiles,
+        String classPath,
+        String outputPath,
+        Collection errors        
+    ) {
+        return
+            compile(sourceFiles, classPath, outputPath, errors, null);
     }
             
 	public boolean compile(        
@@ -66,13 +81,16 @@ public final class CaesarAdapter extends Main {
 		}
 		        
         this.errors = errors;
-        this.progressMonitor = progressMonitor;
+        this.progressMonitor =
+            progressMonitor!=null ?
+            progressMonitor :
+            NULL_PROGRESS_MONITOR;               
         
-        progressMonitor.beginTask(
+        this.progressMonitor.beginTask(
             "compiling source files", sourceFiles.size()+1
         );
         
-		success = run(args);               
+		success = run(args);
         
         return success;
 	}
@@ -82,17 +100,16 @@ public final class CaesarAdapter extends Main {
             return null;
 
         JCompilationUnit res;
-        progressMonitor.subTask("compiling "+file.getName());        
+        progressMonitor.subTask("compiling "+file.getName());
         res = super.parseFile(file, env);
         progressMonitor.worked(1);
         
-        //AsmBuilder.build(res, StructureModelManager.INSTANCE.getStructureModel());
+        AsmBuilder.build(res, StructureModelManager.INSTANCE.getStructureModel());
 
         return res;
 	}
 
-
-	protected void weaveClasses(UnwovenClassFile[] classFiles) {
+    protected void weaveClasses(UnwovenClassFile[] classFiles) {
         /*
         // DEBUG inspect classes
         for(int i=0; i<classFiles.length; i++)
@@ -105,142 +122,43 @@ public final class CaesarAdapter extends Main {
         
         StructureModel model = StructureModelManager.INSTANCE.getStructureModel();
         
-        System.out.println("--- structure model before weave ---");
-        StructureModelDump modelDumpBeforeWeave = new StructureModelDump(model);            
-        modelDumpBeforeWeave.print();
-        
         // build model
+        /*
         for(Iterator it=compilationUnits.iterator(); it.hasNext(); ) {        
             AsmBuilder.build((JCompilationUnit)it.next(), model);
         }
+        */
         
+
+        AdviceNameVisitor adviceNameVisitor = new AdviceNameVisitor();
+        adviceNameVisitor.visit(model.getRoot());
+
+        System.out.println("--- structure model before weave ---");
+        StructureModelDump modelDumpBeforeWeave = new StructureModelDump(System.out);            
+        modelDumpBeforeWeave.print("", model.getRoot());
+                
 
         // add model to the world        
         CaesarBcelWorld world = CaesarBcelWorld.getInstance();
         world.setModel(model);
                 
                 
+        /*
+         * WEAVE
+         */
 		super.weaveClasses(classFiles);
         
+        
+        RegistryNodeEliminator registryNodeEliminator = new RegistryNodeEliminator();
+        registryNodeEliminator.visit(model.getRoot());
+        registryNodeEliminator.eliminateNodes();
+        
+        
         System.out.println("--- structure model after weave ---");
-        StructureModelDump modelDumpAfterWeave = new StructureModelDump(model);            
-        modelDumpAfterWeave.print();
+        StructureModelDump modelDumpAfterWeave = new StructureModelDump(System.out);
+        modelDumpAfterWeave.print("", model.getRoot());
                 
         progressMonitor.worked(1);
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*
-     * 
-     * DEBUG
-     * 
-     */
-     
-    public boolean noWeaveMode() {
-        return false;
-    }
-
-    private void inspectUnwovenClassFile(UnwovenClassFile file) {
-        System.out.println("--------------------------------");
-                
-        JavaClass jclass = file.getJavaClass();
-        
-        Attribute attribs[] = jclass.getAttributes();
-        System.out.println("*** CLASSNAME: "+jclass.getClassName());
-        for(int i=0; i<attribs.length; i++) {            
-            showClassAttributes(attribs[i]);
-        }
-                
-    }
-
-    public void showClassAttributes(Attribute a) {
-        
-        if(a instanceof Unknown) {
-            Unknown unknown = (Unknown)a;
-            AjAttribute aa = 
-                AjAttribute.read(unknown.getName(), unknown.getBytes(), null);
-        
-            if(aa instanceof AjAttribute.WeaverState) {    
-                AjAttribute.WeaverState weaverState = (AjAttribute.WeaverState)aa;
-                WeaverStateKind kind = weaverState.reify();                    
-                System.out.println("weaver state: "+kind);                    
-            }
-        
-            else if(aa instanceof AjAttribute.PointcutDeclarationAttribute) {
-                AjAttribute.PointcutDeclarationAttribute pointcutDeclarationAttribute =
-                    (AjAttribute.PointcutDeclarationAttribute)aa;
-            
-                ResolvedPointcutDefinition rpd = pointcutDeclarationAttribute.reify();
-                ShadowMunger munger = rpd.getAssociatedShadowMunger();
-                Pointcut pointcut = rpd.getPointcut();
-                System.out.println("pointcut: "+rpd);
-                System.out.println("\tsignature: "+rpd.getSignature());
-                System.out.println("\tExtractableName: "+rpd.getExtractableName());
-                                    
-                System.out.println("\tshadow munger: "+munger);
-                System.out.println("\tstart: "+rpd.getStart());
-                System.out.println("\tend: "+rpd.getEnd());                    
-                System.out.println("\tdeclaring type: "+rpd.getDeclaringType());                    
-                System.out.println("\tsignature: "+rpd);                    
-                System.out.println("\tpointcut source location: "+pointcut.getSourceLocation());
-            
-                                
-            }
-        
-            else if(aa instanceof AjAttribute.Aspect) {
-                AjAttribute.Aspect aspect =
-                    (AjAttribute.Aspect)aa;
-                PerClause perClause = aspect.reify(null);
-                                                        
-                System.out.println(perClause);
-            }
-        
-            else if(aa instanceof AjAttribute.PrivilegedAttribute) {
-                AjAttribute.PrivilegedAttribute privilegedAttribute =
-                    (AjAttribute.PrivilegedAttribute)aa;
-                                    
-                ResolvedMember members[] = privilegedAttribute.getAccessedMembers();
-                System.out.println("AjAttribute.PrivilegedAttribute");
-                System.out.println("\tresolved memebers:");
-                for(int j=0; j<members.length; j++)     
-                    System.out.print("\t\t"+members[j].getName()+"; ");     
-                System.out.println();
-            }
-        
-            else if(aa instanceof AjAttribute.SourceContextAttribute) {
-                AjAttribute.SourceContextAttribute sourceContextAttribute =
-                    (AjAttribute.SourceContextAttribute)aa;
-            
-                System.out.println("AjAttribute.SourceContextAttribute");      
-                System.out.print("\tline breaks: ");
-                int lineBreakes[] = sourceContextAttribute.getLineBreaks();
-                for(int j=0; j<lineBreakes.length; j++)     
-                    System.out.print(lineBreakes[j]+"; ");
-                
-                System.out.println();
-                System.out.println("\tsource file name: "+sourceContextAttribute.getSourceFileName());
-            }               
-            else {                
-                System.out.println(aa);
-            }
-        }            
-        else {
-            System.out.println(a);
-        }
-        
-    }
 }

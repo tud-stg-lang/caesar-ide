@@ -8,8 +8,8 @@
 
    <runtime>
       <library name="caesar-compiler.jar"/>
-      <library name="caesar-runtime.jar"/>
-      <library name="aspectjtools.jar"/>
+      <library name="caesar-runtime.jar"/>      
+      <library name="bcel.jar"/>
       <library name="java-getopt-1.0.9.jar"/>
    </runtime>
    <requires>
