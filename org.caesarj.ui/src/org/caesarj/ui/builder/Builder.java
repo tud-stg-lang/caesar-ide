@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: Builder.java,v 1.23 2005-02-16 10:30:49 gasiunas Exp $
+ * $Id: Builder.java,v 1.24 2005-02-21 13:40:26 gasiunas Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -29,12 +29,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
-import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.ui.CaesarPlugin;
-import org.caesarj.ui.editor.CaesarOutlineView;
+import org.caesarj.ui.editor.CaesarJContentOutlinePage;
 import org.caesarj.ui.marker.AdviceMarker;
 import org.caesarj.ui.util.ProjectProperties;
 import org.caesarj.ui.views.CaesarHierarchyView;
@@ -45,9 +43,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.swt.widgets.Display;
 
@@ -65,60 +61,50 @@ public class Builder extends IncrementalProjectBuilder {
 
 	private static Logger log = Logger.getLogger(Builder.class);
 
-	/**
-	 * The last project we did a build for, needed by content outline view to
-	 * decide which updates to accept.
-	 */
-	private static IProject lastBuiltProject = null;
+	private ProjectProperties projectProperties = null;
 
-	private static final Vector allBuildedProjects;
-
-	private ProjectProperties projectProperties;
-
+	private IProject currentProject = null;
+	
 	private Collection errors = new LinkedList();
 
-	static {
-		allBuildedProjects = new Vector();
-	}
-
-	/**
-	 * What did we last build?
-	 */
-	public static IProject getLastBuildTarget() {
-		return lastBuiltProject;
-	}
 
 	/**
 	 * @see IncrementalProjectBuilder#build(int, Map, IProgressMonitor) kind is
 	 *      one of: FULL_BUILD, INCREMENTAL_BUILD or AUTO_BUILD currently we do
 	 *      a full build in every case!
 	 */
-	protected IProject[] build(int kind, Map args,
-			IProgressMonitor progressMonitor) {
+	protected IProject[] build(int kind, Map args, IProgressMonitor progressMonitor) {
 		try {
 		    JavaCore.getClasspathVariable(CaesarPlugin.CAESAR_HOME);
-		    
-			lastBuiltProject = getProject();
-			if (!allBuildedProjects.contains(lastBuiltProject))
-				allBuildedProjects.add(lastBuiltProject);
+		   
 			this.errors.clear();
 
-			this.projectProperties = new ProjectProperties(getProject());
+			// Get the current project
+			this.currentProject = getProject();
+			
+			// Get this project's properties
+			this.projectProperties = ProjectProperties.create(currentProject);
 
+			// Refresh the properties
+			this.projectProperties.refresh();
+			
 			log.debug("Building to '" + this.projectProperties.getOutputPath() + "'"); //$NON-NLS-1$//$NON-NLS-2$
 			
 			log.debug("kind: " + kind); //$NON-NLS-1$
 
 			log.debug("----\n" + this.projectProperties.toString() + "----\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
-			CaesarAdapter caesarAdapter = new CaesarAdapter(
-					this.projectProperties.getProjectLocation());
+			// Create a caesar adapter to compile the project
+			CaesarAdapter caesarAdapter = new CaesarAdapter(this.projectProperties.getProjectLocation());
 
-			// build
+			// Compile the Project
 			caesarAdapter.compile(this.projectProperties.getSourceFiles(),
 					this.projectProperties.getClassPath(),
 					this.projectProperties.getOutputPath().substring(1), this.errors,
 					progressMonitor);
+			
+			// Set the project's structure model
+			this.projectProperties.setStructureModel(caesarAdapter.getModel());
 		} 
 		catch (Throwable t) {
 			t.printStackTrace();
@@ -131,12 +117,12 @@ public class Builder extends IncrementalProjectBuilder {
 		
 		try {
 			/* ensure that the generated class files are recognized */
-			lastBuiltProject.refreshLocal(IResource.DEPTH_INFINITE, null);
+			currentProject.refreshLocal(IResource.DEPTH_INFINITE, null);
 			
 			// update has to be executed from Workbenchs Thread
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
-					CaesarOutlineView.updateAll();
+					CaesarJContentOutlinePage.updateAll(projectProperties);
 					CaesarHierarchyView.updateAll();
 				}
 			});
@@ -149,10 +135,10 @@ public class Builder extends IncrementalProjectBuilder {
 		return requiredResourceDeltasOnNextInvocation;		
 	}
 	
-	public void deleteOldErrors() {
+	private void deleteOldErrors() {
 		try {
 			/* delete unpositioned errors */
-			lastBuiltProject.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+			currentProject.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 			
 			/* delete positioned errors */
 			Collection sourceFiles = this.projectProperties.getSourceFiles();
@@ -162,7 +148,7 @@ public class Builder extends IncrementalProjectBuilder {
 						+ it.next().toString();
 
 				IResource resource = ProjectProperties.findResource(sourcePath,
-						lastBuiltProject);
+						this.projectProperties.getProject());
 
 				resource.deleteMarkers(IMarker.PROBLEM, true,
 						IResource.DEPTH_INFINITE);
@@ -177,7 +163,7 @@ public class Builder extends IncrementalProjectBuilder {
 
 	// TODO [optimize] make it efficient
 	// TODO [feature] warnings are missing
-	public void showErrors() {
+	private void showErrors() {
 		for (Iterator it = this.errors.iterator(); it.hasNext();) {
 			try {
 				Object err = it.next();
@@ -193,7 +179,7 @@ public class Builder extends IncrementalProjectBuilder {
 								+ token.getPath());
 	
 						IResource resource = ProjectProperties.findResource(token
-								.getPath().getAbsolutePath(), lastBuiltProject);
+								.getPath().getAbsolutePath(), currentProject);
 	
 						IMarker marker = resource.createMarker(IMarker.PROBLEM);
 						marker.setAttribute(IMarker.LINE_NUMBER, token.getLine());
@@ -212,7 +198,7 @@ public class Builder extends IncrementalProjectBuilder {
 						msg = (String)err; // for internal errors
 					}
 					
-					IMarker marker = lastBuiltProject.createMarker(IMarker.PROBLEM);
+					IMarker marker = currentProject.createMarker(IMarker.PROBLEM);
 					marker.setAttribute(IMarker.MESSAGE, msg);
 					marker.setAttribute(IMarker.SEVERITY, new Integer(IMarker.SEVERITY_ERROR));
 				}
@@ -223,16 +209,4 @@ public class Builder extends IncrementalProjectBuilder {
 		}
 	}
 	
-	public static IProject getProjectForSourceLocation(ISourceLocation location) {
-		IPath path = new Path(location.getSourceFile().getAbsolutePath());
-		Iterator iter = allBuildedProjects.iterator();
-		IProject ret = null;
-		IPath projectPath=null;
-		while (iter.hasNext()) {
-			ret = (IProject) iter.next();
-			projectPath = ret.getLocation();
-			if (projectPath.isPrefixOf(path))
-				return ret;
-		}
-		return null;
-	}}
+}
