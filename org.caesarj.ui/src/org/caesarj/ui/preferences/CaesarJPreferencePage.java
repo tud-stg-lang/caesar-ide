@@ -45,17 +45,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * 
  */
 public class CaesarJPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-
-	/**
-	 * Holds the field editor for the option "is caesarj the default Java editor?"
-	 * We need it, since this option requires to trigger methods on the CJDTConfigSettings
-	 */
-	private BooleanFieldEditor caesarDefaultJavaEditor = null;
-	
-	/**
-	 * Holds the field editor for the option "annotation while typing"
-	 */
-	private BooleanFieldEditor annotationWhileTyping = null;
 	
 	/**
 	 * Constructor
@@ -72,7 +61,7 @@ public class CaesarJPreferencePage extends FieldEditorPreferencePage implements 
 	protected IPreferenceStore doGetPreferenceStore() {
 		return CaesarPlugin.getDefault().getPreferenceStore();
 	}
-
+	
 	/**
 	 * Creates the field editors.
 	 * 
@@ -84,13 +73,11 @@ public class CaesarJPreferencePage extends FieldEditorPreferencePage implements 
 		// get the parent composite
 		Composite parent = getFieldEditorParent();
 		
-		// the annotationWhileTyping must be kept for the performOk method
-		annotationWhileTyping =
+		addField(
 			new BooleanFieldEditor(
 				CaesarJPreferences.CAESAR_ANALIZE_ANNOTATIONS,
 				"Default setting: annotation while typing",							//$NON-NLS-1$
-				parent);
-		addField(annotationWhileTyping);
+				parent));
 		
 		addField(
 			new BooleanFieldEditor(
@@ -98,13 +85,12 @@ public class CaesarJPreferencePage extends FieldEditorPreferencePage implements 
 				"Auto annotation switch while changing editors", 					//$NON-NLS-1$
 				parent));
 		
-		// the caesarDefaultJavaEditor must be kept for the performOk method
-		caesarDefaultJavaEditor =
+
+		addField(
 			new BooleanFieldEditor(
 				CaesarJPreferences.CAESAR_IS_DEFAULT_EDITOR,						
 				"Make the CaesarJ editor the default java - editor", 				//$NON-NLS-1$
-				parent);
-		addField(caesarDefaultJavaEditor);
+				parent));
 		
 		addField(
 			new BooleanFieldEditor(
