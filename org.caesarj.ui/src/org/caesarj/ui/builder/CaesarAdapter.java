@@ -101,7 +101,7 @@ public final class CaesarAdapter extends Main {
 		}
 
 		JCompilationUnit res;
-		this.progressMonitor.subTask("compiling" + file.getName()); //$NON-NLS-1$
+		this.progressMonitor.subTask("compiling " + file.getName()); //$NON-NLS-1$
 		res = super.parseFile(file, env);
 		this.progressMonitor.worked(1);
 
