@@ -1,7 +1,10 @@
 package org.caesarj.ui;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -17,10 +20,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.preferences.JavadocConfigurationPropertyPage;
+import org.eclipse.jdt.internal.ui.preferences.PreferencesMessages;
 import org.eclipse.jdt.internal.ui.viewsupport.ImageDescriptorRegistry;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
+import org.eclipse.jface.text.templates.persistence.TemplateReaderWriter;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -57,10 +64,51 @@ public class CaesarPlugin extends AbstractUIPlugin {
 	private String caesarCompilerPath = null;
 	private String bcelPath = null;
 
+
+	/*
+	private void updateTemplate(TemplatePersistenceData data) {
+		TemplatePersistenceData[] datas= JavaPlugin.getDefault().getCodeTemplateStore().getTemplateData(true);
+		for (int i= 0; i < datas.length; i++) {
+			String id= datas[i].getId();
+			if (id != null && id.equals(data.getId())) {
+				datas[i].setTemplate(data.getTemplate());
+				break;
+			}
+		}
+	}
+	
+	private void import_() {
+		
+		String path="";
+		
+		if (path == null)
+			return;
+		
+		try {
+			TemplateReaderWriter reader= new TemplateReaderWriter();
+			File file= new File(path);
+			if (file.exists()) {
+				Reader input= new FileReader(file);
+				TemplatePersistenceData[] datas= reader.read(input);
+				for (int i= 0; i < datas.length; i++) {
+					updateTemplate(datas[i]);
+				}
+			}
+
+			fCodeTemplateTree.refresh();
+			updateSourceViewerInput(fCodeTemplateTree.getSelectedElements());
+
+		} catch (FileNotFoundException e) {
+			openReadErrorDialog(e);
+		} catch (IOException e) {
+			openReadErrorDialog(e);
+		}
+
+	}*/
+	
 	/**
 	 * The constructor.
 	 */
-	
 	public CaesarPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		plugin = this;
