@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarAdapter.java,v 1.26 2005-02-21 13:40:51 gasiunas Exp $
+ * $Id: CaesarAdapter.java,v 1.27 2005-03-03 09:23:56 gasiunas Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -31,7 +31,6 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.aspectj.asm.StructureModel;
-import org.aspectj.asm.StructureModelManager;
 import org.caesarj.compiler.KjcEnvironment;
 import org.caesarj.compiler.Main;
 import org.caesarj.compiler.ast.phylum.JCompilationUnit;
@@ -59,8 +58,6 @@ public final class CaesarAdapter extends Main {
 	private Collection errors;
 
 	private IProgressMonitor progressMonitor;
-
-	private StructureModel model;
 
 	static Logger logger = Logger.getLogger(CaesarAdapter.class);
 
@@ -99,8 +96,10 @@ public final class CaesarAdapter extends Main {
 			String outputPath, Collection errorsArg,
 			IProgressMonitor progressMonitorArg) {
 
-		//this.model = new StructureModel();
-		this.model = StructureModelManager.INSTANCE.getStructureModel();
+		// The singleton is not used anymore, because the plugin can have more than
+		// one project and each project must have a structure model
+		//this.model = StructureModelManager.INSTANCE.getStructureModel();
+		this.model = new StructureModel();
 		
 		boolean success = false;
 		String args[] = new String[sourceFiles.size() + 4];

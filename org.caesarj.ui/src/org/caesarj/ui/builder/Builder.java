@@ -20,11 +20,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: Builder.java,v 1.24 2005-02-21 13:40:26 gasiunas Exp $
+ * $Id: Builder.java,v 1.25 2005-03-03 09:23:56 gasiunas Exp $
  */
 
 package org.caesarj.ui.builder;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -43,6 +44,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.swt.widgets.Display;
@@ -94,6 +96,12 @@ public class Builder extends IncrementalProjectBuilder {
 
 			log.debug("----\n" + this.projectProperties.toString() + "----\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
+			// Clean the destination directory always, since there is no incremental building
+			cleanOutputFolder(
+					projectProperties.getProjectLocation() +
+					File.separator +
+					projectProperties.getOutputPath());
+			
 			// Create a caesar adapter to compile the project
 			CaesarAdapter caesarAdapter = new CaesarAdapter(this.projectProperties.getProjectLocation());
 
@@ -209,4 +217,31 @@ public class Builder extends IncrementalProjectBuilder {
 		}
 	}
 	
+	private void cleanOutputFolder(String output) {
+		File[] files = new File[1];
+		files[0] = new File(output);
+		cleanFolder(files);
+	}
+	
+	/**
+	 * Removes all the files, including directories
+	 * 
+	 * @param files
+	 * @throws CoreException
+	 */
+	private void cleanFolder(File[] files) {
+		
+		if (files != null) {
+			// Iterate the files
+			for (int i = 0; i < files.length; i++) {
+				File f = files[i];
+				// If the file is a directory, remove its contents recursively
+				if (f.isDirectory()) {
+					cleanFolder(f.listFiles());
+				}
+				// Remove the file
+				f.delete();
+			}
+		}
+	}
 }

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarPlugin.java,v 1.22 2005-02-15 17:39:12 gasiunas Exp $
+ * $Id: CaesarPlugin.java,v 1.23 2005-03-03 09:23:56 gasiunas Exp $
  */
 
 package org.caesarj.ui;
@@ -28,13 +28,10 @@ package org.caesarj.ui;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.caesarj.ui.editor.CaesarEditor;
 import org.caesarj.ui.editor.CaesarTextTools;
-import org.caesarj.ui.preferences.CaesarJPreferences;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Display;
@@ -182,12 +179,12 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 	}
 	
 	public void selectionChanged(IWorkbenchPart part, ISelection selectionArg) {
-		if (CaesarJPreferences.isAutoSwitch()) {
+		/*if (CaesarJPreferences.isAutoSwitch()) {
 			if (part instanceof CaesarEditor) {
 				CJDTConfigSettings.setAnalyzeAnnotations(false);
 			} else if (part instanceof CompilationUnitEditor) {
 				CJDTConfigSettings.setAnalyzeAnnotations(true);
 			}
-		}
+		}*/
 	}
 }

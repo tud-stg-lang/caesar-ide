@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: ProjectProperties.java,v 1.9 2005-02-21 13:45:44 gasiunas Exp $
+ * $Id: ProjectProperties.java,v 1.10 2005-03-03 09:23:56 gasiunas Exp $
  */
 
 package org.caesarj.ui.util;
@@ -47,7 +47,8 @@ import org.eclipse.jdt.core.JavaModelException;
 /**
  * Central Class for obtaining all relevant data from an IProject Object
  * 
- * TODO - Create a hook to remove projectproperties when projects are closed 
+ * TODO - Create a hook to remove projectproperties when projects are closed
+ * TODO - Comment everything
  * 
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  * @author Thiago Tonelli Bartolomei <bart@macacos.org>
@@ -60,6 +61,7 @@ public class ProjectProperties {
 	private static Hashtable projects = new Hashtable(5);
 	
 	private IProject project = null;
+	private IJavaProject javaProject = null;
     private String outputPath = null;
     private String projectLocation = null;
     private StringBuffer classPath = null;
@@ -106,20 +108,19 @@ public class ProjectProperties {
     	classPath = new StringBuffer();
     	sourceFiles = new ArrayList();
     	
-        IJavaProject jProject = JavaCore.create(project);        
-           
+        javaProject = JavaCore.create(project);
         String projectLocalPrefix = File.separator + project.getName();
             
         /*
          * get paths
          */
         this.projectLocation = project.getLocation().removeLastSegments(1).toOSString();
-        this.outputPath = jProject.getOutputLocation().toOSString();
+        this.outputPath = javaProject.getOutputLocation().toOSString();
 
         /*
          * get source files
          */
-        IClasspathEntry[] classPathEntries = jProject.getResolvedClasspath(false);
+        IClasspathEntry[] classPathEntries = javaProject.getResolvedClasspath(false);
 
         for(int i=0; i<classPathEntries.length; i++) {
             if(classPathEntries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
@@ -185,18 +186,42 @@ public class ProjectProperties {
         return ret;        
     }
 	
+    /**
+     * Represents the absolute path of the project directory
+     * 
+     * @return the project location directory
+     */
 	public String getProjectLocation() {
 		return this.projectLocation;
 	}
-        
+    
+	/**
+	 * Represents the relative path, from the Project Location,
+	 * of the directory where the classes will be copied after
+	 * compilation.
+	 * 
+	 * @return
+	 */
     public String getOutputPath() {
         return this.outputPath;
     }
 
+    /**
+     * A colon separated list of java resources, used as classpath for
+     * the compiler
+     * 
+     * @return
+     */
     public String getClassPath() {
         return this.classPath.toString();
     }
 
+    /**
+     * Represents the relative path, from the Project Location,
+     * of the directory containing the sources.
+     * 
+     * @return
+     */
 	public Collection getSourceFiles() {		
 		return this.sourceFiles;
 	}
@@ -204,7 +229,9 @@ public class ProjectProperties {
 	public IProject getProject() {
 		return project;
 	}
-	
+	public IJavaProject getJavaProject() {
+		return javaProject;
+	}	
 	public StructureModel getStructureModel() {
 		return this.model;
 	}
