@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: Builder.java,v 1.27 2005-03-09 14:29:09 thiago Exp $
+ * $Id: Builder.java,v 1.28 2005-03-10 10:01:39 gasiunas Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -189,9 +189,16 @@ public class Builder extends IncrementalProjectBuilder {
 	
 						IResource resource = ProjectProperties.findResource(token
 								.getPath().getAbsolutePath(), currentProject);
-	
-						IMarker marker = resource.createMarker(IMarker.PROBLEM);
-						marker.setAttribute(IMarker.LINE_NUMBER, token.getLine());
+						
+						IMarker marker = null;
+						if (resource != null) {
+							marker = resource.createMarker(IMarker.PROBLEM);
+							marker.setAttribute(IMarker.LINE_NUMBER, token.getLine());
+						}
+						else {
+							// for the cases, when error refers to a generated piece of code
+							marker = currentProject.createMarker(IMarker.PROBLEM);
+						}
 						marker.setAttribute(IMarker.MESSAGE, error
 								.getFormattedMessage().getMessage());
 						marker.setAttribute(IMarker.SEVERITY, new Integer(
