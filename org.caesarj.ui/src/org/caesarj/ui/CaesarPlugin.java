@@ -1,10 +1,7 @@
 package org.caesarj.ui;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -22,21 +19,12 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
-import org.eclipse.jdt.internal.ui.preferences.JavadocConfigurationPropertyPage;
-import org.eclipse.jdt.internal.ui.preferences.PreferencesMessages;
 import org.eclipse.jdt.internal.ui.viewsupport.ImageDescriptorRegistry;
-import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
-import org.eclipse.jface.text.templates.persistence.TemplateReaderWriter;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**

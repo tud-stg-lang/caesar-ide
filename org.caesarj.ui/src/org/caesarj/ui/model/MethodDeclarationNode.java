@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.FjMethodDeclaration;
-import org.caesarj.compiler.ast.JClassDeclaration;
 import org.caesarj.compiler.ast.JFormalParameter;
 import org.caesarj.compiler.ast.JTypeDeclaration;
 import org.caesarj.compiler.types.CType;

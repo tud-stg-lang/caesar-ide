@@ -7,8 +7,6 @@
 package org.caesarj.ui.actionsets;
 
 import org.apache.log4j.Logger;
-import org.caesarj.ui.CaesarPlugin;
-import org.caesarj.ui.wizard.CaesarConfigWizard;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.action.IAction;

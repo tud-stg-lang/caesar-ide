@@ -17,7 +17,6 @@ import org.aspectj.bridge.SourceLocation;
 import org.caesarj.compiler.ast.AdviceDeclaration;
 import org.caesarj.compiler.ast.BodyVisitor;
 import org.caesarj.compiler.ast.CciInterfaceDeclaration;
-import org.caesarj.compiler.ast.FjCleanClassDeclaration;
 import org.caesarj.compiler.ast.FjMethodDeclaration;
 import org.caesarj.compiler.ast.JBlock;
 import org.caesarj.compiler.ast.JClassDeclaration;

@@ -2,7 +2,6 @@
 
 package org.caesarj.ui.wizard;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
