@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarEditor.java,v 1.24 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CaesarEditor.java,v 1.25 2005-02-21 13:42:24 gasiunas Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -58,7 +58,7 @@ public class CaesarEditor extends CompilationUnitEditor {
 
 	private static Logger log = Logger.getLogger(CaesarEditor.class);
 
-	private CaesarOutlineView outlineView;
+	private CaesarJContentOutlinePage outlineView;
 
 	//private CompositeRuler caesarVerticalRuler;
 
@@ -77,7 +77,6 @@ public class CaesarEditor extends CompilationUnitEditor {
 
 		log.debug("Initializing CaesarJ Editor."); //$NON-NLS-1$
 		try {
-			
 			IPreferenceStore store = this.getPreferenceStore();
 			CaesarTextTools textTools = new CaesarTextTools(store);
 			JavaSourceViewerConfiguration svConfig = new CaesarSourceViewerConfiguration(
@@ -102,8 +101,9 @@ public class CaesarEditor extends CompilationUnitEditor {
 	public Object getAdapter(Class key) {
 		if (key.equals(IContentOutlinePage.class)) {
 			if (this.outlineView == null) {
-				this.outlineView = new CaesarOutlineView(this);
-				this.outlineView.setEnabled(true);
+				this.outlineView = new CaesarJContentOutlinePage(this, 
+						getInputJavaElement().getResource().getProject());
+				//this.outlineView.setEnabled(true);
 			}
 			return this.outlineView;
 		}
@@ -120,7 +120,11 @@ public class CaesarEditor extends CompilationUnitEditor {
 		
 		log.debug("dispose"); //$NON-NLS-1$
 		if(this.outlineView != null){
-			this.outlineView.setEnabled(false);
+			// Enable doesn't make sense anymore. For this reason the setEnabled above
+			// was removed. Now we call the static method to remove this instance from 
+			// the list
+			//this.outlineView.setEnabled(false);
+			CaesarJContentOutlinePage.removeInstance(this.outlineView);
 		}
 	}
 }
