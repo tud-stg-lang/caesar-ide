@@ -100,7 +100,7 @@ public class CaesarOutlineView extends ContentOutlinePage {
 				} else if (element instanceof LinkNode) {
 					LinkNode lNode = (LinkNode) element;
 					return this.getText(lNode.getProgramElementNode());
-				}else 
+				} else
 					return super.getText(element);
 			} catch (NullPointerException e) {
 				logger.error("Sollte es nicht geben!", e);

@@ -92,5 +92,32 @@
             primary="true">
       </toc>
    </extension>
-
+   <extension
+         id="advicemarker"
+         name="%adviceMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="message">
+      </attribute>
+      <attribute
+            name="line">
+      </attribute>
+      <attribute
+            name="flags">
+      </attribute>
+   </extension>
+   <extension
+         point="org.eclipse.ui.markerImageProviders">
+      <imageprovider
+            markertype="org.caesarj.advicemarker"
+            icon="icons/joinPoint.gif"
+            id="org.eclipse.ui.searchMarkerProvider.adviceMarkerProvider">
+      </imageprovider>
+   </extension>
 </plugin>

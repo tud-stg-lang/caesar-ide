@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.editor.CaesarOutlineView;
+import org.caesarj.ui.marker.AdviceMarker;
 import org.caesarj.ui.util.ProjectProperties;
 import org.caesarj.util.PositionedError;
 import org.caesarj.util.TokenReference;
@@ -123,8 +124,7 @@ public class Builder extends IncrementalProjectBuilder {
 				IResource resource = ProjectProperties.findResource(sourcePath, lastBuiltProject);
 
 				resource.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
-				//TODO Eigenen MArker AdviceMarker.ADVICE
-				resource.deleteMarkers(IMarker.TASK, true, IResource.DEPTH_INFINITE);
+				resource.deleteMarkers(AdviceMarker.ADVICEMARKER, true, IResource.DEPTH_INFINITE);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -79,4 +79,14 @@ public class MethodDeclarationNode extends CaesarProgramElementNode {
 	public JClassDeclaration getClassDeclaration() {
 		return classDeclaration;
 	}
+	
+
+	/* (Kein Javadoc)
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	public int compareTo(Object o) throws ClassCastException {
+		// TODO Automatisch erstellter Methoden-Stub
+		return super.compareTo(o);
+	}
+
 }

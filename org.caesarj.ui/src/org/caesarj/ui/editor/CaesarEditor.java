@@ -76,7 +76,6 @@ public class CaesarEditor extends CompilationUnitEditor {
             
             return outlineView;
         }
-
         return super.getAdapter(key);
     }    
     

@@ -5,7 +5,6 @@ import java.util.List;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.JClassImport;
 import org.caesarj.compiler.ast.JPackageImport;
-import org.eclipse.swt.graphics.Image;
 /**
  * @author Shadow
  *
@@ -72,10 +71,6 @@ public class AspectSourceFileNode extends CaesarProgramElementNode {
 			importedPackages,
 			importedClasses);
 		this.initImages();
-	}
-
-	public Image getImage() {
-		return super.getImage();
 	}
 
 	public String getText(String text) {

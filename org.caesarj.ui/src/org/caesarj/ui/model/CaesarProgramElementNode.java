@@ -2,17 +2,19 @@ package org.caesarj.ui.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.aspectj.asm.ProgramElementNode;
+import org.aspectj.asm.RelationNode;
 import org.aspectj.asm.StructureNode;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.JClassImport;
 import org.caesarj.compiler.ast.JPackageImport;
 import org.caesarj.ui.CaesarElementImageDescriptor;
-import org.caesarj.ui.CaesarPluginImages;
 import org.caesarj.ui.builder.Builder;
+import org.caesarj.ui.marker.AdviceMarker;
 import org.caesarj.ui.util.ProjectProperties;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -20,7 +22,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.ui.texteditor.MarkerUtilities;
 /**
  * Adds additional methods needed in NodeEliminator Visitor.
  * @see isToRemove
@@ -137,30 +138,6 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 	}
 
 	public Image getImage() {
-		if (this instanceof CodeNode
-			|| this.getProgramElementKind().equals(ProgramElementNode.Kind.CODE)) {
-			IResource resource =
-				ProjectProperties.findResource(
-					this.getParent().getSourceLocation().getSourceFile().getAbsolutePath(),
-					Builder.getLastBuildTarget());
-
-			HashMap args = new HashMap();
-			args.put(IMarker.LINE_NUMBER, new Integer(this.getParent().getSourceLocation().getLine()));
-			args.put(IMarker.MESSAGE, "Dies ist ein ADVICE Test");
-			args.put(IMarker.SEVERITY, new Integer(IMarker.SEVERITY_INFO));
-			try {//TODO Eigenen Marker
-				MarkerUtilities.createMarker(resource, args, IMarker.TASK);//AdviceMarker.ADVICE);
-			} catch (CoreException e) {
-				logger.error("FEHLER BEIM MARKER ERZEUGEN", e);
-			}
-			return new CaesarElementImageDescriptor(
-				CaesarPluginImages.DESC_CODE,
-				null,
-				BIG_SIZE,
-				false)
-				.createImage();
-		}
-
 		ImageDescriptor img;
 		switch (this.getCAModifiers() % 8) {
 			case 1 :
@@ -176,6 +153,33 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 				img = DEFAULT;
 		}
 		return new CaesarElementImageDescriptor(img, this, BIG_SIZE, false).createImage();
+	}
+
+	public List getRelations() {
+		List relations = super.getRelations();
+		for (Iterator it = relations.iterator(); it.hasNext();) {
+			Object node = it.next();
+			if (node instanceof RelationNode) {
+				Object[] nodes = ((RelationNode) node).getChildren().toArray();
+				String message = ((RelationNode) node).getName().toUpperCase()+":\n\n";
+				for (int i = 0; i < nodes.length; i++)
+					message += ((StructureNode) nodes[i]).getName() + "\n";
+				ISourceLocation src = this.getSourceLocation();
+				IResource resource =
+					ProjectProperties.findResource(
+						src.getSourceFile().getAbsolutePath(),
+						Builder.getLastBuildTarget());
+				HashMap args = new HashMap();
+				args.put(IMarker.LINE_NUMBER, new Integer(this.getSourceLocation().getLine()));
+				args.put(IMarker.MESSAGE, message);
+				try {
+					new AdviceMarker(resource, args);
+				} catch (CoreException e) {
+					logger.error("FEHLER BEIM MARKER ERZEUGEN", e);
+				}
+			}
+		}
+		return relations;
 	}
 
 	protected abstract void initImages();

@@ -6,6 +6,9 @@ import org.apache.log4j.Logger;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.JClassImport;
 import org.caesarj.compiler.ast.JPackageImport;
+import org.caesarj.ui.CaesarElementImageDescriptor;
+import org.caesarj.ui.CaesarPluginImages;
+import org.eclipse.swt.graphics.Image;
 /**
  * @author Shadow
  *
@@ -80,6 +83,15 @@ public class CodeNode extends CaesarProgramElementNode {
 	}
 
 	protected void initImages() {
+	}
+
+	public Image getImage() {
+		return new CaesarElementImageDescriptor(
+			CaesarPluginImages.DESC_CODE,
+			null,
+			BIG_SIZE,
+			false)
+			.createImage();
 	}
 
 }

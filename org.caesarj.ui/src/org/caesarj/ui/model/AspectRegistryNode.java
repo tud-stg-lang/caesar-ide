@@ -3,7 +3,6 @@ package org.caesarj.ui.model;
 import java.util.List;
 
 import org.aspectj.bridge.ISourceLocation;
-import org.eclipse.swt.graphics.Image;
 
 /**
  * ASM Node marking inner advice Registry classes.
@@ -21,10 +20,6 @@ public class AspectRegistryNode extends CaesarProgramElementNode {
 		List children) {
 		super(signature, kind, sourceLocation, modifiers, formalComment, children);
 		this.initImages();
-	}
-
-	public Image getImage() {
-		return super.getImage();
 	}
 
 	public String getText(String text) {
