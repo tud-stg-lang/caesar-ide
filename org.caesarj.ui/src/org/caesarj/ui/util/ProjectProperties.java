@@ -49,7 +49,6 @@ public class ProjectProperties {
         IClasspathEntry[] classPathEntries = jProject.getResolvedClasspath(false);
 
         for(int i=0; i<classPathEntries.length; i++) {
-    
             if(classPathEntries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
                 // 1st segment of the path has to be removed because it is added
                 // again by findMember ending in duplicated first segment in the path

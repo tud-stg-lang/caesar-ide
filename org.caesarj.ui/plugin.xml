@@ -106,18 +106,31 @@
             name="message">
       </attribute>
       <attribute
+            name="links">
+      </attribute>
+      <attribute
             name="line">
       </attribute>
       <attribute
             name="flags">
       </attribute>
+      <attribute
+            name="flags">
+      </attribute>
    </extension>
-   <extension
+   <!--extension point="org.eclipse.ui.markerResolution">
+   	<markerResolutionGenerator
+      class="org.caesarj.ui.marker.AdviceMarkerResolutionGenerator"
+      markerType="org.caesarj.advicemarker">
+      <attribute name="org.caesarj.advicemarker.id" value="1"/>
+   	</markerResolutionGenerator>
+   </extension--> 
+	<extension
          point="org.eclipse.ui.markerImageProviders">
       <imageprovider
             markertype="org.caesarj.advicemarker"
             icon="icons/joinPoint.gif"
-            id="org.eclipse.ui.searchMarkerProvider.adviceMarkerProvider">
+            id="org.eclipse.ui.adviceMarkerProvider">
       </imageprovider>
    </extension>
 </plugin>

@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.aspectj.asm.LinkNode;
 import org.aspectj.asm.ProgramElementNode;
 import org.aspectj.asm.RelationNode;
 import org.aspectj.asm.StructureNode;
@@ -162,8 +163,10 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 			if (node instanceof RelationNode) {
 				Object[] nodes = ((RelationNode) node).getChildren().toArray();
 				String message = ((RelationNode) node).getName().toUpperCase()+":\n\n";
-				for (int i = 0; i < nodes.length; i++)
-					message += ((StructureNode) nodes[i]).getName() + "\n";
+				LinkNode lNode[] = new LinkNode[nodes.length];
+				for (int i = 0; i < nodes.length; i++){
+					lNode[i] = (LinkNode) nodes[i];
+					message += lNode[i].getName() + "\n";}
 				ISourceLocation src = this.getSourceLocation();
 				IResource resource =
 					ProjectProperties.findResource(
@@ -172,6 +175,8 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 				HashMap args = new HashMap();
 				args.put(IMarker.LINE_NUMBER, new Integer(this.getSourceLocation().getLine()));
 				args.put(IMarker.MESSAGE, message);
+				args.put(AdviceMarker.LINKS, lNode);
+				args.put(AdviceMarker.ID,"1");
 				try {
 					new AdviceMarker(resource, args);
 				} catch (CoreException e) {

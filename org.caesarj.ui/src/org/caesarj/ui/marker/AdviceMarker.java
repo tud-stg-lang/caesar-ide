@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 
 /**
@@ -42,7 +41,9 @@ public class AdviceMarker implements IMarker{
 	private IResource resource;
 	private Map attributes;
 	public final static java.lang.String ADVICEMARKER = "org.caesarj.advicemarker";
-
+	public final static java.lang.String LINKS = "org.caesarj.advicemarker.links";
+	public final static java.lang.String ID = "org.caesarj.advicemarker.id";
+	
 	public AdviceMarker(IResource resource, Map attributes) throws CoreException {
 		this.resource = resource;
 		this.workspace = getWorkspace();
@@ -55,12 +56,6 @@ public class AdviceMarker implements IMarker{
 		resource.getWorkspace().run(r, null);
 	}
 	
-	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		selectionChangedListeners.add(listener);
-	}
-	
-	
-
 	private void addMarker() throws CoreException {
 		try {
 			workspace.prepareOperation();
@@ -77,19 +72,10 @@ public class AdviceMarker implements IMarker{
 		AdviceMarker.this.setAttributes(attributes);
 	}
 
-	/**
-	 * Returns the resource info.  Returns null if the resource doesn't exist.
-	 * If the phantom flag is true, phantom resources are considered.
-	 * If the mutable flag is true, a mutable info is returned.
-	 */
 	public ResourceInfo getResourceInfo(boolean phantom, boolean mutable) {
 		return workspace.getResourceInfo(this.resource.getFullPath(), phantom, mutable);
 	}
 
-	/**
-	 * Checks the given marker info to ensure that it is not null.
-	 * Throws an exception if it is.
-	 */
 	private void checkInfo(MarkerInfo info) throws CoreException {
 		if (info == null) {
 			String message = Policy.bind("resources.markerNotFound", Long.toString(id)); //$NON-NLS-1$
@@ -101,9 +87,6 @@ public class AdviceMarker implements IMarker{
 		}
 	}
 
-	/**
-	 * @see IMarker#delete
-	 */
 	public void delete() throws CoreException {
 		try {
 			getWorkspace().prepareOperation();
@@ -114,42 +97,28 @@ public class AdviceMarker implements IMarker{
 		}
 	}
 
-	/**
-	 * Returns the workspace which manages this marker.  Returns
-	 * <code>null</code> if this resource does not have an associated
-	 * resource.
-	 */
 	private Workspace getWorkspace() {
 		return resource == null ? null : (Workspace) resource.getWorkspace();
 	}
 
-	/**
-	 * @see IMarker#equals
-	 */
 	public boolean equals(Object object) {
 		if (!(object instanceof IMarker))
 			return false;
 		IMarker other = (IMarker) object;
 		return (id == other.getId() && resource.equals(other.getResource()));
 	}
-	/**
-	 * @see IMarker#exists
-	 */
+	
 	public boolean exists() {
 		return getInfo() != null;
 	}
-	/**
-	 * @see IMarker#getAttribute
-	 */
+	
 	public Object getAttribute(String attributeName) throws CoreException {
 		Assert.isNotNull(attributeName);
 		MarkerInfo info = getInfo();
 		checkInfo(info);
 		return info.getAttribute(attributeName);
 	}
-	/**
-	 * @see IMarker#getAttribute
-	 */
+	
 	public int getAttribute(String attributeName, int defaultValue) {
 		Assert.isNotNull(attributeName);
 		MarkerInfo info = getInfo();
@@ -160,9 +129,7 @@ public class AdviceMarker implements IMarker{
 			return ((Integer) value).intValue();
 		return defaultValue;
 	}
-	/**
-	 * @see IMarker#getAttribute
-	 */
+	
 	public String getAttribute(String attributeName, String defaultValue) {
 		Assert.isNotNull(attributeName);
 		MarkerInfo info = getInfo();
@@ -173,9 +140,7 @@ public class AdviceMarker implements IMarker{
 			return (String) value;
 		return defaultValue;
 	}
-	/**
-	 * @see IMarker#getAttribute
-	 */
+	
 	public boolean getAttribute(String attributeName, boolean defaultValue) {
 		Assert.isNotNull(attributeName);
 		MarkerInfo info = getInfo();
