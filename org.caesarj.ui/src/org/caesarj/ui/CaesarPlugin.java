@@ -8,7 +8,6 @@ import org.caesarj.ui.editor.CaesarTextTools;
 import org.caesarj.ui.preferences.CaesarJPreferences;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
@@ -45,10 +44,6 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 
 	public static final String CAESAR_HOME = "CAESAR_HOME";
 
-	private Display display = Display.getCurrent();
-
-	private ResourceBundle resourceBundle = null;
-
 	private CaesarTextTools caesarTextTools = null;
 
 	private String aspectjRuntimePath = null;
@@ -56,6 +51,8 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 	private String caesarRuntimePath = null;
 
 	private String caesarCompilerPath = null;
+	
+	private ResourceBundle resourceBundle = null;
 
 	private String bcelPath = null;
 
@@ -89,32 +86,28 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 	/**
 	 * The constructor.
 	 */
-	public CaesarPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public CaesarPlugin() {
 		plugin = this;
+		
 		try {
 			this.resourceBundle = ResourceBundle
 					.getBundle("caesar.CaesarPluginResources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
 			this.resourceBundle = null;
 		}
-		if (selectionListener) {
-			plugin.getWorkbench().getActiveWorkbenchWindow()
-					.getSelectionService().addSelectionListener(plugin);
-			selectionListener = false;
-		}
 		
 		// load here the environment variable
 		// otherwise error when importing a project which contains this variable in .classpath
 	    JavaCore.getClasspathVariable(CAESAR_HOME);
 	}
-
-	/*
-	 * So sollte es richtig sein ... Plugin startet dann blos nicht. public
-	 * CaesarPlugin() { super(); plugin = this; try { resourceBundle =
-	 * ResourceBundle.getBundle("caesar.CaesarPluginResources"); } catch
-	 * (MissingResourceException x) { resourceBundle = null; } }
-	 */
+	
+	public void initPluginUI() {
+		if (selectionListener) {
+			plugin.getWorkbench().getActiveWorkbenchWindow()
+					.getSelectionService().addSelectionListener(plugin);
+			selectionListener = false;
+		}
+	}
 
 	/**
 	 * Returns the shared instance.
@@ -130,30 +123,10 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 		return ResourcesPlugin.getWorkspace();
 	}
 
-	/**
-	 * Returns the string from the plugin's resource bundle, or 'key' if not
-	 * found.
-	 */
-	public static String getResourceString(String key) {
-		ResourceBundle bundle = CaesarPlugin.getDefault().getResourceBundle();
-		try {
-			return bundle.getString(key);
-		} catch (MissingResourceException e) {
-			return key;
-		}
-	}
-
 	public Display getDisplay() {
-		return this.display;
+		return Display.getCurrent();
 	}
-
-	/**
-	 * Returns the plugin's resource bundle,
-	 */
-	public ResourceBundle getResourceBundle() {
-		return this.resourceBundle;
-	}
-
+	
 	/**
 	 * Returns Caesar text tools containing Caesar code scanner
 	 */
@@ -188,62 +161,6 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 		return res;
 	}
 	
-	/*
-	private String getPathFor(String lib) {
-		StringBuffer cpath = new StringBuffer();
-
-		IPluginRegistry reg = Platform.getPluginRegistry();
-
-		int maj = 1;
-		int min = 1;
-		int svc = 1;
-		try {
-			StringTokenizer tok = new StringTokenizer(VERSION, "."); //$NON-NLS-1$
-			maj = Integer.parseInt(tok.nextToken());
-			min = Integer.parseInt(tok.nextToken());
-			svc = Integer.parseInt(tok.nextToken());
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-		// first look for the version we really want...
-		IPluginDescriptor ajdePluginDesc = reg.getPluginDescriptor(PLUGIN_ID,
-				new PluginVersionIdentifier(maj, min, svc));
-
-		if (ajdePluginDesc == null) {
-			// then try *any* version
-			ajdePluginDesc = reg.getPluginDescriptor(PLUGIN_ID);
-		}
-
-		String pluginLoc = null;
-		if (ajdePluginDesc != null) {
-			URL installLoc = ajdePluginDesc.getInstallURL();
-			URL resolved = null;
-			try {
-				resolved = Platform.resolve(installLoc);
-				pluginLoc = resolved.toExternalForm();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		if (pluginLoc != null) {
-			if (pluginLoc.startsWith("file:")) { //$NON-NLS-1$
-				cpath.append(pluginLoc.substring("file:".length())); //$NON-NLS-1$
-				cpath.append(lib);
-			}
-		}
-
-		String res = null;
-
-		// Verify that the file actually exists at the plugins location
-		if (new File(cpath.toString()).exists()) {
-			res = cpath.toString();
-		}
-
-		return res;
-	}
-	*/
-
 	public void selectionChanged(IWorkbenchPart part, ISelection selectionArg) {
 		if (CaesarJPreferences.isCAESARAutoSwitch()) {
 			if (part instanceof CaesarEditor) {
