@@ -2,15 +2,15 @@
 <feature
       id="org.caesarj.feature"
       label="org.caesarj.feature"
-      version="0.2.0"
-      provider-name="TUD Darmstadt">
+      version="0.3.0"
+      provider-name="TU-Darmstadt">
 
    <description>
-      CaesarJ UI
+      CaesarJ Plugin for Eclipse Platform.
    </description>
 
    <copyright>
-      COPYRIGHT NOTICE
+      (c) Copyright TU-Darmstadt 2002-2004. All rights reserved.
    </copyright>
 
    <license>
@@ -18,26 +18,30 @@
    </license>
 
    <requires>
-      <import plugin="org.eclipse.search"/>
-      <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.help"/>
+      <import plugin="org.eclipse.help.base"/>
       <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.jdt.ui"/>
-      <import plugin="org.eclipse.debug.core"/>
-      <import plugin="org.eclipse.jdt.core"/>
-      <import plugin="org.eclipse.pde.core"/>
-      <import plugin="org.eclipse.pde.runtime"/>
-      <import plugin="org.eclipse.pde"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.debug.ui"/>
-      <import plugin="org.eclipse.jdt.debug.ui"/>
-      <import plugin="org.eclipse.swt"/>
-      <import plugin="org.eclipse.jdt.launching"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.jdt.ui"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.eclipse.search"/>
+      <import plugin="org.eclipse.text"/>
+      <import plugin="org.eclipse.ui.console"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
    </requires>
 
    <plugin
          id="org.caesarj"
          download-size="0"
          install-size="0"
-         version="0.2.0"/>
+         version="0.3.0"/>
 
 </feature>
