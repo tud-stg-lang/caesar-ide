@@ -5,7 +5,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * null device. does nothing.
  * 
- * @author ivica
+ * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
 public class NullProgressMonitor implements IProgressMonitor {
 

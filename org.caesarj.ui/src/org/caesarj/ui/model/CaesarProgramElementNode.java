@@ -10,7 +10,7 @@ import org.aspectj.bridge.ISourceLocation;
  * Adds additional methods needed in NodeEliminator Visitor.
  * @see isToRemove
  * 
- * @author ivica
+ * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
 public class CaesarProgramElementNode extends ProgramElementNode {
     public CaesarProgramElementNode(

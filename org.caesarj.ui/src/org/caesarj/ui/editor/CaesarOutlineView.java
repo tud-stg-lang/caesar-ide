@@ -32,7 +32,7 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 /**
  * Content Outline Page for Caesar Compilation Unit
  * 
- * @author ivica
+ * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
 public class CaesarOutlineView extends ContentOutlinePage {
      

@@ -10,9 +10,9 @@ import org.aspectj.asm.StructureModelManager;
 import org.caesarj.ui.builder.CaesarAdapter;
 
 /**
- * ...
+ * Test for ASM.
  * 
- * @author ivica
+ * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
 public class CaesarModelTest {
 
