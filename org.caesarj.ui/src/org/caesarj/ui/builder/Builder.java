@@ -20,7 +20,9 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.swt.widgets.Display;
 
@@ -194,14 +196,14 @@ public class Builder extends IncrementalProjectBuilder {
 	}
 	
 	public static IProject getProjectForSourceLocation(ISourceLocation location) {
-		String path = location.getSourceFile().getAbsolutePath();
+		IPath path = new Path(location.getSourceFile().getAbsolutePath());
 		Iterator iter = allBuildedProjects.iterator();
 		IProject ret = null;
-		String projectPath=null;
+		IPath projectPath=null;
 		while (iter.hasNext()) {
 			ret = (IProject) iter.next();
-			projectPath = ret.getFullPath().lastSegment();
-			if (path.indexOf(projectPath)!= -1)
+			projectPath = ret.getLocation();
+			if (projectPath.isPrefixOf(path))
 				return ret;
 		}
 		return null;
