@@ -1,5 +1,6 @@
 package org.caesarj.ui.editor;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorPart;
@@ -35,9 +37,41 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
 public class CaesarOutlineView extends ContentOutlinePage {
+         
+    private static HashMap categoryMap = new HashMap();
+    
+    static {
+        // provides sorting order for ProgramElementNode categories  
+        categoryMap.put(ProgramElementNode.Kind.ASPECT,      new Integer(0));
+        categoryMap.put(ProgramElementNode.Kind.CLASS,       new Integer(1));
+        categoryMap.put(ProgramElementNode.Kind.FIELD,       new Integer(11));
+        categoryMap.put(ProgramElementNode.Kind.CONSTRUCTOR, new Integer(12));
+        categoryMap.put(ProgramElementNode.Kind.METHOD,      new Integer(13));        
+        categoryMap.put(ProgramElementNode.Kind.ADVICE,      new Integer(14));        
+    }
+         
+
+    class LexicalSorter extends ViewerSorter {
+        /**
+         * Return a category code for the element. This is used
+         * to sort alphabetically within categories. Categories are:
+         * pointcuts, advice, introductions, declarations, other. i.e.
+         * all pointcuts will be sorted together rather than interleaved
+         * with advice.
+         */
+        public int category(Object element) {
+            try {
+                return ((Integer)categoryMap.get(((StructureNode)element).getKind())).intValue();
+            } 
+            catch(Exception e) {
+                return 999;
+            }                   
+        }
+    };
+    
      
     /**
-     * uses Structure Model to extract the data for treeViewer
+     * uses Structure Model to extract the data for TreeViewer
      */
     protected class ContentProvider implements ITreeContentProvider {
         
@@ -99,24 +133,20 @@ public class CaesarOutlineView extends ContentOutlinePage {
         this.caesarEditor = caesarEditor;              
     }
 
-    /* (non-Javadoc)
-     * Method declared on ContentOutlinePage
-     */
-    public void createControl(Composite parent) {
 
+    public void createControl(Composite parent) {
         super.createControl(parent);
 
         TreeViewer viewer = getTreeViewer();
+        viewer.setSorter(new LexicalSorter());
         viewer.setContentProvider(new ContentProvider());
         viewer.setLabelProvider(new LabelProvider());
         viewer.addSelectionChangedListener(this);
-
+         
         update();
     }
 
-    /* (non-Javadoc)
-     * Method declared on ContentOutlinePage
-     */
+
     public void selectionChanged(SelectionChangedEvent event) {
 
         super.selectionChanged(event);
@@ -147,7 +177,7 @@ public class CaesarOutlineView extends ContentOutlinePage {
                     if (resource != null) {
                         marker = resource.createMarker(IMarker.MARKER);
                         marker.setAttribute(IMarker.LINE_NUMBER, sourceLocation.getLine());
-                        marker.setAttribute(IMarker.CHAR_START, sourceLocation.getColumn());                        
+                        marker.setAttribute(IMarker.CHAR_START, sourceLocation.getColumn());
                         
                         IEditorPart ePart =
                             CaesarPlugin.getDefault().
