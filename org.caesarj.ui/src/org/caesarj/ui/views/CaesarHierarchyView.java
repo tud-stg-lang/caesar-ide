@@ -5,6 +5,7 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.caesarj.compiler.export.CClass;
 import org.caesarj.runtime.AdditionalCaesarTypeInformation;
+import org.caesarj.ui.CaesarPluginImages;
 import org.caesarj.ui.builder.Builder;
 import org.caesarj.ui.editor.CaesarEditor;
 import org.caesarj.ui.test.CaesarHierarchyTest;
@@ -26,6 +27,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -134,7 +136,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		  catch (NullPointerException e) {
 		  	log.debug("No Information.");
 		  	StandardNode n1 = new StandardNode();
-		  	n1.setKind(HierarchyNode.CLASS);
+		  	n1.setKind(HierarchyNode.EMTY);
 			n1.setName("No informations available.");
 			n1.setParent(root);
 			root.addChild(n1);
@@ -216,8 +218,8 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 					{
 						node2 = node1;
 						node1 = new LinearNode();
-						node2.setNextNode(node1);
-						node1.setPreNode(node2);
+						node2.setPreNode(node1);
+						node1.setNextNode(node2);
 						node1.setKind(HierarchyNode.LIST);
 						node1.setName(list[i]);
 					}
@@ -413,6 +415,23 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 	}
 	protected class HierarchyLabelProvider extends LabelProvider
 	{
+		
+		public Image getImage(Object element) {
+			if (element instanceof RootNode) {
+				RootNode node = (RootNode) element;
+				if (0==node.getKind().compareTo(HierarchyNode.CLASS)|
+						0==node.getKind().compareTo(HierarchyNode.SUPER)|
+						0==node.getKind().compareTo(HierarchyNode.NESTED)|
+						0==node.getKind().compareTo(HierarchyNode.NESTEDSUPER)
+				)
+					return CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PUBLIC.createImage();
+				else
+					return null;
+			}
+			else
+				return null;
+		}
+		
 		public String getText(Object element)
 		{
 			String help;

@@ -54,6 +54,7 @@ public class HierarchyNode implements ISelection {
 	public static String ROOT = new String("rootnode");
 	public static String INCREMENTCLASSES = new String("incrementclasses");
 	public static String LIST = new String("list");
+	public static String EMTY = new String("emty");
 	
 	public boolean hasAdditionalName()
 	{
