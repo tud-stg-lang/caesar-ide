@@ -28,7 +28,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -55,9 +54,7 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ViewPart;
 
@@ -241,106 +238,108 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		StandardNode node;
 
 		try {
-			if (path.length==0) 
-				throw new NullPointerException("No Data.");
-			for (int k = 0; path.length > k; k++) {
-				toolButton.setEnabled(true);
-				filterButton.setEnabled(true);
-				CaesarHierarchyTest nav = new CaesarHierarchyTest(
-						globalPathForInformationAdapter);
-				CClass clazz = nav.load((String) path[k]);
-				AdditionalCaesarTypeInformation info = clazz
-						.getAdditionalTypeInformation();
-				StandardNode classNode = new StandardNode();
-				classNode.setKind(HierarchyNode.CLASS);
-				classNode.setName(info.getQualifiedName());
-				classNode.setTypeInforamtion(info);
-				classNode.setParent(root);
-				classNode = checkFurtherBinding(classNode);
-				root.addChild(classNode);
-				String[] superClasses = info.getSuperClasses();
-				StandardNode parentNode = new StandardNode();
-
-				if (superClasses.length > 0)
-					parentNode = new StandardNode(HierarchyNode.PARENTS,
-							"Super", classNode);
-
-				for (int i = 0; superClasses.length > i; i++) {
-					node = new StandardNode();
-					node.setKind(HierarchyNode.SUPER);
-					node.setName(superClasses[i]);
-					node.setParent(parentNode);
-					node.setTypeInforamtion(nav.load(superClasses[i]).getAdditionalTypeInformation());
-					parentNode.addChild(node);
-				}
-
-				String[] nestedClasses = info.getNestedClasses();
-
-				StandardNode nestedClassesNode = new StandardNode();
-				if (nestedClasses.length > 0)
-					if (superView)
-						nestedClassesNode = new StandardNode(
-								HierarchyNode.NESTEDCLASSES,
-								"Contains (Super)", classNode);
-					else
-						nestedClassesNode = new StandardNode(
-								HierarchyNode.NESTEDCLASSES,
-								"Contains (Sub)", classNode);
-
-				for (int i = 0; nestedClasses.length > i; i++) 
-				{
-					clazz = nav.load(nestedClasses[i]);
-					AdditionalCaesarTypeInformation nestedInfo = clazz
+			try {
+				if (path.length==0) 
+					throw new NullPointerException("No Data.");
+				for (int k = 0; path.length > k; k++) {
+					toolButton.setEnabled(true);
+					filterButton.setEnabled(true);
+					CaesarHierarchyTest nav = new CaesarHierarchyTest(
+							globalPathForInformationAdapter);
+					CClass clazz = nav.load((String) path[k]);
+					AdditionalCaesarTypeInformation info = clazz
 							.getAdditionalTypeInformation();
-					
-				
-					node = new StandardNode();
-					node.setTypeInforamtion(nestedInfo);
-					node.setKind(HierarchyNode.NESTED);
-					node.setName(nestedClasses[i]);
-					node = checkFurtherBinding(node);
-					if (superView) //SuperView
-					{
-						node = findAllSuper(node);
-					} else //SubView
-					{
-						node = findAllSub(nestedClasses, node);
+					StandardNode classNode = new StandardNode();
+					classNode.setKind(HierarchyNode.CLASS);
+					classNode.setName(info.getQualifiedName());
+					classNode.setTypeInforamtion(info);
+					classNode.setParent(root);
+					classNode = checkFurtherBinding(classNode);
+					root.addChild(classNode);
+					String[] superClasses = info.getSuperClasses();
+					StandardNode parentNode = new StandardNode();
+	
+					if (superClasses.length > 0)
+						parentNode = new StandardNode(HierarchyNode.PARENTS,
+								"Super", classNode);
+	
+					for (int i = 0; superClasses.length > i; i++) {
+						node = new StandardNode();
+						node.setKind(HierarchyNode.SUPER);
+						node.setName(superClasses[i]);
+						node.setParent(parentNode);
+						node.setTypeInforamtion(nav.load(superClasses[i]).getAdditionalTypeInformation());
+						parentNode.addChild(node);
 					}
-					if ((!isNodeInSuperlist(nestedClasses[i], nestedClasses, nav) && superView)
-							|(/*!isNodeInSubList(nestedClasses[i], nestedClasses, nav)&&*/!superView))
+	
+					String[] nestedClasses = info.getNestedClasses();
+	
+					StandardNode nestedClassesNode = new StandardNode();
+					if (nestedClasses.length > 0)
+						if (superView)
+							nestedClassesNode = new StandardNode(
+									HierarchyNode.NESTEDCLASSES,
+									"Contains (Super)", classNode);
+						else
+							nestedClassesNode = new StandardNode(
+									HierarchyNode.NESTEDCLASSES,
+									"Contains (Sub)", classNode);
+	
+					for (int i = 0; nestedClasses.length > i; i++) 
 					{
-						nestedClassesNode.addChild(node);
-						node.setParent(nestedClassesNode);
-					}		
-				}
-				if (!superView)
-				{
-					Object[] helpNestedClasses = nestedClassesNode.getChildren();
-					for (int i = 0; helpNestedClasses.length>i; i++)
-					{
-		
-						for (int j = 0; helpNestedClasses.length>j; j++)
+						clazz = nav.load(nestedClasses[i]);
+						AdditionalCaesarTypeInformation nestedInfo = clazz
+								.getAdditionalTypeInformation();
+						
+					
+						node = new StandardNode();
+						node.setTypeInforamtion(nestedInfo);
+						node.setKind(HierarchyNode.NESTED);
+						node.setName(nestedClasses[i]);
+						node = checkFurtherBinding(node);
+						if (superView) //SuperView
 						{
-							if ((i!=j)&&((StandardNode)helpNestedClasses[j]).hasSubNode(((StandardNode)helpNestedClasses[i])))
+							node = findAllSuper(node);
+						} else //SubView
+						{
+							node = findAllSub(nestedClasses, node);
+						}
+						if ((!isNodeInSuperlist(nestedClasses[i], nestedClasses, nav) && superView)
+								|(/*!isNodeInSubList(nestedClasses[i], nestedClasses, nav)&&*/!superView))
+						{
+							nestedClassesNode.addChild(node);
+							node.setParent(nestedClassesNode);
+						}		
+					}
+					if (!superView)
+					{
+						Object[] helpNestedClasses = nestedClassesNode.getChildren();
+						for (int i = 0; helpNestedClasses.length>i; i++)
+						{
+			
+							for (int j = 0; helpNestedClasses.length>j; j++)
 							{
-								((StandardNode)helpNestedClasses[i]).setParent(null);
-								nestedClassesNode.removeChild((StandardNode)helpNestedClasses[i]);
+								if ((i!=j)&&((StandardNode)helpNestedClasses[j]).hasSubNode(((StandardNode)helpNestedClasses[i])))
+								{
+									((StandardNode)helpNestedClasses[i]).setParent(null);
+									nestedClassesNode.removeChild((StandardNode)helpNestedClasses[i]);
+								}
 							}
 						}
 					}
 				}
-			}
-			return root;
-		} catch (NullPointerException e) {
-			log.debug("No Information.");
-			StandardNode n1 = new StandardNode();
-			n1.setKind(HierarchyNode.EMTY);
-			n1.setName("No informations available.");
-			toolButton.setEnabled(false);
-			filterButton.setEnabled(false);
-			n1.setParent(root);
-			root.addChild(n1);
-			return root;
+				return root;
+			} catch (NullPointerException e) {
+				log.debug("No Information.");
+				StandardNode n1 = new StandardNode();
+				n1.setKind(HierarchyNode.EMTY);
+				n1.setName("No informations available.");
+				toolButton.setEnabled(false);
+				filterButton.setEnabled(false);
+				n1.setParent(root);
+				root.addChild(n1);
+				return root;
+			} 
 		} catch (Exception e) {
 			log.warn("Building hierarchy tree.", e);
 			return root;
@@ -701,19 +700,9 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				StandardNode markedNode = (StandardNode) selection
 						.getFirstElement();
 				if (markedNode.getKind().compareTo(HierarchyNode.SUPER) == 0) {
-					log.debug("Super class '" + markedNode.getName()
-							+ "' selected.");
-					try {
-						IDE.openEditor(getActivePage(),
-								getLinkLocation(markedNode.getName()), true);
-					} catch (PartInitException e) {
-						MessageDialog.openError(PlatformUI.getWorkbench()
-								.getActiveWorkbenchWindow().getShell(),
-								"ERROR", "Unable to open Editor!");
-					}
-					//refreshTree(markedNode.getName());
-					//refreshEditor(markedNode);
-				} else if (markedNode.getKind().compareTo(HierarchyNode.NESTED) == 0) {
+					/** TODO: Add some functionality - navigation or further expansion */
+				} 
+				else if (markedNode.getKind().compareTo(HierarchyNode.NESTED) == 0) {
 					log.debug("Nested class '" + markedNode.getName()
 							+ "' selected.");
 					if (markedNode.getTypeInforamtion().getNestedClasses().length>0)
