@@ -10,7 +10,7 @@ First you have to create a package for your class files. Select the project you 
 
 Name the package \code{myPackage} then click \markedtext{Finish}.\\
 Right-click on the package you just created and select \markedtext{New} $\rightarrow$ \markedtext{Class} from the context menu. Name the class \code{HelloWorld} and activate the option to let Eclipse create a new main method for you. Click \markedtext{Finish}.
-Edit the text in the editor so that it looks something like this:
+Edit the text in the editor so that it looks like this:
 %\begin{table*}[htbp]
 	\begin{lstlisting}[basicstyle=\small\it,caption=HelloWorld.java,label=lst:HelloWorld,name=listing:helloworld,frame=none]{}
 package myPackage;
@@ -31,11 +31,11 @@ public class HelloWorld {
 %	\label{lst:HelloWorldJava}
 %\end{table*}
 Save the file.\\
-Notice that unlike in a Java project, there was no eager parsing of the buffer as you typed. Also the outline view didn't update. Your Eclipse workbench should be looking something like in figure \ref{fig:workspace_newclass}.\\
+Notice that unlike in a Java project, there was no eager parsing of the buffer as you typed. Also the outline view didn't update.\footnote{The \caesarj ~outline bar requires meta information from the compiler to display crosscutting relationships.} Your Eclipse workbench should be looking something like in figure \ref{fig:workspace_newclass}.\\
 
 \begin{figure*}[htbp]
 	\centering
-		\includegraphics[width=0.95\textwidth]{images/workspace_newclass.png}
+		\includegraphics[width=1.0\textwidth]{images/workspace_newclass.png}
 	\caption{Workbench with HelloWorld.java}
 	\label{fig:workspace_newclass}
 \end{figure*}
