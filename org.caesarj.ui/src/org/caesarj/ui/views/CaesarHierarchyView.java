@@ -644,7 +644,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 				path = path.substring(0,path.indexOf(input.getFile().getFileExtension())-1);
 				
 				log.debug("Selection in Editor! \n\tFile: '"+editor.getEditorInput().getName()+"'.\n\tQualified name: "+path+"'");
-				qualifiedNameToActualFile = path;
+				
 				refreshTree(path);
 			}
 	    
@@ -667,6 +667,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		treeViewer.setInput(buildTreeModel(path));
 		//treeViewer.expandAll();
 		treeViewer.expandToLevel(3);
+		qualifiedNameToActualFile = path;
 		refreshList(path);
 	}
 	
