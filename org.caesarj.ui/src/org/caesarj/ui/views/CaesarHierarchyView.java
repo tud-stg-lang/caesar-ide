@@ -5,17 +5,15 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.caesarj.compiler.export.CClass;
 import org.caesarj.runtime.AdditionalCaesarTypeInformation;
+import org.caesarj.ui.builder.Builder;
 import org.caesarj.ui.editor.CaesarEditor;
 import org.caesarj.ui.test.CaesarHierarchyTest;
+import org.caesarj.ui.util.ProjectProperties;
 import org.caesarj.ui.views.hierarchymodel.HierarchyNode;
 import org.caesarj.ui.views.hierarchymodel.IHierarchyPropertyChangeListener;
 import org.caesarj.ui.views.hierarchymodel.LinearNode;
 import org.caesarj.ui.views.hierarchymodel.RootNode;
 import org.caesarj.ui.views.hierarchymodel.StandardNode;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -33,6 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ViewPart;
 
 
@@ -44,26 +43,39 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 
 	private static TreeViewer treeViewer;
 	private static ListViewer listViewer;
+	private static String globalPathForInformationAdapter = new String("");
 	
 	private static Logger log = Logger.getLogger(CaesarHierarchyView.class);
 	
 	
-	private RootNode buildTreeModel()
-	{	
+	private RootNode buildTreeModel(String path)
+	{
+		try {		
+			ProjectProperties projectProperties = new ProjectProperties(Builder.getLastBuildTarget());
+			log.debug(projectProperties.getProjectLocation()+projectProperties.getOutputPath());
+			globalPathForInformationAdapter = projectProperties.getProjectLocation()+projectProperties.getOutputPath();
+		} catch(Exception e)
+		{
+		
+		}
+		//TODO Herausfinden, welchen Knoten noch die AdditionalInfos mitgegeben werden müssen.
 		RootNode root = new RootNode();
 		root.setKind(HierarchyNode.ROOT);
 		StandardNode node;
+		
+		//log.debug(Builder.getLastBuildTarget().getRawLocation().toString());
 		try {
-			//CaesarByteCodeNavigator nav = new CaesarByteCodeNavigator("c:/tmp");
-			CaesarHierarchyTest nav = new CaesarHierarchyTest("c:/test");
-	        CClass clazz = nav.load("pricing/DiscountPricing");
+			CaesarHierarchyTest nav = new CaesarHierarchyTest(globalPathForInformationAdapter);
+	        CClass clazz = nav.load(path);
 			AdditionalCaesarTypeInformation info = clazz.getAdditionalTypeInformation();
 			StandardNode classNode = new StandardNode();
 			classNode.setKind(HierarchyNode.CLASS);
 			classNode.setName(info.getQualifiedName());
+			classNode.setTypeInforamtion(info);
 			classNode.setParent(root);
-			StandardNode parentNode = new StandardNode(HierarchyNode.PARENTS, "Superclasses", classNode);
-			classNode.addChild(parentNode);
+			root.addChild(classNode);
+			StandardNode parentNode = new StandardNode(HierarchyNode.PARENTS, "Super", classNode);
+			classNode.addChild(parentNode);			
 			
 			String [] superClasses = info.getSuperClasses();
 			for (int i=0; superClasses.length>i; i++)
@@ -83,12 +95,30 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 				node.setName(nestedClasses[i]);
 				node.setParent(classNode);
 				classNode.addChild(node);
+				String[] nestedIncrementClasses = nav.load(nestedClasses[i]).getAdditionalTypeInformation().getIncrementFor();
 				String[] nestedSuperClasses = nav.load(nestedClasses[i]).getAdditionalTypeInformation().getSuperClasses();
+				if (nav.load(nestedClasses[i]).getAdditionalTypeInformation().isImplicit())
+				{
+					node.setAdditionalName(nestedIncrementClasses[0]);
+				}
+				if (nestedIncrementClasses.length>0)
+				{
+					StandardNode subNode = new StandardNode(HierarchyNode.INCREMENTCLASSES, "Increment for", node);
+					node.addChild(subNode);
+					for (int j=0; nestedIncrementClasses.length>j; j++)
+					{
+						node = new StandardNode();
+						node.setKind(HierarchyNode.NESTEDSUPER);
+						node.setName(nestedIncrementClasses[j]);
+						node.setParent(subNode);
+						subNode.addChild(node);
+					}
+				}
 				if (nestedSuperClasses.length>0)
 				{
-					StandardNode subNode = new StandardNode(HierarchyNode.NESTEDPARENTS, "Superclasses", node);
+					StandardNode subNode = new StandardNode(HierarchyNode.NESTEDSUPER, "Super", node);
 					node.addChild(subNode);
-					for (int j=0; nestedSuperClasses.length>j; j++)
+					for (int j=0; nestedIncrementClasses.length>j; j++)
 					{
 						node = new StandardNode();
 						node.setKind(HierarchyNode.NESTEDSUPER);
@@ -96,13 +126,13 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 						node.setParent(subNode);
 						subNode.addChild(node);
 					}
-				}	
+				}
 			}
 			
-			root.addChild(classNode);
 			return root;
 		} 
 		  catch (NullPointerException e) {
+		  	log.debug("No Information.");
 		  	StandardNode n1 = new StandardNode();
 		  	n1.setKind(HierarchyNode.CLASS);
 			n1.setName("No informations available.");
@@ -162,6 +192,52 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		return root;
 	}
 	
+	private LinearNode buildListModel(String path)
+	{
+		try {
+			CaesarHierarchyTest nav = new CaesarHierarchyTest(globalPathForInformationAdapter);
+	        CClass clazz = nav.load(path);
+			AdditionalCaesarTypeInformation info = clazz.getAdditionalTypeInformation();
+			LinearNode node1 = new LinearNode();
+			LinearNode node2 = new LinearNode();
+			String [] list = info.getMixinList();
+			if (list.length>0)
+			{
+				for (int i = 0; list.length>i; i++)
+				{
+					if ( i==0 )
+					{
+						node1 = new LinearNode();
+						node1.setKind(HierarchyNode.LIST);
+						node1.setName(list[i]);
+					} else
+					{
+						node2 = node1;
+						node1 = new LinearNode();
+						node2.setNextNode(node1);
+						node1.setPreNode(node2);
+						node1.setKind(HierarchyNode.LIST);
+						node1.setName(list[i]);
+					}
+				}
+				return node1;
+			}else
+				throw (new NullPointerException("no information"));
+		}
+		catch (NullPointerException e) {
+		  	log.debug("No Information to show on hierarchy tree.");
+		  	LinearNode emty = new LinearNode();
+		  	emty.setKind(HierarchyNode.LIST);
+			emty.setName("No list available.");
+			return emty;
+		}
+		catch(Exception e)
+		{
+			log.warn("Building List View.",e);
+			return null;
+		}
+	}
+	
 	private LinearNode buildListModel()
 	{
 		LinearNode n1 = new LinearNode();
@@ -200,7 +276,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		treeViewer.setContentProvider(cp);
 		treeViewer.setLabelProvider(lp);
 		treeViewer.addSelectionChangedListener(scl);
-		treeViewer.setInput(buildTreeModel());
+		
 		//for testing treeViewer.setInput(buildTestTreeModel());
 		
 		treeViewer.expandAll();
@@ -209,7 +285,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		listViewer = new ListViewer(buttomGroup, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.HORIZONTAL);
 		listViewer.setContentProvider(lcp);
 		listViewer.setLabelProvider(lp);
-		listViewer.setInput(buildListModel());
+		refreshTree("");
 		
 		FillLayout layout = new FillLayout();
 		layout.type = SWT.VERTICAL;
@@ -337,14 +413,47 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 	{
 		public String getText(Object element)
 		{
-			if (element instanceof HierarchyNode) {
-				HierarchyNode node = (HierarchyNode) element;
+			String help;
+			if (element instanceof RootNode) {
+				RootNode node = (RootNode) element;
+				help = filterName(node.getName());
+				if (node.hasAdditionalName())
+				{
+					String help2 = node.getAdditionalName();
+					log.debug(help2);
+					help2 = help2.substring(help2.lastIndexOf("/")+1,help2.lastIndexOf("$"));
+					help = help + " (" + help2 + ")";
+				}
+				return help;
+			}
+			else if (element instanceof LinearNode) {
+				LinearNode node = (LinearNode) element;
 				return node.getName();
-				//return node.getKind()+": "+node.getName();
 			}
 			else
 			{
 				return "unknown object";
+			}
+		}
+		
+		private String filterName(String name)
+		{
+			try {
+				String help = new String(name);
+				int slashPos = name.lastIndexOf("/");
+				int dollarPos = name.lastIndexOf("$");
+				if (slashPos>0)
+					help = name.substring(slashPos+1);
+				if (dollarPos>slashPos)
+				{
+					help = name.substring(dollarPos+1);
+				}		
+				return help;
+			}
+			catch(Exception e)
+			{
+				log.warn("Filtering names for Hierarchy View.",e);
+				return "Error";
 			}
 		}
 	}
@@ -368,17 +477,23 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 				if (markedNode.getKind().compareTo(HierarchyNode.SUPER)==0)
 				{
 					log.debug("Super class '"+markedNode.getName()+"' selected.");
-					//TODO Selectevent eintragen (Focus ändern)
+					refreshTree(markedNode.getName());
+					//refreshEditor(markedNode);
 				}
 				else if (markedNode.getKind().compareTo(HierarchyNode.NESTED)==0)
 				{
 					log.debug("Nested class '"+markedNode.getName()+"' selected.");
-					//TODO Selectevent eintragen (Linearisierung updaten) 
+					refreshList(markedNode.getName());
 				}
 				else if (markedNode.getKind().compareTo(HierarchyNode.NESTEDSUPER)==0)
 				{
 					log.debug("Nested Super class '"+markedNode.getName()+"' selected.");
-					//TODO Selectevent eintragen (Linearisierung updaten) 
+					refreshList(markedNode.getName());
+				}
+				else if (markedNode.getKind().compareTo(HierarchyNode.CLASS)==0)
+				{
+					log.debug("Main Class '"+markedNode.getName()+"' selected.");
+					refreshList(markedNode.getName());
 				}
 				else
 				{
@@ -401,36 +516,40 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if (part instanceof CaesarEditor) {
-//			ICompilationUnit cu = 
-//				getCompilationUnit((IStructuredSelection) selection);
-//			log.debug("Selection in Editor '"+cu.getElementName()+"'");
-			//jm.reset(cu);
+		String path;
+		if (part instanceof CaesarEditor) {			
 			CaesarEditor editor = (CaesarEditor)part;
-			log.debug("Selection in Editor! Editor: '"+editor.getEditorInput().getName()+"'.");
-			//TODO HIER weiter machen
-		}
-		log.debug("Selection in Editor! Part: '"+part.toString()+"'.");
-	}
-	
-	private ICompilationUnit getCompilationUnit(IStructuredSelection ss) {
-		if (ss.getFirstElement() instanceof IJavaElement) {
-			IJavaElement je = (IJavaElement) ss.getFirstElement();
-			return (ICompilationUnit) je.getAncestor(IJavaElement.COMPILATION_UNIT);
-		}
-		if (ss.getFirstElement() instanceof IFile) {
-			log.debug("CompilationUnitElement was a file.");
-			IFile f = (IFile) ss.getFirstElement();
-			if (f.getFileExtension() != null &&
-				f.getFileExtension().compareToIgnoreCase("java") == 0)
-			return (ICompilationUnit) JavaCore.create(f);
-		}
-
-		return null;
+			if (editor.getEditorInput() instanceof FileEditorInput) {
+				FileEditorInput input = (FileEditorInput) editor.getEditorInput();
+				//TODO noch nicht sicher, ob das gehen wird
+				path = input.getFile().getProjectRelativePath().toString();
+				path = path.substring(0,path.indexOf(input.getFile().getFileExtension())-1);
+				log.debug("Selection in Editor! \n\tFile: '"+editor.getEditorInput().getName()+"'.\n\tQualified name: "+path+"'");
+				refreshTree(path);
+			}
+	    
+		}		
+		log.debug("Selection in Editor! Part: '"+part+"'.");
 	}
 
 	public void refresh()
 	{
-		treeViewer.setInput(buildTreeModel());
+		log.debug("Refresh!!!");
 	}
+	
+	public void refreshTree(String path)
+	{
+		log.debug("Refreshing Hierarchy Tree for '"+path+"'!");
+		treeViewer.setInput(buildTreeModel(path));
+		treeViewer.expandAll();
+		//treeViewer.expandToLevel(3);
+		refreshList(path);
+	}
+	
+	public void refreshList(String path)
+	{
+		log.debug("Refreshing Hierarchy List'"+path+"'!");
+		listViewer.setInput(buildListModel(path));
+	}
+	
 }
