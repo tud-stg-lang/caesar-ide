@@ -1,5 +1,6 @@
 package org.caesarj.ui;
 
+import org.apache.log4j.Logger;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -16,6 +17,9 @@ import org.eclipse.ui.IWorkbench;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class CaesarProjectNature implements IProjectNature {
+    
+    private static Logger log = Logger.getLogger(CaesarProjectNature.class);
+    
     private IProject project;
 
     /**
@@ -26,11 +30,11 @@ public class CaesarProjectNature implements IProjectNature {
      * otherwise simply insert our builder as a new entry.
      */
     public void configure() throws CoreException {
-        System.out.println("CaesarProjectNature.configure");
+        log.debug("begin");
         IProjectDescription projectDescription = project.getDescription();
         ICommand command = projectDescription.newCommand();
         command.setBuilderName(CaesarPlugin.ID_BUILDER);
-        System.out.println("builder command = "+command.toString());
+        log.debug("builder command = "+command.toString());
 
         ICommand[] buildCommands = projectDescription.getBuildSpec();
         ICommand[] newBuildCommands;
@@ -42,7 +46,7 @@ public class CaesarProjectNature implements IProjectNature {
         }
         
         for(int i=0; i<newBuildCommands.length;i++) {        
-            System.out.println(i+") builder command = "+newBuildCommands[i].toString());
+            log.debug(i+") builder command = "+newBuildCommands[i].toString());
         }
         
         projectDescription.setBuildSpec(newBuildCommands);
@@ -56,7 +60,7 @@ public class CaesarProjectNature implements IProjectNature {
      * Remove the AspectJ Builder from the list, replace with the javabuilder
      */
     public void deconfigure() throws CoreException {
-        System.out.println("CaesarProjectNature.deconfigure");
+        log.debug("CaesarProjectNature.deconfigure");
         IProjectDescription description = project.getDescription();
         ICommand[] buildCommands = description.getBuildSpec();
         ICommand command = description.newCommand();

@@ -100,6 +100,8 @@ public class AsmBuilder extends CaesarVisitor {
             
             String pkgName = packageName.getName();
             
+            pkgName = pkgName.replaceAll("/", ".");
+            
             boolean found = false;
             ProgramElementNode pkgNode = null;
             
@@ -401,7 +403,7 @@ public class AsmBuilder extends CaesarVisitor {
 		CType type,
 		String ident,
 		JExpression expr
-    ) {
+    ) {        
         ProgramElementNode peNode = new ProgramElementNode(
             ident,
             ProgramElementNode.Kind.FIELD,    

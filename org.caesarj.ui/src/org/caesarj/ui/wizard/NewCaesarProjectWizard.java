@@ -2,6 +2,7 @@ package org.caesarj.ui.wizard;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.apache.log4j.Logger;
 import org.caesarj.ui.CaesarPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -29,6 +30,8 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 public class    NewCaesarProjectWizard
 extends         BasicNewProjectResourceWizard
 implements      IExecutableExtension {
+    
+    private static Logger log = Logger.getLogger(NewCaesarProjectWizard.class);
     
     private NewJavaProjectWizardPage fJavaPage;
     private WizardNewProjectCreationPage fMainPage;
@@ -68,7 +71,7 @@ implements      IExecutableExtension {
      * @see Wizard#performFinish
      */
     public boolean performFinish() {
-        System.out.println("NewCaesarProjectWizard.performFinish");
+        log.debug("finish");
         
         IRunnableWithProgress op =
             new WorkspaceModifyDelegatingOperation(fJavaPage.getRunnable());
@@ -96,7 +99,7 @@ implements      IExecutableExtension {
          * SETUP PROJECT NATURE
          */
         try {  
-            System.out.println("setting up project nature");      
+            log.debug("setting up project nature");      
             IProjectDescription description = project.getDescription();
             String[] prevNatures = description.getNatureIds();
             String[] newNatures = new String[prevNatures.length + 1];
@@ -106,7 +109,7 @@ implements      IExecutableExtension {
             project.setDescription(description, null);            
         }
         catch (Exception e) {
-            System.out.println("> Error creating new Caesar project: " + e);
+            log.debug("> Error creating new Caesar project: " + e);
             e.printStackTrace();
 		}
         

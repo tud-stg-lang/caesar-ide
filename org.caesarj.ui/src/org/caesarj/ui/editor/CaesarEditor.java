@@ -1,11 +1,11 @@
 package org.caesarj.ui.editor;
 
-import org.aspectj.asm.StructureModelManager;
+import org.apache.log4j.Logger;
 import org.caesarj.ui.CaesarPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
@@ -21,6 +21,10 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class CaesarEditor extends CompilationUnitEditor {
     
+    private static Logger log = Logger.getLogger(CaesarEditor.class);
+        
+    private CaesarOutlineView outlineView;
+    
     public CaesarEditor() {
         super();
         
@@ -33,33 +37,27 @@ public class CaesarEditor extends CompilationUnitEditor {
         setSourceViewerConfiguration(svConfig);
     }
     
-    public Object getAdapter(Class key) {
-        
-        if ( key.equals( IContentOutlinePage.class ) ) {                        
-            CaesarOutlineView.instance().setInput(this, StructureModelManager.INSTANCE.getStructureModel().getRoot());
-            return CaesarOutlineView.instance();
+    public Object getAdapter(Class key) {                  
+        if(key.equals(IContentOutlinePage.class)) {
+            if(outlineView == null) {
+                outlineView = new CaesarOutlineView(this);
+                outlineView.setEnabled(true);
+            }
+            
+            return outlineView;
         }
 
-        return super.getAdapter( key );
-    }
-
-
-    public void setFocus() {
-        IEditorInput input = getEditorInput();
-        if (input instanceof IFileEditorInput) {
-            IFileEditorInput fInput = (IFileEditorInput)input;
-        }
-        super.setFocus();
-    }
-
-	public void gotoLine(int line) {
-        try {       
-            int offs = getDocumentProvider().getDocument(getEditorInput()).getLineOffset(line-1);
-            setHighlightRange(offs, 1, true);
-        }
-        catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+        return super.getAdapter(key);
+    }    
     
+    public void doSetInput(IEditorInput input) throws CoreException {
+        super.doSetInput(input);
+        outlineView.setEnabled(true);
+    }
+    
+    public void dispose() {
+        log.debug("dispose");
+        outlineView.setEnabled(false);
+    }
+  
 }

@@ -7,6 +7,7 @@ import java.util.Iterator;
 import org.apache.bcel.classfile.Attribute;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Unknown;
+import org.apache.log4j.Logger;
 import org.aspectj.asm.StructureModel;
 import org.aspectj.asm.StructureModelManager;
 import org.aspectj.weaver.AjAttribute;
@@ -34,6 +35,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
 public final class CaesarAdapter extends Main {
+    
+    private static Logger log = Logger.getLogger(CaesarAdapter.class);
     
     public static IProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
     
@@ -133,7 +136,7 @@ public final class CaesarAdapter extends Main {
         AdviceNameVisitor adviceNameVisitor = new AdviceNameVisitor();
         adviceNameVisitor.visit(model.getRoot());
 
-        System.out.println("--- structure model before weave ---");
+        log.debug("--- structure model before weave ---");
         StructureModelDump modelDumpBeforeWeave = new StructureModelDump(System.out);            
         modelDumpBeforeWeave.print("", model.getRoot());
                 
@@ -154,7 +157,7 @@ public final class CaesarAdapter extends Main {
         registryNodeEliminator.eliminateNodes();
         
         
-        System.out.println("--- structure model after weave ---");
+        log.debug("--- structure model after weave ---");
         StructureModelDump modelDumpAfterWeave = new StructureModelDump(System.out);
         modelDumpAfterWeave.print("", model.getRoot());
                 

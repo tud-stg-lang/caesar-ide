@@ -1,17 +1,19 @@
 package org.caesarj.ui.editor;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.aspectj.asm.LinkNode;
 import org.aspectj.asm.ProgramElementNode;
 import org.aspectj.asm.StructureModelManager;
 import org.aspectj.asm.StructureNode;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.ui.CaesarPlugin;
-import org.eclipse.core.internal.resources.File;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.ISelection;
@@ -33,12 +35,6 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
  */
 public class CaesarOutlineView extends ContentOutlinePage {
      
-    private static CaesarOutlineView singleton = new CaesarOutlineView();
-    
-    public static CaesarOutlineView instance() {
-        return singleton;
-    }
- 
     /**
      * uses Structure Model to extract the data for treeViewer
      */
@@ -83,13 +79,15 @@ public class CaesarOutlineView extends ContentOutlinePage {
     };
 
     protected CaesarEditor caesarEditor;
-    protected StructureNode input;
+    protected boolean enabled;
 
     /**
      * Creates a content outline page using the given provider and the given editor.
      */
-    private CaesarOutlineView() {
-        super();              
+    public CaesarOutlineView(CaesarEditor caesarEditor) {
+        super();
+        allViews.add(this);
+        this.caesarEditor = caesarEditor;              
     }
 
     /* (non-Javadoc)
@@ -104,8 +102,7 @@ public class CaesarOutlineView extends ContentOutlinePage {
         viewer.setLabelProvider(new LabelProvider());
         viewer.addSelectionChangedListener(this);
 
-        if (input != null)
-            viewer.setInput(input);
+        update();
     }
 
     /* (non-Javadoc)
@@ -133,6 +130,7 @@ public class CaesarOutlineView extends ContentOutlinePage {
                 try {
                                        
                     IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+                    
                     IPath path = new Path(sourceLocation.getSourceFile().getAbsolutePath());
                     IResource resource = root.getFileForLocation(path);
                     IMarker marker;
@@ -159,32 +157,54 @@ public class CaesarOutlineView extends ContentOutlinePage {
     }
 
     /**
-     * wird vom editor aufgerufen -> Wiederverwendung von OutlinePages 
-     */
-    public void setInput(CaesarEditor caesarEditor, StructureNode input) {
-        this.caesarEditor = caesarEditor; 
-        this.input = input;
-        update();
-    }
-
-    /**
      * Updates the outline page.
      */
-    public void update() {        
-        // TODO hack
-        input = StructureModelManager.INSTANCE.getStructureModel().getRoot();
+    public void update() {   
         
-        TreeViewer viewer = getTreeViewer();
-
-        if (viewer != null) {
-            Control control = viewer.getControl();
-            if (control != null && !control.isDisposed()) {
-                control.setRedraw(false);
-                viewer.setInput(input);
-                viewer.expandAll();
-                control.setRedraw(true);
+        if(enabled) {            
+            StructureNode input = getInput(StructureModelManager.INSTANCE.getStructureModel().getRoot());
+                 
+            TreeViewer viewer = getTreeViewer();
+            if (viewer != null && input != null) {
+                Control control = viewer.getControl();
+                if (control != null && !control.isDisposed()) {
+                    control.setRedraw(false);
+                    viewer.setInput(input);
+                    viewer.expandAll();
+                    control.setRedraw(true);
+                }
             }
         }
 
+    }
+
+	public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+	}
+    
+    protected StructureNode getInput(StructureNode node) {
+        if(node == null) {
+            return null;
+        }
+
+        if(node.getName().equals(caesarEditor.getEditorInput().getName())) {
+            return node;
+        }
+        else {
+            StructureNode res = null;
+            for(Iterator it=node.getChildren().iterator(); it.hasNext() && res==null; ) {
+                res = getInput((StructureNode)it.next());
+            }
+    
+            return res;
+        }
     }    
+    
+    private static List allViews = new LinkedList(); 
+    
+    public static void updateAll() {
+        for(Iterator it=allViews.iterator(); it.hasNext(); ) {
+            ((CaesarOutlineView)it.next()).update();
+        }
+    }
 }

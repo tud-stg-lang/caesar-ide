@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.aspectj.asm.ProgramElementNode;
 import org.aspectj.asm.StructureModelManager;
 import org.caesarj.compiler.PositionedError;
@@ -30,6 +31,8 @@ import org.eclipse.swt.widgets.Display;
  * @author Ivica Aracic
  */
 public class Builder extends IncrementalProjectBuilder {
+
+    private static Logger log = Logger.getLogger(Builder.class);
 
     /**
      * The last project we did a build for, needed by content outline
@@ -72,12 +75,12 @@ public class Builder extends IncrementalProjectBuilder {
 			lastBuiltProject = getProject();
             errors.clear();
 			
-            System.out.println("Ceaser Builder");
+            log.debug("Ceaser Builder");
             
             projectProperties =
                 new ProjectProperties(getProject());
             
-            System.out.println(projectProperties.toString());
+            log.debug("----\n"+projectProperties.toString()+"----\n");
             
             CaesarAdapter caesarAdapter = 
                 new CaesarAdapter(
@@ -99,16 +102,17 @@ public class Builder extends IncrementalProjectBuilder {
             
             // update outline view         
             Display display = Display.getDefault();
-            System.out.println("Display = "+display);
             
             // update has to be executed from Workbenchs Thread
+            
             CaesarPlugin.getDefault().getDisplay().asyncExec(
                 new Runnable() {
                     public void run() {
-                        CaesarOutlineView.instance().update();
+                        CaesarOutlineView.updateAll();
 					}
                 }
             );
+            
         }
         catch (Throwable t) {           	
         	t.printStackTrace();                     
@@ -165,9 +169,9 @@ public class Builder extends IncrementalProjectBuilder {
                 TokenReference token = error.getTokenReference();
                             
                 if(token.getLine() > 0) {
-                    System.out.println(
-                        "file: "+token.getFile()+"\n"+
-                        "line: "+token.getLine()+"\n"+
+                    log.debug(
+                        "file: "+token.getFile()+", "+
+                        "line: "+token.getLine()+", "+
                         "path: "+token.getPath()
                     );
                     

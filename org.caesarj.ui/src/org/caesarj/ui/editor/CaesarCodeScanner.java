@@ -131,7 +131,14 @@ public final class CaesarCodeScanner extends AbstractJavaScanner {
         "precedence",
         "privileged",
         "returning",
-        "throwing"
+        "throwing",
+        
+        "provides",
+        "collaboration",
+        "provided",
+        "expected",
+        "wraps",
+        "wrappee"
     };
 
     private static String[] fgNewKeywords = { "assert" }; //$NON-NLS-1$
