@@ -1,21 +1,7 @@
-/**********************************************************************
-Copyright (c) 2002 IBM Corporation and others.
-All rights reserved. This program and the accompanying materials
-are made available under the terms of the Common Public License v1.0
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v10.html
-Contributors:
-Mik Kersten, Julie Waterhouse - initial version
-Julie Waterhouse - removed methods for new aspect and AspectJ project.  
-This functionality has moved to the plugin.xml. - Aug 13, 2003
-...
-**********************************************************************/
+
 package org.caesarj.ui.wizard;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+
 import org.apache.log4j.Logger;
 import org.caesarj.ui.CJDTConfigSettings;
 import org.caesarj.ui.preferences.CaesarJPreferences;
