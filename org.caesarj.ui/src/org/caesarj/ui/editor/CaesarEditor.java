@@ -67,6 +67,14 @@ public class CaesarEditor extends CompilationUnitEditor {
 	}
     
     public Object getAdapter(Class key) {                  
+        if(key.equals(IContentOutlinePage.class)) {
+            if(outlineView == null) {
+                outlineView = new CaesarOutlineView(this);
+                outlineView.setEnabled(true);
+            }
+            
+            return outlineView;
+        }
         return super.getAdapter(key);
     }    
     
@@ -76,5 +84,6 @@ public class CaesarEditor extends CompilationUnitEditor {
     
     public void dispose() {
         log.debug("dispose");
+        outlineView.setEnabled(false);
     }  	
 }
