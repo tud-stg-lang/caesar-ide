@@ -5,6 +5,7 @@ import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
  * CaesarEditor
@@ -33,7 +34,11 @@ public class CaesarEditor extends CompilationUnitEditor {
     }
     
     public Object getAdapter(Class key) {
-        return super.getAdapter(key);
+        if ( key.equals( IContentOutlinePage.class ) ) {            
+            return new OutlinePage();
+        } 
+
+        return super.getAdapter( key );
     }
 
 
