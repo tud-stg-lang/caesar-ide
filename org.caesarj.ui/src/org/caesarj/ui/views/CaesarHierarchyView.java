@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarHierarchyView.java,v 1.35 2005-03-04 17:27:16 aracic Exp $
+ * $Id: CaesarHierarchyView.java,v 1.36 2005-03-07 15:47:01 aracic Exp $
  */
 
 package org.caesarj.ui.views;
@@ -384,7 +384,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				}
 				return root;
 			} catch (NullPointerException e) {
-				log.error("buildTree Nullpointer Exception", e);
+				log.error("buildTree Nullpointer Exception");
 				log.debug("No Information.");
 				StandardNode n1 = new StandardNode();
 				n1.setKind(HierarchyNode.EMTY);
@@ -396,7 +396,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				return root;
 			} 
 		} catch (Exception e) {
-			log.warn("Building hierarchy tree.", e);
+			log.warn("Building hierarchy tree.");
 			return root;
 		}
 
