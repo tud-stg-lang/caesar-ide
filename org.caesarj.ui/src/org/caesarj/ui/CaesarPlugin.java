@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
 import org.apache.log4j.Logger;
+import org.caesarj.ui.editor.CaesarEditor;
 import org.caesarj.ui.editor.CaesarTextTools;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -19,6 +20,7 @@ import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.internal.ui.preferences.JavadocConfigurationPropertyPage;
 import org.eclipse.jdt.internal.ui.preferences.PreferencesMessages;
 import org.eclipse.jdt.internal.ui.viewsupport.ImageDescriptorRegistry;
@@ -26,114 +28,117 @@ import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import org.eclipse.jface.text.templates.persistence.TemplateReaderWriter;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-/** 
+/**
  * The main plugin class to be used in the desktop.
  * 
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
-public class CaesarPlugin extends AbstractUIPlugin {
+public class CaesarPlugin extends AbstractUIPlugin implements
+		ISelectionListener {
 	// singleton
 	private static CaesarPlugin plugin;
+
 	private ImageDescriptorRegistry fImageDescriptorRegistry;
 
 	public static final String CAESAR_RUNTIME_LIB = "caesar-runtime.jar",
-		ASPECTJ_RUNTIME_LIB = "aspectjrt.jar",
-		CAESAR_COMPILER_LIB = "caesar-compiler.jar",
-		BCEL_LIB = "bcel.jar";
+			ASPECTJ_RUNTIME_LIB = "aspectjrt.jar",
+			CAESAR_COMPILER_LIB = "caesar-compiler.jar", BCEL_LIB = "bcel.jar";
 
 	private static Logger log = Logger.getLogger(CaesarPlugin.class);
 
 	public static final String VERSION = "0.1.2";
+
 	public static final String PLUGIN_ID = "org.caesarj";
+
 	public static final String ID_EDITOR = PLUGIN_ID + ".editor.CaesarEditor";
+
 	public static final String ID_BUILDER = PLUGIN_ID + ".builder.builder";
+
 	public static final String ID_OUTLINE = PLUGIN_ID + ".caesaroutlineview";
+
 	public static final String ID_NATURE = PLUGIN_ID + ".caesarprojectnature";
 
 	private Display display = Display.getCurrent();
+
 	private ResourceBundle resourceBundle = null;
+
 	private CaesarTextTools caesarTextTools = null;
 
 	private String aspectjRuntimePath = null;
+
 	private String caesarRuntimePath = null;
+
 	private String caesarCompilerPath = null;
+
 	private String bcelPath = null;
 
+	private static boolean selectionListener = true;
 
 	/*
-	private void updateTemplate(TemplatePersistenceData data) {
-		TemplatePersistenceData[] datas= JavaPlugin.getDefault().getCodeTemplateStore().getTemplateData(true);
-		for (int i= 0; i < datas.length; i++) {
-			String id= datas[i].getId();
-			if (id != null && id.equals(data.getId())) {
-				datas[i].setTemplate(data.getTemplate());
-				break;
-			}
-		}
-	}
-	
-	private void import_() {
-		
-		String path="";
-		
-		if (path == null)
-			return;
-		
-		try {
-			TemplateReaderWriter reader= new TemplateReaderWriter();
-			File file= new File(path);
-			if (file.exists()) {
-				Reader input= new FileReader(file);
-				TemplatePersistenceData[] datas= reader.read(input);
-				for (int i= 0; i < datas.length; i++) {
-					updateTemplate(datas[i]);
-				}
-			}
+	 * private void updateTemplate(TemplatePersistenceData data) {
+	 * TemplatePersistenceData[] datas=
+	 * JavaPlugin.getDefault().getCodeTemplateStore().getTemplateData(true); for
+	 * (int i= 0; i < datas.length; i++) { String id= datas[i].getId(); if (id !=
+	 * null && id.equals(data.getId())) {
+	 * datas[i].setTemplate(data.getTemplate()); break; } } }
+	 * 
+	 * private void import_() {
+	 * 
+	 * String path="";
+	 * 
+	 * if (path == null) return;
+	 * 
+	 * try { TemplateReaderWriter reader= new TemplateReaderWriter(); File file=
+	 * new File(path); if (file.exists()) { Reader input= new FileReader(file);
+	 * TemplatePersistenceData[] datas= reader.read(input); for (int i= 0; i <
+	 * datas.length; i++) { updateTemplate(datas[i]); } }
+	 * 
+	 * fCodeTemplateTree.refresh();
+	 * updateSourceViewerInput(fCodeTemplateTree.getSelectedElements());
+	 *  } catch (FileNotFoundException e) { openReadErrorDialog(e); } catch
+	 * (IOException e) { openReadErrorDialog(e); }
+	 *  }
+	 */
 
-			fCodeTemplateTree.refresh();
-			updateSourceViewerInput(fCodeTemplateTree.getSelectedElements());
-
-		} catch (FileNotFoundException e) {
-			openReadErrorDialog(e);
-		} catch (IOException e) {
-			openReadErrorDialog(e);
-		}
-
-	}*/
-	
 	/**
 	 * The constructor.
 	 */
 	public CaesarPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		plugin = this;
-		
 		try {
-			resourceBundle = ResourceBundle.getBundle("caesar.CaesarPluginResources");
+			resourceBundle = ResourceBundle
+					.getBundle("caesar.CaesarPluginResources");
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
 	}
-	/* So sollte es richtig sein ... Plugin startet dann blos nicht.
-	public CaesarPlugin() {
-		super();
-		plugin = this;
-		try {
-			resourceBundle = ResourceBundle.getBundle("caesar.CaesarPluginResources");
-		} catch (MissingResourceException x) {
-			resourceBundle = null;
-		}
-	}*/
+
+	/*
+	 * So sollte es richtig sein ... Plugin startet dann blos nicht. public
+	 * CaesarPlugin() { super(); plugin = this; try { resourceBundle =
+	 * ResourceBundle.getBundle("caesar.CaesarPluginResources"); } catch
+	 * (MissingResourceException x) { resourceBundle = null; } }
+	 */
 
 	/**
 	 * Returns the shared instance.
 	 */
 	public static CaesarPlugin getDefault() {
+		if(selectionListener){
+			plugin.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(plugin);
+			selectionListener=false;
+		}
 		return plugin;
 	}
 
@@ -145,8 +150,8 @@ public class CaesarPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the string from the plugin's resource bundle,
-	 * or 'key' if not found.
+	 * Returns the string from the plugin's resource bundle, or 'key' if not
+	 * found.
 	 */
 	public static String getResourceString(String key) {
 		ResourceBundle bundle = CaesarPlugin.getDefault().getResourceBundle();
@@ -228,8 +233,8 @@ public class CaesarPlugin extends AbstractUIPlugin {
 		}
 
 		// first look for the version we really want...
-		IPluginDescriptor ajdePluginDesc =
-			reg.getPluginDescriptor(PLUGIN_ID, new PluginVersionIdentifier(maj, min, svc));
+		IPluginDescriptor ajdePluginDesc = reg.getPluginDescriptor(PLUGIN_ID,
+				new PluginVersionIdentifier(maj, min, svc));
 
 		if (ajdePluginDesc == null) {
 			// then try *any* version
@@ -262,5 +267,12 @@ public class CaesarPlugin extends AbstractUIPlugin {
 		}
 
 		return res;
+	}
+
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		if (part instanceof CaesarEditor) {
+			CJDTConfigSettings.disableAnalyzeAnnotations();
+		} else if (part instanceof CompilationUnitEditor)
+			CJDTConfigSettings.enableAnalyzeAnnotations();
 	}
 }
