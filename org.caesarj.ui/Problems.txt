@@ -1,4 +1,0 @@
--Was passiert mit Interfaces?
--Gibt es abstrakte CClasses.
--Was soll bei normalen Klassen angezeigt werden.
--Was ist mit den Pointcut References (SourceCode Markierungen) passiert. 
