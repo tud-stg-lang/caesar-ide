@@ -5,6 +5,9 @@ import java.util.List;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.JClassImport;
 import org.caesarj.compiler.ast.JPackageImport;
+import org.caesarj.ui.CaesarElementImageDescriptor;
+import org.caesarj.ui.CaesarPluginImages;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * @author Shadow
@@ -33,6 +36,7 @@ public class ImportCaesarProgramElementNode extends CaesarProgramElementNode {
 		JPackageImport[] importedPackages,
 		JClassImport[] importedClasses) {
 		super("Imports", kind, sourceLocation, modifiers, formalComment, children);
+		this.initImages();
 		this.rootFlag = true;
 		for (int i = 0; i < importedPackages.length; i++) {
 			if (importedPackages[i].getName().compareTo("java/lang") != 0)
@@ -73,5 +77,34 @@ public class ImportCaesarProgramElementNode extends CaesarProgramElementNode {
 		List children) {
 		super(signature, kind, sourceLocation, modifiers, formalComment, children);
 		this.rootFlag = false;
+		this.initImages();
 	}
+
+	public String getText(String text) {
+		String label = text.substring(text.lastIndexOf("]") + 2);
+		label = label.replace('/', '.');
+		return label;
+	}
+
+	public Image getImage() {
+		if (this.rootFlag)
+			return new CaesarElementImageDescriptor(
+				CaesarPluginImages.DESC_OUT_IMPORTS,
+				this,
+				BIG_SIZE,
+				false)
+				.createImage();
+		else
+			return new CaesarElementImageDescriptor(
+				CaesarPluginImages.DESC_IMPORTS,
+				this,
+				BIG_SIZE,
+				false)
+				.createImage();
+	}
+	protected void initImages() {
+		PUBLIC = CaesarPluginImages.DESC_OUT_IMPORTS;
+		DEFAULT = CaesarPluginImages.DESC_IMPORTS;
+	}
+
 }

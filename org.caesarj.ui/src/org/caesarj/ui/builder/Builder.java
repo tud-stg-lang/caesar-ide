@@ -123,7 +123,8 @@ public class Builder extends IncrementalProjectBuilder {
 				IResource resource = ProjectProperties.findResource(sourcePath, lastBuiltProject);
 
 				resource.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
-				//resource.deleteMarkers(IMarker.TASK, true, IResource.DEPTH_INFINITE);
+				//TODO Eigenen MArker AdviceMarker.ADVICE
+				resource.deleteMarkers(IMarker.TASK, true, IResource.DEPTH_INFINITE);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -5,6 +5,10 @@ import java.util.List;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.JClassImport;
 import org.caesarj.compiler.ast.JPackageImport;
+import org.caesarj.ui.CaesarElementImageDescriptor;
+import org.eclipse.jdt.internal.ui.JavaPluginImages;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * @author Shadow
@@ -21,6 +25,7 @@ public class InterfaceNode extends CaesarProgramElementNode {
 	 */
 	public InterfaceNode(String signature, Kind kind, List children) {
 		super(signature, kind, children);
+		this.initImages();
 	}
 
 	/**
@@ -39,6 +44,7 @@ public class InterfaceNode extends CaesarProgramElementNode {
 		String formalComment,
 		List children) {
 		super(signature, kind, sourceLocation, modifiers, formalComment, children);
+		this.initImages();
 	}
 
 	/**
@@ -69,6 +75,7 @@ public class InterfaceNode extends CaesarProgramElementNode {
 			children,
 			importedPackages,
 			importedClasses);
+		this.initImages();
 	}
 
 	/* (Kein Javadoc)
@@ -78,4 +85,35 @@ public class InterfaceNode extends CaesarProgramElementNode {
 		return super.compareTo(o);
 	}
 
+	/* (Kein Javadoc)
+	 * @see org.caesarj.ui.model.CaesarProgramElementNode#getText(java.lang.String)
+	 */
+	public String getText(String text) {
+		return text.substring(text.lastIndexOf("]") + 2);
+	}
+
+	protected void initImages() {
+		PUBLIC = JavaPluginImages.DESC_OBJS_INNER_INTERFACE_PUBLIC;
+		PRIVATE = JavaPluginImages.DESC_OBJS_INNER_INTERFACE_PRIVATE;
+		PROTECTED = JavaPluginImages.DESC_OBJS_INNER_INTERFACE_PROTECTED;
+		DEFAULT = JavaPluginImages.DESC_OBJS_INNER_INTERFACE_DEFAULT;
+	}
+
+	public Image getImage() {
+		ImageDescriptor img;
+		switch (this.getCAModifiers() % 8) {
+			case 1 :
+				img = PUBLIC;
+				break;
+			case 2 :
+				img = PRIVATE;
+				break;
+			case 4 :
+				img = PROTECTED;
+				break;
+			default :
+				img = DEFAULT;
+		}
+		return new CaesarElementImageDescriptor(img, this, BIG_SIZE, true).createImage();
+	}
 }

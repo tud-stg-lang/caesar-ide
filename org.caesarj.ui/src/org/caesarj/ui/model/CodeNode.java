@@ -22,6 +22,7 @@ public class CodeNode extends CaesarProgramElementNode {
 	 */
 	public CodeNode(String signature, Kind kind, List children) {
 		super(signature, kind, children);
+		this.initImages();
 	}
 
 	/**
@@ -40,7 +41,7 @@ public class CodeNode extends CaesarProgramElementNode {
 		String formalComment,
 		List children) {
 		super(signature, kind, sourceLocation, modifiers, formalComment, children);
-
+		this.initImages();
 	}
 
 	/**
@@ -71,13 +72,14 @@ public class CodeNode extends CaesarProgramElementNode {
 			children,
 			importedPackages,
 			importedClasses);
+		this.initImages();
 	}
 
-	/* (Kein Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	public int compareTo(Object o) throws ClassCastException {
-		return super.compareTo(o);
+	public String getText(String text) {
+		return text.substring(text.lastIndexOf("]") + 2);
+	}
+
+	protected void initImages() {
 	}
 
 }

@@ -6,6 +6,9 @@ import java.util.List;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.JClassImport;
 import org.caesarj.compiler.ast.JPackageImport;
+import org.caesarj.ui.CaesarElementImageDescriptor;
+import org.caesarj.ui.CaesarPluginImages;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * @author Shadow
@@ -22,6 +25,7 @@ public class PackageNode extends CaesarProgramElementNode {
 	 */
 	public PackageNode(String signature, Kind kind, List children) {
 		super(signature, kind, children);
+		this.initImages();
 	}
 
 	/**
@@ -40,6 +44,7 @@ public class PackageNode extends CaesarProgramElementNode {
 		String formalComment,
 		List children) {
 		super(signature, kind, sourceLocation, modifiers, formalComment, children);
+		this.initImages();
 	}
 
 	/**
@@ -70,20 +75,27 @@ public class PackageNode extends CaesarProgramElementNode {
 			children,
 			importedPackages,
 			importedClasses);
-	}
-
-	/* (Kein Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	public int compareTo(Object o) throws ClassCastException {
-		return super.compareTo(o);
+		this.initImages();
 	}
 
 	public Object clone() {
-		return new PackageNode(
-			this.getSignature(),
-			this.getProgramElementKind(),
-			new ArrayList());
+		return new PackageNode(this.getSignature(), this.getProgramElementKind(), new ArrayList());
+	}
+
+	public Image getImage() {
+		return new CaesarElementImageDescriptor(
+			CaesarPluginImages.DESC_OUT_PACKAGE,
+			null,
+			BIG_SIZE,
+			false)
+			.createImage();
+	}
+
+	public String getText(String text) {
+		return text.substring(text.lastIndexOf("]") + 2);
+	}
+
+	protected void initImages() {
 	}
 
 }

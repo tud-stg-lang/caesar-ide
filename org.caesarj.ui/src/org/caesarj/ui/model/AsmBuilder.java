@@ -144,8 +144,8 @@ public class AsmBuilder extends CaesarVisitor {
 		//TODO Sourcefile unterscheidung einbauen
 		//JavaSourceFileNode
 		//AspectSourceFileNode
-		CaesarProgramElementNode cuNode =
-			new CaesarProgramElementNode(
+		JavaSourceFileNode cuNode =
+			new JavaSourceFileNode(
 				new String(file.getName()),
 				CaesarProgramElementNode.Kind.FILE_JAVA,
 				makeLocation(ref),

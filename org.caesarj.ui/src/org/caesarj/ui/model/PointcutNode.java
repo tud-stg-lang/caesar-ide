@@ -5,6 +5,7 @@ import java.util.List;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.FjMethodDeclaration;
 import org.caesarj.compiler.ast.JClassDeclaration;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * @author Shadow
@@ -27,15 +28,24 @@ public class PointcutNode extends CaesarProgramElementNode {
 		String formalComment,
 		List children) {
 		super(signature, kind, sourceLocation, modifiers, formalComment, children);
+		this.initImages();
 		this.methodDeclaration = methodDeclaration;
 		this.classDeclaration = classDeclaration;
 	}
 
-	/* (Kein Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	public int compareTo(Object o) throws ClassCastException {
-		return super.compareTo(o);
+	public Image getImage() {
+		return super.getImage();
+	}
+
+	public String getText(String text) {
+		return null;
+	}
+
+	public int compareTo(Object arg0) throws ClassCastException {
+		return super.compareTo(arg0);
+	}
+
+	protected void initImages() {
 	}
 
 }

@@ -6,6 +6,7 @@ import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.JClassImport;
 import org.caesarj.compiler.ast.JPackageImport;
 import org.caesarj.compiler.types.CType;
+import org.eclipse.jdt.internal.ui.JavaPluginImages;
 
 /**
  * @author Shadow
@@ -16,7 +17,7 @@ import org.caesarj.compiler.types.CType;
 public class FieldNode extends CaesarProgramElementNode {
 
 	private CType type;
-	
+
 	/**
 	 * @param signature
 	 * @param kind
@@ -24,6 +25,7 @@ public class FieldNode extends CaesarProgramElementNode {
 	 */
 	public FieldNode(String signature, Kind kind, List children) {
 		super(signature, kind, children);
+		this.initImages();
 	}
 
 	/**
@@ -43,7 +45,8 @@ public class FieldNode extends CaesarProgramElementNode {
 		String formalComment,
 		List children) {
 		super(signature, kind, sourceLocation, modifiers, formalComment, children);
-		this.type=type;
+		this.initImages();
+		this.type = type;
 	}
 
 	/**
@@ -74,18 +77,28 @@ public class FieldNode extends CaesarProgramElementNode {
 			children,
 			importedPackages,
 			importedClasses);
+			this.initImages();
+	}
+
+	public String getShortType() {
+		String typDef = this.type.toString();
+		return typDef.substring(typDef.lastIndexOf('.') + 1);
 	}
 
 	/* (Kein Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 * @see org.caesarj.ui.model.CaesarProgramElementNode#getText(java.lang.String)
 	 */
-	public int compareTo(Object o) throws ClassCastException {
-		return super.compareTo(o);
+	public String getText(String text) {
+		String label = text.substring(text.lastIndexOf("]") + 2);
+		label += " : " + this.getShortType();
+		return label;
 	}
-	
-	public String getShortType(){
-		String typDef = this.type.toString();
-		return typDef.substring(typDef.lastIndexOf('.')+1);
+
+	protected void initImages() {
+		PUBLIC = JavaPluginImages.DESC_FIELD_PUBLIC;
+		PRIVATE = JavaPluginImages.DESC_FIELD_PRIVATE;
+		PROTECTED = JavaPluginImages.DESC_FIELD_PROTECTED;
+		DEFAULT = JavaPluginImages.DESC_FIELD_DEFAULT;
 	}
 
 }
