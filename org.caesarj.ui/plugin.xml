@@ -208,8 +208,23 @@
          name="CaesarJDT Perspective"
          id="org.caesarj.ui.perspective.CaesarPerspective">
    </perspective>
-	</extension>
+   </extension>	
+   <extension point="org.eclipse.ui.actionSets">
+		<actionSet label="CaesarJ" visible="true" id="org.caesarj.actionSet">
+  		<action label="CaesarJAnnotation" tooltip="CaesarJ: Enables/Disables live annotation" class="org.caesarj.ui.actionsets.AnnotationShortCut" toolbarPath="Normal/additions" icon="icons/sample.gif" id="org.caesarj.ui.actionsets.Annotation" />  
+   </actionSet>
+   </extension>
+   <!--extension point="org.eclipse.ui.actionSetPartAssociations">
+   		<actionSetPartAssociation
+   		targetID="org.caesarj.ui.actionsets.Annotation">
+   		<part id="org.eclipse.jdt.ui.CompilationUnitEditor"/>
+   		</actionSetPartAssociation>
+   </extension-->
  	<extension point="org.eclipse.ui.views">
   		<view name="CaesarJ View" icon="icons/sample.gif" category="org.eclipse.jdt.ui.java" class="org.caesarj.ui.views.CaesarMetricsView" id="org.caesarj.ui.views.CaesarMetricsView" /> 
  	</extension>
+ 	<extension point="org.eclipse.ui.preferencePages">
+	<page name="TEST" class="org.caesarj.ui.wizard.CaesarConfigPage" id="org.caesarj.ui.wizard.caesarconfigpage">
+     </page>
+	</extension>
 </plugin>

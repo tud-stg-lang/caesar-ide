@@ -10,6 +10,7 @@ package org.caesarj.ui.perspective;
  */
 
 import org.apache.log4j.Logger;
+import org.caesarj.ui.wizard.CaesarConfigWizard;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.search.ui.SearchUI;
@@ -72,9 +73,9 @@ public class CaesarPerspective implements IPerspectiveFactory {
 		
 		layout.addActionSet(IDebugUIConstants.LAUNCH_ACTION_SET);
 		layout.addActionSet(JavaUI.ID_ACTION_SET);
-		layout.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);		
+		layout.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);	
+		//layout.addPerspectiveShortcut("org.caesarj.ui.actionsets.AnnotationShortCut");
 		layout.setEditorAreaVisible(true);
-		
 	}
 
 }

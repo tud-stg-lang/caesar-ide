@@ -16,9 +16,12 @@ import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.internal.ui.preferences.JavadocConfigurationPropertyPage;
 import org.eclipse.jdt.internal.ui.viewsupport.ImageDescriptorRegistry;
+import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /** 
@@ -61,6 +64,7 @@ public class CaesarPlugin extends AbstractUIPlugin {
 	public CaesarPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		plugin = this;
+		
 		try {
 			resourceBundle = ResourceBundle.getBundle("caesar.CaesarPluginResources");
 		} catch (MissingResourceException x) {
