@@ -418,7 +418,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		toolbar.setLayoutData(gridData);
 		ToolItem seperator = new ToolItem(toolbar, SWT.SEPARATOR);
 		filterButton = new ToolItem(toolbar, SWT.CHECK);
-		filterButton.setToolTipText("Filter IMPLICID-Typs");
+		filterButton.setToolTipText("filter implicit types");
 		filterButton
 				.setImage(CaesarPluginImages.DESC_OBJS_INNER_CCLASS_IMPLICID
 						.createImage());

@@ -53,7 +53,11 @@ public class ConstructorDeclarationNode extends CaesarProgramElementNode {
 				label += ", "; //$NON-NLS-1$
 		}
 		label += ")"; //$NON-NLS-1$
-		return label.replaceAll("_Impl","");
+		label = label.replaceAll("_Impl", "");
+		if (this.parent instanceof CClassNode || this.parent instanceof AspectNode) {
+			label = label.substring(0, label.indexOf('(')+1) + ")";
+		}
+		return label;
 	}
 
 	protected void initImages() {
