@@ -14,14 +14,9 @@ import org.aspectj.asm.StructureModel;
 import org.aspectj.asm.StructureNode;
 import org.aspectj.bridge.ISourceLocation;
 import org.aspectj.bridge.SourceLocation;
-import org.caesarj.compiler.ast.phylum.JClassImport;
 import org.caesarj.compiler.ast.phylum.JCompilationUnit;
-import org.caesarj.compiler.ast.phylum.JPackageImport;
-import org.caesarj.compiler.ast.phylum.JPackageName;
-import org.caesarj.compiler.ast.phylum.JPhylum;
 import org.caesarj.compiler.ast.phylum.declaration.CjAdviceDeclaration;
-import org.caesarj.compiler.ast.phylum.declaration.CjClassDeclaration;
-import org.caesarj.compiler.ast.phylum.declaration.CjInterfaceDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.CjMixinInterfaceDeclaration;
 import org.caesarj.compiler.ast.phylum.declaration.CjPointcutDeclaration;
 import org.caesarj.compiler.ast.phylum.declaration.JClassDeclaration;
 import org.caesarj.compiler.ast.phylum.declaration.JConstructorDeclaration;
@@ -29,15 +24,9 @@ import org.caesarj.compiler.ast.phylum.declaration.JFieldDeclaration;
 import org.caesarj.compiler.ast.phylum.declaration.JInterfaceDeclaration;
 import org.caesarj.compiler.ast.phylum.declaration.JMethodDeclaration;
 import org.caesarj.compiler.ast.phylum.declaration.JTypeDeclaration;
-import org.caesarj.compiler.ast.phylum.expression.JExpression;
-import org.caesarj.compiler.ast.phylum.statement.JBlock;
-import org.caesarj.compiler.ast.phylum.statement.JConstructorBlock;
-import org.caesarj.compiler.ast.phylum.variable.JFormalParameter;
-import org.caesarj.compiler.ast.visitor.BodyVisitor;
+import org.caesarj.compiler.ast.phylum.variable.JVariableDefinition;
+import org.caesarj.compiler.ast.visitor.VisitorSupport;
 import org.caesarj.compiler.export.CModifier;
-import org.caesarj.compiler.types.CReferenceType;
-import org.caesarj.compiler.types.CType;
-import org.caesarj.compiler.types.CTypeVariable;
 import org.caesarj.util.TokenReference;
 /**
  * Main Class for generating ASM for caesar source code.
@@ -46,9 +35,9 @@ import org.caesarj.util.TokenReference;
  * preBuild -> build(+) -> preWeave -> postBuild
  * NOTE: build method is called each time a compilation unit is parsed
  * 
- * @author Ivica Aracic <ivica.aracic@bytelords.de>
+ * @author Ivica Aracic
  */
-public class AsmBuilder extends BodyVisitor {
+public class AsmBuilder {
 
 	private static final String REGISTRY_CLASS_NAME = "Registry";
 
@@ -122,22 +111,23 @@ public class AsmBuilder extends BodyVisitor {
 		setStructureModel(structureModel);
 		asmStack.push(structureModel.getRoot());
 
-		unit.accept(this);
+		VisitorSupport visitor = new VisitorSupport(this);
+		unit.accept(visitor);
 
 		asmStack.pop();
 		setStructureModel(null);
 	}
 
+	
+	
+	
+	
+	
+	
 	/**
 	 * CompilationUnit visit method
 	 */
-	public void visitCompilationUnit(
-		JCompilationUnit self,
-		JPackageName packageName,
-		JPackageImport[] importedPackages,
-		JClassImport[] importedClasses,
-		JTypeDeclaration[] typeDeclarations) {
-
+	public boolean visit(JCompilationUnit self) {
 		TokenReference ref = self.getTokenReference();
 		File file = new File(new String(ref.getFile()));
 
@@ -153,12 +143,12 @@ public class AsmBuilder extends BodyVisitor {
 				0,
 				"",
 				new ArrayList(),
-				importedPackages,
-				importedClasses);
+				self.getImportedPackages(),
+				self.getImportedClasses());
 
-		if (packageName != null) {
+		if (self.getPackageName() != null) {
 
-			String pkgName = packageName.getName();
+			String pkgName = self.getPackageName().getName();
 
 			pkgName = pkgName.replaceAll("/", ".");
 
@@ -217,287 +207,221 @@ public class AsmBuilder extends BodyVisitor {
 		}
 
 		asmStack.push(cuNode);
-
-		super.visitCompilationUnit(
-			self,
-			packageName,
-			importedPackages,
-			importedClasses,
-			typeDeclarations);
-
+		
+		return true;
+	}
+	
+	public void endVisit(JCompilationUnit self) {  
 		asmStack.pop();
 	}
 	
-	public void visitCciInterfaceDeclaration(CjInterfaceDeclaration arg0,
-			int arg1, String arg2, CReferenceType[] arg3, JPhylum[] arg4,
-			JMethodDeclaration[] arg5) {
-		visitInterfaceDeclaration(arg0, arg1, arg2, arg3, arg4, arg5);
-	}
-
-	/**
-	 * Interface visit method
-	 */
-	public void visitInterfaceDeclaration(
-		JInterfaceDeclaration self,
-		int modifiers,
-		String ident,
-		CReferenceType[] interfaces,
-		JPhylum[] body,
-		JMethodDeclaration[] methods) {
+	
+	
+	/*
+	 * INTERFACES
+	 */	
+		
+	/** handle all interface types equivalent */
+	public boolean visit(JInterfaceDeclaration self) {
 		InterfaceNode peNode =
 			new InterfaceNode(
-				ident,
+				self.getIdent(),
 				CaesarProgramElementNode.Kind.INTERFACE,
 				makeLocation(self.getTokenReference()),
-				modifiers,
+				self.getModifiers(),
 				"",
 				new ArrayList());
 
 		getCurrentStructureNode().addChild(peNode);
 		asmStack.push(peNode);
 		classStack.push(self);
-
-		//FIELDS
-		JFieldDeclaration types[] = self.getFields();
-		for (int i = 0; i < types.length; i++) {
-			types[i].accept(this);
-		}
 		
-		//TODO In methodenvisitor gibt es beim Aufruf einen Nullpointer!!!
-		//METHODEN
-		for (int i = 0; i < methods.length; i++) {
-			methods[i].accept(this);
-		}
-
-		JTypeDeclaration inners[] = self.getInners();
-		for (int i = 0; i < inners.length; i++) {
-			inners[i].accept(this);
-		}
-
+		return true;
+	}
+	
+	public void endVisit(JInterfaceDeclaration self) {
 		asmStack.pop();
 		classStack.pop();
 	}
+	
+	// don't visit CjMixinInterfaceDeclaration (we have already all data from CjVirtualClassDeclaration)
+	public boolean visit(CjMixinInterfaceDeclaration self) {
+	    return false;
+	}
 
+	/*
+	 * CLASS DECLARATIONS
+	 */
+	
+	
 	/**
 	 * crosscutting und normal classes
 	 */
-	public void visitClassDeclaration(
-		JClassDeclaration self,
-		int modifiers,
-		String ident,
-		CTypeVariable[] typeVariables,
-		String superClass,
-		CReferenceType[] interfaces,
-		JPhylum[] body,
-		JMethodDeclaration[] methods,
-		JTypeDeclaration[] decls) {
-
+	public boolean visit(JClassDeclaration self) {
 		classStack.push(self);
 
 		CaesarProgramElementNode peNode;
 
-		if (CModifier.contains(modifiers, CModifier.ACC_CROSSCUTTING)) {
+		if (CModifier.contains(self.getModifiers(), CModifier.ACC_CROSSCUTTING)) {
 			peNode =
 				new AspectNode(
-					ident,
+					self.getIdent(),
 					CaesarProgramElementNode.Kind.ASPECT,
 					makeLocation(self.getTokenReference()),
-					modifiers,
+					self.getModifiers(),
 					"",
 					new ArrayList());
-		} else {
+		} 
+		else {
 			peNode =
 				new ClassNode(
-					ident,
+					self.getIdent(),
 					CaesarProgramElementNode.Kind.CLASS,
 					makeLocation(self.getTokenReference()),
-					modifiers,
+					self.getModifiers(),
 					"",
 					new ArrayList());
 		}
 
 		getCurrentStructureNode().addChild(peNode);
 		asmStack.push(peNode);
+		
+		return true;
+	}
 
-		// super method ruft nicht die field visitors auf        
-		/*
-		super.visitClassDeclaration(
-			self, modifiers, ident, typeVariables, superClass,
-			interfaces, body, methods, decls
-		);
-		*/
-
-		for (int i = 0; i < decls.length; i++) {
-			decls[i].accept(this);
-		}
-
-		for (int i = 0; i < methods.length; i++) {
-			methods[i].accept(this);
-		}
-
-		for (int i = 0; i < body.length; i++) {
-			body[i].accept(this);
-		}
-
-		// get advices and pointcuts visit
-		if (self instanceof CjClassDeclaration) {
-			CjClassDeclaration clazz = (CjClassDeclaration) self;
-
-			CjAdviceDeclaration[] advices = clazz.getAdvices();
-			for (int i = 0; i < advices.length; i++) {
-				advices[i].accept(this);
-			}
-
-			CjPointcutDeclaration[] pointcuts = clazz.getPointcuts();
-			for (int i = 0; i < pointcuts.length; i++) {
-				pointcuts[i].accept(this);
-			}
-		}
-
+	public void endVisit(JClassDeclaration self) {
 		asmStack.pop();
 		classStack.pop();
 	}
+	
 
 	/**
 	 * ConstructorDeclaration
 	 * 
 	 */
-	public void visitConstructorDeclaration(
-		JConstructorDeclaration self,
-		int modifiers,
-		String ident,
-		JFormalParameter[] parameters,
-		CReferenceType[] exceptions,
-		JConstructorBlock body) {
+	public boolean visit(JConstructorDeclaration self) {		  
 		ConstructorDeclarationNode peNode =
 			new ConstructorDeclarationNode(
 				self,
 				((JClassDeclaration) classStack.peek()),
-				ident,
+				self.getIdent(),
 				CaesarProgramElementNode.Kind.CONSTRUCTOR,
 				makeLocation(self.getTokenReference()),
-				modifiers,
+				self.getModifiers(),
 				"",
 				new ArrayList());
 
 		getCurrentStructureNode().addChild(peNode);
 
-		asmStack.push(peNode);
-
-		super.visitConstructorDeclaration(self, modifiers, ident, parameters, exceptions, body);
-
-		asmStack.pop();
+		return false;
 	}
+	
 
 	/**
 	 * MethodDeclaration
 	 */
-	public void visitMethodDeclaration(
-		JMethodDeclaration self,
-		int modifiers,
-		CTypeVariable[] typeVariables,
-		CType returnType,
-		String ident,
-		JFormalParameter[] parameters,
-		CReferenceType[] exceptions,
-		JBlock body) {
-		CaesarProgramElementNode peNode = null;
+	public boolean visit(JMethodDeclaration self) {
+		CaesarProgramElementNode peNode =
+			new MethodDeclarationNode(
+				self,
+				((JTypeDeclaration) classStack.peek()),
+				self.getIdent(),
+				CaesarProgramElementNode.Kind.METHOD,
+				makeLocation(self.getTokenReference()),
+				self.getModifiers(),
+				"",
+				new ArrayList());
 
-		if (self instanceof CjAdviceDeclaration) {
-			CjAdviceDeclaration advice = (CjAdviceDeclaration) self;
-
-			peNode =
-				new AdviceDeclarationNode(
-					advice,
-					((JTypeDeclaration) classStack.peek()).getCClass().getQualifiedName(),
-					advice.getKind().wrappee().getName(),
-					CaesarProgramElementNode.Kind.ADVICE,
-					makeLocation(self.getTokenReference()),
-					modifiers,
-					"",
-					new ArrayList());
-
-			if (CModifier
-				.contains(
-					((JTypeDeclaration) classStack.peek()).getModifiers(),
-					CModifier.ACC_DEPLOYED)) {
-				getCurrentStructureNode().addChild(peNode);
-			} else {
-				CaesarProgramElementNode registryNode =
-					findChildByName(getCurrentStructureNode().getChildren(), REGISTRY_CLASS_NAME);
-
-				if (registryNode == null) {
-					registryNode =
-						new AspectRegistryNode(
-							"Registry",
-							CaesarProgramElementNode.Kind.CLASS,
-							makeLocation(self.getTokenReference()),
-							modifiers,
-							"",
-							new ArrayList());
-
-					getCurrentStructureNode().addChild(registryNode);
-				}
-
-				registryNode.addChild(peNode);
-			}
-		} else if (self instanceof CjPointcutDeclaration) {
-			CjPointcutDeclaration pointcut = (CjPointcutDeclaration) self;
-
-			peNode =
-				new PointcutNode(
-					pointcut,
-					((JClassDeclaration) classStack.peek()),
-					ident,
-					CaesarProgramElementNode.Kind.POINTCUT,
-					makeLocation(self.getTokenReference()),
-					modifiers,
-					"",
-					new ArrayList());
-
-			getCurrentStructureNode().addChild(peNode);
-		} else {
-			peNode =
-				new MethodDeclarationNode(
-					self,
-					((JTypeDeclaration) classStack.peek()),
-					ident,
-					CaesarProgramElementNode.Kind.METHOD,
-					makeLocation(self.getTokenReference()),
-					modifiers,
-					"",
-					new ArrayList());
-
-			if (ident.equals("main")) {
-				peNode.setRunnable(true);
-			}
-
-			getCurrentStructureNode().addChild(peNode);
+		if (self.getIdent().equals("main")) {
+			peNode.setRunnable(true);
 		}
 
+		getCurrentStructureNode().addChild(peNode);
+		
+		return false;
 	}
+	
+	
+	
+	
+	public boolean visit(CjPointcutDeclaration pointcut) {			 
+		CaesarProgramElementNode peNode =
+			new PointcutNode(
+				pointcut,
+				((JClassDeclaration) classStack.peek()),
+				pointcut.getIdent(),
+				CaesarProgramElementNode.Kind.POINTCUT,
+				makeLocation(pointcut.getTokenReference()),
+				pointcut.getModifiers(),
+				"",
+				new ArrayList());	
+		
+		getCurrentStructureNode().addChild(peNode);
+		return false;
+	}
+	
+	
+	public boolean visit(CjAdviceDeclaration advice) {
+
+		CaesarProgramElementNode peNode =
+			new AdviceDeclarationNode(
+				advice,
+				((JTypeDeclaration) classStack.peek()).getCClass().getQualifiedName(),
+				advice.getKind().wrappee().getName(),
+				CaesarProgramElementNode.Kind.ADVICE,
+				makeLocation(advice.getTokenReference()),
+				advice.getModifiers(),
+				"",
+				new ArrayList());
+
+		if (CModifier
+			.contains(
+				((JTypeDeclaration) classStack.peek()).getModifiers(),
+				CModifier.ACC_DEPLOYED)) {
+			getCurrentStructureNode().addChild(peNode);
+		} else {
+			CaesarProgramElementNode registryNode =
+				findChildByName(getCurrentStructureNode().getChildren(), REGISTRY_CLASS_NAME);
+
+			if (registryNode == null) {
+				registryNode =
+					new AspectRegistryNode(
+						"Registry",
+						CaesarProgramElementNode.Kind.CLASS,
+						makeLocation(advice.getTokenReference()),
+						advice.getModifiers(),
+						"",
+						new ArrayList());
+
+				getCurrentStructureNode().addChild(registryNode);
+			}
+
+			registryNode.addChild(peNode);
+		}
+		return false;
+	}
+	
 
 	/**
 	 * FIELD
-	 */
-	public void visitFieldDeclaration(
-		JFieldDeclaration self,
-		int modifiers,
-		CType type,
-		String ident,
-		JExpression expr) {
+	 */	
+	public boolean visit(JFieldDeclaration self) {
+	    JVariableDefinition var = self.getVariable();
 		FieldNode peNode =
 			new FieldNode(
-				ident,
+				var.getIdent(),
 				CaesarProgramElementNode.Kind.FIELD,
 				makeLocation(self.getTokenReference()),
-				type,
-				modifiers,
+				var.getType(),
+				var.getModifiers(),
 				"",
 				new ArrayList());
 
 		getCurrentStructureNode().addChild(peNode);
+		
+		return false;
 	}
+	
 
 	
 	private ISourceLocation makeLocation(TokenReference ref) {
