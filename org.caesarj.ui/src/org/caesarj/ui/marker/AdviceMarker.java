@@ -2,7 +2,6 @@ package org.caesarj.ui.marker;
 
 import java.util.Map;
 
-import org.caesarj.ui.editor.CaesarEditor;
 import org.eclipse.core.internal.resources.ICoreConstants;
 import org.eclipse.core.internal.resources.MarkerInfo;
 import org.eclipse.core.internal.resources.MarkerManager;
@@ -20,8 +19,6 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.viewers.ISelectionProvider;
 
 /**
  * @author Shadow
@@ -29,21 +26,18 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * Folgendes auswählen, um die Schablone für den erstellten Typenkommentar zu ändern:
  * Fenster&gt;Benutzervorgaben&gt;Java&gt;Codegenerierung&gt;Code und Kommentare
  */
-public class AdviceMarker implements IMarker{
+public class AdviceMarker implements IMarker {
 
 	/** Marker identifier. */
-	private ListenerList selectionChangedListeners = new ListenerList();
-	private CaesarEditor editor;
 	private long id;
-	private ISelectionProvider selectionProvider;
 	private Workspace workspace;
 	/** Resource with which this marker is associated. */
 	private IResource resource;
 	private Map attributes;
 	public final static java.lang.String ADVICEMARKER = "org.caesarj.advicemarker";
-	public final static java.lang.String LINKS = "org.caesarj.advicemarker.links";
-	public final static java.lang.String ID = "org.caesarj.advicemarker.id";
-	
+	public final static java.lang.String LINKS = "org.caesarj.links";
+	public final static java.lang.String ID = "org.caesarj.adviceid";
+
 	public AdviceMarker(IResource resource, Map attributes) throws CoreException {
 		this.resource = resource;
 		this.workspace = getWorkspace();
@@ -55,7 +49,7 @@ public class AdviceMarker implements IMarker{
 		};
 		resource.getWorkspace().run(r, null);
 	}
-	
+
 	private void addMarker() throws CoreException {
 		try {
 			workspace.prepareOperation();
@@ -107,18 +101,18 @@ public class AdviceMarker implements IMarker{
 		IMarker other = (IMarker) object;
 		return (id == other.getId() && resource.equals(other.getResource()));
 	}
-	
+
 	public boolean exists() {
 		return getInfo() != null;
 	}
-	
+
 	public Object getAttribute(String attributeName) throws CoreException {
 		Assert.isNotNull(attributeName);
 		MarkerInfo info = getInfo();
 		checkInfo(info);
 		return info.getAttribute(attributeName);
 	}
-	
+
 	public int getAttribute(String attributeName, int defaultValue) {
 		Assert.isNotNull(attributeName);
 		MarkerInfo info = getInfo();
@@ -129,7 +123,7 @@ public class AdviceMarker implements IMarker{
 			return ((Integer) value).intValue();
 		return defaultValue;
 	}
-	
+
 	public String getAttribute(String attributeName, String defaultValue) {
 		Assert.isNotNull(attributeName);
 		MarkerInfo info = getInfo();
@@ -140,7 +134,7 @@ public class AdviceMarker implements IMarker{
 			return (String) value;
 		return defaultValue;
 	}
-	
+
 	public boolean getAttribute(String attributeName, boolean defaultValue) {
 		Assert.isNotNull(attributeName);
 		MarkerInfo info = getInfo();

@@ -93,13 +93,20 @@ public class CaesarOutlineView extends ContentOutlinePage {
 
 		public String getText(Object element) {
 			try {
-				//TODO ist wegen parent=null in LinkNode??? Sollte irgendwo beim AST-Tree aufbau behoben werden.
 				if (element instanceof CaesarProgramElementNode) {
 					CaesarProgramElementNode cNode = (CaesarProgramElementNode) element;
 					return cNode.getText(super.getText(element));
 				} else if (element instanceof LinkNode) {
 					LinkNode lNode = (LinkNode) element;
-					return this.getText(lNode.getProgramElementNode());
+					String returnString = lNode.toLongString();
+					returnString = returnString.substring(returnString.lastIndexOf(']') + 2);
+					try {
+						String className = returnString.substring(0, returnString.lastIndexOf(':'));
+						String advice = returnString.substring(returnString.lastIndexOf(':')+2,returnString.length()-1);
+						return advice + ":" + className;
+					} catch (RuntimeException e1) {
+						return returnString.substring(0,returnString.length()-1);
+					}
 				} else
 					return super.getText(element);
 			} catch (NullPointerException e) {
