@@ -847,7 +847,8 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		treeViewer.setInput(buildTreeModel(path));
 		treeViewer.expandToLevel(4);
 		qualifiedNameToActualClasses = path;
-		refreshList((String)path[0]);
+		if (path.length>0)
+			refreshList((String)path[0]);
 	}
 
 	public void refreshList(String path) {
