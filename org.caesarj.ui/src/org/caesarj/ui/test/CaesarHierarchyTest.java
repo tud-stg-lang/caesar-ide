@@ -36,7 +36,8 @@ public class CaesarHierarchyTest {
 	     * generates the export informations of a class from the classpath
 	     */
 	    public CClass load(String qn) {
-	    	CClass clazz = classReader.loadClass(factory, qn);
+	    	String internalName = qn.replace('.', '/');
+	    	CClass clazz = classReader.loadClass(factory, internalName);
 	    	log.debug("Class:" + clazz + " \n\tInfo:" + clazz.getAdditionalTypeInformation());
 	        return clazz;
 	    }
