@@ -25,6 +25,8 @@ import org.eclipse.ui.console.IConsoleConstants;
  */
 public class CaesarPerspective implements IPerspectiveFactory {
 	
+	public static final String ID_CAESAR_HIERARCHY_VIEW = "org.caesarj.ui.views.CaesarHierarchyView";
+	
 	/**
 	 * Constructor for CaesarPerspective
 	 */
@@ -41,46 +43,85 @@ public class CaesarPerspective implements IPerspectiveFactory {
 	 * @see IPerspectiveFactory#createInitialLayout(IPageLayout)
 	 */
 	public void createInitialLayout(IPageLayout layout) {
+		
+		/*
+		 * Configure initial view layout
+		 */
+		
 		// Get the editor area.
 		String editorArea = layout.getEditorArea();
-		// Top left: Resource Navigator view and Bookmarks view placeholder
+		
+		// Top left: Navigation views 
 		IFolderLayout topLeft =
 			layout.createFolder("topLeft", IPageLayout.LEFT, 0.25f, editorArea); //$NON-NLS-1$
-
 		topLeft.addView(JavaUI.ID_PACKAGES);
-		topLeft.addPlaceholder(IPageLayout.ID_BOOKMARKS);
-
-		IFolderLayout bottomRight =
-			layout.createFolder(
-				"bottomRight", //$NON-NLS-1$
-				IPageLayout.RIGHT,
-				0.75f,
-				editorArea);
-		bottomRight.addView(IPageLayout.ID_OUTLINE);
-		bottomRight.addView("org.caesarj.ui.views.CaesarHierarchyView"); //$NON-NLS-1$
-		 
+		topLeft.addPlaceholder(IPageLayout.ID_RES_NAV);
+		topLeft.addPlaceholder(JavaUI.ID_TYPE_HIERARCHY);
 		
+		// Bottom: Status views
 		IFolderLayout bottom =
-			layout.createFolder(
-				"bottom", //$NON-NLS-1$
-				IPageLayout.BOTTOM,
-				0.75f,
-				editorArea);
+			layout.createFolder("bottom", IPageLayout.BOTTOM, 0.75f, editorArea);
+		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
 		bottom.addView(IPageLayout.ID_TASK_LIST);
-		bottom.addView(NewSearchUI.SEARCH_VIEW_ID);
-		bottom.addView(JavaUI.ID_SOURCE_VIEW);
 		bottom.addView(IConsoleConstants.ID_CONSOLE_VIEW);
 		
+		bottom.addPlaceholder(NewSearchUI.SEARCH_VIEW_ID);
+		bottom.addPlaceholder(IPageLayout.ID_BOOKMARKS);
+		bottom.addPlaceholder(JavaUI.ID_JAVADOC_VIEW);
+		bottom.addPlaceholder(JavaUI.ID_SOURCE_VIEW);
+		
+		// Right: Outline views
+		IFolderLayout right =
+			layout.createFolder("right", IPageLayout.RIGHT,	0.75f, editorArea);
+		right.addView(IPageLayout.ID_OUTLINE);
+		right.addView(ID_CAESAR_HIERARCHY_VIEW); 
+		
+		/*
+		 * Configure views menu
+		 */
+		
+		// views - java
+		layout.addShowViewShortcut(JavaUI.ID_PACKAGES);
+		layout.addShowViewShortcut(JavaUI.ID_TYPE_HIERARCHY);
+		layout.addShowViewShortcut(ID_CAESAR_HIERARCHY_VIEW);
+		layout.addShowViewShortcut(JavaUI.ID_SOURCE_VIEW);
+		layout.addShowViewShortcut(JavaUI.ID_JAVADOC_VIEW);
+
+		// views - search
+		layout.addShowViewShortcut(NewSearchUI.SEARCH_VIEW_ID);
+		
+		// views - debugging
+		layout.addShowViewShortcut(IConsoleConstants.ID_CONSOLE_VIEW);
+
+		// views - standard workbench
+		layout.addShowViewShortcut(IPageLayout.ID_OUTLINE);
+		layout.addShowViewShortcut(IPageLayout.ID_PROBLEM_VIEW);
+		layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);
+		
+		/*
+		 * Setup ection set
+		 */		
 		layout.addActionSet(IDebugUIConstants.LAUNCH_ACTION_SET);
 		layout.addActionSet(JavaUI.ID_ACTION_SET);
 		layout.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);	
+				
+		// new actions - Java project creation wizard
+		layout.addNewWizardShortcut("org.caesarj.newprojectwizard");
+		layout.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewPackageCreationWizard"); //$NON-NLS-1$
+		layout.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewClassCreationWizard"); //$NON-NLS-1$
+		layout.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewInterfaceCreationWizard"); //$NON-NLS-1$
+		layout.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewSourceFolderCreationWizard");	 //$NON-NLS-1$
+		layout.addNewWizardShortcut("org.eclipse.jdt.ui.wizards.NewSnippetFileCreationWizard"); //$NON-NLS-1$
+		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.folder");//$NON-NLS-1$
+		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.file");//$NON-NLS-1$
+		
 		layout.addPerspectiveShortcut("org.caesarj.ui.actionsets.AnnotationShortCut"); //$NON-NLS-1$
-		layout.setEditorAreaVisible(true);
+		layout.setEditorAreaVisible(true);	
 		
 		//Show Preferences
 		CaesarConfigWizard wizard = new CaesarConfigWizard();
 		wizard.init();
-		if(CaesarJPreferences.isCAESARPrefConfigDone())
+		if (!CaesarJPreferences.isCAESARPrefConfigDone())
 		{
 			org.eclipse.jface.wizard.WizardDialog dialog = new org.eclipse.jface.wizard.WizardDialog(
 					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
