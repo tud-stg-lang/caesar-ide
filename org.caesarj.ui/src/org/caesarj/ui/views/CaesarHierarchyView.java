@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarHierarchyView.java,v 1.33 2005-02-21 13:43:19 gasiunas Exp $
+ * $Id: CaesarHierarchyView.java,v 1.34 2005-03-04 09:28:19 thiago Exp $
  */
 
 package org.caesarj.ui.views;
@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
-import org.aspectj.asm.StructureModelManager;
 import org.aspectj.asm.StructureNode;
 import org.caesarj.compiler.asm.CaesarProgramElementNode;
 import org.caesarj.compiler.export.CClass;
@@ -41,6 +40,7 @@ import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.CaesarPluginImages;
 import org.caesarj.ui.editor.CaesarEditor;
 import org.caesarj.ui.editor.CaesarJContentOutlinePage;
+import org.caesarj.ui.resources.CaesarJPluginResources;
 import org.caesarj.ui.test.CaesarHierarchyTest;
 import org.caesarj.ui.util.ProjectProperties;
 import org.caesarj.ui.views.hierarchymodel.HierarchyNode;
@@ -49,8 +49,6 @@ import org.caesarj.ui.views.hierarchymodel.LinearNode;
 import org.caesarj.ui.views.hierarchymodel.RootNode;
 import org.caesarj.ui.views.hierarchymodel.StandardNode;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -83,38 +81,75 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ViewPart;
 
 /**
+ * Implements CaesarJ Hierarchy View
+ * 
+ * TODO - Total refactor the class
+ * TODO - Change the image resources to the plugin resources
+ * 
  * @author Jochen
- *  
+ * @author Thiago Tonelli Bartolomei <bart@macacos.org>
+ * 
  */
 public class CaesarHierarchyView extends ViewPart implements ISelectionListener {
 
-	private static TreeViewer treeViewer;
+	protected static final Image SUBIMAGE = CaesarPluginImages.DESC_HIER_MODE_SUB
+		.createImage();
 
-	private static ListViewer listViewer;
+	protected static final Image SUPERIMAGE = CaesarPluginImages.DESC_HIER_MODE_SUPER
+		.createImage();
 
+	/**
+	 * The singleton instance
+	 */
+	private static CaesarHierarchyView instance = null;
+
+	/**
+	 * The treeViewer is responsible for displaying the Caesar Classes Hierarchy
+	 */
+	private static TreeViewer treeViewer = null;
+
+	/**
+	 * The listViewer is responsible for displaying the Caesar Mixin Classes
+	 */
+	private static ListViewer listViewer = null;
+
+	/**
+	 * The logger object
+	 */
+	private static Logger log = Logger.getLogger(CaesarHierarchyView.class);
+	
+	/**
+	 * Flags if the Hierarchy View is enabled or disabled
+	 * 
+	 * TODO - CHECK IF IT IS NECESSARY TO HAVE THIS FLAG
+	 */
+	protected static boolean enabled = false;
+	
+	/**
+	 * The ProjectProperties for the active hierarchy view. This object carries
+	 * information on the project, the IProject object, etc.
+	 */
+	private ProjectProperties activeProjectProperties = null;
+	
 	private String globalPathForInformationAdapter = new String("");
 
 	private boolean superView = false;
-
-	private static Logger log = Logger.getLogger(CaesarHierarchyView.class);
 
 	private ToolItem toolButton, filterButton;
 
 	private boolean implicitFilter = false;
 
-	protected static final String SUPER = "Show the Supertyp Hierarchy",
-			SUB = "Show the Subtyp Hierarchy";
+	private Object[] qualifiedNameToActualClasses = null;
 
-	protected static final Image SUBIMAGE = CaesarPluginImages.DESC_HIER_MODE_SUB
-			.createImage();
-
-	protected static final Image SUPERIMAGE = CaesarPluginImages.DESC_HIER_MODE_SUPER
-			.createImage();
-
-	private IProject ACTIVE_PROJECT;
-
-	private static CaesarHierarchyView selfRef;
-
+	/**
+	 * Constructor. Sets the singleton instance.
+	 *
+	 */
+	public CaesarHierarchyView() {
+		super();
+		instance = this;
+	}
+	
 	private String filterName(String name) {
 		try {
 			String help = new String(name);
@@ -130,11 +165,6 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 			log.warn("Filtering names for Hierarchy View.", e);
 			return "Error";
 		}
-	}
-
-	public CaesarHierarchyView() {
-		super();
-		selfRef = this;
 	}
 	
 	private boolean isNodeInSuperlist(String qualifiedNameOfNode, String[] nestedClasses, CaesarHierarchyTest nav) throws Exception
@@ -358,7 +388,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				log.debug("No Information.");
 				StandardNode n1 = new StandardNode();
 				n1.setKind(HierarchyNode.EMTY);
-				n1.setName("No informations available.");
+				n1.setName(CaesarJPluginResources.getResourceString("HierarchyView.hierarchy.noInformationAvailable"));
 				toolButton.setEnabled(false);
 				filterButton.setEnabled(false);
 				n1.setParent(root);
@@ -406,7 +436,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 			log.debug("No Information to show on hierarchy tree.");
 			LinearNode emty = new LinearNode();
 			emty.setKind(HierarchyNode.LIST);
-			emty.setName("No list available for selection");
+			emty.setName(CaesarJPluginResources.getResourceString("HierarchyView.hierarchy.noListAvailable"));
 			return emty;
 		} catch (Exception e) {
 			log.warn("Building List View.", e);
@@ -414,12 +444,12 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		}
 	}
 
-	public static void updateAll() {
-		if (selfRef != null) {
-			selfRef.refresh();
-		} 
-	}
-
+	/**
+	 * This method creates the widgets for the view. It is only called once by the Eclipse
+	 * framework, when the plugin starts.
+	 * 
+	 * @param parent The parent control of this view
+	 */
 	public void createPartControl(Composite parent) {
 		//ORGANIZE FOR ECLIPSE
 		getViewSite().getWorkbenchWindow().getSelectionService()
@@ -441,7 +471,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		toolbar.setLayoutData(gridData);
 		ToolItem seperator = new ToolItem(toolbar, SWT.SEPARATOR);
 		filterButton = new ToolItem(toolbar, SWT.CHECK);
-		filterButton.setToolTipText("filter implicit types");
+		filterButton.setToolTipText(CaesarJPluginResources.getResourceString("HierarchyView.tooltip.filter")); //$NON-NLS-1$
 		filterButton
 				.setImage(CaesarPluginImages.DESC_OBJS_INNER_CCLASS_IMPLICID
 						.createImage());
@@ -464,18 +494,18 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		});
 		ToolItem seperator2 = new ToolItem(toolbar, SWT.SEPARATOR);
 		toolButton = new ToolItem(toolbar, SWT.FLAT);
-		toolButton.setToolTipText(SUPER);
+		toolButton.setToolTipText(CaesarJPluginResources.getResourceString("HierarchyView.tooltip.super")); //$NON-NLS-1$
 		toolButton.setImage(SUPERIMAGE);
 		toolButton.setEnabled(false);
 		toolButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				log.debug("Button Pressed!!!");
 				setSuperView(!isSuperView());
-				if (toolButton.getToolTipText().equals(SUPER)) {
-					toolButton.setToolTipText(SUB);
+				if (toolButton.getToolTipText().equals(CaesarJPluginResources.getResourceString("HierarchyView.tooltip.super"))) { //$NON-NLS-1$
+					toolButton.setToolTipText(CaesarJPluginResources.getResourceString("HierarchyView.tooltip.sub")); //$NON-NLS-1$
 					toolButton.setImage(SUBIMAGE);
 				} else {
-					toolButton.setToolTipText(SUPER);
+					toolButton.setToolTipText(CaesarJPluginResources.getResourceString("HierarchyView.tooltip.super")); //$NON-NLS-1$
 					toolButton.setImage(SUPERIMAGE);
 				}
 				refresh();
@@ -504,7 +534,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		//LINEVIEW
 		Group buttomGroup = new Group(parent, SWT.NONE);
 		buttomGroup.setLayout(new FillLayout());
-		buttomGroup.setText("Mixin View");
+		buttomGroup.setText(CaesarJPluginResources.getResourceString("HierarchyView.mixin.title"));
 		GridData gridDa2 = new GridData(GridData.FILL_HORIZONTAL);
 		gridDa2.heightHint = 200;
 		buttomGroup.setLayoutData(gridDa2);
@@ -515,15 +545,12 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		listViewer.setLabelProvider(lp);
 		enabled=true;
 		//refreshTree(new String[] { "" });
-		
+		refresh();
 	}
 
 	public void setFocus() {
 		enabled = true;
 	}
-	
-	protected static boolean enabled = false;
-	
 	
 
 	public void dispose() {
@@ -535,6 +562,10 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		return treeViewer;
 	}
 
+	/**
+	 * The content provider for the mixin view list
+	 * 
+	 */
 	protected class HierarchyListContentProvider implements
 			IStructuredContentProvider {
 
@@ -557,6 +588,10 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 
 	}
 
+	/**
+	 * The content provider for the hierarchy tree
+	 * 
+	 */
 	protected class HierarchyTreeContentProvider implements
 			ITreeContentProvider, IHierarchyPropertyChangeListener {
 
@@ -624,6 +659,9 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		}
 	}
 
+	/**
+	 * The label provider for the hierarchy tree
+	 */
 	protected class HierarchyLabelProvider extends LabelProvider {
 
 		public Image getImage(Object element) {
@@ -708,7 +746,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 			String fullPath = globalPathForInformationAdapter + "/"
 					+ fullQualifiedName + ".java";
 			IFile iFile = (IFile) ProjectProperties.findResource(fullPath,
-					ACTIVE_PROJECT);
+					activeProjectProperties.getProject());
 			return iFile;
 		}
 
@@ -734,7 +772,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 						ArrayList list = new ArrayList();
 						list.add(markedNode.getName());
 						refreshTree(list.toArray());
-						actualFileHelp = "-";
+						//actualFileHelp = "-";
 					}
 					refreshList(markedNode.getName());
 				} else if (markedNode.getKind().compareTo(
@@ -764,32 +802,23 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		return listViewer;
 	}
 	
-	String actualFile = "";
-	String actualFileHelp = "-";
-	
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		
 		String path;
-		
-		 try {
-			findJavaRootElement();
-		} catch (Exception e) {
-			actualFileHelp = "-";
-		}
-		
+		StructureNode node = findJavaRootElement();
 		int selectionLength = 0;
+		
 		if (selection instanceof TextSelection) {
 			TextSelection textSelection = (TextSelection) selection;
-			selectionLength = textSelection.getLength();
-			
+			selectionLength = textSelection.getLength();	
 		}
 
-		if ((part instanceof CaesarEditor)&&actualFile.compareTo(actualFileHelp)!=0&&enabled) {
-			actualFileHelp = actualFile;
+		if ((part instanceof CaesarEditor) && node != null && enabled) {
+			CaesarEditor e = (CaesarEditor) part;
 			refresh();
 		}		
-
 	}
-
+	
 	protected StructureNode getInput(StructureNode node, FileEditorInput input)
 			throws Exception {
 		if (node == null) {
@@ -809,25 +838,29 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		return r;
 	}
 
-	private Object[] qualifiedNameToActualClasses = null;
 
-	private StructureNode findJavaRootElement() throws Exception {
+
+	/**
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	private StructureNode findJavaRootElement() {
 		
 		CaesarEditor editor = (CaesarEditor) CaesarPlugin.getDefault()
 				.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 				.getActiveEditor();
-		IJavaElement element = editor.getInputJavaElement();
 
 		FileEditorInput input = (FileEditorInput) editor.getEditorInput();
-		StructureNode node = getInput(StructureModelManager.INSTANCE
-				.getStructureModel().getRoot(), input);
 		
-		actualFile = node.getName();
+		activeProjectProperties = 
+			ProjectProperties.create(editor.getInputJavaElement().getJavaProject().getProject());
 		
-		ACTIVE_PROJECT = editor.getInputJavaElement().getJavaProject()
-		.getProject();
-		
-		return node;
+		try {
+			return getInput(activeProjectProperties.getStructureModel().getRoot(), input);
+		} catch (Exception e) {
+			return null;
+		}
 	}
 	
 	/*public void refresh() {
@@ -888,7 +921,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				}
 			}
 			qualifiedNameToActualClasses = fullQualifiedNames.toArray();
-			ProjectProperties prob = ProjectProperties.create(ACTIVE_PROJECT);
+			ProjectProperties prob = ProjectProperties.create(activeProjectProperties.getProject());
 			globalPathForInformationAdapter = prob.getProjectLocation()+prob.getOutputPath();
 			refreshTree(qualifiedNameToActualClasses);
 		}catch(Exception e){
@@ -917,5 +950,17 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 
 	public void setSuperView(boolean superView) {
 		this.superView = superView;
+	}
+	
+	/**
+	 * Called by the Caesar Builder when everything was rebuilt.
+	 * Causes the instance to be refreshed.
+	 * 
+	 * @param properties The project properties for the new built project
+	 */
+	public static void updateAll(ProjectProperties properties) {
+		if (instance != null) {
+			instance.refresh();
+		} 
 	}
 }

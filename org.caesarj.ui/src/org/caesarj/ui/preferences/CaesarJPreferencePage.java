@@ -25,6 +25,7 @@ package org.caesarj.ui.preferences;
 
 import org.caesarj.ui.CJDTConfigSettings;
 import org.caesarj.ui.CaesarPlugin;
+import org.caesarj.ui.resources.CaesarJPluginResources;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -39,8 +40,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
  * PreferenceStore, we should make several pages, one for each. This
  * class implements only the options in the Wizzard, just for testing.
  * 
- * TODO - Use ResourceBundles for internationalization
- * 
  * @author Thiago Tonelli Bartolomei <bart@macacos.org>
  * 
  */
@@ -50,9 +49,8 @@ public class CaesarJPreferencePage extends FieldEditorPreferencePage implements 
 	 * Constructor
 	 */
 	public CaesarJPreferencePage() {
-		super("CaesarJ", FLAT);			//$NON-NLS-1$
-		this.setTitle("CaesarJ Preferences");		//$NON-NLS-1$
-		this.setDescription("To customize your CaesarJ Plugin choose your preferences");	//$NON-NLS-1$	
+		super(CaesarJPluginResources.getResourceString("Preferences.title"), FLAT);					//$NON-NLS-1$
+		this.setDescription(CaesarJPluginResources.getResourceString("Preferences.description"));	//$NON-NLS-1$	
 	}
 
 	/**
@@ -76,26 +74,26 @@ public class CaesarJPreferencePage extends FieldEditorPreferencePage implements 
 		addField(
 			new BooleanFieldEditor(
 				CaesarJPreferences.CAESAR_ANALIZE_ANNOTATIONS,
-				"Default setting: annotation while typing",							//$NON-NLS-1$
+				CaesarJPluginResources.getResourceString("Preferences.annotations"),	//$NON-NLS-1$
 				parent));
 		
 		addField(
 			new BooleanFieldEditor(
 				CaesarJPreferences.CAESAR_AUTO_SWITCH, 
-				"Auto annotation switch while changing editors", 					//$NON-NLS-1$
+				CaesarJPluginResources.getResourceString("Preferences.autoSwitch"), 	//$NON-NLS-1$
 				parent));
 		
 
 		addField(
 			new BooleanFieldEditor(
 				CaesarJPreferences.CAESAR_IS_DEFAULT_EDITOR,						
-				"Make the CaesarJ editor the default java - editor", 				//$NON-NLS-1$
+				CaesarJPluginResources.getResourceString("Preferences.defaultEditor"), 	//$NON-NLS-1$
 				parent));
 		
 		addField(
 			new BooleanFieldEditor(
 				CaesarJPreferences.CAESAR_PREF_CONFIG_DONE, 
-				"Open options dialog next time you open the CaesarJ perspective?", 	//$NON-NLS-1$
+				CaesarJPluginResources.getResourceString("Preferences.configDone"), 	//$NON-NLS-1$
 				parent));
 	}
 	

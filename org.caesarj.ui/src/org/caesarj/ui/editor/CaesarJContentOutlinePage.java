@@ -20,12 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarJContentOutlinePage.java,v 1.1 2005-02-21 13:47:11 gasiunas Exp $
+ * $Id: CaesarJContentOutlinePage.java,v 1.2 2005-03-04 09:28:19 thiago Exp $
  */
 
 package org.caesarj.ui.editor;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -99,9 +100,13 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 	static Logger logger = Logger.getLogger(CaesarJContentOutlinePage.class);
 	
 	/**
-	 * Keep track of all Instances, so they can be updated when needed
+	 * Keep track of all Instances, so they can be updated when needed.
+	 * The keys for the hastable are project objects and the values are lists
+	 * of instances for each project.
+	 * When a Project is compiled, only the instance in the list for a project
+	 * are updated.
 	 */
-	private static List instances = new Vector();
+	private static Hashtable instances = new Hashtable();
 	
 	/**
 	 * TODO REMOVE THIS CLASS, BECAUSE IT IS NOT BEING USED!
@@ -129,6 +134,9 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 	 */
 	protected CaesarEditor caesarEditor;
 	
+	/**
+	 * The project object related to the page the editor is using
+	 */
 	protected IProject project;
 	
 	/**
@@ -142,7 +150,14 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 		super();
 		this.caesarEditor = caesarEditorArg;
 		this.project = project;
-		CaesarJContentOutlinePage.instances.add(this);
+		// Check if the project already has a instance list. If not, create a new
+		List projectInstances = (List) instances.get(project);
+		if (projectInstances == null)
+			projectInstances = new Vector();
+		
+		// Put this instance in the project list and put the list in the hash
+		projectInstances.add(this);
+		CaesarJContentOutlinePage.instances.put(project, projectInstances);
 	}
 
 	/**
@@ -277,12 +292,15 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 	}
 
 	/**
-	 * This method is called when all the instances must be updated. It iterates
+	 * This method is called when all the instances for a project must be updated. It iterates
 	 * over the list and call their update method.
 	 */
 	public static void updateAll(ProjectProperties properties) {
-		for (Iterator it = instances.iterator(); it.hasNext();) {
-			((CaesarJContentOutlinePage) it.next()).update(properties);
+		List list = (List) instances.get(properties.getProject());
+		if (list != null) {
+			for (Iterator it = list.iterator(); it.hasNext();) {
+				((CaesarJContentOutlinePage) it.next()).update(properties);
+			}
 		}
 	}
 
@@ -293,7 +311,17 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 	 * @return true if the instance existed and was removed. False otherwise.
 	 */
 	public static boolean removeInstance(CaesarJContentOutlinePage anInstance) {
-		return instances.remove(anInstance);
+		List list = (List) instances.get(anInstance.project);
+		if (list != null) {
+			// Remove the instance and keep track of the result
+			boolean r = list.remove(anInstance);
+			// If the list is empty, remove it from the hash
+			if (list.size() == 0) {
+				instances.remove(list);
+			}
+			return r;
+		}
+		return false;
 	}
 	
 }

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: Builder.java,v 1.25 2005-03-03 09:23:56 gasiunas Exp $
+ * $Id: Builder.java,v 1.26 2005-03-04 09:28:19 thiago Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -130,8 +130,9 @@ public class Builder extends IncrementalProjectBuilder {
 			// update has to be executed from Workbenchs Thread
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
+					// Tell the outline pages and hierarchy view that they must be updated
 					CaesarJContentOutlinePage.updateAll(projectProperties);
-					CaesarHierarchyView.updateAll();
+					CaesarHierarchyView.updateAll(projectProperties);
 				}
 			});
 		} 
@@ -217,6 +218,11 @@ public class Builder extends IncrementalProjectBuilder {
 		}
 	}
 	
+	/**
+	 * Gets an folder and removes all files recursivelly
+	 * 
+	 * @param output The absolute path to a folder.
+	 */
 	private void cleanOutputFolder(String output) {
 		File[] files = new File[1];
 		files[0] = new File(output);
