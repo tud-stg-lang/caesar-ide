@@ -4,6 +4,8 @@
 \usepackage{graphicx}
 \usepackage[ansinew]{inputenc}
 \usepackage{a4}
+\usepackage{listings}
+\usepackage{color}
 \pagestyle{headings}
 \usepackage{float}
 \restylefloat{figure}
@@ -23,6 +25,29 @@
 {CaesarJ Development Tool}
 
 \begin{document}
+\lstset{
+   frame=l,
+   language=Java,
+   xleftmargin=10pt, 
+   stepnumber=1,
+   numbers=left,
+   numbersep=5pt,
+   numberstyle=\ttfamily\tiny\color[gray]{0.3},
+   belowcaptionskip=\bigskipamount,
+   escapeinside={*'}{'*},
+   tabsize=1,
+   emphstyle={\it},
+   commentstyle=\rmfamily\it,
+   stringstyle=\mdseries\rmfamily,
+   showspaces=false,
+   keywordstyle=\bfseries,
+   columns=flexible,
+   basicstyle=\small,
+   showstringspaces=false,
+   framextopmargin=2pt,
+   framexbottommargin=2pt
+  }
+
 \maketitle
 \tableofcontents
 

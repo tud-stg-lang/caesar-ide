@@ -1,21 +1,15 @@
 \subsection{Adding a New Aspect to Your Project}
 Create a new Class and name it \code{World}. Edit the buffer so it looks as follows and then save it:\\\\
-\begin{verbatim}
-Hier kommt dann der Code hin, der in aspect.png abgelegt ist.
-private RootNode buildTreeModel(String path)
-	{
-		try {
-      //TODO BUG: bei Zwei geöffneten Projekten wird nicht die Auswahl 
-      //          des aktuellen Projekts genommen, sondern das, was als
-			//          letztes gebuildet wurde!!!
-			ProjectProperties projectProperties = new ProjectProperties(Builder.getLastBuildTarget());
-			log.debug(projectProperties.getProjectLocation()+projectProperties.getOutputPath());
-			globalPathForInformationAdapter = projectProperties.getProjectLocation()+projectProperties.getOutputPath();
-		} catch(Exception e)
+\begin{lstlisting}[basicstyle=\small\it,caption=Parser endElement Event,label=lst:endelement,name=listing:endelement,frame=none]{}
+package myPackage;
+//TEST
+public cclass World { 	
+      after(HelloWorld c, String a) :
+      	(call(void sayHello(String)) && this(c) && args(a))
 		{
-		
+            System.out.println("Hello to you too...");
 		}
-\end{verbatim}
+}\end{lstlisting}
 %\includegraphics[width=0.80\textwidth]{images/aspect.png}\\
 
 Make a clean Build of the project, and the outline view populates. Expand the \code{after()} node.\\\\
