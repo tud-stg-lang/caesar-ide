@@ -10,7 +10,8 @@
       <library name="caesar-compiler.jar"/>
       <library name="caesar-runtime.jar"/>      
       <library name="bcel.jar"/>
-      <library name="java-getopt-1.0.9.jar"/>
+      <library name="java-getopt-1.0.9.jar"/>      
+      <library name="log4j-1.2.8.jar"/>
    </runtime>
    <requires>
       <import plugin="org.eclipse.search" export="true"/>
