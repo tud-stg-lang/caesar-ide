@@ -10,7 +10,10 @@ package org.caesarj.ui.perspective;
  */
  
 import org.apache.log4j.Logger;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jdt.internal.ui.JavaHierarchyPerspectiveFactory;
 import org.caesarj.ui.CaesarPlugin;
+import org.eclipse.search.ui.SearchUI;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
@@ -18,6 +21,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.jdt.ui.IPackagesViewPart;
 import org.eclipse.jdt.ui.JavaUI;
 
@@ -69,8 +73,14 @@ public class CaesarPerspective implements IPerspectiveFactory {
 				0.75f,
 				editorArea);
 		bottom.addView(IPageLayout.ID_TASK_LIST);
-		bottom.addView(JavaUI.ID_PROJECTS_VIEW);
+		bottom.addView(SearchUI.SEARCH_VIEW_ID);
+		bottom.addView(JavaUI.ID_OPEN_ACTION_SET);
+		bottom.addView(JavaUI.ID_SOURCE_VIEW);
+		bottom.addView(IConsoleConstants.ID_CONSOLE_VIEW);
 		
+		layout.addActionSet(IDebugUIConstants.LAUNCH_ACTION_SET);
+		layout.addActionSet(JavaUI.ID_ACTION_SET);
+		layout.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);		
 		layout.setEditorAreaVisible(true);
 		
 	}
