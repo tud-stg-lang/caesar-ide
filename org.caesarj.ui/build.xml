@@ -13,6 +13,8 @@
 	<property name="javacTarget" value="1.2"/>
 	<property name="compilerArg" value=""/>
 	<property name="eclipse.home" value="${user.dir}"/>
+	
+	<property name="caesar.ver" value="0.3.2"/>
 
 	<target name="init" depends="properties">
 		<condition property="pluginTemp" value="${buildTempFolder}/plugins">
@@ -38,7 +40,7 @@
 		<antcall target="gather.bin.parts">
 			<param name="destination.temp.folder" value="${temp.folder}/"/>
 		</antcall>
-		<zip zipfile="${plugin.destination}/org.caesarj_0.3.0.jar" basedir="${temp.folder}/org.caesarj_0.3.0" filesonly="false" whenempty="skip" update="false"/>
+		<zip zipfile="${plugin.destination}/org.caesarj_${caesar.ver}.jar" basedir="${temp.folder}/org.caesarj_${caesar.ver}" filesonly="false" whenempty="skip" update="false"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
@@ -173,11 +175,11 @@
 	</target>
 
 	<target name="gather.bin.parts" depends="init" if="destination.temp.folder">
-		<mkdir dir="${destination.temp.folder}/org.caesarj_0.3.0"/>
-		<copy todir="${destination.temp.folder}/org.caesarj_0.3.0" failonerror="true">
+		<mkdir dir="${destination.temp.folder}/org.caesarj_${caesar.ver}"/>
+		<copy todir="${destination.temp.folder}/org.caesarj_${caesar.ver}" failonerror="true">
 			<fileset dir="${build.result.folder}" includes="caesar.jar"			/>
 		</copy>
-		<copy todir="${destination.temp.folder}/org.caesarj_0.3.0" failonerror="true">
+		<copy todir="${destination.temp.folder}/org.caesarj_${caesar.ver}" failonerror="true">
 			<fileset dir="${basedir}" includes="plugin.xml,about.ini,welcome.xml,html/,toc.xml,caesar-compiler.jar,icons/,aspectjtools.jar,caesar-runtime.jar,cjbuildtools.jar,caesar.jar,log4j-1.2.8.jar,aspectjrt.jar,java-getopt-1.0.9.jar"			/>
 		</copy>
 	</target>
@@ -186,28 +188,28 @@
 	</target>
 
 	<target name="gather.sources" depends="init" if="destination.temp.folder">
-		<mkdir dir="${destination.temp.folder}/org.caesarj_0.3.0"/>
-		<copy file="${build.result.folder}/caesarsrc.zip" todir="${destination.temp.folder}/org.caesarj_0.3.0" failonerror="false"/>
-		<copy todir="${destination.temp.folder}/org.caesarj_0.3.0" failonerror="false">
+		<mkdir dir="${destination.temp.folder}/org.caesarj_${caesar.ver}"/>
+		<copy file="${build.result.folder}/caesarsrc.zip" todir="${destination.temp.folder}/org.caesarj_${caesar.ver}" failonerror="false"/>
+		<copy todir="${destination.temp.folder}/org.caesarj_${caesar.ver}" failonerror="false">
 			<fileset dir="${basedir}" includes="src/,java-getopt-1.0.9.jar,log4j-1.2.8.jar,aspectjrt.jar,aspectjtools.jar,caesar-compiler.jar,caesar-runtime.jar,cjbuildtools.jar,build.properties,plugin.xml,.project,.classpath,icons/,toc.xml,welcome.xml"			/>
 		</copy>
 	</target>
 
 	<target name="gather.logs" depends="init" if="destination.temp.folder">
-		<mkdir dir="${destination.temp.folder}/org.caesarj_0.3.0"/>
-		<copy file="${temp.folder}/caesar.jar.bin.log" todir="${destination.temp.folder}/org.caesarj_0.3.0" failonerror="false"/>
+		<mkdir dir="${destination.temp.folder}/org.caesarj_${caesar.ver}"/>
+		<copy file="${temp.folder}/caesar.jar.bin.log" todir="${destination.temp.folder}/org.caesarj_${caesar.ver}" failonerror="false"/>
 	</target>
 
 	<target name="clean" depends="init" description="Clean the plug-in: org.caesarj of all the zips, jars and logs created.">
 		<delete file="${build.result.folder}/caesar.jar"/>
 		<delete file="${build.result.folder}/caesarsrc.zip"/>
-		<delete file="${plugin.destination}/org.caesarj_0.3.0.jar"/>
-		<delete file="${plugin.destination}/org.caesarj_0.3.0.zip"/>
+		<delete file="${plugin.destination}/org.caesarj_${caesar.ver}.jar"/>
+		<delete file="${plugin.destination}/org.caesarj_${caesar.ver}.zip"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
 	<target name="refresh" depends="init" if="eclipse.running" description="Refresh this folder.">
-		<eclipse.convertPath fileSystemPath="C:/build-environment/workspaces/build/org.caesarj.ui" property="resourcePath"/>
+		<eclipse.convertPath fileSystemPath="../org.caesarj.ui" property="resourcePath"/>
 		<eclipse.refreshLocal resource="${resourcePath}" depth="infinite"/>
 	</target>
 
@@ -225,7 +227,7 @@
 		<delete>
 			<fileset dir="${temp.folder}" includes="**/*.bin.log"			/>
 		</delete>
-		<zip zipfile="${plugin.destination}/org.caesarj_0.3.0.zip" basedir="${temp.folder}" filesonly="true" whenempty="skip" update="false"/>
+		<zip zipfile="${plugin.destination}/org.caesarj_${caesar.ver}.zip" basedir="${temp.folder}" filesonly="true" whenempty="skip" update="false"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
