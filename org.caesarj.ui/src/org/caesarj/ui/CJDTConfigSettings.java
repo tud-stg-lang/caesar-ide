@@ -26,12 +26,23 @@ public class CJDTConfigSettings {
 		store.setValue(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS, false);		
 	}
 	
+	static public void enableAnalyzeAnnotations() {
+		IPreferenceStore store = JavaPlugin.getDefault().getPreferenceStore();		
+		store.setValue(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS, true);		
+	}
+	
 	static public boolean isUnusedImportsDisabled() {
 		Hashtable map = (Hashtable)JavaCore.getOptions();
 		return ((String)map.get(JavaCore.COMPILER_PB_UNUSED_IMPORT)).equals(JavaCore.IGNORE) ? true : false;
 	}
 	
 	static public void disableUnusedImports() {
+		Hashtable map = (Hashtable)JavaCore.getOptions();
+		map.put(JavaCore.COMPILER_PB_UNUSED_IMPORT, JavaCore.IGNORE);
+		JavaCore.setOptions(map);
+	}
+	
+	static public void enableUnusedImports() {
 		Hashtable map = (Hashtable)JavaCore.getOptions();
 		map.put(JavaCore.COMPILER_PB_UNUSED_IMPORT, JavaCore.IGNORE);
 		JavaCore.setOptions(map);
@@ -44,7 +55,7 @@ public class CJDTConfigSettings {
 		return CaesarPlugin.getResourceString(CaesarPlugin.ID_EDITOR).equals(desc.getLabel());
 	}
 	
-	static public void setCaesarJEditorDefault() {
+	static public void enableCaesarJEditorDefault() {
 		EditorRegistry editorRegistry = (EditorRegistry)WorkbenchPlugin.getDefault().getEditorRegistry();
 		IFileEditorMapping[] array = WorkbenchPlugin.getDefault().getEditorRegistry().getFileEditorMappings();
 		editorRegistry.setFileEditorMappings((FileEditorMapping[])array);
