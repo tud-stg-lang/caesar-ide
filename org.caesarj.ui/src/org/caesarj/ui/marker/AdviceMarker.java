@@ -52,16 +52,16 @@ public class AdviceMarker implements IMarker {
 
 	private void addMarker() throws CoreException {
 		try {
-			workspace.prepareOperation();
+			workspace.prepareOperation(null, null);
 			ResourceInfo resourceInfo = getResourceInfo(false, false);
 			workspace.beginOperation(true);
 			MarkerInfo info = new MarkerInfo();
 			info.setType(ADVICEMARKER);
 			info.setCreationTime(System.currentTimeMillis());
-			workspace.getMarkerManager().add(resource, new MarkerInfo[] { info });
+			workspace.getMarkerManager().add(resource,  info );
 			this.id = info.getId();
 		} finally {
-			workspace.endOperation(false, null);
+			workspace.endOperation(null, false, null);
 		}
 		AdviceMarker.this.setAttributes(attributes);
 	}
@@ -83,11 +83,11 @@ public class AdviceMarker implements IMarker {
 
 	public void delete() throws CoreException {
 		try {
-			getWorkspace().prepareOperation();
+			getWorkspace().prepareOperation(null, null);
 			getWorkspace().beginOperation(true);
 			getWorkspace().getMarkerManager().removeMarker(getResource(), getId());
 		} finally {
-			getWorkspace().endOperation(false, null);
+			getWorkspace().endOperation(null, false, null);
 		}
 	}
 
@@ -217,7 +217,7 @@ public class AdviceMarker implements IMarker {
 		Workspace workspace = getWorkspace();
 		MarkerManager manager = workspace.getMarkerManager();
 		try {
-			workspace.prepareOperation();
+			workspace.prepareOperation(null, null);
 			workspace.beginOperation(true);
 			MarkerInfo markerInfo = getInfo();
 			checkInfo(markerInfo);
@@ -234,7 +234,7 @@ public class AdviceMarker implements IMarker {
 				manager.changedMarkers(resource, new MarkerDelta[] { delta });
 			}*/
 		} finally {
-			workspace.endOperation(false, null);
+			workspace.endOperation(null, false, null);
 		}
 	}
 	/**
@@ -252,7 +252,7 @@ public class AdviceMarker implements IMarker {
 		Workspace workspace = getWorkspace();
 		MarkerManager manager = workspace.getMarkerManager();
 		try {
-			workspace.prepareOperation();
+			workspace.prepareOperation(null, null);
 			workspace.beginOperation(true);
 			MarkerInfo markerInfo = getInfo();
 			checkInfo(markerInfo);
@@ -269,7 +269,7 @@ public class AdviceMarker implements IMarker {
 				manager.changedMarkers(resource, new MarkerDelta[] { delta });
 			}*/
 		} finally {
-			workspace.endOperation(false, null);
+			workspace.endOperation(null, false, null);
 		}
 	}
 
@@ -280,7 +280,7 @@ public class AdviceMarker implements IMarker {
 		Workspace workspace = getWorkspace();
 		MarkerManager manager = workspace.getMarkerManager();
 		try {
-			workspace.prepareOperation();
+			workspace.prepareOperation(null, null);
 			workspace.beginOperation(true);
 			MarkerInfo markerInfo = getInfo();
 			checkInfo(markerInfo);
@@ -297,7 +297,7 @@ public class AdviceMarker implements IMarker {
 				manager.changedMarkers(resource, new MarkerDelta[] { delta });
 			}*/
 		} finally {
-			workspace.endOperation(false, null);
+			workspace.endOperation(null, false, null);
 		}
 	}
 

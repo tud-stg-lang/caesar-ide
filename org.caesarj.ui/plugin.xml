@@ -30,6 +30,9 @@
       <library name="log4j-1.2.8.jar">
          <export name="*"/>
       </library>
+      <library name="cjbuildtools.jar">
+         <export name="*"/>
+      </library>
    </runtime>
    <requires>
       <import plugin="org.eclipse.core.runtime.compatibility"/>

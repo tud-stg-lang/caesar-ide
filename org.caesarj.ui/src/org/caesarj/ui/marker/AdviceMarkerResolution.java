@@ -12,6 +12,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 /**
  * @author Shadow
@@ -43,7 +44,7 @@ public class AdviceMarkerResolution implements IMarkerResolution {
 		IFileEditorInput input = new FileEditorInput((IFile) marker.getResource());
 		IEditorPart editorPart = page.findEditor(input);
 		try {
-			editorPart = page.openEditor((IFile) marker.getResource());
+			editorPart = IDE.openEditor(page, (IFile) marker.getResource());
 		} catch (PartInitException e) {
 			MessageDialog.openError(w.getShell(), "ERROR","Unable to open Editor!"); //$NON-NLS-1$
 		}

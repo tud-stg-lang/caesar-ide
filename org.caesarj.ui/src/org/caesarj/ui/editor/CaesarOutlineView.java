@@ -38,9 +38,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.texteditor.MarkerUtilities;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 /**
  * Content Outline Page for Caesar Compilation Unit
@@ -100,8 +98,6 @@ public class CaesarOutlineView extends ContentOutlinePage {
 					return cNode.getText(super.getText(element));
 				} else if (element instanceof LinkNode) {
 					LinkNode lNode = (LinkNode) element;
-					return this.getText(lNode.getProgramElementNode());
-				}else 
 					String returnString = lNode.toString();
 					returnString = returnString.substring(returnString.lastIndexOf(']') + 2);
 					try {
@@ -270,7 +266,6 @@ public class CaesarOutlineView extends ContentOutlinePage {
 	public void selectionChanged(SelectionChangedEvent event) {
 
 		super.selectionChanged(event);
-		
 		ISelection selection = event.getSelection();
 		if (selection.isEmpty()) {
 		} else {
@@ -282,6 +277,7 @@ public class CaesarOutlineView extends ContentOutlinePage {
 
 			StructureNode selectedNode = (StructureNode) item;
 			ISourceLocation sourceLocation = selectedNode.getSourceLocation();
+
 			if (sourceLocation != null) {
 				int line = sourceLocation.getLine();
 				try {
@@ -291,6 +287,7 @@ public class CaesarOutlineView extends ContentOutlinePage {
 					IPath path = new Path(sourceLocation.getSourceFile().getAbsolutePath());
 					IResource resource = root.getFileForLocation(path);
 					IMarker marker;
+
 					if (resource != null) {
 						marker = resource.createMarker(IMarker.MARKER);
 						marker.setAttribute(IMarker.LINE_NUMBER, sourceLocation.getLine());
@@ -299,7 +296,7 @@ public class CaesarOutlineView extends ContentOutlinePage {
 								.getDefault()
 								.getWorkbench()
 								.getActiveWorkbenchWindow()
-								.getActivePage(), marker);
+								.getActivePage(), marker);						
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
