@@ -8,7 +8,7 @@
 	<classpathentry exported="true" kind="lib" path="cjbuildtools.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Caesar-Compiler/bin/org"/>
-	<classpathentry kind="src" path="/Caesar-Compiler"/>
+	<classpathentry kind="lib" path="caesar-compiler.jar"/>
+	<classpathentry kind="lib" path="caesar-runtime.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
