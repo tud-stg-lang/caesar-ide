@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
     <classpathentry kind="src" path="src"/>
-    <classpathentry kind="src" path="AspectJSrc"/>
     <classpathentry kind="lib" path="caesar-compiler.jar" sourcepath="/Caesar/src"/>
     <classpathentry kind="lib" path="caesar-runtime.jar" sourcepath="/Caesar/src"/>
     <classpathentry kind="lib" path="java-getopt-1.0.9.jar"/>
@@ -54,5 +53,6 @@
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
     <classpathentry kind="lib" path="bcel.jar"/>
     <classpathentry kind="lib" path="log4j-1.2.8.jar"/>
+    <classpathentry kind="lib" path="aspectjtools.jar"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
