@@ -27,7 +27,7 @@ public class CaesarPluginImages {
 		String pathSuffix = "icons/"; //$NON-NLS-1$
 		try {
 			fgIconBaseURL =
-				new URL(CaesarPlugin.getDefault().getBundle().getEntry("/"), pathSuffix);
+				new URL(CaesarPlugin.getDefault().getBundle().getEntry("/"), pathSuffix); //$NON-NLS-1$
 				//CHANGED was deprecated 
 		} catch (MalformedURLException e) {
 			// do nothing
@@ -42,19 +42,19 @@ public class CaesarPluginImages {
 	 * Available cached Images in the Java plugin image registry.
 	 */
 	
-	public static final String IMG_ERROR = NAME_PREFIX + "error.gif";
-	public static final String IMG_ADVICE = NAME_PREFIX + "advice.gif";
-	public static final String IMG_ASPECT = NAME_PREFIX + "aspect.gif";
-	public static final String IMG_JOINPOINT = NAME_PREFIX + "joinPoint.gif";
-	public static final String IMG_OUT_PACKAGE = NAME_PREFIX + "packd_obj.gif";
-	public static final String IMG_OUT_IMPORTS = NAME_PREFIX + "impc_obj.gif";
-	public static final String IMG_IMPORTS = NAME_PREFIX + "imp_obj.gif";
-	public static final String IMG_CODE = NAME_PREFIX + "code.gif";
+	public static final String IMG_ERROR = NAME_PREFIX + "error.gif"; //$NON-NLS-1$
+	public static final String IMG_ADVICE = NAME_PREFIX + "advice.gif"; //$NON-NLS-1$
+	public static final String IMG_ASPECT = NAME_PREFIX + "aspect.gif"; //$NON-NLS-1$
+	public static final String IMG_JOINPOINT = NAME_PREFIX + "joinPoint.gif"; //$NON-NLS-1$
+	public static final String IMG_OUT_PACKAGE = NAME_PREFIX + "packd_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OUT_IMPORTS = NAME_PREFIX + "impc_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_IMPORTS = NAME_PREFIX + "imp_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_CODE = NAME_PREFIX + "code.gif"; //$NON-NLS-1$
 	//TODO DZ: Images einbauen
-	private static final String IMG_CCLASS_PUB = NAME_PREFIX + "error.gif";
-	private static final String IMG_CCLASS_PRI = NAME_PREFIX + "error.gif";
-	private static final String IMG_CCLASS_PRO = NAME_PREFIX + "error.gif";
-	private static final String IMG_CCLASS = NAME_PREFIX + "error.gif";
+	private static final String IMG_CCLASS_PUB = NAME_PREFIX + "error.gif"; //$NON-NLS-1$
+	private static final String IMG_CCLASS_PRI = NAME_PREFIX + "error.gif"; //$NON-NLS-1$
+	private static final String IMG_CCLASS_PRO = NAME_PREFIX + "error.gif"; //$NON-NLS-1$
+	private static final String IMG_CCLASS = NAME_PREFIX + "error.gif"; //$NON-NLS-1$
 	
 	
 
@@ -116,13 +116,13 @@ public class CaesarPluginImages {
 		return fgImageRegistry;
 	}
 
-	private static ImageDescriptor create(String name) {
-		try {
-			return ImageDescriptor.createFromURL(makeIconFileURL(name));
-		} catch (MalformedURLException e) {
-			return ImageDescriptor.getMissingImageDescriptor();
-		}
-	}
+//	private static ImageDescriptor create(String name) {
+//		try {
+//			return ImageDescriptor.createFromURL(makeIconFileURL(name));
+//		} catch (MalformedURLException e) {
+//			return ImageDescriptor.getMissingImageDescriptor();
+//		}
+//	}
 
 	private static URL makeIconFileURL(String name) throws MalformedURLException {
 		if (fgIconBaseURL == null)

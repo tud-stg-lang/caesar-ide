@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.aspectj.asm.LinkNode;
 import org.aspectj.asm.ProgramElementNode;
-import org.aspectj.asm.RelationNode;
 import org.aspectj.asm.StructureNode;
 import org.aspectj.bridge.ISourceLocation;
 
@@ -17,57 +16,57 @@ import org.aspectj.bridge.ISourceLocation;
  */
 public class StructureModelDump {
 
-	String indent = "";
+	String indent = ""; //$NON-NLS-1$
 	protected PrintStream out;
 
-	public StructureModelDump(PrintStream out) {
-		this.out = out;
+	public StructureModelDump(PrintStream outArg) {
+		this.out = outArg;
 	}
 
-	public void print(String indent, StructureNode node) {
-		out.print(indent);
+	public void print(String indentArg, StructureNode node) {
+		this.out.print(indentArg);
 
-		printNodeHeader(out, node);
+		printNodeHeader(this.out, node);
 
 		if (node instanceof ProgramElementNode) {
 			ProgramElementNode peNode = (ProgramElementNode) node;
-			out.print(
-				" '" + peNode.getBytecodeName() + "' '" + peNode.getBytecodeSignature() + peNode.getAccessibility()+"'");
+			this.out.print(
+				" '" + peNode.getBytecodeName() + "' '" + peNode.getBytecodeSignature() + peNode.getAccessibility()+"'");   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 
-			out.println();
+			this.out.println();
 
 			List relations = peNode.getRelations();
 			if (relations.size() > 0) {
 				for (Iterator it = relations.iterator(); it.hasNext();) {
-					print(indent + "++", (StructureNode) it.next());
+					print(indentArg + "++", (StructureNode) it.next()); //$NON-NLS-1$
 				}
 			}
-		} else if (node instanceof RelationNode) {
-			RelationNode relNode = (RelationNode) node;
-			//out.print(" "+relNode.getRelation().toString());
-			out.println();
+//		} else if (node instanceof RelationNode) {
+//			RelationNode relNode = (RelationNode) node;
+//			//out.print(" "+relNode.getRelation().toString());
+//			this.out.println();
 		} else if (node instanceof LinkNode) {
 			LinkNode linkNode = (LinkNode) node;
-			out.print(" ->> ");
-			printNodeHeader(out, linkNode.getProgramElementNode());
-			out.println();
+			this.out.print(" ->> "); //$NON-NLS-1$
+			printNodeHeader(this.out, linkNode.getProgramElementNode());
+			this.out.println();
 		} else {
-			out.println();
+			this.out.println();
 		}
 
 		for (Iterator it = node.getChildren().iterator(); it.hasNext();) {
-			print(indent + "..", (StructureNode) it.next());
+			print(indentArg + "..", (StructureNode) it.next()); //$NON-NLS-1$
 		}
 	}
 
-	protected void printNodeHeader(PrintStream out, StructureNode node) {
+	protected void printNodeHeader(PrintStream outArg, StructureNode node) {
 		//out.print(node.getClass().getName());
 
-		out.print("[" + node.getKind() + "] " + node.getName());
+		outArg.print("[" + node.getKind() + "] " + node.getName()); //$NON-NLS-1$ //$NON-NLS-2$
 
 		ISourceLocation srcLoc = node.getSourceLocation();
 		if (srcLoc != null) {
-			out.print("(L " + srcLoc.getLine() + ") ");
+			outArg.print("(L " + srcLoc.getLine() + ") ");  //$NON-NLS-1$//$NON-NLS-2$
 		}
 	}
 

@@ -11,13 +11,15 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * @author Shadow
- *
- * Folgendes auswählen, um die Schablone für den erstellten Typenkommentar zu ändern:
- * Fenster&gt;Benutzervorgaben&gt;Java&gt;Codegenerierung&gt;Code und Kommentare
+ * 
+ * Folgendes auswählen, um die Schablone für den erstellten Typenkommentar zu
+ * ändern: Fenster&gt;Benutzervorgaben&gt;Java&gt;Codegenerierung&gt;Code und
+ * Kommentare
  */
 public class ImportCaesarProgramElementNode extends CaesarProgramElementNode {
 
 	public boolean rootFlag;
+
 	/**
 	 * @param signature
 	 * @param kind
@@ -26,83 +28,68 @@ public class ImportCaesarProgramElementNode extends CaesarProgramElementNode {
 	 * @param formalComment
 	 * @param children
 	 */
-	public ImportCaesarProgramElementNode(
-		String signature,
-		Kind kind,
-		ISourceLocation sourceLocation,
-		int modifiers,
-		String formalComment,
-		List children,
-		JPackageImport[] importedPackages,
-		JClassImport[] importedClasses) {
-		super("Imports", kind, sourceLocation, modifiers, formalComment, children);
+	public ImportCaesarProgramElementNode(Kind kind,
+			ISourceLocation sourceLocationArg, int modifiers,
+			String formalComment, List childrenArg,
+			JPackageImport[] importedPackages, JClassImport[] importedClasses) {
+		super(
+				"Imports", kind, sourceLocationArg, modifiers, formalComment, childrenArg); //$NON-NLS-1$
 		this.initImages();
 		this.rootFlag = true;
 		for (int i = 0; i < importedPackages.length; i++) {
-			if (importedPackages[i].getName().compareTo("java/lang") != 0)
-				this.children.add(
-					new ImportCaesarProgramElementNode(
-						importedPackages[i].getName() + ".*",
-						kind,
-						sourceLocation,
-						0,
-						formalComment,
-						null));
+			if (importedPackages[i].getName().compareTo("java/lang") != 0) { //$NON-NLS-1$
+				this.children.add(new ImportCaesarProgramElementNode(
+						importedPackages[i].getName() + ".*", //$NON-NLS-1$
+						kind, sourceLocationArg, 0, formalComment, null));
+			}
 		}
 		for (int i = 0; i < importedClasses.length; i++) {
-			this.children.add(
-				new ImportCaesarProgramElementNode(
-					importedClasses[i].getQualifiedName(),
-					kind,
-					sourceLocation,
-					0,
-					formalComment,
-					null));
+			this.children.add(new ImportCaesarProgramElementNode(
+					importedClasses[i].getQualifiedName(), kind,
+					sourceLocationArg, 0, formalComment, null));
 		}
 	}
+
 	/**
-		 * @param signature
-		 * @param kind
-		 * @param sourceLocation
-		 * @param modifiers
-		 * @param formalComment
-		 * @param children
-		 */
-	public ImportCaesarProgramElementNode(
-		String signature,
-		Kind kind,
-		ISourceLocation sourceLocation,
-		int modifiers,
-		String formalComment,
-		List children) {
-		super(signature, kind, sourceLocation, modifiers, formalComment, children);
+	 * @param signature
+	 * @param kind
+	 * @param sourceLocation
+	 * @param modifiers
+	 * @param formalComment
+	 * @param children
+	 */
+	public ImportCaesarProgramElementNode(String signature, Kind kind,
+			ISourceLocation sourceLocationArg, int modifiers,
+			String formalComment, List childrenArg) {
+		super(signature, kind, sourceLocationArg, modifiers, formalComment,
+				childrenArg);
 		this.rootFlag = false;
 		this.initImages();
 	}
 
 	public String getText(String text) {
-		String label = text.substring(text.lastIndexOf("]") + 2);
+		String label = text.substring(text.lastIndexOf("]") + 2); //$NON-NLS-1$
 		label = label.replace('/', '.');
 		return label;
 	}
 
 	public Image getImage() {
-		if (this.rootFlag)
-			return new CaesarElementImageDescriptor(
-				CaesarPluginImages.DESC_OUT_IMPORTS,
-				this,
-				BIG_SIZE)
-				.createImage();
-		else
-			return new CaesarElementImageDescriptor(
-				CaesarPluginImages.DESC_IMPORTS,
-				this,
-				BIG_SIZE)
-				.createImage();
+		Image r = null;
+		if (this.rootFlag) {
+			r = new CaesarElementImageDescriptor(
+					CaesarPluginImages.DESC_OUT_IMPORTS, this, BIG_SIZE)
+					.createImage();
+		} else {
+			r = new CaesarElementImageDescriptor(
+					CaesarPluginImages.DESC_IMPORTS, this, BIG_SIZE)
+					.createImage();
+		}
+		return r;
 	}
+
 	protected void initImages() {
-		PUBLIC = CaesarPluginImages.DESC_OUT_IMPORTS;
-		DEFAULT = CaesarPluginImages.DESC_IMPORTS;
+		this.PUBLIC = CaesarPluginImages.DESC_OUT_IMPORTS;
+		this.DEFAULT = CaesarPluginImages.DESC_IMPORTS;
 	}
 
 }

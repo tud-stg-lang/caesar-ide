@@ -77,11 +77,11 @@ public class SignatureResolver extends AbstractAsmVisitor {
 			CType returnType) {
 			StringBuffer byteCodeSig = new StringBuffer();
 
-			byteCodeSig.append("(");
+			byteCodeSig.append("("); //$NON-NLS-1$
 			for (int i = 0; i < arguments.length; i++) {
 				byteCodeSig.append(arguments[i].getSignature());
 			}
-			byteCodeSig.append(")");
+			byteCodeSig.append(")"); //$NON-NLS-1$
 			byteCodeSig.append(returnType.getSignature());
 
 			peNode.setBytecodeName(ident);

@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.texteditor.MarkerUtilities;
 /**
  * Adds additional methods needed in NodeEliminator Visitor.
@@ -42,21 +41,21 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 	private int modif;
 	private ImportCaesarProgramElementNode imports = null;
 
-	static Logger logger = Logger.getLogger(CaesarProgramElementNode.class);
+	private static Logger logger = Logger.getLogger(CaesarProgramElementNode.class);
 
-	public CaesarProgramElementNode(String signature, Kind kind, List children) {
-		super(signature, kind, children);
+	public CaesarProgramElementNode(String signature, Kind kind, List childrenArg) {
+		super(signature, kind, childrenArg);
 		checkChildren();
 	}
 
 	public CaesarProgramElementNode(
 		String signature,
 		Kind kind,
-		ISourceLocation sourceLocation,
+		ISourceLocation sourceLocationArg,
 		int modifiers,
 		String formalComment,
-		List children) {
-		super(signature, kind, sourceLocation, modifiers, formalComment, children);
+		List childrenArg) {
+		super(signature, kind, sourceLocationArg, modifiers, formalComment, childrenArg);
 		this.modif = modifiers;
 		checkChildren();
 	}
@@ -64,20 +63,19 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 	public CaesarProgramElementNode(
 		String signature,
 		Kind kind,
-		ISourceLocation sourceLocation,
+		ISourceLocation sourceLocationArg,
 		int modifiers,
 		String formalComment,
-		List children,
+		List childrenArg,
 		JPackageImport[] importedPackages,
 		JClassImport[] importedClasses) {
-		super(signature, kind, sourceLocation, modifiers, formalComment, children);
+		super(signature, kind, sourceLocationArg, modifiers, formalComment, childrenArg);
 		this.modif = modifiers;
 		if (this.getProgramElementKind().equals(ProgramElementNode.Kind.FILE_JAVA)) {
 			this.imports =
 				new ImportCaesarProgramElementNode(
-					signature,
 					kind,
-					sourceLocation,
+					sourceLocationArg,
 					0,
 					formalComment,
 					null,
@@ -111,7 +109,7 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 	}
 
 	public String toString() {
-		return "[" + getKind() + "] " + getName();
+		return "[" + getKind() + "] " + getName();  //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	public int getCAModifiers() {
@@ -137,9 +135,7 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 					pNode.getChildren());
 			this.removeChild(sNode);
 		}
-		super.addChild(sNode);
-		IEditorPart part;
-		
+		super.addChild(sNode);		
 	}
 	
 
@@ -147,16 +143,16 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 		ImageDescriptor img;
 		switch (this.getCAModifiers() % 8) {
 			case 1 :
-				img = PUBLIC;
+				img = this.PUBLIC;
 				break;
 			case 2 :
-				img = PRIVATE;
+				img = this.PRIVATE;
 				break;
 			case 4 :
-				img = PROTECTED;
+				img = this.PROTECTED;
 				break;
 			default :
-				img = DEFAULT;
+				img = this.DEFAULT;
 		}
 		return new CaesarElementImageDescriptor(img, this, BIG_SIZE).createImage();
 	}
@@ -168,7 +164,7 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 			if (node instanceof RelationNode) {
 				Object[] nodes = ((RelationNode) node).getChildren().toArray();
 				HashMap args = new HashMap();
-				String message = ((RelationNode) node).getName().toUpperCase() + ": ";
+				String messageLocal = ((RelationNode) node).getName().toUpperCase() + ": "; //$NON-NLS-1$
 				LinkNode lNode[] = new LinkNode[nodes.length];
 				String tempString, className, adviceName;
 				for (int i = 0; i < nodes.length; i++) {
@@ -185,11 +181,11 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 												tempString.substring(
 													tempString.lastIndexOf(':') + 2,
 													tempString.length() - 1);
-						message += "!" + adviceName + ":" + className + "!  ";
-						args.put(AdviceMarker.ID, "AdviceLink");
+						messageLocal += "!" + adviceName + ":" + className + "!  "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						args.put(AdviceMarker.ID, "AdviceLink"); //$NON-NLS-1$
 					}catch (Exception e){
-						message += "!" +tempString.substring(1,tempString.length()-1)+"()!  ";
-						args.put(AdviceMarker.ID, "MethodeLink");
+						messageLocal += "!" +tempString.substring(1,tempString.length()-1)+"()!  ";  //$NON-NLS-1$//$NON-NLS-2$
+						args.put(AdviceMarker.ID, "MethodeLink"); //$NON-NLS-1$
 					}
 				}
 				ISourceLocation src = this.getSourceLocation();
@@ -198,12 +194,12 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 						src.getSourceFile().getAbsolutePath(),
 						Builder.getLastBuildTarget());
 				args.put(IMarker.LINE_NUMBER, new Integer(this.getSourceLocation().getLine()));
-				args.put(IMarker.MESSAGE, message);
+				args.put(IMarker.MESSAGE, messageLocal);
 				args.put(AdviceMarker.LINKS, lNode);
 				try {
 					MarkerUtilities.createMarker(resource,args,AdviceMarker.ADVICEMARKER);
 				} catch (CoreException e) {
-					logger.error("FEHLER BEIM MARKER ERZEUGEN", e);
+					logger.error("FEHLER BEIM MARKER ERZEUGEN", e); //$NON-NLS-1$
 				}
 			}
 		}

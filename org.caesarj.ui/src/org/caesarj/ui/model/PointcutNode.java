@@ -19,15 +19,15 @@ public class PointcutNode extends CaesarProgramElementNode {
 
 	private JClassDeclaration classDeclaration;
 
-	public PointcutNode(CjPointcutDeclaration pointCutDeclaration,
-			JClassDeclaration classDeclaration, String signature, Kind kind,
-			ISourceLocation sourceLocation, int modifiers,
-			String formalComment, List children) {
-		super(signature, kind, sourceLocation, modifiers, formalComment,
-				children);
+	public PointcutNode(CjPointcutDeclaration pointCutDeclarationArg,
+			JClassDeclaration classDeclarationArg, String signature, Kind kind,
+			ISourceLocation sourceLocationArg, int modifiers,
+			String formalComment, List childrenArg) {
+		super(signature, kind, sourceLocationArg, modifiers, formalComment,
+				childrenArg);
 		this.initImages();
-		this.pointCutDeclaration = pointCutDeclaration;
-		this.classDeclaration = classDeclaration;
+		this.pointCutDeclaration = pointCutDeclarationArg;
+		this.classDeclaration = classDeclarationArg;
 	}
 
 	protected void initImages() {
@@ -43,4 +43,28 @@ public class PointcutNode extends CaesarProgramElementNode {
 		return 0;
 	}
 
+	/**
+	 * @return Returns the classDeclaration.
+	 */
+	public JClassDeclaration getClassDeclaration() {
+		return this.classDeclaration;
+	}
+	/**
+	 * @param classDeclarationArg The classDeclaration to set.
+	 */
+	public void setClassDeclaration(JClassDeclaration classDeclarationArg) {
+		this.classDeclaration = classDeclarationArg;
+	}
+	/**
+	 * @return Returns the pointCutDeclaration.
+	 */
+	public CjPointcutDeclaration getPointCutDeclaration() {
+		return this.pointCutDeclaration;
+	}
+	/**
+	 * @param pointCutDeclarationArg The pointCutDeclaration to set.
+	 */
+	public void setPointCutDeclaration(CjPointcutDeclaration pointCutDeclarationArg) {
+		this.pointCutDeclaration = pointCutDeclarationArg;
+	}
 }

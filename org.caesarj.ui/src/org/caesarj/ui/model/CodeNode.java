@@ -2,7 +2,6 @@ package org.caesarj.ui.model;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.phylum.JClassImport;
 import org.caesarj.compiler.ast.phylum.JPackageImport;
@@ -17,14 +16,13 @@ import org.eclipse.swt.graphics.Image;
  */
 public class CodeNode extends CaesarProgramElementNode {
 
-	static Logger logger = Logger.getLogger(CodeNode.class);
 	/**
 	 * @param signature
 	 * @param kind
 	 * @param children
 	 */
-	public CodeNode(String signature, Kind kind, List children) {
-		super(signature, kind, children);
+	public CodeNode(String signature, Kind kind, List childrenArg) {
+		super(signature, kind, childrenArg);
 		this.initImages();
 	}
 
@@ -39,11 +37,11 @@ public class CodeNode extends CaesarProgramElementNode {
 	public CodeNode(
 		String signature,
 		Kind kind,
-		ISourceLocation sourceLocation,
+		ISourceLocation sourceLocationArg,
 		int modifiers,
 		String formalComment,
-		List children) {
-		super(signature, kind, sourceLocation, modifiers, formalComment, children);
+		List childrenArg) {
+		super(signature, kind, sourceLocationArg, modifiers, formalComment, childrenArg);
 		this.initImages();
 	}
 
@@ -60,26 +58,26 @@ public class CodeNode extends CaesarProgramElementNode {
 	public CodeNode(
 		String signature,
 		Kind kind,
-		ISourceLocation sourceLocation,
+		ISourceLocation sourceLocationArg,
 		int modifiers,
 		String formalComment,
-		List children,
+		List childrenArg,
 		JPackageImport[] importedPackages,
 		JClassImport[] importedClasses) {
 		super(
 			signature,
 			kind,
-			sourceLocation,
+			sourceLocationArg,
 			modifiers,
 			formalComment,
-			children,
+			childrenArg,
 			importedPackages,
 			importedClasses);
 		this.initImages();
 	}
 
 	public String getText(String text) {
-		return text.substring(text.lastIndexOf("]") + 2);
+		return text.substring(text.lastIndexOf("]") + 2); //$NON-NLS-1$
 	}
 
 	protected void initImages() {

@@ -15,18 +15,18 @@ public class CaesarTextTools extends JavaTextTools {
 
     public CaesarTextTools(IPreferenceStore ips) {
         super(ips);
-        codeScanner = new CaesarCodeScanner(getColorManager(), ips);
+        this.codeScanner = new CaesarCodeScanner(getColorManager(), ips);
     } 
 
     public RuleBasedScanner getCodeScanner() {
-        return codeScanner;
+        return this.codeScanner;
     }
 	/**
 	 * Disposes all the individual tools of this tools collection.
 	 */
 	public void dispose() {
 
-		codeScanner = null;
+		this.codeScanner = null;
 		super.dispose();
 	}
 }

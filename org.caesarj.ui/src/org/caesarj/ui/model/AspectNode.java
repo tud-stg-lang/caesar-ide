@@ -22,8 +22,8 @@ public class AspectNode extends CaesarProgramElementNode {
 	 * @param kind
 	 * @param children
 	 */
-	public AspectNode(String signature, Kind kind, List children) {
-		super(signature, kind, children);
+	public AspectNode(String signature, Kind kind, List childrenArg) {
+		super(signature, kind, childrenArg);
 		this.initImages();
 	}
 
@@ -38,11 +38,11 @@ public class AspectNode extends CaesarProgramElementNode {
 	public AspectNode(
 		String signature,
 		Kind kind,
-		ISourceLocation sourceLocation,
+		ISourceLocation sourceLocationArg,
 		int modifiers,
 		String formalComment,
-		List children) {
-		super(signature, kind, sourceLocation, modifiers, formalComment, children);
+		List childrenArg) {
+		super(signature, kind, sourceLocationArg, modifiers, formalComment, childrenArg);
 		this.initImages();
 	}
 
@@ -59,26 +59,26 @@ public class AspectNode extends CaesarProgramElementNode {
 	public AspectNode(
 		String signature,
 		Kind kind,
-		ISourceLocation sourceLocation,
+		ISourceLocation sourceLocationArg,
 		int modifiers,
 		String formalComment,
-		List children,
+		List childrenArg,
 		JPackageImport[] importedPackages,
 		JClassImport[] importedClasses) {
 		super(
 			signature,
 			kind,
-			sourceLocation,
+			sourceLocationArg,
 			modifiers,
 			formalComment,
-			children,
+			childrenArg,
 			importedPackages,
 			importedClasses);
 		this.initImages();
 	}
 
 	public String getText(String text) {
-		return text.substring(text.lastIndexOf("]") + 2);
+		return text.substring(text.lastIndexOf("]") + 2); //$NON-NLS-1$
 	}
 
 	public Image getImage() {

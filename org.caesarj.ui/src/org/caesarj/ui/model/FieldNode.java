@@ -23,8 +23,8 @@ public class FieldNode extends CaesarProgramElementNode {
 	 * @param kind
 	 * @param children
 	 */
-	public FieldNode(String signature, Kind kind, List children) {
-		super(signature, kind, children);
+	public FieldNode(String signature, Kind kind, List childrenArg) {
+		super(signature, kind, childrenArg);
 		this.initImages();
 	}
 
@@ -39,14 +39,14 @@ public class FieldNode extends CaesarProgramElementNode {
 	public FieldNode(
 		String signature,
 		Kind kind,
-		ISourceLocation sourceLocation,
-		CType type,
+		ISourceLocation sourceLocationArg,
+		CType typeArg,
 		int modifiers,
 		String formalComment,
-		List children) {
-		super(signature, kind, sourceLocation, modifiers, formalComment, children);
+		List childrenArg) {
+		super(signature, kind, sourceLocationArg, modifiers, formalComment, childrenArg);
 		this.initImages();
-		this.type = type;
+		this.type = typeArg;
 	}
 
 	/**
@@ -62,19 +62,19 @@ public class FieldNode extends CaesarProgramElementNode {
 	public FieldNode(
 		String signature,
 		Kind kind,
-		ISourceLocation sourceLocation,
+		ISourceLocation sourceLocationArg,
 		int modifiers,
 		String formalComment,
-		List children,
+		List childrenArg,
 		JPackageImport[] importedPackages,
 		JClassImport[] importedClasses) {
 		super(
 			signature,
 			kind,
-			sourceLocation,
+			sourceLocationArg,
 			modifiers,
 			formalComment,
-			children,
+			childrenArg,
 			importedPackages,
 			importedClasses);
 			this.initImages();
@@ -89,16 +89,16 @@ public class FieldNode extends CaesarProgramElementNode {
 	 * @see org.caesarj.ui.model.CaesarProgramElementNode#getText(java.lang.String)
 	 */
 	public String getText(String text) {
-		String label = text.substring(text.lastIndexOf("]") + 2);
-		label += " : " + this.getShortType();
+		String label = text.substring(text.lastIndexOf("]") + 2); //$NON-NLS-1$
+		label += " : " + this.getShortType(); //$NON-NLS-1$
 		return label;
 	}
 
 	protected void initImages() {
-		PUBLIC = JavaPluginImages.DESC_FIELD_PUBLIC;
-		PRIVATE = JavaPluginImages.DESC_FIELD_PRIVATE;
-		PROTECTED = JavaPluginImages.DESC_FIELD_PROTECTED;
-		DEFAULT = JavaPluginImages.DESC_FIELD_DEFAULT;
+		this.PUBLIC = JavaPluginImages.DESC_FIELD_PUBLIC;
+		this.PRIVATE = JavaPluginImages.DESC_FIELD_PRIVATE;
+		this.PROTECTED = JavaPluginImages.DESC_FIELD_PROTECTED;
+		this.DEFAULT = JavaPluginImages.DESC_FIELD_DEFAULT;
 	}
 
 }

@@ -15,8 +15,8 @@ public class CClassNode extends CaesarProgramElementNode {
 	 * @param kind
 	 * @param children
 	 */
-	public CClassNode(String signature, Kind kind, List children) {
-		super(signature, kind, children);
+	public CClassNode(String signature, Kind kind, List childrenArg) {
+		super(signature, kind, childrenArg);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -29,10 +29,10 @@ public class CClassNode extends CaesarProgramElementNode {
 	 * @param children
 	 */
 	public CClassNode(String signature, Kind kind,
-			ISourceLocation sourceLocation, int modifiers,
-			String formalComment, List children) {
-		super(signature, kind, sourceLocation, modifiers, formalComment,
-				children);
+			ISourceLocation sourceLocationArg, int modifiers,
+			String formalComment, List childrenArg) {
+		super(signature, kind, sourceLocationArg, modifiers, formalComment,
+				childrenArg);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -47,26 +47,26 @@ public class CClassNode extends CaesarProgramElementNode {
 	 * @param importedClasses
 	 */
 	public CClassNode(String signature, Kind kind,
-			ISourceLocation sourceLocation, int modifiers,
-			String formalComment, List children,
+			ISourceLocation sourceLocationArg, int modifiers,
+			String formalComment, List childrenArg,
 			JPackageImport[] importedPackages, JClassImport[] importedClasses) {
-		super(signature, kind, sourceLocation, modifiers, formalComment,
-				children, importedPackages, importedClasses);
+		super(signature, kind, sourceLocationArg, modifiers, formalComment,
+				childrenArg, importedPackages, importedClasses);
 		// TODO Auto-generated constructor stub
 	}
 
 	
 	protected void initImages() {
-		PUBLIC = CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PUBLIC;
-		PRIVATE = CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PRIVATE;
-		PROTECTED = CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PROTECTED;
-		DEFAULT = CaesarPluginImages.DESC_OBJS_INNER_CCLASS_DEFAULT;
+		this.PUBLIC = CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PUBLIC;
+		this.PRIVATE = CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PRIVATE;
+		this.PROTECTED = CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PROTECTED;
+		this.DEFAULT = CaesarPluginImages.DESC_OBJS_INNER_CCLASS_DEFAULT;
 	}
 
 	
 	public String getText(String text) {
 		// TODO Auto-generated method stub
-		return "CClass";
+		return "CClass"; //$NON-NLS-1$
 	}
 
 }

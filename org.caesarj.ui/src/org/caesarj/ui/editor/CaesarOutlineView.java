@@ -25,7 +25,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
+
 /**
  * Content Outline Page for Caesar Compilation Unit
  * 
@@ -48,9 +49,11 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 public class CaesarOutlineView extends ContentOutlinePage {
 
-	private static HashMap categoryMap;
-	private String signature;
-	private Object imports;
+	static HashMap categoryMap;
+
+
+	Object imports;
+
 	protected static final Point BIG_SIZE = new Point(22, 16);
 
 	static {
@@ -67,29 +70,27 @@ public class CaesarOutlineView extends ContentOutlinePage {
 		categoryMap.put(ProgramElementNode.Kind.CODE, new Integer(14));
 	}
 
-	class LexicalSorter extends ViewerSorter {
+	private class LexicalSorter extends ViewerSorter {
 		/**
-		 * Return a category code for the element. This is used
-		 * to sort alphabetically within categories. Categories are:
-		 * pointcuts, advice, introductions, declarations, other. i.e.
-		 * all pointcuts will be sorted together rather than interleaved
-		 * with advice.
+		 * Return a category code for the element. This is used to sort
+		 * alphabetically within categories. Categories are: pointcuts, advice,
+		 * introductions, declarations, other. i.e. all pointcuts will be sorted
+		 * together rather than interleaved with advice.
 		 */
 		public int category(Object element) {
 			try {
-				return (
-					(Integer) categoryMap.get(
-						((ProgramElementNode) element).getProgramElementKind()))
-					.intValue();
+				return ((Integer) categoryMap
+						.get(((ProgramElementNode) element)
+								.getProgramElementKind())).intValue();
 			} catch (Exception e) {
 				return 999;
 			}
 		}
 	};
 
-	private static Logger logger = Logger.getLogger(CaesarOutlineView.class);
+	static Logger logger = Logger.getLogger(CaesarOutlineView.class);
 
-	class CaesarLabelProvider extends LabelProvider {
+	private class CaesarLabelProvider extends LabelProvider {
 
 		public String getText(Object element) {
 			try {
@@ -99,88 +100,84 @@ public class CaesarOutlineView extends ContentOutlinePage {
 				} else if (element instanceof LinkNode) {
 					LinkNode lNode = (LinkNode) element;
 					String returnString = lNode.toString();
-					returnString = returnString.substring(returnString.lastIndexOf(']') + 2);
+					returnString = returnString.substring(returnString
+							.lastIndexOf(']') + 2);
 					try {
-						String className = returnString.substring(0, returnString.lastIndexOf(':'));
-						String advice =
-							returnString.substring(
-								returnString.lastIndexOf(':') + 2,
-								returnString.length());
-						return advice + ":" + className;
+						String className = returnString.substring(0,
+								returnString.lastIndexOf(':'));
+						String advice = returnString.substring(returnString
+								.lastIndexOf(':') + 2, returnString.length());
+						return advice + ":" + className; //$NON-NLS-1$
 					} catch (RuntimeException e1) {
-						return returnString.substring(0, returnString.length())+"()";
+						return returnString.substring(0, returnString.length())
+								+ "()"; //$NON-NLS-1$
 					}
 				} else
 					return super.getText(element);
 			} catch (NullPointerException e) {
-				logger.error("Sollte es nicht geben!", e);
+				logger.error("Sollte es nicht geben!", e); //$NON-NLS-1$
 			}
-			return "ERROR";
+			return "ERROR"; //$NON-NLS-1$
 		}
 
-		private String getArgument() {
-			if (signature.charAt(0) == '[') {
-				signature = signature.substring(1);
-				return extractTyp() + "[]";
-			} else {
-				return extractTyp();
-			}
-		}
+		//		private String getArgument() {
+		//			if (signature.charAt(0) == '[') {
+		//				signature = signature.substring(1);
+		//				return extractTyp() + "[]";
+		//			} else {
+		//				return extractTyp();
+		//			}
+		//		}
 
-		private String extractTyp() {
-			switch (signature.charAt(0)) {
-				case 'I' :
-					signature = signature.substring(1);
-					return "int";
-				case 'F' :
-					signature = signature.substring(1);
-					return "float";
-				case 'D' :
-					signature = signature.substring(1);
-					return "double";
-				case 'J' :
-					signature = signature.substring(1);
-					return "long";
-				case 'C' :
-					signature = signature.substring(1);
-					return "char";
-				case 'V' :
-					signature = signature.substring(1);
-					return "void";
-				case 'L' :
-					String sig = signature.substring(1, signature.indexOf(';'));
-					sig = sig.substring(sig.lastIndexOf('/') + 1);
-					signature = signature.substring(signature.indexOf(';') + 1);
-					return sig;
-				default :
-					return "";
-			}
-		}
+		//		private String extractTyp() {
+		//			switch (signature.charAt(0)) {
+		//				case 'I' :
+		//					signature = signature.substring(1);
+		//					return "int";
+		//				case 'F' :
+		//					signature = signature.substring(1);
+		//					return "float";
+		//				case 'D' :
+		//					signature = signature.substring(1);
+		//					return "double";
+		//				case 'J' :
+		//					signature = signature.substring(1);
+		//					return "long";
+		//				case 'C' :
+		//					signature = signature.substring(1);
+		//					return "char";
+		//				case 'V' :
+		//					signature = signature.substring(1);
+		//					return "void";
+		//				case 'L' :
+		//					String sig = signature.substring(1, signature.indexOf(';'));
+		//					sig = sig.substring(sig.lastIndexOf('/') + 1);
+		//					signature = signature.substring(signature.indexOf(';') + 1);
+		//					return sig;
+		//				default :
+		//					return "";
+		//			}
+		//		}
 
 		public Image getImage(Object element) {
 			try {
-				Image image = null;
-				ImageDescriptor img;
 				if (element instanceof LinkNode) {
-					LinkNode lNode = (LinkNode) element;
 					return new CaesarElementImageDescriptor(
-						CaesarPluginImages.DESC_JOINPOINT,
-						null,
-						BIG_SIZE)
-						.createImage();
+							CaesarPluginImages.DESC_JOINPOINT, null, BIG_SIZE)
+							.createImage();
 				} else if (element instanceof RelationNode) {
 					return new CaesarElementImageDescriptor(
-						CaesarPluginImages.DESC_ADVICE,
-						null,
-						BIG_SIZE)
-						.createImage();
+							CaesarPluginImages.DESC_ADVICE, null, BIG_SIZE)
+							.createImage();
 				} else if (element instanceof CaesarProgramElementNode) {
 					CaesarProgramElementNode cNode = (CaesarProgramElementNode) element;
 					return cNode.getImage();
 				} else
 					return super.getImage(element);
 			} catch (Exception e) {
-				logger.error("Error while loading icon images for caesar outline view.", e);
+				logger
+						.error(
+								"Error while loading icon images for caesar outline view.", e); //$NON-NLS-1$
 				return super.getImage(element);
 			}
 		}
@@ -199,11 +196,15 @@ public class CaesarOutlineView extends ContentOutlinePage {
 
 		public Object[] getElements(Object inputElement) {
 			Vector elements = new Vector();
-			elements.add(((PackageNode) ((CaesarProgramElementNode) inputElement).getParent()).clone());
-			Object temp = ((CaesarProgramElementNode) inputElement).getImports();
+			elements
+					.add(((PackageNode) ((CaesarProgramElementNode) inputElement)
+							.getParent()).clone());
+			Object temp = ((CaesarProgramElementNode) inputElement)
+					.getImports();
 			CaesarOutlineView.this.imports = temp;
 			elements.add(temp);
-			elements.addAll(((CaesarProgramElementNode) inputElement).getChildren());
+			elements.addAll(((CaesarProgramElementNode) inputElement)
+					.getChildren());
 			return elements.toArray();
 		}
 
@@ -213,8 +214,8 @@ public class CaesarOutlineView extends ContentOutlinePage {
 			if (parentElement instanceof ProgramElementNode) {
 				ProgramElementNode node = (ProgramElementNode) parentElement;
 				Iterator it = node.getRelations().iterator();
-				while(it.hasNext()){
-					Object te = it.next();	
+				while (it.hasNext()) {
+					Object te = it.next();
 					if (!(te instanceof AdviceDeclarationNode))
 						vec.add(te);
 				}
@@ -230,26 +231,31 @@ public class CaesarOutlineView extends ContentOutlinePage {
 		}
 
 		public boolean hasChildren(Object element) {
+			boolean r = false;
 			if (element instanceof ProgramElementNode) {
 				ProgramElementNode node = (ProgramElementNode) element;
-				return node.getChildren().size() > 0 || node.getRelations().size() > 0;
+				r = node.getChildren().size() > 0
+						|| node.getRelations().size() > 0;
 			} else {
 				StructureNode node = (StructureNode) element;
-				return node.getChildren().size() > 0;
+				r = node.getChildren().size() > 0;
 			}
+			return r;
 		}
 	}
 
 	protected CaesarEditor caesarEditor;
+
 	protected boolean enabled;
 
 	/**
-	 * Creates a content outline page using the given provider and the given editor.
+	 * Creates a content outline page using the given provider and the given
+	 * editor.
 	 */
-	public CaesarOutlineView(CaesarEditor caesarEditor) {
+	public CaesarOutlineView(CaesarEditor caesarEditorArg) {
 		super();
 		allViews.add(this);
-		this.caesarEditor = caesarEditor;
+		this.caesarEditor = caesarEditorArg;
 	}
 
 	public void createControl(Composite parent) {
@@ -280,24 +286,25 @@ public class CaesarOutlineView extends ContentOutlinePage {
 			ISourceLocation sourceLocation = selectedNode.getSourceLocation();
 
 			if (sourceLocation != null) {
-				int line = sourceLocation.getLine();
 				try {
 
-					IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+					IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
+							.getRoot();
 
-					IPath path = new Path(sourceLocation.getSourceFile().getAbsolutePath());
+					IPath path = new Path(sourceLocation.getSourceFile()
+							.getAbsolutePath());
 					IResource resource = root.getFileForLocation(path);
 					IMarker marker;
 
 					if (resource != null) {
 						marker = resource.createMarker(IMarker.MARKER);
-						marker.setAttribute(IMarker.LINE_NUMBER, sourceLocation.getLine());
-						marker.setAttribute(IMarker.CHAR_START, sourceLocation.getColumn());
-						IDE.openEditor(CaesarPlugin
-								.getDefault()
-								.getWorkbench()
-								.getActiveWorkbenchWindow()
-								.getActivePage(), marker);						
+						marker.setAttribute(IMarker.LINE_NUMBER, sourceLocation
+								.getLine());
+						marker.setAttribute(IMarker.CHAR_START, sourceLocation
+								.getColumn());
+						IDE.openEditor(CaesarPlugin.getDefault().getWorkbench()
+								.getActiveWorkbenchWindow().getActivePage(),
+								marker);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -312,9 +319,9 @@ public class CaesarOutlineView extends ContentOutlinePage {
 	 */
 	public void update() {
 
-		if (enabled) {
-			StructureNode input =
-				getInput(StructureModelManager.INSTANCE.getStructureModel().getRoot());
+		if (this.enabled) {
+			StructureNode input = getInput(StructureModelManager.INSTANCE
+					.getStructureModel().getRoot());
 
 			TreeViewer viewer = getTreeViewer();
 			if (viewer != null && input != null) {
@@ -323,7 +330,8 @@ public class CaesarOutlineView extends ContentOutlinePage {
 					control.setRedraw(false);
 					viewer.setInput(input);
 					viewer.expandAll();
-					viewer.collapseToLevel(this.imports, TreeViewer.ALL_LEVELS);
+					viewer.collapseToLevel(this.imports,
+							AbstractTreeViewer.ALL_LEVELS);
 					control.setRedraw(true);
 				}
 			}
@@ -331,24 +339,26 @@ public class CaesarOutlineView extends ContentOutlinePage {
 
 	}
 
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
+	public void setEnabled(boolean enabledArg) {
+		this.enabled = enabledArg;
 	}
 
 	protected StructureNode getInput(StructureNode node) {
 		if (node == null) {
 			return null;
 		}
-
-		if (node.getName().equals(caesarEditor.getEditorInput().getName())) {
-			return node;
+		StructureNode r = null;
+		if (node.getName().equals(this.caesarEditor.getEditorInput().getName())) {
+			r = node;
 		} else {
 			StructureNode res = null;
-			for (Iterator it = node.getChildren().iterator(); it.hasNext() && res == null;) {
+			for (Iterator it = node.getChildren().iterator(); it.hasNext()
+					&& res == null;) {
 				res = getInput((StructureNode) it.next());
 			}
-			return res;
+			r = res;
 		}
+		return r;
 	}
 
 	private static List allViews = new LinkedList();

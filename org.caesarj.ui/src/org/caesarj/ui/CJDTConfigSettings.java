@@ -33,34 +33,34 @@ public class CJDTConfigSettings {
 	}
 	
 	static public boolean isUnusedImportsDisabled() {
-		Hashtable map = (Hashtable)JavaCore.getOptions();
+		Hashtable map = JavaCore.getOptions();
 		return ((String)map.get(JavaCore.COMPILER_PB_UNUSED_IMPORT)).equals(JavaCore.IGNORE) ? true : false;
 	}
 	
 	static public void disableUnusedImports() {
-		Hashtable map = (Hashtable)JavaCore.getOptions();
+		Hashtable map = JavaCore.getOptions();
 		map.put(JavaCore.COMPILER_PB_UNUSED_IMPORT, JavaCore.IGNORE);
 		JavaCore.setOptions(map);
 	}
 	
 	static public void enableUnusedImports() {
-		Hashtable map = (Hashtable)JavaCore.getOptions();
+		Hashtable map = JavaCore.getOptions();
 		map.put(JavaCore.COMPILER_PB_UNUSED_IMPORT, JavaCore.IGNORE);
 		JavaCore.setOptions(map);
 	}
 	
 	static public boolean isCaesarJEditorDefault() {
 		IEditorRegistry editorRegistry = WorkbenchPlugin.getDefault().getEditorRegistry();
-		IEditorDescriptor desc = editorRegistry.getDefaultEditor("*.java");
+		IEditorDescriptor desc = editorRegistry.getDefaultEditor("*.java"); //$NON-NLS-1$
 		
-		return "CaesarEditor".equals(desc.getLabel());
+		return "CaesarEditor".equals(desc.getLabel()); //$NON-NLS-1$
 	}
 	
 	static public void enableCaesarJEditorDefault() {
 		EditorRegistry editorRegistry = (EditorRegistry)WorkbenchPlugin.getDefault().getEditorRegistry();
 		IFileEditorMapping[] array = WorkbenchPlugin.getDefault().getEditorRegistry().getFileEditorMappings();
 		editorRegistry.setFileEditorMappings((FileEditorMapping[])array);
-		editorRegistry.setDefaultEditor("*.java", "org.caesarj.ui.editor.CaesarEditor");
+		editorRegistry.setDefaultEditor("*.java", "org.caesarj.ui.editor.CaesarEditor"); //$NON-NLS-1$ //$NON-NLS-2$
 		editorRegistry.saveAssociations();
 	
 	}
@@ -68,7 +68,7 @@ public class CJDTConfigSettings {
 		EditorRegistry editorRegistry = (EditorRegistry)WorkbenchPlugin.getDefault().getEditorRegistry();
 		IFileEditorMapping[] array = WorkbenchPlugin.getDefault().getEditorRegistry().getFileEditorMappings();
 		editorRegistry.setFileEditorMappings((FileEditorMapping[])array);
-		editorRegistry.setDefaultEditor("*.java", JavaUI.ID_CU_EDITOR);
+		editorRegistry.setDefaultEditor("*.java", JavaUI.ID_CU_EDITOR); //$NON-NLS-1$
 		editorRegistry.saveAssociations();
 			
 	}

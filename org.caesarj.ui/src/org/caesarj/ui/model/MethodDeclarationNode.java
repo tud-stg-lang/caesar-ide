@@ -20,20 +20,20 @@ public class MethodDeclarationNode extends CaesarProgramElementNode {
 
 	private JTypeDeclaration classDeclaration;
 
-	public MethodDeclarationNode(JMethodDeclaration methodDeclaration,
-			JTypeDeclaration classDeclaration, 
+	public MethodDeclarationNode(JMethodDeclaration methodDeclarationArg,
+			JTypeDeclaration classDeclarationArg, 
 			String signature, Kind kind,
-			ISourceLocation sourceLocation, int modifiers,
-			String formalComment, List children) {
-		super(signature, kind, sourceLocation, modifiers, formalComment,
-				children);
+			ISourceLocation sourceLocationArg, int modifiers,
+			String formalComment, List childrenArg) {
+		super(signature, kind, sourceLocationArg, modifiers, formalComment,
+				childrenArg);
 		this.initImages();
-		this.methodDeclaration = methodDeclaration;
-		this.classDeclaration = classDeclaration;
+		this.methodDeclaration = methodDeclarationArg;
+		this.classDeclaration = classDeclarationArg;
 	}
 
 	public JMethodDeclaration getMethodDeclaration() {
-		return methodDeclaration;
+		return this.methodDeclaration;
 	}
 
 	public CType getReturnTyp() {
@@ -46,38 +46,38 @@ public class MethodDeclarationNode extends CaesarProgramElementNode {
 	}
 
 	protected void initImages() {
-		PUBLIC = JavaPluginImages.DESC_MISC_PUBLIC;
-		PRIVATE = JavaPluginImages.DESC_MISC_PRIVATE;
-		PROTECTED = JavaPluginImages.DESC_MISC_PROTECTED;
-		DEFAULT = JavaPluginImages.DESC_MISC_DEFAULT;
+		this.PUBLIC = JavaPluginImages.DESC_MISC_PUBLIC;
+		this.PRIVATE = JavaPluginImages.DESC_MISC_PRIVATE;
+		this.PROTECTED = JavaPluginImages.DESC_MISC_PROTECTED;
+		this.DEFAULT = JavaPluginImages.DESC_MISC_DEFAULT;
 	}
 
 	public String getText(String text) {
 		String label = text;
-		label = label.substring(label.lastIndexOf("]") + 2);
-		label += "(";
+		label = label.substring(label.lastIndexOf("]") + 2); //$NON-NLS-1$
+		label += "("; //$NON-NLS-1$
 		JFormalParameter[] para = this.getMethodDeclaration().getArgs();
 		int paraSize = para.length;
 		for (int i = 0; i < paraSize; i++) {
 			String arg = para[i].getType().toString();
 			label += arg.substring(arg.lastIndexOf('.') + 1);
 			if (i < paraSize - 1)
-				label += ", ";
+				label += ", "; //$NON-NLS-1$
 		}
-		label += ") : ";
+		label += ") : "; //$NON-NLS-1$
 		CType type = this.getReturnTyp();
 		if (type == null) {
-			label += "no statement";
-		} else if (type.toString().compareTo("") == 0)
-			label += "void";
-		else
+			label += "no statement"; //$NON-NLS-1$
+		} else if (type.toString().compareTo("") == 0) { //$NON-NLS-1$
+			label += "void"; //$NON-NLS-1$
+		} else
 			label += type.toString().substring(
 					type.toString().lastIndexOf('.') + 1);
 		return label;
 	}
 
 	public JTypeDeclaration getClassDeclaration() {
-		return classDeclaration;
+		return this.classDeclaration;
 	}
 
 }

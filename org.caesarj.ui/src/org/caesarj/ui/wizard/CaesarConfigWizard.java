@@ -2,31 +2,29 @@
 
 package org.caesarj.ui.wizard;
 
-import org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPage;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
 
 public class CaesarConfigWizard extends Wizard {
 
 	private CaesarConfigPage mainPage;
-	private NewJavaProjectWizardPage fJavaPage;//test
-	private WizardNewProjectCreationPage fMainPage;
+//	private NewJavaProjectWizardPage fJavaPage;//test
+//	private WizardNewProjectCreationPage fMainPage;
 
 	/** 
 	 * Adds the CaesarConfigPage (only page for this wizard)
 	 */
 	public void addPages() {
 		
-		mainPage = new CaesarConfigPage();
-		addPage(mainPage);
+		this.mainPage = new CaesarConfigPage();
+		addPage(this.mainPage);
 	}
 	
 	/** 
 	 * Set-up the title.
 	 */
 	public void init() {
-		setWindowTitle("CaesarJ Configuration Wizard"); 
+		setWindowTitle("CaesarJ Configuration Wizard");  //$NON-NLS-1$
 	}
 	
 	/**
@@ -35,6 +33,6 @@ public class CaesarConfigWizard extends Wizard {
 	 * successful.
 	 */
 	public boolean performFinish() {
-		return mainPage.finish();
+		return this.mainPage.finish();
 	}
 }

@@ -9,7 +9,7 @@ package org.caesarj.ui.marker;
  */
 public interface AdviceMarker {
 
-	public final static java.lang.String ADVICEMARKER = "org.caesarj.advicemarker";
-	public final static java.lang.String LINKS = "org.caesarj.links";
-	public final static java.lang.String ID = "org.caesarj.adviceid";
+	public final static java.lang.String ADVICEMARKER = "org.caesarj.advicemarker"; //$NON-NLS-1$
+	public final static java.lang.String LINKS = "org.caesarj.links"; //$NON-NLS-1$
+	public final static java.lang.String ID = "org.caesarj.adviceid"; //$NON-NLS-1$
 }

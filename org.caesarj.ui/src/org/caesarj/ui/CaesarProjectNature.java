@@ -30,11 +30,10 @@ public class CaesarProjectNature implements IProjectNature {
      * otherwise simply insert our builder as a new entry.
      */
     public void configure() throws CoreException {
-        log.debug("begin");
-        IProjectDescription projectDescription = project.getDescription();
+        IProjectDescription projectDescription = this.project.getDescription();
         ICommand command = projectDescription.newCommand();
         command.setBuilderName(CaesarPlugin.ID_BUILDER);
-        log.debug("builder command = "+command.toString());
+        log.debug("builder command = "+command.toString()); //$NON-NLS-1$
 
         ICommand[] buildCommands = projectDescription.getBuildSpec();
         ICommand[] newBuildCommands;
@@ -46,22 +45,21 @@ public class CaesarProjectNature implements IProjectNature {
         }
         
         for(int i=0; i<newBuildCommands.length;i++) {        
-            log.debug(i+") builder command = "+newBuildCommands[i].toString());
+            log.debug(i+") builder command = "+newBuildCommands[i].toString()); //$NON-NLS-1$
         }
         
         projectDescription.setBuildSpec(newBuildCommands);
-        project.setDescription(projectDescription, null);
+        this.project.setDescription(projectDescription, null);
     
         IWorkbench workbench = CaesarPlugin.getDefault().getWorkbench();
-        workbench.showPerspective( "org.eclipse.jdt.ui.JavaPerspective" , workbench.getActiveWorkbenchWindow() );
+        workbench.showPerspective( "org.eclipse.jdt.ui.JavaPerspective" , workbench.getActiveWorkbenchWindow() ); //$NON-NLS-1$
     }
 
     /**
      * Remove the AspectJ Builder from the list, replace with the javabuilder
      */
     public void deconfigure() throws CoreException {
-        log.debug("CaesarProjectNature.deconfigure");
-        IProjectDescription description = project.getDescription();
+        IProjectDescription description = this.project.getDescription();
         ICommand[] buildCommands = description.getBuildSpec();
         ICommand command = description.newCommand();
         command.setBuilderName(JavaCore.BUILDER_ID);
@@ -74,21 +72,21 @@ public class CaesarProjectNature implements IProjectNature {
         }           
     
         description.setBuildSpec(newBuildCommands);
-        project.setDescription(description, null);
+        this.project.setDescription(description, null);
     }
 
     /**
      * @see IProjectNature#getProject
      */
     public IProject getProject() {
-        return project;
+        return this.project;
     }
 
     /**
      * @see IProjectNature#setProject
      */
     public void setProject(IProject value) {
-        project = value;
+        this.project = value;
     }
 
     /**

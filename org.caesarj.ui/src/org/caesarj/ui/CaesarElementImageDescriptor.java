@@ -91,38 +91,38 @@ public CaesarElementImageDescriptor(
 	ImageDescriptor baseImage,
 	CaesarProgramElementNode node,
 	Point size) {
-	fBaseImage = baseImage;
-	Assert.isNotNull(fBaseImage);
-	fFlags = this.computeJavaAdornmentFlags(node);
-	Assert.isTrue(fFlags >= 0);
-	fSize = size;
-	Assert.isNotNull(fSize);
+	this.fBaseImage = baseImage;
+	Assert.isNotNull(this.fBaseImage);
+	this.fFlags = this.computeJavaAdornmentFlags(node);
+	Assert.isTrue(this.fFlags >= 0);
+	this.fSize = size;
+	Assert.isNotNull(this.fSize);
 }
 
 public void setAdornments(int adornments) {
 	Assert.isTrue(adornments >= 0);
-	fFlags = adornments;
+	this.fFlags = adornments;
 }
 
 public int getAdronments() {
-	return fFlags;
+	return this.fFlags;
 }
 
 public void setImageSize(Point size) {
 	Assert.isNotNull(size);
 	Assert.isTrue(size.x >= 0 && size.y >= 0);
-	fSize = size;
+	this.fSize = size;
 }
 
 public Point getImageSize() {
-	return new Point(fSize.x, fSize.y);
+	return new Point(this.fSize.x, this.fSize.y);
 }
 
 /* (non-Javadoc)
  * Method declared in CompositeImageDescriptor
  */
 protected Point getSize() {
-	return fSize;
+	return this.fSize;
 }
 
 /* (non-Javadoc)
@@ -134,14 +134,14 @@ public boolean equals(Object object) {
 
 	CaesarElementImageDescriptor other = (CaesarElementImageDescriptor) object;
 	return (
-		fBaseImage.equals(other.fBaseImage) && fFlags == other.fFlags && fSize.equals(other.fSize));
+		this.fBaseImage.equals(other.fBaseImage) && this.fFlags == other.fFlags && this.fSize.equals(other.fSize));
 }
 
 /* (non-Javadoc)
  * Method declared on Object.
  */
 public int hashCode() {
-	return fBaseImage.hashCode() | fFlags | fSize.hashCode();
+	return this.fBaseImage.hashCode() | this.fFlags | this.fSize.hashCode();
 }
 
 /* (non-Javadoc)
@@ -149,7 +149,7 @@ public int hashCode() {
  */
 protected void drawCompositeImage(int width, int height) {
 	ImageData bg;
-	if ((bg = fBaseImage.getImageData()) == null)
+	if ((bg = this.fBaseImage.getImageData()) == null)
 		bg = DEFAULT_IMAGE_DATA;
 
 	drawImage(bg, 0, 0);
@@ -162,22 +162,22 @@ private void drawBottomRight() {
 	Point size = getSize();
 	int x = size.x;
 	ImageData data = null;
-	if ((fFlags & OVERRIDES) != 0) {
+	if ((this.fFlags & OVERRIDES) != 0) {
 		data = JavaPluginImages.DESC_OVR_OVERRIDES.getImageData();
 		x -= data.width;
 		drawImage(data, x, size.y - data.height);
 	}
-	if ((fFlags & IMPLEMENTS) != 0) {
+	if ((this.fFlags & IMPLEMENTS) != 0) {
 		data = JavaPluginImages.DESC_OVR_IMPLEMENTS.getImageData();
 		x -= data.width;
 		drawImage(data, x, size.y - data.height);
 	}
-	if ((fFlags & SYNCHRONIZED) != 0) {
+	if ((this.fFlags & SYNCHRONIZED) != 0) {
 		data = JavaPluginImages.DESC_OVR_SYNCH.getImageData();
 		x -= data.width;
 		drawImage(data, x, size.y - data.height);
 	}
-	if ((fFlags & RUNNABLE) != 0) {
+	if ((this.fFlags & RUNNABLE) != 0) {
 		data = JavaPluginImages.DESC_OVR_RUN.getImageData();
 		x -= data.width;
 		drawImage(data, x, size.y - data.height);
@@ -188,12 +188,12 @@ private void drawBottomLeft() {
 	Point size = getSize();
 	int x = 0;
 	ImageData data = null;
-	if ((fFlags & ERROR) != 0) {
+	if ((this.fFlags & ERROR) != 0) {
 		data = JavaPluginImages.DESC_OVR_ERROR.getImageData();
 		drawImage(data, x, size.y - data.height);
 		x += data.width;
 	}
-	if ((fFlags & WARNING) != 0) {
+	if ((this.fFlags & WARNING) != 0) {
 		data = JavaPluginImages.DESC_OVR_WARNING.getImageData();
 		drawImage(data, x, size.y - data.height);
 		x += data.width;
@@ -203,22 +203,22 @@ private void drawBottomLeft() {
 private void drawTopRight() {
 	int x = getSize().x;
 	ImageData data = null;
-	if ((fFlags & ABSTRACT) != 0 &&!interfaceFlag) {
+	if ((this.fFlags & ABSTRACT) != 0 &&!this.interfaceFlag) {
 		data = JavaPluginImages.DESC_OVR_ABSTRACT.getImageData();
 		x -= data.width;
 		drawImage(data, x, 0);
 	}
-	if ((fFlags & CONSTRUCTOR) != 0) {
+	if ((this.fFlags & CONSTRUCTOR) != 0) {
 		data = JavaPluginImages.DESC_OVR_CONSTRUCTOR.getImageData();
 		x -= data.width;
 		drawImage(data, x, 0);
 	}
-	if ((fFlags & FINAL) != 0) {
+	if ((this.fFlags & FINAL) != 0) {
 		data = JavaPluginImages.DESC_OVR_FINAL.getImageData();
 		x -= data.width;
 		drawImage(data, x, 0);
 	}
-	if ((fFlags & STATIC) != 0) {
+	if ((this.fFlags & STATIC) != 0) {
 		data = JavaPluginImages.DESC_OVR_STATIC.getImageData();
 		x -= data.width;
 		drawImage(data, x, 0);

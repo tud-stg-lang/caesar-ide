@@ -9,7 +9,6 @@ package org.caesarj.ui.perspective;
  * Code or samples provided herein are provided without warranty of any kind.
  */
 
-import org.apache.log4j.Logger;
 import org.caesarj.ui.preferences.CaesarJPreferences;
 import org.caesarj.ui.wizard.CaesarConfigWizard;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -25,8 +24,6 @@ import org.eclipse.ui.console.IConsoleConstants;
  */
 public class CaesarPerspective implements IPerspectiveFactory {
 	
-	private static Logger log = Logger.getLogger(CaesarPerspective.class);
-
 	/**
 	 * Constructor for CaesarPerspective
 	 */
@@ -47,24 +44,24 @@ public class CaesarPerspective implements IPerspectiveFactory {
 		String editorArea = layout.getEditorArea();
 		// Top left: Resource Navigator view and Bookmarks view placeholder
 		IFolderLayout topLeft =
-			layout.createFolder("topLeft", IPageLayout.LEFT, 0.25f, editorArea);
+			layout.createFolder("topLeft", IPageLayout.LEFT, 0.25f, editorArea); //$NON-NLS-1$
 
 		topLeft.addView(JavaUI.ID_PACKAGES);
 		topLeft.addPlaceholder(IPageLayout.ID_BOOKMARKS);
 
 		IFolderLayout bottomRight =
 			layout.createFolder(
-				"bottomRight",
+				"bottomRight", //$NON-NLS-1$
 				IPageLayout.RIGHT,
 				0.75f,
 				editorArea);
 		bottomRight.addView(IPageLayout.ID_OUTLINE);
-		bottomRight.addView("org.caesarj.ui.views.CaesarHierarchyView");
+		bottomRight.addView("org.caesarj.ui.views.CaesarHierarchyView"); //$NON-NLS-1$
 		 
 		
 		IFolderLayout bottom =
 			layout.createFolder(
-				"bottom",
+				"bottom", //$NON-NLS-1$
 				IPageLayout.BOTTOM,
 				0.75f,
 				editorArea);
@@ -76,14 +73,12 @@ public class CaesarPerspective implements IPerspectiveFactory {
 		layout.addActionSet(IDebugUIConstants.LAUNCH_ACTION_SET);
 		layout.addActionSet(JavaUI.ID_ACTION_SET);
 		layout.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);	
-		layout.addPerspectiveShortcut("org.caesarj.ui.actionsets.AnnotationShortCut");
+		layout.addPerspectiveShortcut("org.caesarj.ui.actionsets.AnnotationShortCut"); //$NON-NLS-1$
 		layout.setEditorAreaVisible(true);
 		
 		//Show Preferences
 		CaesarConfigWizard wizard = new CaesarConfigWizard();
 		wizard.init();
-		// Create the wizard dialog
-		CaesarJPreferences dfsf;
 		if(CaesarJPreferences.isCAESARPrefConfigDone())
 		{
 			org.eclipse.jface.wizard.WizardDialog dialog = new org.eclipse.jface.wizard.WizardDialog(

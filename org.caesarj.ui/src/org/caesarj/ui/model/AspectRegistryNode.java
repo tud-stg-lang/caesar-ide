@@ -14,11 +14,11 @@ public class AspectRegistryNode extends CaesarProgramElementNode {
 	public AspectRegistryNode(
 		String signature,
 		Kind kind,
-		ISourceLocation sourceLocation,
+		ISourceLocation sourceLocationArg,
 		int modifiers,
 		String formalComment,
-		List children) {
-		super(signature, kind, sourceLocation, modifiers, formalComment, children);
+		List childrenArg) {
+		super(signature, kind, sourceLocationArg, modifiers, formalComment, childrenArg);
 		this.initImages();
 	}
 

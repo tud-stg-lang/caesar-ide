@@ -20,63 +20,63 @@ public class ConstructorDeclarationNode extends CaesarProgramElementNode {
 	private JClassDeclaration classDeclaration;
 	
 	public ConstructorDeclarationNode(
-		JConstructorDeclaration constructorDeclaration,
-		JClassDeclaration classDeclaration,
+		JConstructorDeclaration constructorDeclarationArg,
+		JClassDeclaration classDeclarationArg,
 		String signature,
 		Kind kind,
-		ISourceLocation sourceLocation,
+		ISourceLocation sourceLocationArg,
 		int modifiers,
 		String formalComment,
-		List children) {
-		super(signature, kind, sourceLocation, modifiers, formalComment, children);
+		List childrenArg) {
+		super(signature, kind, sourceLocationArg, modifiers, formalComment, childrenArg);
 		this.initImages();
-		this.constructorDeclaration = constructorDeclaration;
-		this.classDeclaration = classDeclaration;
+		this.constructorDeclaration = constructorDeclarationArg;
+		this.classDeclaration = classDeclarationArg;
 	}
 
-	public ConstructorDeclarationNode(String signature, Kind kind, List children) {
-		super(signature, kind, children);
+	public ConstructorDeclarationNode(String signature, Kind kind, List childrenArg) {
+		super(signature, kind, childrenArg);
 		this.initImages();
 	}
 
 	public ConstructorDeclarationNode(
 		String signature,
 		Kind kind,
-		ISourceLocation sourceLocation,
+		ISourceLocation sourceLocationArg,
 		int modifiers,
 		String formalComment,
-		List children) {
-		super(signature, kind, sourceLocation, modifiers, formalComment, children);
+		List childrenArg) {
+		super(signature, kind, sourceLocationArg, modifiers, formalComment, childrenArg);
 		this.initImages();
 	}
 
 	public JConstructorDeclaration getConstructorDeclaration() {
-		return constructorDeclaration;
+		return this.constructorDeclaration;
 	}
 
 	public JClassDeclaration getClassDeclaration() {
-		return classDeclaration;
+		return this.classDeclaration;
 	}
 
 	public String getText(String text) {
-		String label = text.substring(text.lastIndexOf("]") + 2);
-		label += "(";
+		String label = text.substring(text.lastIndexOf("]") + 2); //$NON-NLS-1$
+		label += "("; //$NON-NLS-1$
 		JFormalParameter[] para = this.getConstructorDeclaration().getArgs();
 		int paraSize = para.length;
 		for (int i = 0; i < paraSize; i++) {
 			String temp = para[i].getType().toString();
 			label += temp.substring(temp.lastIndexOf('.') + 1, temp.length());
 			if (i < paraSize - 1)
-				label += ", ";
+				label += ", "; //$NON-NLS-1$
 		}
-		label += ")";
+		label += ")"; //$NON-NLS-1$
 		return label;
 	}
 
 	protected void initImages() {
-		PUBLIC = JavaPluginImages.DESC_MISC_PUBLIC;
-		PRIVATE = JavaPluginImages.DESC_MISC_PRIVATE;
-		PROTECTED = JavaPluginImages.DESC_MISC_PROTECTED;
-		DEFAULT = JavaPluginImages.DESC_MISC_DEFAULT;
+		this.PUBLIC = JavaPluginImages.DESC_MISC_PUBLIC;
+		this.PRIVATE = JavaPluginImages.DESC_MISC_PRIVATE;
+		this.PROTECTED = JavaPluginImages.DESC_MISC_PROTECTED;
+		this.DEFAULT = JavaPluginImages.DESC_MISC_DEFAULT;
 	}
 }

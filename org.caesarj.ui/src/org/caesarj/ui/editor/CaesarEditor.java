@@ -1,12 +1,10 @@
 package org.caesarj.ui.editor;
 
 import org.apache.log4j.Logger;
-import org.caesarj.ui.CaesarPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -35,7 +33,7 @@ public class CaesarEditor extends CompilationUnitEditor {
 
 	private CaesarOutlineView outlineView;
 
-	private CompositeRuler caesarVerticalRuler;
+	//private CompositeRuler caesarVerticalRuler;
 
 	public CaesarEditor() {
 		super();
@@ -44,17 +42,18 @@ public class CaesarEditor extends CompilationUnitEditor {
 	protected void initializeEditor() {
 		super.initializeEditor();
 
-		log.debug("Initializing CaesarJ Editor.");
+		log.debug("Initializing CaesarJ Editor."); //$NON-NLS-1$
 		try {
+			
 			IPreferenceStore store = this.getPreferenceStore();
 			CaesarTextTools textTools = new CaesarTextTools(store);
 			JavaSourceViewerConfiguration svConfig = new CaesarSourceViewerConfiguration(
 					textTools, this, store);
 			setSourceViewerConfiguration(svConfig);
 
-			log.debug("CaesarJ Editor Initialized.");
+			log.debug("CaesarJ Editor Initialized."); //$NON-NLS-1$
 		} catch (Exception e) {
-			log.error("Initalizing CaesarJ Editor.", e);
+			log.error("Initalizing CaesarJ Editor.", e); //$NON-NLS-1$
 		}
 	}
 
@@ -67,14 +66,14 @@ public class CaesarEditor extends CompilationUnitEditor {
 				textTools, this, store);
 		setSourceViewerConfiguration(svConfig);
 	}
-
+	
 	public Object getAdapter(Class key) {
 		if (key.equals(IContentOutlinePage.class)) {
-			if (outlineView == null) {
-				outlineView = new CaesarOutlineView(this);
-				outlineView.setEnabled(true);
+			if (this.outlineView == null) {
+				this.outlineView = new CaesarOutlineView(this);
+				this.outlineView.setEnabled(true);
 			}
-			return outlineView;
+			return this.outlineView;
 		}
 		return super.getAdapter(key);
 	}
@@ -84,7 +83,7 @@ public class CaesarEditor extends CompilationUnitEditor {
 	}
 
 	public void dispose() {
-		log.debug("dispose");
-		outlineView.setEnabled(false);
+		log.debug("dispose"); //$NON-NLS-1$
+		this.outlineView.setEnabled(false);
 	}
 }

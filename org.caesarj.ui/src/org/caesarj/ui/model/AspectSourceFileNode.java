@@ -5,12 +5,7 @@ import java.util.List;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.phylum.JClassImport;
 import org.caesarj.compiler.ast.phylum.JPackageImport;
-/**
- * @author Shadow
- *
- * Folgendes auswählen, um die Schablone für den erstellten Typenkommentar zu ändern:
- * Fenster&gt;Benutzervorgaben&gt;Java&gt;Codegenerierung&gt;Code und Kommentare
- */
+
 public class AspectSourceFileNode extends CaesarProgramElementNode {
 
 	/**
@@ -18,8 +13,8 @@ public class AspectSourceFileNode extends CaesarProgramElementNode {
 	 * @param kind
 	 * @param children
 	 */
-	public AspectSourceFileNode(String signature, Kind kind, List children) {
-		super(signature, kind, children);
+	public AspectSourceFileNode(String signature, Kind kind, List childrenArg) {
+		super(signature, kind, childrenArg);
 		this.initImages();
 	}
 
@@ -34,11 +29,11 @@ public class AspectSourceFileNode extends CaesarProgramElementNode {
 	public AspectSourceFileNode(
 		String signature,
 		Kind kind,
-		ISourceLocation sourceLocation,
+		ISourceLocation sourceLocationArg,
 		int modifiers,
 		String formalComment,
-		List children) {
-		super(signature, kind, sourceLocation, modifiers, formalComment, children);
+		List childrenArg) {
+		super(signature, kind, sourceLocationArg, modifiers, formalComment, childrenArg);
 		this.initImages();
 	}
 
@@ -55,19 +50,19 @@ public class AspectSourceFileNode extends CaesarProgramElementNode {
 	public AspectSourceFileNode(
 		String signature,
 		Kind kind,
-		ISourceLocation sourceLocation,
+		ISourceLocation sourceLocationArg,
 		int modifiers,
 		String formalComment,
-		List children,
+		List childrenArg,
 		JPackageImport[] importedPackages,
 		JClassImport[] importedClasses) {
 		super(
 			signature,
 			kind,
-			sourceLocation,
+			sourceLocationArg,
 			modifiers,
 			formalComment,
-			children,
+			childrenArg,
 			importedPackages,
 			importedClasses);
 		this.initImages();

@@ -15,11 +15,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.IWorkbench;
 
 
 public class CaesarConfigPage extends WizardPage {
-	private IWorkbench workbench;
+	//private IWorkbench workbench;
 	private static Logger log = Logger.getLogger(CaesarConfigPage.class);
 
 	// widgets
@@ -30,9 +29,9 @@ public class CaesarConfigPage extends WizardPage {
 	
 	public CaesarConfigPage(){
 
-		super("Caesar Preferences");
-		this.setTitle("Caesar Preferences");		
-		this.setDescription("To costomize your CaesarJ Plugin choose your preferences");
+		super("Caesar Preferences"); //$NON-NLS-1$
+		this.setTitle("Caesar Preferences");		 //$NON-NLS-1$
+		this.setDescription("To costomize your CaesarJ Plugin choose your preferences"); //$NON-NLS-1$
 	}
 	
 	
@@ -48,52 +47,52 @@ public class CaesarConfigPage extends WizardPage {
 		try {
 			Group workbench = new Group(composite, SWT.NONE);
 			workbench.setLayout(new GridLayout());
-			workbench.setText("CaesarJ Preference");
+			workbench.setText("CaesarJ Preference"); //$NON-NLS-1$
 			workbench.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			
-				caesarJAnnotationCheckbox = new Button(workbench, SWT.CHECK);		
-				caesarJAnnotationCheckbox.setText("Default setting: annotation while typing");
-				caesarJAnnotationCheckbox.setSelection(JavaPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS));
+				this.caesarJAnnotationCheckbox = new Button(workbench, SWT.CHECK);		
+				this.caesarJAnnotationCheckbox.setText("Default setting: annotation while typing"); //$NON-NLS-1$
+				this.caesarJAnnotationCheckbox.setSelection(JavaPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS));
 			
-				caesarJAnnotationAutoSwitshCheckbox = new Button(workbench, SWT.CHECK);		
-				caesarJAnnotationAutoSwitshCheckbox.setText("Auto annotation switch while changing editors");
-				caesarJAnnotationAutoSwitshCheckbox.setSelection(CaesarJPreferences.isCAESARAutoSwitch());
+				this.caesarJAnnotationAutoSwitshCheckbox = new Button(workbench, SWT.CHECK);		
+				this.caesarJAnnotationAutoSwitshCheckbox.setText("Auto annotation switch while changing editors"); //$NON-NLS-1$
+				this.caesarJAnnotationAutoSwitshCheckbox.setSelection(CaesarJPreferences.isCAESARAutoSwitch());
 				
-				caesarEditorDefaultCheckbox = new Button(workbench, SWT.CHECK);	
-				caesarEditorDefaultCheckbox.setText("Make the CaesarJ editor the default java - editor");
-				caesarEditorDefaultCheckbox.setSelection(CJDTConfigSettings.isCaesarJEditorDefault());
+				this.caesarEditorDefaultCheckbox = new Button(workbench, SWT.CHECK);	
+				this.caesarEditorDefaultCheckbox.setText("Make the CaesarJ editor the default java - editor"); //$NON-NLS-1$
+				this.caesarEditorDefaultCheckbox.setSelection(CJDTConfigSettings.isCaesarJEditorDefault());
 							
 		new Label(composite, SWT.NONE); // vertical spacer
 		}
 		catch (Exception e)
 		{
-			log.warn("Error while drawing ConfigPage", e);
+			log.warn("Error while drawing ConfigPage", e); //$NON-NLS-1$
 		}
 		
-		dontAskAgainCheckbox = new Button(composite, SWT.CHECK);
-		dontAskAgainCheckbox.setText("Open this dialog next time you open the CaesarJ perspective?");
-		dontAskAgainCheckbox.setSelection(CaesarJPreferences.isCAESARPrefConfigDone());
+		this.dontAskAgainCheckbox = new Button(composite, SWT.CHECK);
+		this.dontAskAgainCheckbox.setText("Open this dialog next time you open the CaesarJ perspective?"); //$NON-NLS-1$
+		this.dontAskAgainCheckbox.setSelection(CaesarJPreferences.isCAESARPrefConfigDone());
 	}
 	
 	
 	public boolean finish() {
 		
-		if (caesarJAnnotationCheckbox != null) {
-			if (!caesarJAnnotationCheckbox.getSelection())
+		if (this.caesarJAnnotationCheckbox != null) {
+			if (!this.caesarJAnnotationCheckbox.getSelection()) {
 				CJDTConfigSettings.disableAnalyzeAnnotations();
-			else
+			} else
 				CJDTConfigSettings.enableAnalyzeAnnotations();
 		}
-		if (caesarJAnnotationAutoSwitshCheckbox != null) {
-			CaesarJPreferences.setCAESARAutoSwitch(caesarJAnnotationAutoSwitshCheckbox.getSelection());
+		if (this.caesarJAnnotationAutoSwitshCheckbox != null) {
+			CaesarJPreferences.setCAESARAutoSwitch(this.caesarJAnnotationAutoSwitshCheckbox.getSelection());
 		}
-		if (caesarEditorDefaultCheckbox != null) {
-			if (caesarEditorDefaultCheckbox.getSelection())
+		if (this.caesarEditorDefaultCheckbox != null) {
+			if (this.caesarEditorDefaultCheckbox.getSelection()) {
 				CJDTConfigSettings.enableCaesarJEditorDefault();
-			else
+			} else
 				CJDTConfigSettings.disableCaesarJEditorDefault();
 		}
-		boolean dontAskAgain = dontAskAgainCheckbox.getSelection();
+		boolean dontAskAgain = this.dontAskAgainCheckbox.getSelection();
 		CaesarJPreferences.setCAESARPrefConfigDone(dontAskAgain);
 		return true;
 	}

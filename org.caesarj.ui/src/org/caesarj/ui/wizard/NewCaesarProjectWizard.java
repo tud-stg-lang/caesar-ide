@@ -53,7 +53,7 @@ implements      IExecutableExtension {
     public void addPages() {
             
         //super.addPages();
-        fMainPage = new WizardNewProjectCreationPage("NewAspectjProjectCreationWizard");
+        this.fMainPage = new WizardNewProjectCreationPage("NewAspectjProjectCreationWizard"); //$NON-NLS-1$
          
         /*  
         fMainPage.setTitle(
@@ -61,20 +61,20 @@ implements      IExecutableExtension {
         fMainPage.setDescription(
             AspectJPlugin.getResourceString("NewAspectjProjectCreationWizard.MainPage.description"));
         */  
-        addPage(fMainPage);
+        addPage(this.fMainPage);
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-        fJavaPage = new NewJavaProjectWizardPage(root, fMainPage);
-        addPage(fJavaPage);
+        this.fJavaPage = new NewJavaProjectWizardPage(root, this.fMainPage);
+        addPage(this.fJavaPage);
     }
     
     /*
      * @see Wizard#performFinish
      */
     public boolean performFinish() {
-        log.debug("finish");
+        log.debug("finish"); //$NON-NLS-1$
         
         IRunnableWithProgress op =
-            new WorkspaceModifyDelegatingOperation(fJavaPage.getRunnable());
+            new WorkspaceModifyDelegatingOperation(this.fJavaPage.getRunnable());
         try {
             getContainer().run(false, true, op);
         } 
@@ -84,17 +84,17 @@ implements      IExecutableExtension {
         catch (InterruptedException e) {
             return false;
         }
-        BasicNewProjectResourceWizard.updatePerspective(fConfigElement);
+        BasicNewProjectResourceWizard.updatePerspective(this.fConfigElement);
     
-        IProject project = fJavaPage.getNewJavaProject().getProject();
+        IProject project = this.fJavaPage.getNewJavaProject().getProject();
         
-        IJavaProject javaProject = fJavaPage.getNewJavaProject();
+        IJavaProject javaProject = this.fJavaPage.getNewJavaProject();
 
         /*
          * SETUP PROJECT NATURE
          */
         try {  
-            log.debug("setting up project nature");      
+            log.debug("setting up project nature");       //$NON-NLS-1$
             IProjectDescription description = project.getDescription();
             String[] prevNatures = description.getNatureIds();
             String[] newNatures = new String[prevNatures.length + 1];
@@ -104,7 +104,7 @@ implements      IExecutableExtension {
             project.setDescription(description, null);            
         }
         catch (Exception e) {
-            log.debug("> Error creating new Caesar project: " + e);
+            log.debug("> Error creating new Caesar project: " + e); //$NON-NLS-1$
             e.printStackTrace();
 		}
         
@@ -143,6 +143,6 @@ implements      IExecutableExtension {
         String propertyName,
         Object data
     ) {
-        fConfigElement = cfig;
+        this.fConfigElement = cfig;
     }
 }

@@ -18,10 +18,10 @@ public class CaesarSourceViewerConfiguration extends JavaSourceViewerConfigurati
 	public CaesarSourceViewerConfiguration(CaesarTextTools textTools, CaesarEditor editor, IPreferenceStore prefStore) 
 	{
 		super(textTools.getColorManager(), prefStore, editor, IJavaPartitions.JAVA_PARTITIONING);
-		ctt = textTools;
+		this.ctt = textTools;
 	}
 	
 	protected RuleBasedScanner getCodeScanner() {
-		return ctt.getCodeScanner();
+		return this.ctt.getCodeScanner();
 	}
 }

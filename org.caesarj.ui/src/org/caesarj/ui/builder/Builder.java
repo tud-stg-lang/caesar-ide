@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.caesarj.ui.CaesarPlugin;
-//import org.caesarj.ui.editor.CaesarOutlineView;
 import org.caesarj.ui.editor.CaesarOutlineView;
 import org.caesarj.ui.marker.AdviceMarker;
 import org.caesarj.ui.util.ProjectProperties;
@@ -17,7 +16,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Display;
 
@@ -42,18 +40,9 @@ public class Builder extends IncrementalProjectBuilder {
 	 */
 	private static IProject lastBuiltProject = null;
 
-	/** The progress monitor used for this build */
-	private IProgressMonitor monitor;
-
 	private ProjectProperties projectProperties;
 
 	private Collection errors = new LinkedList();
-
-	/**
-	 * Constructor
-	 */
-	public Builder() {
-	}
 
 	/**
 	 * What did we last build?
@@ -68,31 +57,31 @@ public class Builder extends IncrementalProjectBuilder {
 	 *      a full build in every case!
 	 */
 	protected IProject[] build(int kind, Map args,
-			IProgressMonitor progressMonitor) throws CoreException {
+			IProgressMonitor progressMonitor) {
 		try {
 			lastBuiltProject = getProject();
-			errors.clear();
+			this.errors.clear();
 			
-			projectProperties = new ProjectProperties(getProject());
+			this.projectProperties = new ProjectProperties(getProject());
 			
-			log.debug("Building to '" + projectProperties.getOutputPath() + "'");
-			log.debug("kind: " + kind);
+			log.debug("Building to '" + this.projectProperties.getOutputPath() + "'");  //$NON-NLS-1$//$NON-NLS-2$
+			log.debug("kind: " + kind); //$NON-NLS-1$
 
-			log.debug("----\n" + projectProperties.toString() + "----\n");
+			log.debug("----\n" + this.projectProperties.toString() + "----\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
-			CaesarAdapter caesarAdapter = new CaesarAdapter(projectProperties
+			CaesarAdapter caesarAdapter = new CaesarAdapter(this.projectProperties
 					.getProjectLocation());
 
 			// build
-			boolean success = caesarAdapter.compile(projectProperties
-					.getSourceFiles(), projectProperties.getClassPath(),
-					projectProperties.getOutputPath(), errors, progressMonitor);
+			caesarAdapter.compile(this.projectProperties
+					.getSourceFiles(), this.projectProperties.getClassPath(),
+					this.projectProperties.getOutputPath(), this.errors, progressMonitor);
 
 			// update markers, show errors
 			showErrors();
 
 			// update outline view
-			Display display = Display.getDefault();
+			Display.getDefault();
 
 			// update has to be executed from Workbenchs Thread
 
@@ -114,10 +103,10 @@ public class Builder extends IncrementalProjectBuilder {
 	public void showErrors() {
 
 		try {
-			Collection sourceFiles = projectProperties.getSourceFiles();
+			Collection sourceFiles = this.projectProperties.getSourceFiles();
 			for (Iterator it = sourceFiles.iterator(); it.hasNext();) {
 
-				String sourcePath = projectProperties.getProjectLocation()
+				String sourcePath = this.projectProperties.getProjectLocation()
 						+ it.next().toString();
 
 				IResource resource = ProjectProperties.findResource(sourcePath,
@@ -132,14 +121,14 @@ public class Builder extends IncrementalProjectBuilder {
 			e.printStackTrace();
 		}
 
-		for (Iterator it = errors.iterator(); it.hasNext();) {
+		for (Iterator it = this.errors.iterator(); it.hasNext();) {
 			try {
 				PositionedError error = (PositionedError) it.next();
 				TokenReference token = error.getTokenReference();
 
 				if (token.getLine() > 0) {
-					log.debug("file: " + token.getFile() + ", " + "line: "
-							+ token.getLine() + ", " + "path: "
+					log.debug("file: " + token.getFile() + ", " + "line: " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							+ token.getLine() + ", " + "path: "  //$NON-NLS-1$//$NON-NLS-2$
 							+ token.getPath());
 
 					IResource resource = ProjectProperties.findResource(token

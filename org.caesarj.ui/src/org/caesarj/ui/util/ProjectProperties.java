@@ -40,8 +40,8 @@ public class ProjectProperties {
         /*
          * get paths
          */
-        projectLocation = project.getLocation().removeLastSegments(1).toOSString();
-        outputPath = jProject.getOutputLocation().toOSString();
+        this.projectLocation = project.getLocation().removeLastSegments(1).toOSString();
+        this.outputPath = jProject.getOutputLocation().toOSString();
 
         /*
          * get source files
@@ -56,36 +56,37 @@ public class ProjectProperties {
                     project.findMember(
                         classPathEntries[i].getPath().removeFirstSegments(1)
                     ),
-                    sourceFiles
+                    this.sourceFiles
                 );
             }               
             else if(classPathEntries[i].getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
         
-                if(classPath.length()>0)
-                    classPath.append(File.pathSeparator);
+                if(this.classPath.length()>0) {
+					this.classPath.append(File.pathSeparator);
+				}
         
                 String cp = classPathEntries[i].getPath().toOSString(); 
                 if(cp.startsWith(projectLocalPrefix)) {
                     cp =
-                        projectLocation + 
+                        this.projectLocation + 
                         classPathEntries[i].getPath().toOSString();
                 }                
 
-                classPath.append(cp);
+                this.classPath.append(cp);
             }
         }
     }
 
-    private void getAllSourceFiles(IResource resource, List sourceFiles) throws CoreException {
+    private void getAllSourceFiles(IResource resource, List sourceFilesArg) throws CoreException {
         if(resource!=null) {        
-            if(resource.getName().endsWith(".java") || resource.getName().endsWith(".cj")) {
-                sourceFiles.add(resource.getFullPath().toOSString());
+            if(resource.getName().endsWith(".java") || resource.getName().endsWith(".cj")) { //$NON-NLS-1$ //$NON-NLS-2$
+                sourceFilesArg.add(resource.getFullPath().toOSString());
             }
             else if(resource instanceof Container) {
                 Container container = (Container)resource;
                 IResource[] resources = container.members();
                 for(int i=0; i<resources.length; i++) {
-                    getAllSourceFiles(resources[i], sourceFiles);       
+                    getAllSourceFiles(resources[i], sourceFilesArg);       
                 }
             }
         }
@@ -106,28 +107,28 @@ public class ProjectProperties {
 
 
 	public String getProjectLocation() {
-		return projectLocation;
+		return this.projectLocation;
 	}
         
     public String getOutputPath() {
-        return outputPath;
+        return this.outputPath;
     }
 
     public String getClassPath() {
-        return classPath.toString();
+        return this.classPath.toString();
     }
 
 	public Collection getSourceFiles() {		
-		return sourceFiles;
+		return this.sourceFiles;
 	}
     
     public String toString() {
         StringBuffer res = new StringBuffer();
-        res.append("projectLocation\n\t"+getProjectLocation());
-        res.append("\noutputPath\n\t"+getOutputPath());
-        res.append("\nclasspath\n\t"+getClassPath());
-        res.append("\nsource files:\n");
-        for(Iterator it=sourceFiles.iterator(); it.hasNext(); ) {
+        res.append("projectLocation\n\t"+getProjectLocation()); //$NON-NLS-1$
+        res.append("\noutputPath\n\t"+getOutputPath()); //$NON-NLS-1$
+        res.append("\nclasspath\n\t"+getClassPath()); //$NON-NLS-1$
+        res.append("\nsource files:\n"); //$NON-NLS-1$
+        for(Iterator it=this.sourceFiles.iterator(); it.hasNext(); ) {
             res.append('\t');
             res.append(it.next());
             res.append('\n');

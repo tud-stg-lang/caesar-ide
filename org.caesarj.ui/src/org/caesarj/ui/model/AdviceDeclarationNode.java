@@ -20,30 +20,30 @@ public class AdviceDeclarationNode extends CaesarProgramElementNode {
 	private String classFullQualifiedName;
 
 	public AdviceDeclarationNode(
-		CjAdviceDeclaration adviceDeclaration,
-		String classFullQualifiedName,
+		CjAdviceDeclaration adviceDeclarationAeg,
+		String classFullQualifiedNameArg,
 		String signature,
 		Kind kind,
-		ISourceLocation sourceLocation,
+		ISourceLocation sourceLocationArg,
 		int modifiers,
 		String formalComment,
-		List children) {
-		super(signature, kind, sourceLocation, modifiers, formalComment, children);
+		List childrenArg) {
+		super(signature, kind, sourceLocationArg, modifiers, formalComment, childrenArg);
 		this.initImages();
-		this.adviceDeclaration = adviceDeclaration;
-		this.classFullQualifiedName = classFullQualifiedName;
+		this.adviceDeclaration = adviceDeclarationAeg;
+		this.classFullQualifiedName = classFullQualifiedNameArg;
 	}
 
 	public CjAdviceDeclaration getAdviceDeclaration() {
-		return adviceDeclaration;
+		return this.adviceDeclaration;
 	}
 
 	public String getClassFullQualifiedName() {
-		return classFullQualifiedName;
+		return this.classFullQualifiedName;
 	}
 
 	public String getText(String text) {
-		return text.substring(text.lastIndexOf("]") + 2);
+		return text.substring(text.lastIndexOf("]") + 2); //$NON-NLS-1$
 	}
 
 	public Image getImage() {

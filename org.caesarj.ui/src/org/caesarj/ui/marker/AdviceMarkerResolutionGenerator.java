@@ -8,8 +8,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
@@ -18,7 +16,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * @author Shadow
@@ -42,7 +39,7 @@ public class AdviceMarkerResolutionGenerator implements
 				res[i] = new AdviceMarkerResolution(advices[i], marker);
 			return res;
 		} catch (CoreException e) {
-			logger.error("Fehler beim auslesen der LINKS aus AdviceMarker", e);
+			logger.error("Fehler beim auslesen der LINKS aus AdviceMarker", e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -61,18 +58,18 @@ public class AdviceMarkerResolutionGenerator implements
 
 		boolean toAdvice = false;
 
-		public AdviceMarkerResolution(LinkNode link, IMarker marker) {
+		public AdviceMarkerResolution(LinkNode linkArg, IMarker marker) {
 			super();
-			this.link = link;
+			this.link = linkArg;
 			try {
 				this.toAdvice = marker.getAttribute(AdviceMarker.ID).equals(
-						"AdviceLink");
+						"AdviceLink"); //$NON-NLS-1$
 			} catch (CoreException e) {
 			}
 		}
 
 		public String getLabel() {
-			return this.toAdvice ? "Open Advice: " + link.getName():"Open Methode: " + link.getName();
+			return this.toAdvice ? "Open Advice: " + this.link.getName():"Open Methode: " + this.link.getName(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		public void run(IMarker marker) {
@@ -83,15 +80,11 @@ public class AdviceMarkerResolutionGenerator implements
 			IWorkbenchPage page = w.getActivePage();
 			if (page == null)
 				return;
-			org.eclipse.jdt.internal.ui.javaeditor.JavaAnnotationImageProvider tes;
-			IFileEditorInput input = new FileEditorInput((IFile) marker
-					.getResource());
-			IEditorPart editorPart = page.findEditor(input);
 			try {
-				editorPart = IDE.openEditor(page, this.getLinkLocation(), true);
+				IDE.openEditor(page, this.getLinkLocation(), true);
 			} catch (PartInitException e) {
 				MessageDialog.openError(w.getShell(),
-						"ERROR", "Unable to open Editor!"); //$NON-NLS-1$
+						"ERROR", "Unable to open Editor!"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 

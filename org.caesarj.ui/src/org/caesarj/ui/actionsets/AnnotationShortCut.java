@@ -36,17 +36,17 @@ public class AnnotationShortCut implements IWorkbenchWindowActionDelegate{
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
-		status = JavaPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS);
+		this.status = JavaPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		log.debug("Annotation action was activated!");
-		JavaPlugin.getDefault().getPreferenceStore().setValue(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS, !status);
+		log.debug("Annotation action was activated!"); //$NON-NLS-1$
+		JavaPlugin.getDefault().getPreferenceStore().setValue(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS, !this.status);
 		//JavaPlugin.getDefault().getPreferenceStore().notifyAll();
-		status = JavaPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS);
+		this.status = JavaPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS);
 	}
 
 	/* (non-Javadoc)

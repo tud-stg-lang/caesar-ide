@@ -7,13 +7,13 @@ import org.eclipse.jface.preference.IPreferenceStore;
 public class CaesarJPreferences {
 
 	
-	public static final String CAESAR_PREF_CONFIG_DONE = "org.caesarj.ui.preferences.ajdtPrefConfigDone";
+	public static final String CAESAR_PREF_CONFIG_DONE = "org.caesarj.ui.preferences.ajdtPrefConfigDone"; //$NON-NLS-1$
 
-	public static final String CAESAR_AUTO_SWITCH = "org.caesarj.ui.preferences.autoSwitch";
+	public static final String CAESAR_AUTO_SWITCH = "org.caesarj.ui.preferences.autoSwitch"; //$NON-NLS-1$
 	
-	public static final String PDE_AUTO_IMPORT_CONFIG_DONE = "org.caesarj.ui.preferences.pdeAutoImportConfigDone";
+	public static final String PDE_AUTO_IMPORT_CONFIG_DONE = "org.caesarj.ui.preferences.pdeAutoImportConfigDone"; //$NON-NLS-1$
 
-	public static final String ASK_PDE_AUTO_IMPORT = "org.caesarj.ui.preferences.askPdeAutoImport";
+	public static final String ASK_PDE_AUTO_IMPORT = "org.caesarj.ui.preferences.askPdeAutoImport"; //$NON-NLS-1$
 
 	public static void setCAESARAutoSwitch(boolean arg)
 	{

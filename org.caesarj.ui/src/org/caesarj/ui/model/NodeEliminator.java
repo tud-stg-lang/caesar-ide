@@ -19,13 +19,13 @@ public class NodeEliminator extends AbstractAsmVisitor {
     public void visit(StructureNode node) {       
 
         if(AsmBuilder.isToRemove(node))
-            nodes2del.add(node);       
+            this.nodes2del.add(node);       
 
         super.visit(node);
     }    
     
     public void eliminateNodes() {
-        for(Iterator it=nodes2del.iterator(); it.hasNext(); ) {
+        for(Iterator it=this.nodes2del.iterator(); it.hasNext(); ) {
             StructureNode node2del = (StructureNode)it.next();
     
             List parentChildren = node2del.getParent().getChildren();
@@ -38,6 +38,6 @@ public class NodeEliminator extends AbstractAsmVisitor {
     }
     
     public void clear() {
-        nodes2del.clear();
+        this.nodes2del.clear();
     }
 }

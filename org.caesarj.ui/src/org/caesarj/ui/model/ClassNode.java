@@ -16,10 +16,10 @@ import org.eclipse.jdt.internal.ui.JavaPluginImages;
 public class ClassNode extends CaesarProgramElementNode {
 
 	protected void initImages() {
-		PUBLIC = JavaPluginImages.DESC_OBJS_INNER_CLASS_PUBLIC;
-		PRIVATE = JavaPluginImages.DESC_OBJS_INNER_CLASS_PRIVATE;
-		PROTECTED = JavaPluginImages.DESC_OBJS_INNER_CLASS_PROTECTED;
-		DEFAULT = JavaPluginImages.DESC_OBJS_INNER_CLASS_DEFAULT;
+		this.PUBLIC = JavaPluginImages.DESC_OBJS_INNER_CLASS_PUBLIC;
+		this.PRIVATE = JavaPluginImages.DESC_OBJS_INNER_CLASS_PRIVATE;
+		this.PROTECTED = JavaPluginImages.DESC_OBJS_INNER_CLASS_PROTECTED;
+		this.DEFAULT = JavaPluginImages.DESC_OBJS_INNER_CLASS_DEFAULT;
 	}
 
 	/**
@@ -27,8 +27,8 @@ public class ClassNode extends CaesarProgramElementNode {
 	 * @param kind
 	 * @param children
 	 */
-	public ClassNode(String signature, Kind kind, List children) {
-		super(signature, kind, children);
+	public ClassNode(String signature, Kind kind, List childrenArg) {
+		super(signature, kind, childrenArg);
 		this.initImages();
 	}
 
@@ -43,11 +43,11 @@ public class ClassNode extends CaesarProgramElementNode {
 	public ClassNode(
 		String signature,
 		Kind kind,
-		ISourceLocation sourceLocation,
+		ISourceLocation sourceLocationArg,
 		int modifiers,
 		String formalComment,
-		List children) {
-		super(signature, kind, sourceLocation, modifiers, formalComment, children);
+		List childrenArg) {
+		super(signature, kind, sourceLocationArg, modifiers, formalComment, childrenArg);
 		this.initImages();
 	}
 
@@ -64,19 +64,19 @@ public class ClassNode extends CaesarProgramElementNode {
 	public ClassNode(
 		String signature,
 		Kind kind,
-		ISourceLocation sourceLocation,
+		ISourceLocation sourceLocationArg,
 		int modifiers,
 		String formalComment,
-		List children,
+		List childrenArg,
 		JPackageImport[] importedPackages,
 		JClassImport[] importedClasses) {
 		super(
 			signature,
 			kind,
-			sourceLocation,
+			sourceLocationArg,
 			modifiers,
 			formalComment,
-			children,
+			childrenArg,
 			importedPackages,
 			importedClasses);
 		this.initImages();
@@ -90,7 +90,7 @@ public class ClassNode extends CaesarProgramElementNode {
 	}
 
 	public String getText(String text) {
-		return text.substring(text.lastIndexOf("]") + 2);
+		return text.substring(text.lastIndexOf("]") + 2); //$NON-NLS-1$
 	}
 
 }

@@ -402,9 +402,9 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		if (part instanceof CaesarEditor) {
-			ICompilationUnit cu = 
-				getCompilationUnit((IStructuredSelection) selection);
-			log.debug("Selection in Editor '"+cu.getElementName()+"'");
+//			ICompilationUnit cu = 
+//				getCompilationUnit((IStructuredSelection) selection);
+//			log.debug("Selection in Editor '"+cu.getElementName()+"'");
 			//jm.reset(cu);
 			CaesarEditor editor = (CaesarEditor)part;
 			log.debug("Selection in Editor! Editor: '"+editor.getEditorInput().getName()+"'.");

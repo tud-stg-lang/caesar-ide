@@ -14,6 +14,7 @@ import org.aspectj.asm.StructureModel;
 import org.aspectj.asm.StructureNode;
 import org.aspectj.bridge.ISourceLocation;
 import org.aspectj.bridge.SourceLocation;
+import org.caesarj.classfile.ClassfileConstants2;
 import org.caesarj.compiler.ast.phylum.JCompilationUnit;
 import org.caesarj.compiler.ast.phylum.declaration.CjAdviceDeclaration;
 import org.caesarj.compiler.ast.phylum.declaration.CjMixinInterfaceDeclaration;
@@ -39,7 +40,7 @@ import org.caesarj.util.TokenReference;
  */
 public class AsmBuilder {
 
-	private static final String REGISTRY_CLASS_NAME = "Registry";
+	private static final String REGISTRY_CLASS_NAME = "Registry"; //$NON-NLS-1$
 
 	protected StructureModel structureModel = null;
 	protected Stack asmStack = new Stack();
@@ -50,7 +51,7 @@ public class AsmBuilder {
 	 * initialize the model
 	 */
 	public static void preBuild(StructureModel structureModel) {
-		String rootLabel = "<root>";
+		String rootLabel = "<root>"; //$NON-NLS-1$
 		structureModel.setRoot(
 			new ProgramElementNode(rootLabel, ProgramElementNode.Kind.FILE_JAVA, new ArrayList()));
 
@@ -95,26 +96,26 @@ public class AsmBuilder {
 
 		if (node instanceof CaesarProgramElementNode) {
 			String nodeName = node.getName();
-			return nodeName.equals("_getBinding")
-				|| nodeName.equals("_getProviding")
-				|| nodeName.equals("_getProvidingReference")
-				|| nodeName.equals("_getWrappee");
+			return nodeName.equals("_getBinding") //$NON-NLS-1$
+				|| nodeName.equals("_getProviding") //$NON-NLS-1$
+				|| nodeName.equals("_getProvidingReference") //$NON-NLS-1$
+				|| nodeName.equals("_getWrappee"); //$NON-NLS-1$
 		}
 
 		return false;
 	}
 
-	private void internalBuild(JCompilationUnit unit, StructureModel structureModel) {
+	private void internalBuild(JCompilationUnit unit, StructureModel structureModelArg) {
 		if (unit == null)
 			return;
 
-		setStructureModel(structureModel);
-		asmStack.push(structureModel.getRoot());
+		setStructureModel(structureModelArg);
+		this.asmStack.push(structureModelArg.getRoot());
 
 		VisitorSupport visitor = new VisitorSupport(this);
 		unit.accept(visitor);
 
-		asmStack.pop();
+		this.asmStack.pop();
 		setStructureModel(null);
 	}
 
@@ -141,7 +142,7 @@ public class AsmBuilder {
 				CaesarProgramElementNode.Kind.FILE_JAVA,
 				makeLocation(ref),
 				0,
-				"",
+				"", //$NON-NLS-1$
 				new ArrayList(),
 				self.getImportedPackages(),
 				self.getImportedClasses());
@@ -150,9 +151,8 @@ public class AsmBuilder {
 
 			String pkgName = self.getPackageName().getName();
 
-			pkgName = pkgName.replaceAll("/", ".");
+			pkgName = pkgName.replaceAll("/", "."); //$NON-NLS-1$ //$NON-NLS-2$
 
-			boolean found = false;
 			CaesarProgramElementNode pkgNode = null;
 
 			for (Iterator it = getStructureModel().getRoot().getChildren().iterator();
@@ -172,9 +172,6 @@ public class AsmBuilder {
 				getStructureModel().getRoot().addChild(pkgNode);
 			}
 
-			// if the node already exists remove before adding
-			CaesarProgramElementNode duplicate = null;
-
 			for (Iterator itt = pkgNode.getChildren().iterator(); itt.hasNext();) {
 				CaesarProgramElementNode child = (CaesarProgramElementNode) itt.next();
 				if (child.getSourceLocation().getSourceFile().equals(file)) {
@@ -185,7 +182,6 @@ public class AsmBuilder {
 			pkgNode.addChild(cuNode);
 		} else {
 			// if the node already exists remove before adding
-			CaesarProgramElementNode duplicate = null;
 
 			for (Iterator itt = getStructureModel().getRoot().getChildren().iterator();
 				itt.hasNext();
@@ -203,16 +199,16 @@ public class AsmBuilder {
 			//StructureModelManager.INSTANCE.getStructureModel().getFileMap().put(
 			getStructureModel().addToFileMap(file.getCanonicalPath(), cuNode);
 		} catch (IOException ioe) {
-			logger.error("WAS weiß ich den watt hier pasiere töt", ioe);
+			logger.error("WAS weiß ich den watt hier pasiere töt", ioe); //$NON-NLS-1$
 		}
 
-		asmStack.push(cuNode);
+		this.asmStack.push(cuNode);
 		
 		return true;
 	}
 	
 	public void endVisit(JCompilationUnit self) {  
-		asmStack.pop();
+		this.asmStack.pop();
 	}
 	
 	
@@ -229,19 +225,19 @@ public class AsmBuilder {
 				CaesarProgramElementNode.Kind.INTERFACE,
 				makeLocation(self.getTokenReference()),
 				self.getModifiers(),
-				"",
+				"", //$NON-NLS-1$
 				new ArrayList());
 
 		getCurrentStructureNode().addChild(peNode);
-		asmStack.push(peNode);
-		classStack.push(self);
+		this.asmStack.push(peNode);
+		this.classStack.push(self);
 		
 		return true;
 	}
 	
 	public void endVisit(JInterfaceDeclaration self) {
-		asmStack.pop();
-		classStack.pop();
+		this.asmStack.pop();
+		this.classStack.pop();
 	}
 	
 	// don't visit CjMixinInterfaceDeclaration (we have already all data from CjVirtualClassDeclaration)
@@ -258,18 +254,18 @@ public class AsmBuilder {
 	 * crosscutting und normal classes
 	 */
 	public boolean visit(JClassDeclaration self) {
-		classStack.push(self);
+		this.classStack.push(self);
 
 		CaesarProgramElementNode peNode;
 
-		if (CModifier.contains(self.getModifiers(), CModifier.ACC_CROSSCUTTING)) {
+		if (CModifier.contains(self.getModifiers(), ClassfileConstants2.ACC_CROSSCUTTING)) {
 			peNode =
 				new AspectNode(
 					self.getIdent(),
 					CaesarProgramElementNode.Kind.ASPECT,
 					makeLocation(self.getTokenReference()),
 					self.getModifiers(),
-					"",
+					"", //$NON-NLS-1$
 					new ArrayList());
 		} 
 		else {
@@ -279,19 +275,19 @@ public class AsmBuilder {
 					CaesarProgramElementNode.Kind.CLASS,
 					makeLocation(self.getTokenReference()),
 					self.getModifiers(),
-					"",
+					"", //$NON-NLS-1$
 					new ArrayList());
 		}
 
 		getCurrentStructureNode().addChild(peNode);
-		asmStack.push(peNode);
+		this.asmStack.push(peNode);
 		
 		return true;
 	}
 
 	public void endVisit(JClassDeclaration self) {
-		asmStack.pop();
-		classStack.pop();
+		this.asmStack.pop();
+		this.classStack.pop();
 	}
 	
 
@@ -303,12 +299,12 @@ public class AsmBuilder {
 		ConstructorDeclarationNode peNode =
 			new ConstructorDeclarationNode(
 				self,
-				((JClassDeclaration) classStack.peek()),
+				((JClassDeclaration) this.classStack.peek()),
 				self.getIdent(),
 				CaesarProgramElementNode.Kind.CONSTRUCTOR,
 				makeLocation(self.getTokenReference()),
 				self.getModifiers(),
-				"",
+				"", //$NON-NLS-1$
 				new ArrayList());
 
 		getCurrentStructureNode().addChild(peNode);
@@ -324,15 +320,15 @@ public class AsmBuilder {
 		CaesarProgramElementNode peNode =
 			new MethodDeclarationNode(
 				self,
-				((JTypeDeclaration) classStack.peek()),
+				((JTypeDeclaration) this.classStack.peek()),
 				self.getIdent(),
 				CaesarProgramElementNode.Kind.METHOD,
 				makeLocation(self.getTokenReference()),
 				self.getModifiers(),
-				"",
+				"", //$NON-NLS-1$
 				new ArrayList());
 
-		if (self.getIdent().equals("main")) {
+		if (self.getIdent().equals("main")) { //$NON-NLS-1$
 			peNode.setRunnable(true);
 		}
 
@@ -348,12 +344,12 @@ public class AsmBuilder {
 		CaesarProgramElementNode peNode =
 			new PointcutNode(
 				pointcut,
-				((JClassDeclaration) classStack.peek()),
+				((JClassDeclaration) this.classStack.peek()),
 				pointcut.getIdent(),
 				CaesarProgramElementNode.Kind.POINTCUT,
 				makeLocation(pointcut.getTokenReference()),
 				pointcut.getModifiers(),
-				"",
+				"", //$NON-NLS-1$
 				new ArrayList());	
 		
 		getCurrentStructureNode().addChild(peNode);
@@ -366,18 +362,18 @@ public class AsmBuilder {
 		CaesarProgramElementNode peNode =
 			new AdviceDeclarationNode(
 				advice,
-				((JTypeDeclaration) classStack.peek()).getCClass().getQualifiedName(),
+				((JTypeDeclaration) this.classStack.peek()).getCClass().getQualifiedName(),
 				advice.getKind().wrappee().getName(),
 				CaesarProgramElementNode.Kind.ADVICE,
 				makeLocation(advice.getTokenReference()),
 				advice.getModifiers(),
-				"",
+				"", //$NON-NLS-1$
 				new ArrayList());
 
 		if (CModifier
 			.contains(
-				((JTypeDeclaration) classStack.peek()).getModifiers(),
-				CModifier.ACC_DEPLOYED)) {
+				((JTypeDeclaration) this.classStack.peek()).getModifiers(),
+				ClassfileConstants2.ACC_DEPLOYED)) {
 			getCurrentStructureNode().addChild(peNode);
 		} else {
 			CaesarProgramElementNode registryNode =
@@ -386,11 +382,11 @@ public class AsmBuilder {
 			if (registryNode == null) {
 				registryNode =
 					new AspectRegistryNode(
-						"Registry",
+						"Registry", //$NON-NLS-1$
 						CaesarProgramElementNode.Kind.CLASS,
 						makeLocation(advice.getTokenReference()),
 						advice.getModifiers(),
-						"",
+						"", //$NON-NLS-1$
 						new ArrayList());
 
 				getCurrentStructureNode().addChild(registryNode);
@@ -414,7 +410,7 @@ public class AsmBuilder {
 				makeLocation(self.getTokenReference()),
 				var.getType(),
 				var.getModifiers(),
-				"",
+				"", //$NON-NLS-1$
 				new ArrayList());
 
 		getCurrentStructureNode().addChild(peNode);
@@ -431,15 +427,15 @@ public class AsmBuilder {
 	}
 
 	private StructureNode getCurrentStructureNode() {
-		return (StructureNode) asmStack.peek();
+		return (StructureNode) this.asmStack.peek();
 	}
 
-	private void setStructureModel(StructureModel structureModel) {
-		this.structureModel = structureModel;
+	private void setStructureModel(StructureModel structureModelArg) {
+		this.structureModel = structureModelArg;
 	}
 
 	private StructureModel getStructureModel() {
-		return structureModel;
+		return this.structureModel;
 	}
 
 	/*

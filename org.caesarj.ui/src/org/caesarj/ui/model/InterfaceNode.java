@@ -23,8 +23,8 @@ public class InterfaceNode extends CaesarProgramElementNode {
 	 * @param kind
 	 * @param children
 	 */
-	public InterfaceNode(String signature, Kind kind, List children) {
-		super(signature, kind, children);
+	public InterfaceNode(String signature, Kind kind, List childrenArg) {
+		super(signature, kind, childrenArg);
 		this.initImages();
 	}
 
@@ -39,11 +39,11 @@ public class InterfaceNode extends CaesarProgramElementNode {
 	public InterfaceNode(
 		String signature,
 		Kind kind,
-		ISourceLocation sourceLocation,
+		ISourceLocation sourceLocationArg,
 		int modifiers,
 		String formalComment,
-		List children) {
-		super(signature, kind, sourceLocation, modifiers, formalComment, children);
+		List childrenArg) {
+		super(signature, kind, sourceLocationArg, modifiers, formalComment, childrenArg);
 		this.initImages();
 	}
 
@@ -60,19 +60,19 @@ public class InterfaceNode extends CaesarProgramElementNode {
 	public InterfaceNode(
 		String signature,
 		Kind kind,
-		ISourceLocation sourceLocation,
+		ISourceLocation sourceLocationArg,
 		int modifiers,
 		String formalComment,
-		List children,
+		List childrenArg,
 		JPackageImport[] importedPackages,
 		JClassImport[] importedClasses) {
 		super(
 			signature,
 			kind,
-			sourceLocation,
+			sourceLocationArg,
 			modifiers,
 			formalComment,
-			children,
+			childrenArg,
 			importedPackages,
 			importedClasses);
 		this.initImages();
@@ -89,30 +89,30 @@ public class InterfaceNode extends CaesarProgramElementNode {
 	 * @see org.caesarj.ui.model.CaesarProgramElementNode#getText(java.lang.String)
 	 */
 	public String getText(String text) {
-		return text.substring(text.lastIndexOf("]") + 2);
+		return text.substring(text.lastIndexOf("]") + 2); //$NON-NLS-1$
 	}
 
 	protected void initImages() {
-		PUBLIC = JavaPluginImages.DESC_OBJS_INNER_INTERFACE_PUBLIC;
-		PRIVATE = JavaPluginImages.DESC_OBJS_INNER_INTERFACE_PRIVATE;
-		PROTECTED = JavaPluginImages.DESC_OBJS_INNER_INTERFACE_PROTECTED;
-		DEFAULT = JavaPluginImages.DESC_OBJS_INNER_INTERFACE_DEFAULT;
+		this.PUBLIC = JavaPluginImages.DESC_OBJS_INNER_INTERFACE_PUBLIC;
+		this.PRIVATE = JavaPluginImages.DESC_OBJS_INNER_INTERFACE_PRIVATE;
+		this.PROTECTED = JavaPluginImages.DESC_OBJS_INNER_INTERFACE_PROTECTED;
+		this.DEFAULT = JavaPluginImages.DESC_OBJS_INNER_INTERFACE_DEFAULT;
 	}
 
 	public Image getImage() {
 		ImageDescriptor img;
 		switch (this.getCAModifiers() % 8) {
 			case 1 :
-				img = PUBLIC;
+				img = this.PUBLIC;
 				break;
 			case 2 :
-				img = PRIVATE;
+				img = this.PRIVATE;
 				break;
 			case 4 :
-				img = PROTECTED;
+				img = this.PROTECTED;
 				break;
 			default :
-				img = DEFAULT;
+				img = this.DEFAULT;
 		}
 		return new CaesarElementImageDescriptor(img, this, BIG_SIZE).createImage();
 	}

@@ -7,7 +7,6 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
-import org.apache.log4j.Logger;
 import org.caesarj.ui.editor.CaesarEditor;
 import org.caesarj.ui.editor.CaesarTextTools;
 import org.caesarj.ui.preferences.CaesarJPreferences;
@@ -19,7 +18,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
-import org.eclipse.jdt.internal.ui.viewsupport.ImageDescriptorRegistry;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Display;
@@ -37,25 +35,21 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 	// singleton
 	private static CaesarPlugin plugin;
 
-	private ImageDescriptorRegistry fImageDescriptorRegistry;
+	public static final String CAESAR_RUNTIME_LIB = "caesar-runtime.jar", //$NON-NLS-1$
+			ASPECTJ_RUNTIME_LIB = "aspectjrt.jar", //$NON-NLS-1$
+			CAESAR_COMPILER_LIB = "caesar-compiler.jar", BCEL_LIB = "bcel.jar";  //$NON-NLS-1$//$NON-NLS-2$
 
-	public static final String CAESAR_RUNTIME_LIB = "caesar-runtime.jar",
-			ASPECTJ_RUNTIME_LIB = "aspectjrt.jar",
-			CAESAR_COMPILER_LIB = "caesar-compiler.jar", BCEL_LIB = "bcel.jar";
+	public static final String VERSION = "0.1.2"; //$NON-NLS-1$
 
-	private static Logger log = Logger.getLogger(CaesarPlugin.class);
+	public static final String PLUGIN_ID = "org.caesarj"; //$NON-NLS-1$
 
-	public static final String VERSION = "0.1.2";
+	public static final String ID_EDITOR = PLUGIN_ID + ".editor.CaesarEditor"; //$NON-NLS-1$
 
-	public static final String PLUGIN_ID = "org.caesarj";
+	public static final String ID_BUILDER = PLUGIN_ID + ".builder.builder"; //$NON-NLS-1$
 
-	public static final String ID_EDITOR = PLUGIN_ID + ".editor.CaesarEditor";
+	public static final String ID_OUTLINE = PLUGIN_ID + ".caesaroutlineview"; //$NON-NLS-1$
 
-	public static final String ID_BUILDER = PLUGIN_ID + ".builder.builder";
-
-	public static final String ID_OUTLINE = PLUGIN_ID + ".caesaroutlineview";
-
-	public static final String ID_NATURE = PLUGIN_ID + ".caesarprojectnature";
+	public static final String ID_NATURE = PLUGIN_ID + ".caesarprojectnature"; //$NON-NLS-1$
 
 	private Display display = Display.getCurrent();
 
@@ -105,10 +99,10 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 		super(descriptor);
 		plugin = this;
 		try {
-			resourceBundle = ResourceBundle
-					.getBundle("caesar.CaesarPluginResources");
+			this.resourceBundle = ResourceBundle
+					.getBundle("caesar.CaesarPluginResources"); //$NON-NLS-1$
 		} catch (MissingResourceException x) {
-			resourceBundle = null;
+			this.resourceBundle = null;
 		}
 		
 		if (selectionListener) {
@@ -153,14 +147,14 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 	}
 
 	public Display getDisplay() {
-		return display;
+		return this.display;
 	}
 
 	/**
 	 * Returns the plugin's resource bundle,
 	 */
 	public ResourceBundle getResourceBundle() {
-		return resourceBundle;
+		return this.resourceBundle;
 	}
 
 	/**
@@ -169,40 +163,43 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 	public CaesarTextTools getCaesarTextTools() {
 		IPreferenceStore textToolPreferences;
 
-		if (caesarTextTools == null) {
+		if (this.caesarTextTools == null) {
 			textToolPreferences = JavaPlugin.getDefault().getPreferenceStore();
-			caesarTextTools = new CaesarTextTools(textToolPreferences);
+			this.caesarTextTools = new CaesarTextTools(textToolPreferences);
 		}
 
-		return caesarTextTools;
+		return this.caesarTextTools;
 	}
 
 	public String getCaesarRuntimeClasspath() {
-		if (caesarRuntimePath == null)
-			caesarRuntimePath = getPathFor(CAESAR_RUNTIME_LIB);
+		if (this.caesarRuntimePath == null)
+			this.caesarRuntimePath = getPathFor(CAESAR_RUNTIME_LIB);
 
-		return caesarRuntimePath;
+		return this.caesarRuntimePath;
 	}
 
 	public String getAspectJRuntimeClasspath() {
-		if (aspectjRuntimePath == null)
-			aspectjRuntimePath = getPathFor(ASPECTJ_RUNTIME_LIB);
+		if (this.aspectjRuntimePath == null) {
+			this.aspectjRuntimePath = getPathFor(ASPECTJ_RUNTIME_LIB);
+		}
 
-		return aspectjRuntimePath;
+		return this.aspectjRuntimePath;
 	}
 
 	public String getCaesarCompilerClasspath() {
-		if (caesarCompilerPath == null)
-			caesarCompilerPath = getPathFor(CAESAR_COMPILER_LIB);
+		if (this.caesarCompilerPath == null) {
+			this.caesarCompilerPath = getPathFor(CAESAR_COMPILER_LIB);
+		}
 
-		return caesarCompilerPath;
+		return this.caesarCompilerPath;
 	}
 
 	public String getBcelClasspath() {
-		if (bcelPath == null)
-			bcelPath = getPathFor(BCEL_LIB);
+		if (this.bcelPath == null) {
+			this.bcelPath = getPathFor(BCEL_LIB);
+		}
 
-		return bcelPath;
+		return this.bcelPath;
 	}
 
 	private String getPathFor(String lib) {
@@ -214,7 +211,7 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 		int min = 1;
 		int svc = 1;
 		try {
-			StringTokenizer tok = new StringTokenizer(VERSION, ".");
+			StringTokenizer tok = new StringTokenizer(VERSION, "."); //$NON-NLS-1$
 			maj = Integer.parseInt(tok.nextToken());
 			min = Integer.parseInt(tok.nextToken());
 			svc = Integer.parseInt(tok.nextToken());
@@ -243,8 +240,8 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 			}
 		}
 		if (pluginLoc != null) {
-			if (pluginLoc.startsWith("file:")) {
-				cpath.append(pluginLoc.substring("file:".length()));
+			if (pluginLoc.startsWith("file:")) { //$NON-NLS-1$
+				cpath.append(pluginLoc.substring("file:".length())); //$NON-NLS-1$
 				cpath.append(lib);
 			}
 		}
@@ -259,7 +256,7 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 		return res;
 	}
 
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+	public void selectionChanged(IWorkbenchPart part, ISelection selectionArg) {
 		if (CaesarJPreferences.isCAESARAutoSwitch()) {
 			if (part instanceof CaesarEditor) {
 				CJDTConfigSettings.disableAnalyzeAnnotations();

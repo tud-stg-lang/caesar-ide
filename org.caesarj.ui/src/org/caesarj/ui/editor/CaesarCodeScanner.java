@@ -27,274 +27,262 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  */
 public final class CaesarCodeScanner extends AbstractJavaScanner {
 
-    private static class VersionedWordRule extends WordRule {
+	private static class VersionedWordRule extends WordRule {
 
-        private final String fVersion;
-        private final boolean fEnable;
+		private final String fVersion;
 
-        private String fCurrentVersion;
+		private final boolean fEnable;
 
-        public VersionedWordRule(
-            IWordDetector detector,
-            String version,
-            boolean enable,
-            String currentVersion) {
-            super(detector);
+		private String fCurrentVersion;
 
-            fVersion = version;
-            fEnable = enable;
-            fCurrentVersion = currentVersion;
-        }
+		public VersionedWordRule(IWordDetector detector, String version,
+				boolean enable, String currentVersion) {
+			super(detector);
 
-        public void setCurrentVersion(String version) {
-            fCurrentVersion = version;
-        }
+			this.fVersion = version;
+			this.fEnable = enable;
+			this.fCurrentVersion = currentVersion;
+		}
 
-        /*
-         * @see IRule#evaluate
-         */
+		public void setCurrentVersion(String version) {
+			this.fCurrentVersion = version;
+		}
 
-        public IToken evaluate(ICharacterScanner scanner) {
-            IToken token = super.evaluate(scanner);
+		/*
+		 * @see IRule#evaluate
+		 */
 
-            if (fEnable) {
-                if (fCurrentVersion.equals(fVersion))
-                    return token;
+		public IToken evaluate(ICharacterScanner scanner) {
+			IToken token = super.evaluate(scanner);
 
-                return Token.UNDEFINED;
+			if (this.fEnable) {
+				if (this.fCurrentVersion.equals(this.fVersion)) {
+					return token;
+				}
+				return Token.UNDEFINED;
+			} else {
+				if (this.fCurrentVersion.equals(this.fVersion)) {
+					return Token.UNDEFINED;
+				}
+				return token;
+			}
+		}
+	}
 
-            } else {
-                if (fCurrentVersion.equals(fVersion))
-                    return Token.UNDEFINED;
+	private static final String SOURCE_VERSION = "org.eclipse.jdt.core.compiler.source"; //$NON-NLS-1$
 
-                return token;
-            }
-        }
-    }
+	private static String[] fgKeywords = { "abstract", //$NON-NLS-1$
+			"break", //$NON-NLS-1$
+			"case", //$NON-NLS-1$
+			"catch", //$NON-NLS-1$
+			"class", //$NON-NLS-1$
+			"const", //$NON-NLS-1$
+			"continue", //$NON-NLS-1$
+			//$NON-NLS-5$ //$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+			"default", "do", //$NON-NLS-2$ //$NON-NLS-1$
+			"else", "extends", //$NON-NLS-2$ //$NON-NLS-1$
+			"final", "finally", "for", //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+			"goto", //$NON-NLS-1$
+			"if", //$NON-NLS-1$
+			"implements", //$NON-NLS-1$
+			"import", //$NON-NLS-1$
+			"instanceof", //$NON-NLS-1$
+			"interface", //$NON-NLS-1$
+			//$NON-NLS-5$ //$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+			"native", "new", //$NON-NLS-2$ //$NON-NLS-1$
+			"package", //$NON-NLS-1$
+			"private", //$NON-NLS-1$
+			"protected", //$NON-NLS-1$
+			"public", //$NON-NLS-1$
+			//$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+			"return", //$NON-NLS-1$
+			"static", //$NON-NLS-1$
+			"super", //$NON-NLS-1$
+			"switch", //$NON-NLS-1$
+			"synchronized",//$NON-NLS-1$
+			//$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+			"this",//$NON-NLS-1$
+			"throw",//$NON-NLS-1$
+			"throws",//$NON-NLS-1$
+			"transient",//$NON-NLS-1$
+			"try",//$NON-NLS-1$
+			//$NON-NLS-5$ //$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+			"volatile", //$NON-NLS-1$
+			"while" //$NON-NLS-1$
+	};
 
-    private static final String SOURCE_VERSION =
-        "org.eclipse.jdt.core.compiler.source";
+	// AspectJ keywords
+	private static String[] ajKeywords = { /* "aspect", */"pointcut",//$NON-NLS-1$
+			"privileged",//$NON-NLS-1$
+			// Pointcut designators: methods and constructora
+			"call", "execution", "initialization", "preinitialization",   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$
+			// Pointcut designators: exception handlers
+			"handler",//$NON-NLS-1$
+			// Pointcut designators: fields
+			"get", "set",//$NON-NLS-1$ //$NON-NLS-2$
+			// Pointcut designators: static initialization
+			"staticinitialization",//$NON-NLS-1$
+			// Pointcut designators: object
+			// (this already a Java keyword)
+			"target", "args",//$NON-NLS-1$ //$NON-NLS-2$
+			// Pointcut designators: lexical extents
+			"within", "withincode",//$NON-NLS-1$ //$NON-NLS-2$
+			// Pointcut designators: control flow
+			"cflow", "cflowbelow", //$NON-NLS-1$ //$NON-NLS-2$
+			// Advice
+			"before", "after", "around", "proceed", "throwing", "returning",  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			/* "adviceexecution" , */
+			// Declarations
+			/*
+			 * "declare", "parents" , "warning" , "error", "soft" ,
+			 * "precedence",
+			 */
+			// variables
+			"thisJoinPoint", "thisJoinPointStaticPart", //$NON-NLS-1$ //$NON-NLS-2$
+			"thisEnclosingJoinPointStaticPart", //$NON-NLS-1$
+	// Associations
+	/* "issingleton", "perthis", "pertarget", "percflow", "percflowbelow" */};
 
-    private static String[] fgKeywords = { "abstract", //$NON-NLS-1$
-        "break", //$NON-NLS-1$
-        "case",
-            "catch",
-            "class",
-            "const",
-            "continue",
-        //$NON-NLS-5$ //$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
-        "default", "do", //$NON-NLS-2$ //$NON-NLS-1$
-        "else", "extends", //$NON-NLS-2$ //$NON-NLS-1$
-        "final", "finally", "for", //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
-        "goto", //$NON-NLS-1$
-        "if",
-            "implements",
-            "import",
-            "instanceof",
-            "interface",
-        //$NON-NLS-5$ //$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
-        "native", "new", //$NON-NLS-2$ //$NON-NLS-1$
-        "package",
-            "private",
-            "protected",
-            "public",
-        //$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
-        "return", //$NON-NLS-1$
-        "static",
-            "super",
-            "switch",
-            "synchronized",
-        //$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
-        "this",
-            "throw",
-            "throws",
-            "transient",
-            "try",
-        //$NON-NLS-5$ //$NON-NLS-4$ //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
-        "volatile", //$NON-NLS-1$
-        "while" //$NON-NLS-1$
-    };
-    
-    // AspectJ keywords
-	private static String[] ajKeywords = { /*"aspect",*/ "pointcut", "privileged",
-		// Pointcut designators: methods and constructora
-		"call", "execution", "initialization", "preinitialization" ,
-		// Pointcut designators: exception handlers
-		"handler",
-		// Pointcut designators: fields
-		"get", "set",
-		// Pointcut designators: static initialization
-		"staticinitialization",
-		// Pointcut designators: object
-		// (this already a Java keyword)
-		"target", "args",
-		// Pointcut designators: lexical extents
-		"within", "withincode",
-		// Pointcut designators: control flow
-		"cflow", "cflowbelow",
-		// Advice
-		"before", "after", "around", "proceed", "throwing" , "returning" ,
-		/*"adviceexecution" ,*/
-		// Declarations
-		/* "declare", "parents" , "warning" , "error", "soft" , "precedence", */
-		// variables
-		"thisJoinPoint" , "thisJoinPointStaticPart" , "thisEnclosingJoinPointStaticPart" ,
-		// Associations
-		/*"issingleton", "perthis", "pertarget", "percflow", "percflowbelow"*/ };
+	// Caesar keywords
+	private static String[] caesarKeywords = { "cclass", "wraps", "wrappee",  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			"deploy", "deployed" }; //$NON-NLS-1$ //$NON-NLS-2$
 
-    // Caesar keywords
-    private static String[] caesarKeywords = {
-		"cclass",
-		"wraps",
-		"wrappee",
-		"deploy",
-		"deployed"		
-    };
+	private static String[] fgNewKeywords = { "assert" }; //$NON-NLS-1$
 
-    private static String[] fgNewKeywords = { "assert" }; //$NON-NLS-1$
+	private static String[] fgTypes = { "void", "boolean", "char", "byte",  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"short", "strictfp", "int", "long", "float", "double" };   //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 
-    private static String[] fgTypes =
-        {
-            "void",
-            "boolean",
-            "char",
-            "byte",
-            "short",
-            "strictfp",
-            "int",
-            "long",
-            "float",
-            "double" };
-    //$NON-NLS-1$ //$NON-NLS-5$ //$NON-NLS-7$ //$NON-NLS-6$ //$NON-NLS-8$ //$NON-NLS-9$  //$NON-NLS-10$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-2$
+	//$NON-NLS-1$ //$NON-NLS-5$ //$NON-NLS-7$ //$NON-NLS-6$ //$NON-NLS-8$ //$NON-NLS-9$  //$NON-NLS-10$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-2$
 
-    private static String[] fgConstants = { "false", "null", "true" };
-    //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+	private static String[] fgConstants = { "false", "null", "true" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-    private static String[] fgTokenProperties =
-        {
-            IJavaColorConstants.JAVA_KEYWORD,
-            IJavaColorConstants.JAVA_STRING,
-            IJavaColorConstants.JAVA_DEFAULT };
+	//$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 
-    private VersionedWordRule fVersionedWordRule;
+	private static String[] fgTokenProperties = {
+			IJavaColorConstants.JAVA_KEYWORD, IJavaColorConstants.JAVA_STRING,
+			IJavaColorConstants.JAVA_DEFAULT };
 
-    /**
-     * Creates a Java code scanner
-     */
-    public CaesarCodeScanner(IColorManager manager, IPreferenceStore store) {
-        super(manager, store);
+	private VersionedWordRule fVersionedWordRule;
 
-        initialize();
-    }
+	/**
+	 * Creates a Java code scanner
+	 */
+	public CaesarCodeScanner(IColorManager manager, IPreferenceStore store) {
+		super(manager, store);
 
-    /*
-     * @see AbstractJavaScanner#getTokenProperties()
-     */
-    protected String[] getTokenProperties() {
-        return fgTokenProperties;
-    }
+		initialize();
+	}
 
-    /*
-     * @see AbstractJavaScanner#createRules()
-     */
-    protected List createRules() {
+	/*
+	 * @see AbstractJavaScanner#getTokenProperties()
+	 */
+	protected String[] getTokenProperties() {
+		return fgTokenProperties;
+	}
 
-        //      System.err.println("AJCodeScanner.createRules() called");
-        List rules = new ArrayList();
+	/*
+	 * @see AbstractJavaScanner#createRules()
+	 */
+	protected List createRules() {
 
-        // Add rule for strings and character constants.
-        Token token = getToken(IJavaColorConstants.JAVA_STRING);
-        rules.add(new SingleLineRule("\"", "\"", token, '\\'));
-        //$NON-NLS-2$ //$NON-NLS-1$
-        rules.add(new SingleLineRule("'", "'", token, '\\'));
-        //$NON-NLS-2$ //$NON-NLS-1$
+		//      System.err.println("AJCodeScanner.createRules() called");
+		List rules = new ArrayList();
 
-        // Add generic whitespace rule.
-        rules.add(new WhitespaceRule(new JavaWhitespaceDetector()));
+		// Add rule for strings and character constants.
+		Token token = getToken(IJavaColorConstants.JAVA_STRING);
+		rules.add(new SingleLineRule("\"", "\"", token, '\\'));  //$NON-NLS-1$//$NON-NLS-2$
+		//$NON-NLS-2$ //$NON-NLS-1$
+		rules.add(new SingleLineRule("'", "'", token, '\\'));  //$NON-NLS-1$//$NON-NLS-2$
+		//$NON-NLS-2$ //$NON-NLS-1$
 
-        // Add word rule for new keywords, 4077
-        Object version = JavaCore.getOptions().get(SOURCE_VERSION);
-        if (version instanceof String) {
-            fVersionedWordRule =
-                new VersionedWordRule(new JavaWordDetector(), "1.4", true, (String) version);
-            //$NON-NLS-1$
+		// Add generic whitespace rule.
+		rules.add(new WhitespaceRule(new JavaWhitespaceDetector()));
 
-            token = getToken(IJavaColorConstants.JAVA_KEYWORD);
-            for (int i = 0; i < fgNewKeywords.length; i++)
-                fVersionedWordRule.addWord(fgNewKeywords[i], token);
+		// Add word rule for new keywords, 4077
+		Object version = JavaCore.getOptions().get(SOURCE_VERSION);
+		if (version instanceof String) {
+			this.fVersionedWordRule = new VersionedWordRule(new JavaWordDetector(),
+					"1.4", true, (String) version); //$NON-NLS-1$
+			//$NON-NLS-1$
 
-            rules.add(fVersionedWordRule);
-        }
+			token = getToken(IJavaColorConstants.JAVA_KEYWORD);
+			for (int i = 0; i < fgNewKeywords.length; i++)
+				this.fVersionedWordRule.addWord(fgNewKeywords[i], token);
 
-        // Add word rule for keywords, types, and constants.
-        token = getToken(IJavaColorConstants.JAVA_DEFAULT);
-        WordRule wordRule = new WordRule(new JavaWordDetector(), token);
+			rules.add(this.fVersionedWordRule);
+		}
 
-        token = getToken(IJavaColorConstants.JAVA_KEYWORD);
+		// Add word rule for keywords, types, and constants.
+		token = getToken(IJavaColorConstants.JAVA_DEFAULT);
+		WordRule wordRule = new WordRule(new JavaWordDetector(), token);
 
-        for (int i = 0; i < fgKeywords.length; i++)
-            wordRule.addWord(fgKeywords[i], token);
-        
-        for (int i = 0; i < ajKeywords.length; i++)
-            wordRule.addWord(ajKeywords[i], token);
+		token = getToken(IJavaColorConstants.JAVA_KEYWORD);
 
-        for (int i = 0; i < caesarKeywords.length; i++)
-            wordRule.addWord(caesarKeywords[i], token);
+		for (int i = 0; i < fgKeywords.length; i++)
+			wordRule.addWord(fgKeywords[i], token);
 
-        for (int i = 0; i < fgTypes.length; i++)
-            wordRule.addWord(fgTypes[i], token);
+		for (int i = 0; i < ajKeywords.length; i++)
+			wordRule.addWord(ajKeywords[i], token);
 
-        for (int i = 0; i < fgConstants.length; i++)
-            wordRule.addWord(fgConstants[i], token);
+		for (int i = 0; i < caesarKeywords.length; i++)
+			wordRule.addWord(caesarKeywords[i], token);
 
-        rules.add(wordRule);
+		for (int i = 0; i < fgTypes.length; i++)
+			wordRule.addWord(fgTypes[i], token);
 
-        setDefaultReturnToken(getToken(IJavaColorConstants.JAVA_DEFAULT));
-        return rules;
-    }
+		for (int i = 0; i < fgConstants.length; i++)
+			wordRule.addWord(fgConstants[i], token);
 
-    /*
-     * @see RuleBasedScanner#setRules(IRule[])
-     */
-    public void setRules(IRule[] rules) {
-        int i;
-        for (i = 0; i < rules.length; i++)
-            if (rules[i].equals(fVersionedWordRule))
-                break;
+		rules.add(wordRule);
 
-        // not found - invalidate fVersionedWordRule
-        if (i == rules.length)
-            fVersionedWordRule = null;
+		setDefaultReturnToken(getToken(IJavaColorConstants.JAVA_DEFAULT));
+		return rules;
+	}
 
-        super.setRules(rules);
-    }
+	/*
+	 * @see RuleBasedScanner#setRules(IRule[])
+	 */
+	public void setRules(IRule[] rules) {
+		int i;
+		for (i = 0; i < rules.length; i++)
+			if (rules[i].equals(this.fVersionedWordRule)) {
+				break;
+			}
 
-    /*
-     * @see AbstractJavaScanner#affectsBehavior(PropertyChangeEvent)
-     */
-    public boolean affectsBehavior(PropertyChangeEvent event) {
-        return event.getProperty().equals(SOURCE_VERSION)
-            || super.affectsBehavior(event);
-    }
+		// not found - invalidate fVersionedWordRule
+		if (i == rules.length)
+			this.fVersionedWordRule = null;
 
-    /*
-     * @see AbstractJavaScanner#adaptToPreferenceChange(PropertyChangeEvent)
-     */
-    public void adaptToPreferenceChange(PropertyChangeEvent event) {
+		super.setRules(rules);
+	}
 
-        if (event.getProperty().equals(SOURCE_VERSION)) {
-            Object value = event.getNewValue();
+	/*
+	 * @see AbstractJavaScanner#affectsBehavior(PropertyChangeEvent)
+	 */
+	public boolean affectsBehavior(PropertyChangeEvent event) {
+		return event.getProperty().equals(SOURCE_VERSION)
+				|| super.affectsBehavior(event);
+	}
 
-            if (value instanceof String) {
-                String s = (String) value;
+	/*
+	 * @see AbstractJavaScanner#adaptToPreferenceChange(PropertyChangeEvent)
+	 */
+	public void adaptToPreferenceChange(PropertyChangeEvent event) {
 
-                if (fVersionedWordRule != null)
-                    fVersionedWordRule.setCurrentVersion(s);
-            }
+		if (event.getProperty().equals(SOURCE_VERSION)) {
+			Object value = event.getNewValue();
 
-        } else if (super.affectsBehavior(event)) {
-            super.adaptToPreferenceChange(event);
-        }
-    }
+			if (value instanceof String) {
+				String s = (String) value;
+
+				if (this.fVersionedWordRule != null) {
+					this.fVersionedWordRule.setCurrentVersion(s);
+				}
+			}
+
+		} else if (super.affectsBehavior(event)) {
+			super.adaptToPreferenceChange(event);
+		}
+	}
 
 }

@@ -41,73 +41,75 @@ public final class CaesarAdapter extends Main {
 	}
 
 	public void inform(PositionedError error) {
-		errors.add(error);
+		this.errors.add(error);
 	}
 
 	public boolean compile(Collection sourceFiles, String classPath,
-			String outputPath, Collection errors) {
-		return compile(sourceFiles, classPath, outputPath, errors, null);
+			String outputPath, Collection errorsArg) {
+		return compile(sourceFiles, classPath, outputPath, errorsArg, null);
 	}
 
 	public boolean compile(Collection sourceFiles, String classPath,
-			String outputPath, Collection errors,
-			IProgressMonitor progressMonitor) {
+			String outputPath, Collection errorsArg,
+			IProgressMonitor progressMonitorArg) {
 
-		model = StructureModelManager.INSTANCE.getStructureModel();
-		AsmBuilder.preBuild(model);
+		this.model = StructureModelManager.INSTANCE.getStructureModel();
+		AsmBuilder.preBuild(this.model);
 		boolean success = false;
 		String args[] = new String[sourceFiles.size() + 4];
 
 		int i = 0;
 
-		args[i++] = "-d";
+		args[i++] = "-d"; //$NON-NLS-1$
 		args[i++] = outputPath;
 
-		args[i++] = "-classpath";
+		args[i++] = "-classpath"; //$NON-NLS-1$
 		args[i++] = classPath;
 
 		for (Iterator it = sourceFiles.iterator(); it.hasNext();) {
 			args[i++] = it.next().toString();
 		}
 
-		this.errors = errors;
-		this.progressMonitor = progressMonitor != null ? progressMonitor
+		this.errors = errorsArg;
+		this.progressMonitor = progressMonitorArg != null ? progressMonitorArg
 				: NULL_PROGRESS_MONITOR;
 
-		this.progressMonitor.beginTask("compiling source files", sourceFiles
+		this.progressMonitor.beginTask("compiling source files", sourceFiles //$NON-NLS-1$
 				.size() + 1);
 
 		try {
 			success = run(args);
 		} catch (RuntimeException e) {
-			logger.warn("Fehler im Compiler", e);
+			logger.warn("Fehler im Compiler", e); //$NON-NLS-1$
 		}
-		AsmBuilder.postBuild(model);
-		_dumpModel("final structure model", model);
+		AsmBuilder.postBuild(this.model);
+		_dumpModel("final structure model", this.model); //$NON-NLS-1$
 		return success;
 	}
 
 	protected JCompilationUnit parseFile(File file, KjcEnvironment env) {
-		if (progressMonitor.isCanceled())
+		if (this.progressMonitor.isCanceled()) {
 			return null;
+		}
 
 		JCompilationUnit res;
-		progressMonitor.subTask("compiling" + file.getName());
+		this.progressMonitor.subTask("compiling" + file.getName()); //$NON-NLS-1$
 		res = super.parseFile(file, env);
-		progressMonitor.worked(1);
+		this.progressMonitor.worked(1);
 
-		AsmBuilder.build(res, model);
+		AsmBuilder.build(res, this.model);
 
 		return res;
 	}
 
 	protected void weaveClasses() {
-		if (progressMonitor.isCanceled())
+		if (this.progressMonitor.isCanceled()) {
 			return;
+		}
 
-		progressMonitor.subTask("weaving classes...");
+		this.progressMonitor.subTask("weaving classes..."); //$NON-NLS-1$
 
-		AsmBuilder.preWeave(model);
+		AsmBuilder.preWeave(this.model);
 
 		//_dumpModel("structure model before weave", model);
 		// add model to world and WEAVE
@@ -116,14 +118,14 @@ public final class CaesarAdapter extends Main {
 
 		super.weaveClasses();
 
-		progressMonitor.worked(1);
+		this.progressMonitor.worked(1);
 	}
 
-	private void _dumpModel(String description, StructureModel model) {
+	private void _dumpModel(String description, StructureModel modelArg) {
 
-		log.debug("--- " + description + " ---");
+		log.debug("--- " + description + " ---"); //$NON-NLS-1$ //$NON-NLS-2$
 		StructureModelDump modelDumpBeforeWeave = new StructureModelDump(
 				System.out);
-		modelDumpBeforeWeave.print("", model.getRoot());
+		modelDumpBeforeWeave.print("", modelArg.getRoot()); //$NON-NLS-1$
 	}
 }
