@@ -29,7 +29,7 @@ public class CaesarHierarchyTest {
 	     */
 	    public CaesarHierarchyTest(String extDirs) {
 	        classReader = new KjcClassReader(extDirs, extDirs, new KjcSignatureParser());
-	        factory = new KjcTypeFactory(classReader, false);
+	        factory = new KjcTypeFactory(classReader);
 	    }
 	    
 	    /**
