@@ -20,15 +20,13 @@ import org.eclipse.ui.IWorkbench;
 
 public class CaesarConfigPage extends WizardPage {
 	private IWorkbench workbench;
-	
-	  private static Logger log = Logger.getLogger(CaesarConfigPage.class);
+	private static Logger log = Logger.getLogger(CaesarConfigPage.class);
 
 	// widgets
 	private Button caesarJAnnotationCheckbox = null;
 	private Button caesarEditorDefaultCheckbox = null;
 	private Button caesarJAnnotationAutoSwitshCheckbox = null;
 	private Button dontAskAgainCheckbox = null;
-	
 	
 	public CaesarConfigPage(){
 
