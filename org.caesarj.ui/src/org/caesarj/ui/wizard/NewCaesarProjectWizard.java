@@ -52,18 +52,20 @@ implements      IExecutableExtension {
      */
     public void addPages() {
             
-        //super.addPages();
         this.fMainPage = new WizardNewProjectCreationPage("NewAspectjProjectCreationWizard"); //$NON-NLS-1$
          
-        /*  
-        fMainPage.setTitle(
-            AspectJPlugin.getResourceString("NewAspectjProjectCreationWizard.MainPage.title"));
-        fMainPage.setDescription(
-            AspectJPlugin.getResourceString("NewAspectjProjectCreationWizard.MainPage.description"));
-        */  
+        fMainPage.setTitle("Create a new CaesarJ project"
+            /*AspectJPlugin.getResourceString("NewAspectjProjectCreationWizard.MainPage.title")*/);
+        fMainPage.setDescription("Create a CaesarJ project in the workspace."
+            /*AspectJPlugin.getResourceString("NewAspectjProjectCreationWizard.MainPage.description")*/);
+        fMainPage.setImageDescriptor(JavaPluginImages.DESC_WIZBAN_NEWJPRJ);
+          
         addPage(this.fMainPage);
         IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
         this.fJavaPage = new NewJavaProjectWizardPage(root, this.fMainPage);
+        
+        fJavaPage.setImageDescriptor(JavaPluginImages.DESC_WIZBAN_NEWJPRJ);
+        
         addPage(this.fJavaPage);
     }
     
@@ -84,8 +86,7 @@ implements      IExecutableExtension {
         catch (InterruptedException e) {
             return false;
         }
-        BasicNewProjectResourceWizard.updatePerspective(this.fConfigElement);
-    
+        
         IProject project = this.fJavaPage.getNewJavaProject().getProject();
         
         IJavaProject javaProject = this.fJavaPage.getNewJavaProject();
@@ -111,8 +112,9 @@ implements      IExecutableExtension {
         CaesarPlugin caesarPlugin = CaesarPlugin.getDefault();
                 
         addClassPath(javaProject, caesarPlugin.getAspectJRuntimeClasspath());
-        addClassPath(javaProject, caesarPlugin.getCaesarRuntimeClasspath());        
+        addClassPath(javaProject, caesarPlugin.getCaesarRuntimeClasspath()); 
         
+        BasicNewProjectResourceWizard.updatePerspective(this.fConfigElement);
         return true;
     }       
     
