@@ -15,22 +15,13 @@
       <library name="bcel.jar"/>
       <library name="java-getopt-1.0.9.jar"/>
       <library name="log4j-1.2.8.jar"/>
+      <library name="cjbuildtools.jar"/>
    </runtime>
    <requires>
-      <import plugin="org.eclipse.search" export="true"/>
-      <import plugin="org.eclipse.core.runtime" export="true"/>
-      <import plugin="org.eclipse.core.resources" export="true"/>
-      <import plugin="org.eclipse.ui" export="true"/>
       <import plugin="org.eclipse.jdt.ui" export="true"/>
-      <import plugin="org.eclipse.debug.core" export="true"/>
+      <import plugin="org.eclipse.ui" export="true"/>
+      <import plugin="org.eclipse.core.resources" export="true"/>
       <import plugin="org.eclipse.jdt.core" export="true"/>
-      <import plugin="org.eclipse.pde.core" export="true"/>
-      <import plugin="org.eclipse.pde.runtime" export="true"/>
-      <import plugin="org.eclipse.pde" export="true"/>
-      <import plugin="org.eclipse.debug.ui" export="true"/>
-      <import plugin="org.eclipse.jdt.debug.ui" export="true"/>
-      <import plugin="org.eclipse.swt" export="true"/>
-      <import plugin="org.eclipse.jdt.launching" export="true"/>
    </requires>
 
 
@@ -96,7 +87,9 @@
          id="advicemarker"
          name="AdviceMarker"
          point="org.eclipse.core.resources.markers">
-      <super type="org.eclipse.core.resources.textmarker"/>
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
       <persistent
             value="true">
       </persistent>
@@ -115,19 +108,5 @@
             id="org.eclipse.ui.adviceMarkerProvider">
       </imageprovider>
    </extension>
-   <!--extension
-         point="org.eclipse.ui.markerResolution">
-      <markerResolutionGenerator
-            markerType="org.caesarj.advicemarker"
-            class="org.caesarj.ui.marker.AdviceMarkerResolutionGenerator">
-      </markerResolutionGenerator>
-   </extension>
-	<extension point="org.eclipse.ui.markerHelp">
-		<markerHelp markerType="org.caesarj.advicemarker" helpContextId="org.caesarj.marker_example1_context">
-			<attribute name="org.caesarj.advicemarker" value="AdviceLink"/>
-		</markerHelp>
-		<markerHelp markerType="org.caesarj.advicemarker" helpContextId="org.caesarj.marker_example2_context">
-			<attribute name="org.caesarj.advicemarker" value="MethodeLink"/>
-		</markerHelp>
-	</extension-->
+
 </plugin>
