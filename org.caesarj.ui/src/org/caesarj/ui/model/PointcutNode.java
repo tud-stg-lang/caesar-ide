@@ -39,12 +39,16 @@ public class PointcutNode extends CaesarProgramElementNode {
 	public String getText(String text) {
 		String ret = this.getName() + "(";
 		JFormalParameter allPara[] = this.pointCutDeclaration.getArgs();
-		String arg = allPara[0].getType().toString();
-		ret += arg.subSequence(arg.lastIndexOf('.') + 1, arg.length());
-		for (int i = 1; i < allPara.length; i++) {
-			arg = allPara[i].getType().toString();
-			ret += ", "
-					+ arg.subSequence(arg.lastIndexOf('.') + 1, arg.length());
+		if (allPara.length != 0) {
+			String arg = allPara[0].getType().toString();
+
+			ret += arg.subSequence(arg.lastIndexOf('.') + 1, arg.length());
+			for (int i = 1; i < allPara.length; i++) {
+				arg = allPara[i].getType().toString();
+				ret += ", "
+						+ arg.subSequence(arg.lastIndexOf('.') + 1, arg
+								.length());
+			}
 		}
 		ret += ")";
 		return ret;
@@ -53,10 +57,10 @@ public class PointcutNode extends CaesarProgramElementNode {
 	public int compareTo(Object o) {
 		return 0;
 	}
-	
+
 	public Image getImage() {
-		return new CaesarElementImageDescriptor(CaesarPluginImages.DESC_POINTCUT,
-				null, BIG_SIZE).createImage();
+		return new CaesarElementImageDescriptor(
+				CaesarPluginImages.DESC_POINTCUT, null, BIG_SIZE).createImage();
 	}
 
 	/**

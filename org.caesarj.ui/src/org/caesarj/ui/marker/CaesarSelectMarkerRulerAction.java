@@ -46,7 +46,6 @@ public class CaesarSelectMarkerRulerAction extends SelectMarkerRulerAction {
 				operation.doOperation(opCode);
 				return;
 			}
-			return;
 		}
 		super.run();
 	}

@@ -98,7 +98,8 @@ public class CaesarOutlineView extends ContentOutlinePage {
 			try {
 				if (element instanceof CaesarProgramElementNode) {
 					CaesarProgramElementNode cNode = (CaesarProgramElementNode) element;
-					return cNode.getText(super.getText(element));
+					return cNode.getText(super.getText(element)).replaceAll(
+							"_Impl", "");
 				} else if (element instanceof LinkNode) {
 					LinkNode lNode = (LinkNode) element;
 					String returnString = lNode.toString();
@@ -111,17 +112,17 @@ public class CaesarOutlineView extends ContentOutlinePage {
 								.lastIndexOf(':') + 2, returnString.length());
 						return advice + ":" + className.replaceAll("_Impl", ""); //$NON-NLS-1$
 					} catch (RuntimeException e1) {
-						return returnString.substring(0, returnString.length())
-								+ "()"; //$NON-NLS-1$
+						return (returnString.substring(0, returnString.length())
+								+ "()").replaceAll("_Impl", ""); //$NON-NLS-1$
 					}
 				} else if (element instanceof ProgramElementNode
 						&& ((ProgramElementNode) element)
 								.getProgramElementKind().equals(
 										ProgramElementNode.Kind.CODE)) {
 					return new CodeNode((ProgramElementNode) element)
-							.getText(super.getText(element));
+							.getText(super.getText(element)).replaceAll("_Impl", "");
 				} else
-					return super.getText(element);
+					return super.getText(element).replaceAll("_Impl", "");
 			} catch (NullPointerException e) {
 				logger.error("Sollte es nicht geben!", e); //$NON-NLS-1$
 			}
