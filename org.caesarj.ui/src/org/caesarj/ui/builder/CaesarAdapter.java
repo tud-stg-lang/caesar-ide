@@ -12,6 +12,7 @@ import org.caesarj.compiler.Main;
 import org.caesarj.compiler.ast.phylum.JCompilationUnit;
 import org.caesarj.ui.model.AsmBuilder;
 import org.caesarj.ui.model.StructureModelDump;
+import org.caesarj.util.CWarning;
 import org.caesarj.util.PositionedError;
 import org.caesarj.util.UnpositionedError;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -41,12 +42,24 @@ public final class CaesarAdapter extends Main {
 		super(projectLocation, null);
 	}
 
-	public void inform(PositionedError error) {
-		this.errors.add(error);
+	public void reportTrouble(PositionedError error) {
+		/**
+		 * TODO: move filtering of messages to compiler
+		 */
+		if (error instanceof CWarning) {
+            if (options.warning != 0 && filterWarning((CWarning)error)) {
+            	this.errors.add(error);
+            }
+        }
+		else {
+			this.errors.add(error);
+		}
+		super.reportTrouble(error);
 	}
 	
-	public void inform(UnpositionedError error) {
+	public void reportTrouble(UnpositionedError error) {
 		this.errors.add(error);
+		super.reportTrouble(error);
     }
 
 	public boolean compile(Collection sourceFiles, String classPath,
