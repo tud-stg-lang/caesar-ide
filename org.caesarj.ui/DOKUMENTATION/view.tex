@@ -22,7 +22,7 @@ The outline view is showing structural members and crosscutting relationships. I
 
 \subsection{Hierarchy View\label{hierarchyview}}
 % It displays the hierarchical relationships of \caesarj ~cclasses.
-A \caesarj ~hierarchy view displays the hierarchical relationships of \caesarj ~cclasses. That means, that for each cclass their super-classes are displayed under the \markedtext{Super} node (see figure \ref{fig:hierarchy_view}). If the class contains nested classes (\markedtext{Contains} node) there are two displaying modes available for them:
+A \caesarj ~hierarchy view displays the hierarchical relationships of \caesarj ~cclass-es. That means, that for each cclass their super-classes are displayed under the \markedtext{Super} node (see figure \ref{fig:hierarchy_view}). If the class contains nested classes (\markedtext{Contains} node) there are two displaying modes available for them:
 \begin{itemize}
 	\item[\textbf{Super:}] For each nested class their super classes are displayed.
 	\item[\textbf{Sub:}] For each nested class their sub classes are displayed. If a sub class has two super classes the linearized inheritance relation is displayed in brackets after the class name.
@@ -39,10 +39,10 @@ The modes can be switched by pressing the control button in the upper-right of t
 \textbf{Note:} Since this view needs meta information from the compiler, the view refreshes when a project is (re-)built successfully.
 
 \section{Common Problems and Limitations}
-The \cjdt ~is under development. That is why there are some restrictions in this release. Some of these are listed below:
+The \cjdt ~is still under development. That is why there are some restrictions in this release. Some of these are listed below:
 \begin{itemize}
-	\item This release does not support live annotation while typing. To get this available, an \caesarj ~AST\footnote{Abstract Syntax Tree} would have to be built while changing code. This is not done yet.
-	\item Showing the class hierarchy of an cclass marked in the editor by pressing \markedtext{F4}. Only the hierarchy view of an entire file and its included classes is supported.
+	\item This release does not support live annotation while typing. To get this available, an \caesarj ~AST\footnote{Abstract Syntax Tree} would have to be rebuilt while changing the code in the editor. This is not implemented yet.
+	\item Showing the class hierarchy of an cclass marked in the editor by pressing \markedtext{F4}. Only the hierarchy view of an entire source file and its included classes is supported.
 	\item In-time refreshing of the outline bar and of the hierarchy view is not supported yet. In this release both of the views need meta information from the compiler. That is why they only refresh after a (re-) build of the entire project.
-	\item It is not possible to declare breakpoints in cclasses, when debugging an \caesarj ~application.
+	\item It is not possible to declare breakpoints in cclass-es, when debugging an \caesarj ~application.
 \end{itemize}

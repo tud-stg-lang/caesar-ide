@@ -1,42 +1,39 @@
 \section{Introduction}
-This documentation discribes how to use the \caesarj -Eclipse Plugin for the new programming language \caesarj.
-\subsection{What is \caesarj ?}
-\caesar ~is a new aspect-oriented programming language that extends JAVA with the following functions:
-\begin{itemize}
-	\item aspect\footnote{\href{http://www.st.informatik.tu-darmstadt.de/database/publications/data/aosd03.pdf?id=70}{This paper} contains more information about \caesarj ~and aspects.} functionality with runtime deployment of aspects
-	\item multiple inheritance
-	\item aspecture polymorphisms
-	\item dynamic deployment
-	\item virtual classes with propagating mixin composition
-	\item \dots
-\end{itemize}
-For more detailed information please visite \href{http://caesarj.org/}{http://caesarj.org/}.
+This documentation describes how to use the \caesarj -Eclipse Plugin.
 
-\subsection{What is the use of the \caesarj ~ Plugin?}
-\caesarj ~extends the Java source code. A pure JAVA-Editor (e.g. the \jdt -Eclipse Plugin) would not be able to handle this kind of source code. Furthermore the integrated JAVA compiler would not work. So an IDE is needed, that extends the \jdt. 
-\subsection{What are the features of the \jdt}
-The \jdt -Eclipse plugin supports many features for JAVA programmers. Some highlights are:
+
+\subsection{What is \caesarj ?}
+\caesar ~is a new aspect-oriented programming language, which addresses the most important goals of the software design: modularity, reuse, flexibility and correctness. It is easy to learn because it fully integrates with the Java programming language. All new language extensions are compiled to efficient Java byte-code. The \caesar ~highlights are:
+\begin{itemize}
+	\item Virtual Classes
+	\item Mixin Composition
+	\item Collaboration Interfaces	
+	\item Bindings
+	\item Aspectual Polymorphism	
+	\item Dynamic Deployment		
+\end{itemize}
+
+For more detailed information please visit \href{http://caesarj.org/}{http://caesarj.org/}.
+
+\subsection{About the \caesarj ~ Plugin}
+\caesarj ~extends the Java language with new syntax and semantics. In order to support the daily development with \caesar ~we have developed the Caesar Development Tools (CDT) consisting of a plugin for the Eclipse Integrated Development Environment (IDE). The Eclipse IDE has already built-in support for Java development. Some highlights of Eclipse's \jdt ~are:
 \begin{itemize}
 	\item code highlighting
 	\item live code annotation 
 	\item outline visualisation
 	\item type hierarchy
 	\item calling hierarchy
-	\item and many more
 \end{itemize}
-The \caesarj ~plugin trys to extend these features and add \caesarj ~specific features.
 
-\subsection{Which extensions do we need for \caesarj}
-To provide a good IDE for the \caesarj ~programming language, we needed to extend the \jdt ~plugin with the following features:
+In order to provide a good IDE support for the \caesarj ~programming language, we have extended the \jdt ~plugin with the following features:
 
 \begin{itemize}
-	\item syntax-highlighting for \caesarj ~expressions
+	\item syntax-highlighting for \caesarj ~code
 	\item crosscutting views
 	\item integrated \caesarj ~builder
 	\item new outline bar (with visualisation of aspects)
 	\item new side ruler (with visualisation of aspects)
 	\item \caesarj ~hierarchy view (visualisation of multiple inheritance)
 \end{itemize}
+
 For detailed description please see Section \ref{features}.
-
-
