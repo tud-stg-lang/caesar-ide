@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="org/caesarj/ui/CaesarElementImageDescriptor.java|org/caesarj/ui/editor/CaesarOutlineView.java|org/caesarj/ui/model/" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="aspectjrt.jar"/>
 	<classpathentry kind="lib" path="aspectjtools.jar"/>
-	<classpathentry kind="lib" path="bcel.jar"/>
 	<classpathentry kind="lib" path="caesar-compiler.jar"/>
 	<classpathentry kind="lib" path="caesar-runtime.jar"/>
 	<classpathentry kind="lib" path="cjbuildtools.jar"/>
