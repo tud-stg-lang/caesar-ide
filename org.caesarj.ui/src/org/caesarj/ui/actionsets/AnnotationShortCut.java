@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: AnnotationShortCut.java,v 1.8 2005-02-15 17:40:33 gasiunas Exp $
+ * $Id: AnnotationShortCut.java,v 1.9 2005-02-16 10:30:02 gasiunas Exp $
  */
 
 package org.caesarj.ui.actionsets;
@@ -55,7 +55,7 @@ public class AnnotationShortCut
 
 	public void init(IWorkbenchWindow window) {
 		this.status = CJDTConfigSettings.isAnalyzeAnnotationsEnabled();
-		JavaPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);		
+		JavaPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 	}
 
 	public void run(IAction action) {
@@ -65,7 +65,9 @@ public class AnnotationShortCut
 		this.action = action;
 	}
 	
-	public void selectionChanged(IAction action, ISelection selection) {		
+	public void selectionChanged(IAction action, ISelection selection) {
+		action.setChecked(this.status);
+		this.action = action;
 	}
 	
 	public void propertyChange(PropertyChangeEvent event) {
