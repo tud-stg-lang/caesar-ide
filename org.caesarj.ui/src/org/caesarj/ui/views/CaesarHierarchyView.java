@@ -195,6 +195,8 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 	private LinearNode buildListModel(String path)
 	{
 		try {
+			if (path==null)
+				throw (new NullPointerException("no information"));
 			CaesarHierarchyTest nav = new CaesarHierarchyTest(globalPathForInformationAdapter);
 	        CClass clazz = nav.load(path);
 			AdditionalCaesarTypeInformation info = clazz.getAdditionalTypeInformation();
@@ -228,7 +230,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		  	log.debug("No Information to show on hierarchy tree.");
 		  	LinearNode emty = new LinearNode();
 		  	emty.setKind(HierarchyNode.LIST);
-			emty.setName("No list available.");
+			emty.setName("No list available for selection");
 			return emty;
 		}
 		catch(Exception e)
@@ -498,7 +500,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 				else
 				{
 					log.debug("Not interested in selection of '"+markedNode.getName()+"'.");
-					
+					refreshList(null);
 				}
 			}
 		}
