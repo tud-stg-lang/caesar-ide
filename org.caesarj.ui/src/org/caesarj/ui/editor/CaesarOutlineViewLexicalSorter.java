@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarOutlineViewLexicalSorter.java,v 1.2 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CaesarOutlineViewLexicalSorter.java,v 1.3 2005-03-24 12:31:55 meffert Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -53,10 +53,21 @@ public class CaesarOutlineViewLexicalSorter extends ViewerSorter {
 	
 	public int category(Object element) {
 		try {
+			Integer categoryInteger;
 			if(element instanceof CaesarProgramElementNode){
-				return ((Integer) categoryMap.get(((CaesarProgramElementNode) element).getCaesarKind())).intValue();
+				CaesarProgramElementNode.Kind kind = ((CaesarProgramElementNode) element).getCaesarKind();
+				categoryInteger = (Integer) categoryMap.get(kind);
+				if(categoryInteger != null) {
+					//return ((Integer) categoryMap.get(((CaesarProgramElementNode) element).getCaesarKind())).intValue();
+					return categoryInteger.intValue();
+				}
 			}else if(element instanceof ProgramElementNode){
-				return ((Integer) categoryMap.get(((ProgramElementNode) element).getProgramElementKind())).intValue();
+				ProgramElementNode.Kind pKind = ((ProgramElementNode) element).getProgramElementKind();
+				categoryInteger = (Integer) categoryMap.get(pKind);
+				if(categoryInteger != null) {
+					//return ((Integer) categoryMap.get(((ProgramElementNode) element).getProgramElementKind())).intValue();
+					return categoryInteger.intValue();
+				}
 			}
 			return 999;
 		} catch (Exception e) {
