@@ -169,22 +169,17 @@
    </extension>
    <extension
          id="advicemarker"
-         name="%adviceMarker"
+         name="AdviceMarker"
          point="org.eclipse.core.resources.markers">
-      <super
-            type="org.eclipse.core.resources.textmarker">
-      </super>
+      <super type="org.eclipse.core.resources.textmarker"/>
       <persistent
             value="true">
       </persistent>
       <attribute
-            name="message">
+            name="org.caesarj.links">
       </attribute>
       <attribute
-            name="line">
-      </attribute>
-      <attribute
-            name="flags">
+            name="org.caesarj.adviceid">
       </attribute>
    </extension>
    <extension
@@ -192,7 +187,22 @@
       <imageprovider
             markertype="org.caesarj.advicemarker"
             icon="icons/joinPoint.gif"
-            id="org.eclipse.ui.searchMarkerProvider.adviceMarkerProvider">
+            id="org.eclipse.ui.adviceMarkerProvider">
       </imageprovider>
    </extension>
+   <!--extension
+         point="org.eclipse.ui.markerResolution">
+      <markerResolutionGenerator
+            markerType="org.caesarj.advicemarker"
+            class="org.caesarj.ui.marker.AdviceMarkerResolutionGenerator">
+      </markerResolutionGenerator>
+   </extension>
+	<extension point="org.eclipse.ui.markerHelp">
+		<markerHelp markerType="org.caesarj.advicemarker" helpContextId="org.caesarj.marker_example1_context">
+			<attribute name="org.caesarj.advicemarker" value="AdviceLink"/>
+		</markerHelp>
+		<markerHelp markerType="org.caesarj.advicemarker" helpContextId="org.caesarj.marker_example2_context">
+			<attribute name="org.caesarj.advicemarker" value="MethodeLink"/>
+		</markerHelp>
+	</extension-->
 </plugin>

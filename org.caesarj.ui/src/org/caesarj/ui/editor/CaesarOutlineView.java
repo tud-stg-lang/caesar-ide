@@ -95,7 +95,6 @@ public class CaesarOutlineView extends ContentOutlinePage {
 
 		public String getText(Object element) {
 			try {
-				//TODO ist wegen parent=null in LinkNode??? Sollte irgendwo beim AST-Tree aufbau behoben werden.
 				if (element instanceof CaesarProgramElementNode) {
 					CaesarProgramElementNode cNode = (CaesarProgramElementNode) element;
 					return cNode.getText(super.getText(element));
@@ -103,6 +102,19 @@ public class CaesarOutlineView extends ContentOutlinePage {
 					LinkNode lNode = (LinkNode) element;
 					return this.getText(lNode.getProgramElementNode());
 				}else 
+					String returnString = lNode.toString();
+					returnString = returnString.substring(returnString.lastIndexOf(']') + 2);
+					try {
+						String className = returnString.substring(0, returnString.lastIndexOf(':'));
+						String advice =
+							returnString.substring(
+								returnString.lastIndexOf(':') + 2,
+								returnString.length());
+						return advice + ":" + className;
+					} catch (RuntimeException e1) {
+						return returnString.substring(0, returnString.length())+"()";
+					}
+				} else
 					return super.getText(element);
 			} catch (NullPointerException e) {
 				logger.error("Sollte es nicht geben!", e);
@@ -152,22 +164,19 @@ public class CaesarOutlineView extends ContentOutlinePage {
 		public Image getImage(Object element) {
 			try {
 				Image image = null;
-				//TODO ist wegen parent=null in LinkNode??? Sollte irgendwo beim AST-Tree aufbau behoben werden.
-				if (element instanceof LinkNode)
-					logger.debug("Element discription: LinkNode");
-				else
-					logger.debug("Element discription: " + element.toString());
 				ImageDescriptor img;
 				if (element instanceof LinkNode) {
-					//TODO Linknode setzt den programmnode nicht richtig.
 					LinkNode lNode = (LinkNode) element;
-					return this.getImage(lNode.getProgramElementNode());
+					return new CaesarElementImageDescriptor(
+						CaesarPluginImages.DESC_JOINPOINT,
+						null,
+						BIG_SIZE)
+						.createImage();
 				} else if (element instanceof RelationNode) {
 					return new CaesarElementImageDescriptor(
 						CaesarPluginImages.DESC_ADVICE,
 						null,
-						BIG_SIZE,
-						false)
+						BIG_SIZE)
 						.createImage();
 				} else if (element instanceof CaesarProgramElementNode) {
 					CaesarProgramElementNode cNode = (CaesarProgramElementNode) element;
@@ -206,17 +215,16 @@ public class CaesarOutlineView extends ContentOutlinePage {
 
 			if (parentElement instanceof ProgramElementNode) {
 				ProgramElementNode node = (ProgramElementNode) parentElement;
-				for (Iterator it = node.getRelations().iterator(); it.hasNext();)
-					if (!(it instanceof AdviceDeclarationNode))
-						vec.add(it.next());
+				Iterator it = node.getRelations().iterator();
+				while(it.hasNext()){
+					Object te = it.next();	
+					if (!(te instanceof AdviceDeclarationNode))
+						vec.add(te);
+				}
 			}
-
-			{
-				StructureNode node = (StructureNode) parentElement;
-				for (Iterator it = node.getChildren().iterator(); it.hasNext();)
-					vec.add(it.next());
-			}
-
+			StructureNode node = (StructureNode) parentElement;
+			for (Iterator it = node.getChildren().iterator(); it.hasNext();)
+				vec.add(it.next());
 			return vec.toArray();
 		}
 

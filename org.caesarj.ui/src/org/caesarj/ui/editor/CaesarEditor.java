@@ -5,10 +5,7 @@ import org.caesarj.ui.CaesarPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.CompositeRuler;
-import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -25,8 +22,6 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class CaesarEditor extends CompilationUnitEditor {
 	
-
-    
 	/**
 	 * @author Jochen
 	 *
@@ -42,29 +37,22 @@ public class CaesarEditor extends CompilationUnitEditor {
     
     public CaesarEditor() {
         super();
-		try{
-		caesarVerticalRuler = (CompositeRuler)this.createVerticalRuler();
-		IVerticalRulerColumn column = this.createLineNumberRulerColumn();
-		AnnotationModel model = new AnnotationModel();
-		//Annotation annotation = new Annotation();
-		Position position = new Position(3);
-		model.addAnnotation(null,position);
-		column.setModel(model);
-		caesarVerticalRuler.addDecorator(1,column);
-		}
-		catch(Exception e)
+        log.debug("Initializing CaesarJ Editor.");
+        try {
+        	CaesarTextTools textTools =
+        		CaesarPlugin.getDefault().getCaesarTextTools();
+        
+        	JavaSourceViewerConfiguration svConfig = 
+        		new JavaSourceViewerConfiguration(textTools, this);  
+        
+        	setSourceViewerConfiguration(svConfig);
+        	log.debug("CaesarJ Editor Initialized.");
+        }
+        catch(Exception e)
 		{
-			log.error("Sideruler error:",e);
+        	log.error("Initalizing CaesarJ Editor.",e);
 		}
-		caesarVerticalRuler.update();
         
-        CaesarTextTools textTools =
-            CaesarPlugin.getDefault().getCaesarTextTools();
-        
-        JavaSourceViewerConfiguration svConfig = 
-            new JavaSourceViewerConfiguration(textTools, this);  
-        
-        setSourceViewerConfiguration(svConfig);
     }
     
     public Object getAdapter(Class key) {                  
@@ -81,8 +69,7 @@ public class CaesarEditor extends CompilationUnitEditor {
     
     public void doSetInput(IEditorInput input) throws CoreException {
         super.doSetInput(input);
-        this.
-        outlineView.setEnabled(true);
+        //TODO [Problem] Migration to 3.0 this.outlineView.setEnabled(true);
     }
     
     public void dispose() {
