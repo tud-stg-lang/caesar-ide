@@ -26,7 +26,7 @@ public class CaesarConfigPage extends WizardPage {
 	// widgets
 	private Button caesarJAnnotationCheckbox = null;
 	private Button caesarEditorDefaultCheckbox = null;
-	private Button analyzeAnnotationsCheckbox = null;
+	private Button caesarJAnnotationAutoSwitshCheckbox = null;
 	private Button dontAskAgainCheckbox = null;
 	
 	
@@ -54,9 +54,13 @@ public class CaesarConfigPage extends WizardPage {
 			workbench.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			
 				caesarJAnnotationCheckbox = new Button(workbench, SWT.CHECK);		
-				caesarJAnnotationCheckbox.setText("Annotation while typing");
+				caesarJAnnotationCheckbox.setText("Default setting: annotation while typing");
 				caesarJAnnotationCheckbox.setSelection(JavaPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS));
 			
+				caesarJAnnotationAutoSwitshCheckbox = new Button(workbench, SWT.CHECK);		
+				caesarJAnnotationAutoSwitshCheckbox.setText("Auto annotation switch while changing editors");
+				caesarJAnnotationAutoSwitshCheckbox.setSelection(CaesarJPreferences.isCAESARAutoSwitch());
+				
 				caesarEditorDefaultCheckbox = new Button(workbench, SWT.CHECK);	
 				caesarEditorDefaultCheckbox.setText("Make the CaesarJ editor the default java - editor");
 				caesarEditorDefaultCheckbox.setSelection(CJDTConfigSettings.isCaesarJEditorDefault());
@@ -81,6 +85,9 @@ public class CaesarConfigPage extends WizardPage {
 				CJDTConfigSettings.disableAnalyzeAnnotations();
 			else
 				CJDTConfigSettings.enableAnalyzeAnnotations();
+		}
+		if (caesarJAnnotationAutoSwitshCheckbox != null) {
+			CaesarJPreferences.setCAESARAutoSwitch(caesarJAnnotationAutoSwitshCheckbox.getSelection());
 		}
 		if (caesarEditorDefaultCheckbox != null) {
 			if (caesarEditorDefaultCheckbox.getSelection())
