@@ -208,5 +208,8 @@
          name="CaesarJDT Perspective"
          id="org.caesarj.ui.perspective.CaesarPerspective">
    </perspective>
-</extension>
+	</extension>
+ 	<extension point="org.eclipse.ui.views">
+  		<view name="CaesarJ View" icon="icons/sample.gif" category="org.eclipse.jdt.ui.java" class="org.caesarj.ui.views.CaesarMetricsView" id="org.caesarj.ui.views.CaesarMetricsView" /> 
+ 	</extension>
 </plugin>
