@@ -47,8 +47,61 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 	private static TreeViewer treeViewer;
 	private static ListViewer listViewer;
 	private String globalPathForInformationAdapter = new String("");
+	private boolean superView = false;
 	
 	private static Logger log = Logger.getLogger(CaesarHierarchyView.class);
+	
+	private String filterName(String name)
+	{
+		try {
+			String help = new String(name);
+			int slashPos = name.lastIndexOf("/");
+			int dollarPos = name.lastIndexOf("$");
+			if (slashPos>0)
+				help = name.substring(slashPos+1);
+			if (dollarPos>slashPos)
+			{
+				help = name.substring(dollarPos+1);
+			}
+			return help;
+		}
+		catch(Exception e)
+		{
+			log.warn("Filtering names for Hierarchy View.",e);
+			return "Error";
+		}
+	}
+	
+	private StandardNode findAllSub(String[] nestedClasses, StandardNode node)
+	{
+		CaesarHierarchyTest nav = new CaesarHierarchyTest(globalPathForInformationAdapter);
+		CClass clazz;
+		AdditionalCaesarTypeInformation helpInfo;
+		String[] superClasses;
+		String additionalInfo = "";
+		
+		for (int j=0; nestedClasses.length>j;j++)
+		{
+			clazz = nav.load(nestedClasses[j]);
+			helpInfo = clazz.getAdditionalTypeInformation();
+			superClasses = helpInfo.getSuperClasses();
+			if (elementInArray(node.getName(),superClasses))
+			{
+				StandardNode subNode = new StandardNode(HierarchyNode.NESTEDSUB, nestedClasses[j], node, helpInfo);
+				for (int k=0;superClasses.length>k;k++)
+				{
+					if (k==0)
+						additionalInfo = filterName(superClasses[k]);
+					else
+					additionalInfo = additionalInfo + " & " + filterName(superClasses[k]);
+				}
+				if (superClasses.length>1)
+					subNode.setAdditionalName(additionalInfo);
+				subNode = findAllSub(nestedClasses, subNode);
+			}
+		}
+		return node;
+	}
 	
 	private StandardNode findAllSuper(StandardNode classNode)
 	{
@@ -83,6 +136,17 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		
 	}
 	
+	private boolean elementInArray(String element, String[] array)
+	{
+		boolean help = false;
+		for ( int i = 0; array.length>i ; i++)
+		{
+			help = help | (element.compareTo(array[i])==0);		
+			//log.debug("Comparing '"+qn+"' and '"+listOfClasses[i]+"'");
+		}
+		return help;
+	}
+	
 	private RootNode buildTreeModel(String path)
 	{
 		try {
@@ -113,8 +177,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 			classNode.setParent(root);
 			root.addChild(classNode);
 			StandardNode parentNode = new StandardNode(HierarchyNode.PARENTS, "Super", classNode);
-			classNode.addChild(parentNode);			
-			
+								
 			String [] superClasses = info.getSuperClasses();
 			for (int i=0; superClasses.length>i; i++)
 			{
@@ -126,8 +189,9 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 			}
 			
 			String [] nestedClasses = info.getNestedClasses();
+						
 			
-			//new Implemtation
+			//new Implemtation 
 			for (int i=0; nestedClasses.length>i; i++)
 			{
 				clazz = nav.load(nestedClasses[i]);
@@ -139,9 +203,17 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 				if (nestedInfo.isImplicit())
 					node.setAdditionalName("Implicid");
 				node.setParent(classNode);
-				node = findAllSuper(node);
-				classNode.addChild(node);			
+				if (superView) //SuperView
+				{
+					node = findAllSuper(node);					
+				} else //SubView
+				{
+					node = findAllSub(nestedClasses, node);					
+				}
+				classNode.addChild(node);
+							
 			}
+		
 			/* Old Implementation
 			for (int i=0; nestedClasses.length>i; i++)
 			{
@@ -202,50 +274,6 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		
 	}
 	
-	private RootNode buildTestTreeModel()
-	{
-		RootNode root = new RootNode();
-		root.setKind("Root Node");
-		root.setName("Root Node Name");
-		StandardNode n1 = new StandardNode();
-		n1.setKind(HierarchyNode.CLASS);
-		n1.setName("Sample class");
-		n1.setParent(root);
-		root.addChild(n1);
-		StandardNode n2 = new StandardNode();
-		n2.setKind(HierarchyNode.PARENTS);
-		n2.setName("Parents");
-		n2.setParent(n1);
-		n1.addChild(n2);
-		StandardNode n3 = new StandardNode();
-		n3.setKind(HierarchyNode.NESTED);
-		n3.setName("Nested Class 1");
-		n3.setParent(n1);
-		n1.addChild(n3);
-		StandardNode n4 = new StandardNode();
-		n4.setKind(HierarchyNode.SUPER);
-		n4.setName("Super Class 1");
-		n4.setParent(n2);
-		n2.addChild(n4);
-		StandardNode n5 = new StandardNode();
-		n5.setKind(HierarchyNode.SUPER);
-		n5.setName("Super Class 2");
-		n5.setParent(n2);
-		n2.addChild(n5);
-		
-		StandardNode n6 = new StandardNode();
-		n6.setKind(HierarchyNode.NESTEDPARENTS);
-		n6.setName("Parents");
-		n6.setParent(n3);
-		n3.addChild(n6);
-		
-		StandardNode n7 = new StandardNode();
-		n7.setKind(HierarchyNode.NESTEDSUPER);
-		n7.setName("Super Class 1.Nested Class");
-		n7.setParent(n6);
-		n6.addChild(n7);
-		return root;
-	}
 	
 	private LinearNode buildListModel(String path)
 	{
@@ -295,34 +323,16 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		}
 	}
 	
-	private LinearNode buildListModel()
-	{
-		LinearNode n1 = new LinearNode();
-		LinearNode n2 = new LinearNode();
-		LinearNode n3 = new LinearNode();
-				
-		n1.setKind("linearizedclass");
-		n1.setName("Subclass 2");
-		
-		n2.setKind("linearizedclass");
-		n2.setName("Subclass 1");
-		
-		n3.setKind("linearizedclass");
-		n3.setName("Sample class");
 	
-		n1.setNextNode(n2);
-		n2.setNextNode(n3);
-		n2.setPreNode(n1);
-		n3.setPreNode(n2);
-		return n1;
-	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
 		Group layoutGroup = new Group(parent,SWT.NONE);
+		Group controlGroup = new Group(layoutGroup,SWT.NONE);
 		Group topGroup = new Group(layoutGroup,SWT.NONE);
 		Group buttomGroup = new Group(layoutGroup,SWT.NONE);
+		controlGroup.setText("View Control");
 		topGroup.setText("Tree View");
 		buttomGroup.setText("Mixin View");
 		treeViewer = new TreeViewer(topGroup, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.HORIZONTAL);
@@ -349,6 +359,8 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		layoutGroup.setLayout(layout);
 		topGroup.setLayout(layout);
 		buttomGroup.setLayout(layout);
+		
+		controlGroup.setLayout(layout);
 		
 		getViewSite().
 		getWorkbenchWindow().
@@ -475,7 +487,8 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 				if (0==node.getKind().compareTo(HierarchyNode.CLASS)|
 						0==node.getKind().compareTo(HierarchyNode.SUPER)|
 						0==node.getKind().compareTo(HierarchyNode.NESTED)|
-						0==node.getKind().compareTo(HierarchyNode.NESTEDSUPER)
+						0==node.getKind().compareTo(HierarchyNode.NESTEDSUPER)|
+						0==node.getKind().compareTo(HierarchyNode.NESTEDSUB)
 				)
 					return CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PUBLIC.createImage();
 				else if (0==node.getKind().compareTo(HierarchyNode.PARENTS)|
@@ -527,26 +540,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 			}
 		}
 		
-		private String filterName(String name)
-		{
-			try {
-				String help = new String(name);
-				int slashPos = name.lastIndexOf("/");
-				int dollarPos = name.lastIndexOf("$");
-				if (slashPos>0)
-					help = name.substring(slashPos+1);
-				if (dollarPos>slashPos)
-				{
-					help = name.substring(dollarPos+1);
-				}
-				return help;
-			}
-			catch(Exception e)
-			{
-				log.warn("Filtering names for Hierarchy View.",e);
-				return "Error";
-			}
-		}
+		
 	}
 	
 	
@@ -579,6 +573,11 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 				else if (markedNode.getKind().compareTo(HierarchyNode.NESTEDSUPER)==0)
 				{
 					log.debug("Nested Super class '"+markedNode.getName()+"' selected.");
+					refreshList(markedNode.getName());
+				}
+				else if (markedNode.getKind().compareTo(HierarchyNode.NESTEDSUB)==0)
+				{
+					log.debug("Nested Sub class '"+markedNode.getName()+"' selected.");
 					refreshList(markedNode.getName());
 				}
 				else if (markedNode.getKind().compareTo(HierarchyNode.CLASS)==0)
