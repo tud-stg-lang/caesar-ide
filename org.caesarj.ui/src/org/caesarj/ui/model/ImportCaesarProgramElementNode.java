@@ -20,14 +20,6 @@ public class ImportCaesarProgramElementNode extends CaesarProgramElementNode {
 
 	public boolean rootFlag;
 
-	/**
-	 * @param signature
-	 * @param kind
-	 * @param sourceLocation
-	 * @param modifiers
-	 * @param formalComment
-	 * @param children
-	 */
 	public ImportCaesarProgramElementNode(Kind kind,
 			ISourceLocation sourceLocationArg, int modifiers,
 			String formalComment, List childrenArg,

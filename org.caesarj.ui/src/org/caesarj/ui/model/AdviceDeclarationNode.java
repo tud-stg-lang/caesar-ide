@@ -9,26 +9,23 @@ import org.caesarj.ui.CaesarPluginImages;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * Adds additional methods for AdviceDeclarations.
- * Needed by SignatureResolver Visitor in order to resolve the advice signature.
+ * Adds additional methods for AdviceDeclarations. Needed by SignatureResolver
+ * Visitor in order to resolve the advice signature.
  * 
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
 public class AdviceDeclarationNode extends CaesarProgramElementNode {
 
 	private CjAdviceDeclaration adviceDeclaration;
+
 	private String classFullQualifiedName;
 
-	public AdviceDeclarationNode(
-		CjAdviceDeclaration adviceDeclarationAeg,
-		String classFullQualifiedNameArg,
-		String signature,
-		Kind kind,
-		ISourceLocation sourceLocationArg,
-		int modifiers,
-		String formalComment,
-		List childrenArg) {
-		super(signature, kind, sourceLocationArg, modifiers, formalComment, childrenArg);
+	public AdviceDeclarationNode(CjAdviceDeclaration adviceDeclarationAeg,
+			String classFullQualifiedNameArg, String signature, Kind kind,
+			ISourceLocation sourceLocationArg, int modifiers,
+			String formalComment, List childrenArg) {
+		super(signature, kind, sourceLocationArg, modifiers, formalComment,
+				childrenArg);
 		this.initImages();
 		this.adviceDeclaration = adviceDeclarationAeg;
 		this.classFullQualifiedName = classFullQualifiedNameArg;
@@ -49,10 +46,8 @@ public class AdviceDeclarationNode extends CaesarProgramElementNode {
 
 	public Image getImage() {
 		return new CaesarElementImageDescriptor(
-			CaesarPluginImages.DESC_JOINPOINT,
-			null,
-			BIG_SIZE)
-			.createImage();
+				CaesarPluginImages.DESC_JOINPOINT, null, BIG_SIZE)
+				.createImage();
 	}
 
 	protected void initImages() {

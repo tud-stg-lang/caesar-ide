@@ -10,44 +10,27 @@ import org.eclipse.jdt.internal.ui.JavaPluginImages;
 
 /**
  * @author Shadow
- *
- * Folgendes auswählen, um die Schablone für den erstellten Typenkommentar zu ändern:
- * Fenster&gt;Benutzervorgaben&gt;Java&gt;Codegenerierung&gt;Code und Kommentare
+ * 
+ * Folgendes auswählen, um die Schablone für den erstellten Typenkommentar zu
+ * ändern: Fenster&gt;Benutzervorgaben&gt;Java&gt;Codegenerierung&gt;Code und
+ * Kommentare
  */
 public class ConstructorDeclarationNode extends CaesarProgramElementNode {
 
 	private JConstructorDeclaration constructorDeclaration;
+
 	private JClassDeclaration classDeclaration;
-	
+
 	public ConstructorDeclarationNode(
-		JConstructorDeclaration constructorDeclarationArg,
-		JClassDeclaration classDeclarationArg,
-		String signature,
-		Kind kind,
-		ISourceLocation sourceLocationArg,
-		int modifiers,
-		String formalComment,
-		List childrenArg) {
-		super(signature, kind, sourceLocationArg, modifiers, formalComment, childrenArg);
+			JConstructorDeclaration constructorDeclarationArg,
+			JClassDeclaration classDeclarationArg, String signature, Kind kind,
+			ISourceLocation sourceLocationArg, int modifiers,
+			String formalComment, List childrenArg) {
+		super(signature, kind, sourceLocationArg, modifiers, formalComment,
+				childrenArg);
 		this.initImages();
 		this.constructorDeclaration = constructorDeclarationArg;
 		this.classDeclaration = classDeclarationArg;
-	}
-
-	public ConstructorDeclarationNode(String signature, Kind kind, List childrenArg) {
-		super(signature, kind, childrenArg);
-		this.initImages();
-	}
-
-	public ConstructorDeclarationNode(
-		String signature,
-		Kind kind,
-		ISourceLocation sourceLocationArg,
-		int modifiers,
-		String formalComment,
-		List childrenArg) {
-		super(signature, kind, sourceLocationArg, modifiers, formalComment, childrenArg);
-		this.initImages();
 	}
 
 	public JConstructorDeclaration getConstructorDeclaration() {

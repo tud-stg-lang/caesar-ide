@@ -15,45 +15,6 @@ import org.eclipse.swt.graphics.Image;
  */
 public class JavaSourceFileNode extends CaesarProgramElementNode {
 
-	/**
-	 * @param signature
-	 * @param kind
-	 * @param children
-	 */
-	public JavaSourceFileNode(String signature, Kind kind, List childrenArg) {
-		super(signature, kind, childrenArg);
-		this.initImages();
-	}
-
-	/**
-	 * @param signature
-	 * @param kind
-	 * @param sourceLocation
-	 * @param modifiers
-	 * @param formalComment
-	 * @param children
-	 */
-	public JavaSourceFileNode(
-		String signature,
-		Kind kind,
-		ISourceLocation sourceLocationArg,
-		int modifiers,
-		String formalComment,
-		List childrenArg) {
-		super(signature, kind, sourceLocationArg, modifiers, formalComment, childrenArg);
-		this.initImages();
-	}
-
-	/**
-	 * @param signature
-	 * @param kind
-	 * @param sourceLocation
-	 * @param modifiers
-	 * @param formalComment
-	 * @param children
-	 * @param importedPackages
-	 * @param importedClasses
-	 */
 	public JavaSourceFileNode(
 		String signature,
 		Kind kind,
