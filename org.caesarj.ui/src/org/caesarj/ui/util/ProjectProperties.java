@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: ProjectProperties.java,v 1.8 2005-01-24 16:57:22 aracic Exp $
+ * $Id: ProjectProperties.java,v 1.9 2005-02-21 13:45:44 gasiunas Exp $
  */
 
 package org.caesarj.ui.util;
@@ -28,9 +28,11 @@ package org.caesarj.ui.util;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
+import org.aspectj.asm.StructureModel;
 import org.eclipse.core.internal.resources.Container;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -45,17 +47,65 @@ import org.eclipse.jdt.core.JavaModelException;
 /**
  * Central Class for obtaining all relevant data from an IProject Object
  * 
+ * TODO - Create a hook to remove projectproperties when projects are closed 
+ * 
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
+ * @author Thiago Tonelli Bartolomei <bart@macacos.org>
  */
 public class ProjectProperties {
     
-    private String outputPath;
-    private String projectLocation;
-    private StringBuffer classPath = new StringBuffer();
-    private List sourceFiles = new ArrayList();
+	/**
+	 * Keep track of all project properties
+	 */
+	private static Hashtable projects = new Hashtable(5);
+	
+	private IProject project = null;
+    private String outputPath = null;
+    private String projectLocation = null;
+    private StringBuffer classPath = null;
+    private List sourceFiles = null;
+    private StructureModel model = null;
     
+    /**
+     * Creates a new not initialized ProjectProperties object.
+     * 
+     * @param project
+     */
+    private ProjectProperties(IProject project) {
+    	this.project = project;
+    	outputPath = "";
+    	projectLocation = "";
+    }
     
-    public ProjectProperties(IProject project) throws JavaModelException, CoreException {
+    /**
+     * Factory method for creating a ProjectProperties object for a IProject.
+     * 
+     * @param project an IProject object
+     * @return the ProjectProperties object associated to the IProject. Creates a new
+     * instance if it doesn't exist.
+     */
+    public static ProjectProperties create(IProject project) {
+    	Object properties = projects.get(project);
+    	Hashtable t = projects;
+    	if (properties == null) {
+    		properties = new ProjectProperties(project);
+    		projects.put(project, properties);
+    	}
+    	return (ProjectProperties) properties;
+    }
+
+    /**
+     * Initializes the ProjectProperties object.
+     * 
+     * @param project
+     * @throws JavaModelException
+     * @throws CoreException
+     */
+    public void refresh() throws JavaModelException, CoreException {
+    	
+    	classPath = new StringBuffer();
+    	sourceFiles = new ArrayList();
+    	
         IJavaProject jProject = JavaCore.create(project);        
            
         String projectLocalPrefix = File.separator + project.getName();
@@ -99,7 +149,13 @@ public class ProjectProperties {
             }
         }
     }
-
+    
+    /**
+     * 
+     * @param resource
+     * @param sourceFilesArg
+     * @throws CoreException
+     */
     private void getAllSourceFiles(IResource resource, List sourceFilesArg) throws CoreException {
         if(resource!=null) {        
             if(resource.getName().endsWith(".java") || resource.getName().endsWith(".cj")) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -128,8 +184,7 @@ public class ProjectProperties {
         IResource ret = p.findMember(path);
         return ret;        
     }
-
-
+	
 	public String getProjectLocation() {
 		return this.projectLocation;
 	}
@@ -146,6 +201,18 @@ public class ProjectProperties {
 		return this.sourceFiles;
 	}
     
+	public IProject getProject() {
+		return project;
+	}
+	
+	public StructureModel getStructureModel() {
+		return this.model;
+	}
+	
+	public void setStructureModel(StructureModel model) {
+		this.model = model;
+	}
+	
     public String toString() {
         StringBuffer res = new StringBuffer();
         res.append("projectLocation\n\t"+getProjectLocation()); //$NON-NLS-1$
