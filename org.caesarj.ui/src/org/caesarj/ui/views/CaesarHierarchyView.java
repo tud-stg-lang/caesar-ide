@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarHierarchyView.java,v 1.32 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CaesarHierarchyView.java,v 1.33 2005-02-21 13:43:19 gasiunas Exp $
  */
 
 package org.caesarj.ui.views;
@@ -40,7 +40,7 @@ import org.caesarj.ui.CaesarElementImageDescriptor;
 import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.CaesarPluginImages;
 import org.caesarj.ui.editor.CaesarEditor;
-import org.caesarj.ui.editor.CaesarOutlineView;
+import org.caesarj.ui.editor.CaesarJContentOutlinePage;
 import org.caesarj.ui.test.CaesarHierarchyTest;
 import org.caesarj.ui.util.ProjectProperties;
 import org.caesarj.ui.views.hierarchymodel.HierarchyNode;
@@ -415,10 +415,9 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 	}
 
 	public static void updateAll() {
-		try {
+		if (selfRef != null) {
 			selfRef.refresh();
-		} catch (NullPointerException e) {
-		}
+		} 
 	}
 
 	public void createPartControl(Composite parent) {
@@ -639,12 +638,12 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 								.compareTo(HierarchyNode.NESTEDSUB))
 					try {
 						if (node.getTypeInforamtion().isImplicit())
-							return new CaesarElementImageDescriptor(CaesarPluginImages.DESC_OBJS_INNER_CCLASS_IMPLICID, CaesarOutlineView.BIG_SIZE, node).createImage();
+							return new CaesarElementImageDescriptor(CaesarPluginImages.DESC_OBJS_INNER_CCLASS_IMPLICID, CaesarJContentOutlinePage.BIG_SIZE, node).createImage();
 						else
-							return new CaesarElementImageDescriptor(CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PUBLIC, CaesarOutlineView.BIG_SIZE, node).createImage();							
+							return new CaesarElementImageDescriptor(CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PUBLIC, CaesarJContentOutlinePage.BIG_SIZE, node).createImage();							
 					} catch (NullPointerException e) {
 						//For nodes, which do not have any typ information
-						return new CaesarElementImageDescriptor(CaesarPluginImages.DESC_OBJS_INNER_CCLASS_IMPLICID, CaesarOutlineView.BIG_SIZE, node).createImage();
+						return new CaesarElementImageDescriptor(CaesarPluginImages.DESC_OBJS_INNER_CCLASS_IMPLICID, CaesarJContentOutlinePage.BIG_SIZE, node).createImage();
 					}
 
 				else if (0 == node.getKind().compareTo(HierarchyNode.PARENTS)
@@ -889,7 +888,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				}
 			}
 			qualifiedNameToActualClasses = fullQualifiedNames.toArray();
-			ProjectProperties prob = new ProjectProperties(ACTIVE_PROJECT);
+			ProjectProperties prob = ProjectProperties.create(ACTIVE_PROJECT);
 			globalPathForInformationAdapter = prob.getProjectLocation()+prob.getOutputPath();
 			refreshTree(qualifiedNameToActualClasses);
 		}catch(Exception e){
