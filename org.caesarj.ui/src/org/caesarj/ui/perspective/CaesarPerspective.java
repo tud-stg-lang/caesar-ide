@@ -25,11 +25,7 @@ import org.eclipse.jdt.ui.JavaUI;
  * Creates a perspective using views, perspective shortcuts and wizard shortcuts.
  */
 public class CaesarPerspective implements IPerspectiveFactory {
-	//public static final String ID_CAESAROUTLINE = "org.caesarj.ui.editor.CaesarOutlineView";
-	//public static final String ID_EDUWIZARD =
-		//"com.ibm.lab.soln.dialogs.wizard.Basic";
-	//public static final String ID_EDU_JAVA_PERSPECTIVE =
-		//"org.eclipse.jdt.ui.JavaHierarchyPerspective";
+	
 	private static Logger log = Logger.getLogger(CaesarPerspective.class);
 
 	/**
@@ -50,7 +46,7 @@ public class CaesarPerspective implements IPerspectiveFactory {
 	public void createInitialLayout(IPageLayout layout) {
 		// Get the editor area.
 		String editorArea = layout.getEditorArea();
-
+		log.debug("EditorArea name:" + editorArea);
 		// Top left: Resource Navigator view and Bookmarks view placeholder
 		IFolderLayout topLeft =
 			layout.createFolder("topLeft", IPageLayout.LEFT, 0.25f, editorArea);
@@ -58,31 +54,25 @@ public class CaesarPerspective implements IPerspectiveFactory {
 		topLeft.addView(JavaUI.ID_PACKAGES);
 		topLeft.addPlaceholder(IPageLayout.ID_BOOKMARKS);
 		// Bottom left: Outline view and Property Sheet view
-		IFolderLayout bottomLeft =
+		IFolderLayout bottomRight =
 			layout.createFolder(
-				"bottomLeft",
+				"bottomRight",
+				IPageLayout.RIGHT,
+				0.75f,
+				editorArea);
+		bottomRight.addView(IPageLayout.ID_OUTLINE); 
+		
+		IFolderLayout bottom =
+			layout.createFolder(
+				"bottom",
 				IPageLayout.BOTTOM,
-				0.50f,
-				"topLeft");
-		bottomLeft.addView(IPageLayout.ID_OUTLINE);
-		bottomLeft.addView(IPageLayout.ID_PROP_SHEET);
-
+				0.75f,
+				editorArea);
+		bottom.addView(IPageLayout.ID_TASK_LIST);
+		bottom.addView(JavaUI.ID_PROJECTS_VIEW);
+		
 		layout.setEditorAreaVisible(true);
-		IWorkbenchWindow w = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (w == null)
-			return;
 		
-		
-		IWorkbenchPage[] page = w.getPages();
-		if (page == null)
-			return;
-		IViewPart viewPart = page[0].findView(JavaUI.ID_PACKAGES);
-		if (viewPart==null)
-			return;
-		IPackagesViewPart packageView = (IPackagesViewPart)viewPart;
-		log.debug("PackageView found: '"+packageView+"'!");
-		//layout.addNewWizardShortcut(ID_EDUWIZARD);
-		//layout.addPerspectiveShortcut(ID_EDU_JAVA_PERSPECTIVE);
 	}
 
 }
