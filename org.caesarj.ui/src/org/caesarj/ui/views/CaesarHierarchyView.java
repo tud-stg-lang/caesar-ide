@@ -4,9 +4,9 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.caesarj.compiler.export.CClass;
-import org.caesarj.navigator.CaesarByteCodeNavigator;
 import org.caesarj.runtime.AdditionalCaesarTypeInformation;
 import org.caesarj.ui.editor.CaesarEditor;
+import org.caesarj.ui.test.CaesarHierarchyTest;
 import org.caesarj.ui.views.hierarchymodel.HierarchyNode;
 import org.caesarj.ui.views.hierarchymodel.IHierarchyPropertyChangeListener;
 import org.caesarj.ui.views.hierarchymodel.LinearNode;
@@ -52,16 +52,54 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 	{	
 		RootNode root = new RootNode();
 		root.setKind(HierarchyNode.ROOT);
+		StandardNode node;
 		try {
-			CaesarByteCodeNavigator nav = new CaesarByteCodeNavigator("");
-			CClass clazz = nav.load("C:/Programme/eclipse30/runtime-workbench-workspace/TestCaesar/pricing/DiscountPricing.class");
+			//CaesarByteCodeNavigator nav = new CaesarByteCodeNavigator("c:/tmp");
+			CaesarHierarchyTest nav = new CaesarHierarchyTest("c:/test");
+	        CClass clazz = nav.load("pricing/DiscountPricing");
 			AdditionalCaesarTypeInformation info = clazz.getAdditionalTypeInformation();
-			StandardNode n1 = new StandardNode();
-			n1.setKind(HierarchyNode.CLASS);
-			n1.setName(info.getImplClassName());
-			//n1.setName(clazz.getQualifiedName());
-			n1.setParent(root);
-			root.addChild(n1);
+			StandardNode classNode = new StandardNode();
+			classNode.setKind(HierarchyNode.CLASS);
+			classNode.setName(info.getQualifiedName());
+			classNode.setParent(root);
+			StandardNode parentNode = new StandardNode(HierarchyNode.PARENTS, "Superclasses", classNode);
+			classNode.addChild(parentNode);
+			
+			String [] superClasses = info.getSuperClasses();
+			for (int i=0; superClasses.length>i; i++)
+			{
+				node = new StandardNode();
+				node.setKind(HierarchyNode.SUPER);
+				node.setName(superClasses[i]);
+				node.setParent(parentNode);
+				parentNode.addChild(node);
+			}
+			
+			String [] nestedClasses = info.getNestedClasses();
+			for (int i=0; nestedClasses.length>i; i++)
+			{
+				node = new StandardNode();
+				node.setKind(HierarchyNode.NESTED);
+				node.setName(nestedClasses[i]);
+				node.setParent(classNode);
+				classNode.addChild(node);
+				String[] nestedSuperClasses = nav.load(nestedClasses[i]).getAdditionalTypeInformation().getSuperClasses();
+				if (nestedSuperClasses.length>0)
+				{
+					StandardNode subNode = new StandardNode(HierarchyNode.NESTEDPARENTS, "Superclasses", node);
+					node.addChild(subNode);
+					for (int j=0; nestedSuperClasses.length>j; j++)
+					{
+						node = new StandardNode();
+						node.setKind(HierarchyNode.NESTEDSUPER);
+						node.setName(nestedSuperClasses[j]);
+						node.setParent(subNode);
+						subNode.addChild(node);
+					}
+				}	
+			}
+			
+			root.addChild(classNode);
 			return root;
 		} 
 		  catch (NullPointerException e) {
@@ -153,7 +191,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		Group topGroup = new Group(layoutGroup,SWT.NONE);
 		Group buttomGroup = new Group(layoutGroup,SWT.NONE);
 		topGroup.setText("Tree View");
-		buttomGroup.setText("Linearized View");
+		buttomGroup.setText("Mixin View");
 		treeViewer = new TreeViewer(topGroup, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.HORIZONTAL);
 
 		HierarchyTreeContentProvider cp = new HierarchyTreeContentProvider();
@@ -299,10 +337,10 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 	{
 		public String getText(Object element)
 		{
-			log.debug("Label requested.");
 			if (element instanceof HierarchyNode) {
 				HierarchyNode node = (HierarchyNode) element;
-				return node.getKind()+": "+node.getName();
+				return node.getName();
+				//return node.getKind()+": "+node.getName();
 			}
 			else
 			{
@@ -345,7 +383,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 				else
 				{
 					log.debug("Not interested in selection of '"+markedNode.getName()+"'.");
-					getTreeViewer().setInput(buildTreeModel());
+					
 				}
 			}
 		}
@@ -391,4 +429,8 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		return null;
 	}
 
+	public void refresh()
+	{
+		treeViewer.setInput(buildTreeModel());
+	}
 }
