@@ -70,7 +70,6 @@ public class CaesarEditor extends CompilationUnitEditor {
     
     public void doSetInput(IEditorInput input) throws CoreException {
         super.doSetInput(input);
-        //TODO [Problem] Migration to 3.0 this.outlineView.setEnabled(true);
     }
     
     public void dispose() {
