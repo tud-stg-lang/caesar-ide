@@ -1,12 +1,14 @@
 package org.caesarj.ui.editor;
 
 import org.apache.log4j.Logger;
+import org.caesarj.ui.CaesarPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
  * CaesarEditor
@@ -29,11 +31,13 @@ public class CaesarEditor extends CompilationUnitEditor {
 	 */
 
     private static Logger log = Logger.getLogger(CaesarEditor.class);
+    
+    private CaesarOutlineView outlineView;
         
     private CompositeRuler caesarVerticalRuler;
     
     public CaesarEditor() {
-        super();                
+        super();
     }
     
     protected void initializeEditor() 
