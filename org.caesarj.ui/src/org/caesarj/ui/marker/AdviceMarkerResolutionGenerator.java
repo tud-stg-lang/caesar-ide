@@ -67,7 +67,7 @@ public class AdviceMarkerResolutionGenerator implements
 		}
 
 		public String getLabel() {
-			return this.toAdvice ? "Open Advice: " + this.link.getName() : "Open Methode: " + this.link.getName(); //$NON-NLS-1$ //$NON-NLS-2$
+			return this.toAdvice ? "Open Advice: " + this.link.getName() : "Open Method: " + this.link.getName(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		public void run(IMarker marker) {
