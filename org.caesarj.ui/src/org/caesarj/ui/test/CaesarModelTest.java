@@ -54,6 +54,7 @@ public class CaesarModelTest {
 	}
     
     private static void setupModel() {
+    	System.out.println("CaesarTest.setupModel() called!");
         String rootLabel = "<root>";
         StructureModelManager.INSTANCE.getStructureModel().setRoot(
             new ProgramElementNode(

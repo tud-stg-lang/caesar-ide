@@ -94,6 +94,8 @@ public class CaesarEditor extends CompilationUnitEditor {
 		super.dispose(); 
 		
 		log.debug("dispose"); //$NON-NLS-1$
-		this.outlineView.setEnabled(false);
+		if(this.outlineView != null){
+			this.outlineView.setEnabled(false);
+		}
 	}
 }

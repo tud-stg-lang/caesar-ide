@@ -4,24 +4,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.aspectj.asm.LinkNode;
 import org.aspectj.asm.ProgramElementNode;
-import org.aspectj.asm.RelationNode;
 import org.aspectj.asm.StructureModelManager;
 import org.aspectj.asm.StructureNode;
 import org.aspectj.bridge.ISourceLocation;
-import org.caesarj.ui.CaesarElementImageDescriptor;
+import org.caesarj.compiler.asm.CaesarProgramElementNode;
 import org.caesarj.ui.CaesarPlugin;
-import org.caesarj.ui.CaesarPluginImages;
-import org.caesarj.ui.model.AdviceDeclarationNode;
-import org.caesarj.ui.model.CaesarProgramElementNode;
-import org.caesarj.ui.model.CodeNode;
-import org.caesarj.ui.model.FieldNode;
-import org.caesarj.ui.model.MethodDeclarationNode;
-import org.caesarj.ui.model.PackageNode;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -31,13 +22,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -92,7 +79,7 @@ public class CaesarOutlineView extends ContentOutlinePage {
 
 	static Logger logger = Logger.getLogger(CaesarOutlineView.class);
 
-	private class CaesarLabelProvider extends LabelProvider {
+	/*private class CaesarLabelProvider extends LabelProvider {
 
 		public String getText(Object element) {
 			try {
@@ -166,12 +153,12 @@ public class CaesarOutlineView extends ContentOutlinePage {
 				return super.getImage(element);
 			}
 		}
-	}
+	}*/
 
 	/**
 	 * uses Structure Model to extract the data for TreeViewer
 	 */
-	protected class ContentProvider implements ITreeContentProvider {
+	/*protected class ContentProvider implements ITreeContentProvider {
 
 		public void dispose() {
 		}
@@ -197,10 +184,12 @@ public class CaesarOutlineView extends ContentOutlinePage {
 			Vector vec = new Vector();
 			if (parentElement instanceof ProgramElementNode) {
 				ProgramElementNode node = (ProgramElementNode) parentElement;
+				// Substitute nodes of Kind CODE by CodeNodes (see also ui.CaesarProgramElementNode.checkChildren())
 				if (node.getProgramElementKind().equals(
 						ProgramElementNode.Kind.CODE)) {
 					node = new CodeNode(node);
 				}
+				// add relation nodes
 				Iterator it = node.getRelations().iterator();
 				while (it.hasNext()) {
 					Object te = it.next();
@@ -208,6 +197,7 @@ public class CaesarOutlineView extends ContentOutlinePage {
 						vec.add(te);
 					}
 				}
+				// set markers for relation nodes in current parentElement (ProgramElementNode)
 				if (node instanceof CaesarProgramElementNode) {
 					CaesarProgramElementNode cNode = (CaesarProgramElementNode) node;
 					it = cNode.getRelationNodes();
@@ -252,7 +242,7 @@ public class CaesarOutlineView extends ContentOutlinePage {
 			}
 			return r;
 		}
-	}
+	}*/
 
 	protected CaesarEditor caesarEditor;
 
@@ -272,9 +262,12 @@ public class CaesarOutlineView extends ContentOutlinePage {
 		super.createControl(parent);
 
 		TreeViewer viewer = getTreeViewer();
-		viewer.setSorter(new LexicalSorter());
-		viewer.setContentProvider(new ContentProvider());
-		viewer.setLabelProvider(new CaesarLabelProvider());
+		//viewer.setSorter(new LexicalSorter());
+		//viewer.setContentProvider(new ContentProvider());
+		//viewer.setLabelProvider(new CaesarLabelProvider());
+		viewer.setSorter(new CaesarOutlineViewLexicalSorter());
+		viewer.setContentProvider(new CaesarOutlineViewContentProvider());
+		viewer.setLabelProvider(new CaesarOutlineViewLabelProvider());
 		viewer.addSelectionChangedListener(this);
 
 		update();
@@ -340,8 +333,19 @@ public class CaesarOutlineView extends ContentOutlinePage {
 					control.setRedraw(false);
 					viewer.setInput(input);
 					viewer.expandAll();
-					viewer.collapseToLevel(this.imports,
-							AbstractTreeViewer.ALL_LEVELS);
+					if(input instanceof CaesarProgramElementNode){
+						// find and collapses the import node:
+						Iterator it = ((CaesarProgramElementNode)input).getChildren().iterator();
+						while(it.hasNext()){
+							Object next = it.next();
+							if(next instanceof CaesarProgramElementNode){
+								if(((CaesarProgramElementNode)next).getCaesarKind() == CaesarProgramElementNode.Kind.IMPORTS){
+									viewer.collapseToLevel(next, AbstractTreeViewer.ALL_LEVELS);
+								}
+							}
+						}
+					}
+
 					control.setRedraw(true);
 				}
 			}
@@ -353,6 +357,8 @@ public class CaesarOutlineView extends ContentOutlinePage {
 		this.enabled = enabledArg;
 	}
 
+	// Iterates through StructureModel until a Node with name equal to 
+	// Editor-Input-Name (should be the filename) is found.
 	protected StructureNode getInput(StructureNode node) {
 		if (node == null) {
 			return null;

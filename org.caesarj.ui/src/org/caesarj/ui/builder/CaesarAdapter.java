@@ -10,8 +10,6 @@ import org.aspectj.asm.StructureModelManager;
 import org.caesarj.compiler.KjcEnvironment;
 import org.caesarj.compiler.Main;
 import org.caesarj.compiler.ast.phylum.JCompilationUnit;
-import org.caesarj.ui.model.AsmBuilder;
-import org.caesarj.ui.model.StructureModelDump;
 import org.caesarj.util.CWarning;
 import org.caesarj.util.PositionedError;
 import org.caesarj.util.UnpositionedError;
@@ -25,8 +23,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
 public final class CaesarAdapter extends Main {
-
-	private static Logger log = Logger.getLogger(CaesarAdapter.class);
+	
+	//protected final static boolean buildAsm = true;
+    //protected final static boolean printAsm = true;
+    
+    private static Logger log = Logger.getLogger(CaesarAdapter.class);
 
 	public static IProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
 
@@ -40,6 +41,8 @@ public final class CaesarAdapter extends Main {
 
 	public CaesarAdapter(String projectLocation) {
 		super(projectLocation, null);
+		CaesarAdapter.buildAsm = true;
+		CaesarAdapter.printAsm = true;
 	}
 
 	public void reportTrouble(PositionedError error) {
@@ -72,7 +75,7 @@ public final class CaesarAdapter extends Main {
 			IProgressMonitor progressMonitorArg) {
 
 		this.model = StructureModelManager.INSTANCE.getStructureModel();
-		AsmBuilder.preBuild(this.model);
+		
 		boolean success = false;
 		String args[] = new String[sourceFiles.size() + 4];
 
@@ -102,8 +105,6 @@ public final class CaesarAdapter extends Main {
 			e.printStackTrace();
 			errors.add("internal compiler error: " + e.toString());	
 		}
-		AsmBuilder.postBuild(this.model);
-		//_dumpModel("final structure model", this.model); //$NON-NLS-1$
 		
 		return success;
 	}
@@ -115,18 +116,17 @@ public final class CaesarAdapter extends Main {
 
 		JCompilationUnit res;
 		this.progressMonitor.subTask("compiling " + file.getName()); //$NON-NLS-1$
+		System.out.println("compiling " + file.getName());
 		res = super.parseFile(file, env);
 		this.progressMonitor.worked(1);
-
+		
 		//AsmBuilder.build(res, this.model);
-
+		System.out.println("parseFile completed: " + file.getName());
 		return res;
 	}
 	
 	protected void preWeaveProcessing(JCompilationUnit[] cu) {
-        for (int i = 0; i < cu.length; i++) {
-            AsmBuilder.build(cu[i], this.model);
-        }
+		super.preWeaveProcessing(cu);
     }
 	
 
@@ -137,23 +137,8 @@ public final class CaesarAdapter extends Main {
 
 		this.progressMonitor.subTask("weaving classes..."); //$NON-NLS-1$
 
-		AsmBuilder.preWeave(this.model);
-
-		//_dumpModel("structure model before weave", model);
-		// add model to world and WEAVE
-		//		CaesarBcelWorld world = CaesarBcelWorld.getInstance();
-		//		world.setModel(model);
-
 		super.weaveClasses();
 
 		this.progressMonitor.worked(1);
-	}
-
-	private void _dumpModel(String description, StructureModel modelArg) {
-
-		log.debug("--- " + description + " ---"); //$NON-NLS-1$ //$NON-NLS-2$
-		StructureModelDump modelDumpBeforeWeave = new StructureModelDump(
-				System.out);
-		modelDumpBeforeWeave.print("", modelArg.getRoot()); //$NON-NLS-1$
 	}
 }

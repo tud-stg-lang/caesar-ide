@@ -1,8 +1,5 @@
 package org.caesarj.ui;
 
-import org.caesarj.ui.model.CClassNode;
-import org.caesarj.ui.model.CaesarProgramElementNode;
-import org.caesarj.ui.model.ConstructorDeclarationNode;
 import org.caesarj.ui.views.hierarchymodel.RootNode;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
@@ -56,7 +53,7 @@ public class CaesarElementImageDescriptor extends CompositeImageDescriptor {
 
 	public final static int STRICTFP = 0x300;
 
-	private int computeJavaAdornmentFlags(CaesarProgramElementNode node) {
+	/*private int computeJavaAdornmentFlags(CaesarProgramElementNode node) {
 		int flags = 0;
 		if (node == null)
 			return flags;
@@ -87,7 +84,7 @@ public class CaesarElementImageDescriptor extends CompositeImageDescriptor {
 		if ((modif / 2048) % 2 == 1)
 			flags |= STRICTFP;
 		return flags;
-	}
+	}*/
 
 	private int computeJavaAdornmentFlags(RootNode node) {
 		int flags = 0;
@@ -108,7 +105,7 @@ public class CaesarElementImageDescriptor extends CompositeImageDescriptor {
 
 	private boolean interfaceFlag;
 
-	public CaesarElementImageDescriptor(ImageDescriptor baseImage,
+	/*public CaesarElementImageDescriptor(ImageDescriptor baseImage,
 			CaesarProgramElementNode node, Point size) {
 		this.fBaseImage = baseImage;
 		Assert.isNotNull(this.fBaseImage);
@@ -116,7 +113,7 @@ public class CaesarElementImageDescriptor extends CompositeImageDescriptor {
 		Assert.isTrue(this.fFlags >= 0);
 		this.fSize = size;
 		Assert.isNotNull(this.fSize);
-	}
+	}*/
 
 	public CaesarElementImageDescriptor(ImageDescriptor baseImage, Point size,
 			RootNode node) {

@@ -3,12 +3,12 @@ package org.caesarj.ui.views;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.aspectj.asm.StructureModelManager;
 import org.aspectj.asm.StructureNode;
+import org.caesarj.compiler.asm.CaesarProgramElementNode;
 import org.caesarj.compiler.export.CClass;
 import org.caesarj.runtime.AdditionalCaesarTypeInformation;
 import org.caesarj.ui.CaesarElementImageDescriptor;
@@ -16,7 +16,6 @@ import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.CaesarPluginImages;
 import org.caesarj.ui.editor.CaesarEditor;
 import org.caesarj.ui.editor.CaesarOutlineView;
-import org.caesarj.ui.model.CClassNode;
 import org.caesarj.ui.test.CaesarHierarchyTest;
 import org.caesarj.ui.util.ProjectProperties;
 import org.caesarj.ui.views.hierarchymodel.HierarchyNode;
@@ -330,6 +329,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				}
 				return root;
 			} catch (NullPointerException e) {
+				log.error("buildTree Nullpointer Exception", e);
 				log.debug("No Information.");
 				StandardNode n1 = new StandardNode();
 				n1.setKind(HierarchyNode.EMTY);
@@ -806,7 +806,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		return node;
 	}
 	
-	public void refresh() {
+	/*public void refresh() {
 		log.debug("Refresh!!!");
 		ArrayList listOfFullQualifiedNames = new ArrayList();
 		try {			
@@ -814,11 +814,17 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 			
 			Object[] arrayOfFullQualifiedNames;
 			String help = "";
+			log.debug("Iterating over toplevel classes.");
 			ListIterator iter = listOfToplevelClasses.listIterator();
 			for (int i = 0; iter.hasNext(); i++) {
-				CClassNode topLevelClass = (CClassNode) iter.next();
+				//CClassNode topLevelClass = (CClassNode) iter.next();
+				CaesarProgramElementNode topLevelClass = (CaesarProgramElementNode)iter.next();
 				help = topLevelClass.getName();
-				help = help.substring(0, help.indexOf("_Impl"));
+				log.debug("toplevelclass no." + i + " getName() = " + help);
+				if(help.indexOf("_Impl") != -1){
+					help = help.substring(0, help.indexOf("_Impl"));
+					log.debug("Remove suffix _Impl from toplevel classname.");
+				}
 				listOfFullQualifiedNames.add(topLevelClass.getPackageName()
 						+ "/" + help);
 			}
@@ -827,12 +833,48 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 			globalPathForInformationAdapter = prob.getProjectLocation()+prob.getOutputPath();
 			refreshTree(qualifiedNameToActualClasses);
 		} catch (Exception e) {
+			log.error("Exception in refresh()!", e);
 			refreshTree(listOfFullQualifiedNames.toArray());
+		}
+	}*/
+	
+	public void refresh(){
+		log.debug("Starting rebuilding of HierarchyView.....");
+		try{
+			List fullQualifiedNames = new ArrayList();
+			log.debug("Iterating over toplevel elements.");
+			Iterator it = findJavaRootElement().getChildren().iterator();
+			while(it.hasNext()){
+				Object next = it.next();
+				if(next instanceof CaesarProgramElementNode){
+					if(((CaesarProgramElementNode)next).getCaesarKind() == CaesarProgramElementNode.Kind.VIRTUAL_CLASS
+							|| ((CaesarProgramElementNode)next).getCaesarKind() == CaesarProgramElementNode.Kind.ASPECT){
+						String classname = ((CaesarProgramElementNode)next).getName();
+						if(classname.indexOf("_Impl") != -1){
+							classname = classname.substring(0, classname.indexOf("_Impl"));
+							log.debug("Remove suffix _Impl from toplevel classname.");
+						}
+						log.debug("Adding fullqualified class name: " + ((CaesarProgramElementNode)next).getPackageName() + "/" + classname);
+						fullQualifiedNames.add(((CaesarProgramElementNode)next).getPackageName() + "/" + classname);
+					}else{
+						log.debug("element is not a virtual class and will be ignored.");
+					}
+				}else{
+					log.debug("element is not a CeasarProgramElementNode, it will be ignored.");
+				}
+			}
+			qualifiedNameToActualClasses = fullQualifiedNames.toArray();
+			ProjectProperties prob = new ProjectProperties(ACTIVE_PROJECT);
+			globalPathForInformationAdapter = prob.getProjectLocation()+prob.getOutputPath();
+			refreshTree(qualifiedNameToActualClasses);
+		}catch(Exception e){
+			log.error("An Exception occured during rebuild.", e);
+			refreshTree(new ArrayList().toArray());
 		}
 	}
 
 	public void refreshTree(Object[] path) {
-		log.debug("Refreshing Hierarchy Tree for '" + path + "'!");
+		log.debug("Refreshing Hierarchy Tree!");
 		treeViewer.setInput(buildTreeModel(path));
 		treeViewer.expandToLevel(4);
 		qualifiedNameToActualClasses = path;
@@ -841,7 +883,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 	}
 
 	public void refreshList(String path) {
-		log.debug("Refreshing Hierarchy List'" + path + "'!");
+		log.debug("Refreshing Hierarchy List for '" + path + "'!");
 		listViewer.setInput(buildListModel(path));
 	}
 
