@@ -1,13 +1,12 @@
 package org.caesarj.ui.editor;
 
 import org.apache.log4j.Logger;
+import org.caesarj.ui.CaesarPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -40,6 +39,8 @@ public class CaesarEditor extends CompilationUnitEditor {
 
 	public CaesarEditor() {
 		super();
+		/* initialize auto annotation on/off switching */
+		CaesarPlugin.getDefault().initPluginUI();
 	}
 	
 	public IJavaElement getInputJavaElement() {
@@ -89,6 +90,9 @@ public class CaesarEditor extends CompilationUnitEditor {
 	}
 
 	public void dispose() {
+		/* Fix TR35: must call super to free reference to the file */
+		super.dispose(); 
+		
 		log.debug("dispose"); //$NON-NLS-1$
 		this.outlineView.setEnabled(false);
 	}
