@@ -9,6 +9,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * @author Jochen
@@ -37,9 +38,8 @@ public class PreferenceShortCut implements IWorkbenchWindowActionDelegate {
 		wizard.init();
 		// Create the wizard dialog
 		org.eclipse.jface.wizard.WizardDialog dialog = new org.eclipse.jface.wizard.WizardDialog(
-				org.eclipse.ui.internal.WorkbenchPlugin.getDefault()
-						.getWorkbench().getActiveWorkbenchWindow()
-						.getShell(),wizard);
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+				wizard);
 		dialog.open();
 	}
 

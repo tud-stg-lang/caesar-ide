@@ -13,10 +13,11 @@ import org.caesarj.ui.preferences.CaesarJPreferences;
 import org.caesarj.ui.wizard.CaesarConfigWizard;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IConsoleConstants;
 
 /**
@@ -66,7 +67,7 @@ public class CaesarPerspective implements IPerspectiveFactory {
 				0.75f,
 				editorArea);
 		bottom.addView(IPageLayout.ID_TASK_LIST);
-		bottom.addView(SearchUI.SEARCH_VIEW_ID);
+		bottom.addView(NewSearchUI.SEARCH_VIEW_ID);
 		bottom.addView(JavaUI.ID_SOURCE_VIEW);
 		bottom.addView(IConsoleConstants.ID_CONSOLE_VIEW);
 		
@@ -82,9 +83,8 @@ public class CaesarPerspective implements IPerspectiveFactory {
 		if(CaesarJPreferences.isCAESARPrefConfigDone())
 		{
 			org.eclipse.jface.wizard.WizardDialog dialog = new org.eclipse.jface.wizard.WizardDialog(
-				org.eclipse.ui.internal.WorkbenchPlugin.getDefault()
-						.getWorkbench().getActiveWorkbenchWindow()
-						.getShell(),wizard);
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+					wizard);
 			dialog.open();
 		}
 	}
