@@ -239,23 +239,6 @@ public class CaesarOutlineView extends ContentOutlinePage {
 						LinkNode lNode = (LinkNode) node;
 						return this.getImage(lNode.getProgramElementNode());
 					} else if (node instanceof RelationNode) {
-						IResource resource =
-							ProjectProperties.findResource(
-								node.getSourceLocation().getSourceFile().getAbsolutePath(),
-								Builder.getLastBuildTarget());
-
-						try {
-							IMarker marker = resource.createMarker(IMarker.TASK);
-							marker.setAttribute(
-								IMarker.LINE_NUMBER,
-								node.getSourceLocation().getLine());
-							marker.setAttribute(IMarker.MESSAGE, "DIES IST ein ADVICE TEST");
-							marker.setAttribute(
-								IMarker.SEVERITY,
-								new Integer(IMarker.SEVERITY_INFO));
-						} catch (CoreException e) {
-							logger.error("FEHLER BEIM MARKER ERZEUGEN", e);
-						}
 						return new CaesarElementImageDescriptor(
 							CaesarPluginImages.DESC_ADVICE,
 							null,
@@ -371,6 +354,26 @@ public class CaesarOutlineView extends ContentOutlinePage {
 							pNode instanceof CodeNode
 								|| pNode.getProgramElementKind().equals(
 									ProgramElementNode.Kind.CODE)) {
+							IResource resource =
+								ProjectProperties.findResource(
+									node
+										.getParent()
+										.getSourceLocation()
+										.getSourceFile()
+										.getAbsolutePath(),
+									Builder.getLastBuildTarget());
+							try {
+								IMarker marker = resource.createMarker(IMarker.TASK);
+								marker.setAttribute(
+									IMarker.LINE_NUMBER,
+									node.getParent().getSourceLocation().getLine());
+								marker.setAttribute(IMarker.MESSAGE, "DIES IST ein ADVICE TEST");
+								marker.setAttribute(
+									IMarker.SEVERITY,
+									new Integer(IMarker.SEVERITY_INFO));
+							} catch (CoreException e) {
+								logger.error("FEHLER BEIM MARKER ERZEUGEN", e);
+							}
 							return new CaesarElementImageDescriptor(
 								CaesarPluginImages.DESC_CODE,
 								null,
