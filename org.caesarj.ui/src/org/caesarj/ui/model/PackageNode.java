@@ -33,7 +33,9 @@ public class PackageNode extends CaesarProgramElementNode {
 	}
 
 	public String getText(String text) {
-		return text.substring(text.lastIndexOf("]") + 2); //$NON-NLS-1$
+		String label = text.substring(text.lastIndexOf("]") + 2); //$NON-NLS-1$
+		label = label.replaceAll("_Impl", "");
+		return label;
 	}
 
 	protected void initImages() {

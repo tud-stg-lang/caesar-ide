@@ -4,8 +4,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Vector;
 
 import org.apache.log4j.Logger;
+import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.editor.CaesarOutlineView;
 import org.caesarj.ui.marker.AdviceMarker;
@@ -30,7 +32,6 @@ import org.eclipse.swt.widgets.Display;
  * @author Ivica Aracic
  */
 
-//TODO leeres Project geht nicht sollte abgefangen werden
 public class Builder extends IncrementalProjectBuilder {
 
 	private static Logger log = Logger.getLogger(Builder.class);
@@ -41,9 +42,15 @@ public class Builder extends IncrementalProjectBuilder {
 	 */
 	private static IProject lastBuiltProject = null;
 
+	private static final Vector allBuildedProjects;
+
 	private ProjectProperties projectProperties;
 
 	private Collection errors = new LinkedList();
+
+	static {
+		allBuildedProjects = new Vector();
+	}
 
 	/**
 	 * What did we last build?
@@ -61,22 +68,26 @@ public class Builder extends IncrementalProjectBuilder {
 			IProgressMonitor progressMonitor) {
 		try {
 			lastBuiltProject = getProject();
+			if (!allBuildedProjects.contains(lastBuiltProject))
+				allBuildedProjects.add(lastBuiltProject);
 			this.errors.clear();
-			
+
 			this.projectProperties = new ProjectProperties(getProject());
-			
-			log.debug("Building to '" + this.projectProperties.getOutputPath() + "'");  //$NON-NLS-1$//$NON-NLS-2$
+
+			log
+					.debug("Building to '" + this.projectProperties.getOutputPath() + "'"); //$NON-NLS-1$//$NON-NLS-2$
 			log.debug("kind: " + kind); //$NON-NLS-1$
 
 			log.debug("----\n" + this.projectProperties.toString() + "----\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
-			CaesarAdapter caesarAdapter = new CaesarAdapter(this.projectProperties
-					.getProjectLocation());
+			CaesarAdapter caesarAdapter = new CaesarAdapter(
+					this.projectProperties.getProjectLocation());
 
 			// build
-			caesarAdapter.compile(this.projectProperties
-					.getSourceFiles(), this.projectProperties.getClassPath(),
-					this.projectProperties.getOutputPath(), this.errors, progressMonitor);
+			caesarAdapter.compile(this.projectProperties.getSourceFiles(),
+					this.projectProperties.getClassPath(),
+					this.projectProperties.getOutputPath(), this.errors,
+					progressMonitor);
 
 			// update markers, show errors
 			showErrors();
@@ -130,7 +141,7 @@ public class Builder extends IncrementalProjectBuilder {
 
 				if (token.getLine() > 0) {
 					log.debug("file: " + token.getFile() + ", " + "line: " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							+ token.getLine() + ", " + "path: "  //$NON-NLS-1$//$NON-NLS-2$
+							+ token.getLine() + ", " + "path: " //$NON-NLS-1$//$NON-NLS-2$
 							+ token.getPath());
 
 					IResource resource = ProjectProperties.findResource(token
@@ -149,4 +160,16 @@ public class Builder extends IncrementalProjectBuilder {
 		}
 	}
 
-}
+public static IProject getProjectForSourceLocation(ISourceLocation location) {
+		String path = location.getSourceFile().getAbsolutePath();
+		Iterator iter = allBuildedProjects.iterator();
+		IProject ret = null;
+		String projectPath=null;
+		while (iter.hasNext()) {
+			ret = (IProject) iter.next();
+			projectPath = ret.getFullPath().lastSegment();
+			if (path.indexOf(projectPath)!= -1)
+				return ret;
+		}
+		return null;
+	}}

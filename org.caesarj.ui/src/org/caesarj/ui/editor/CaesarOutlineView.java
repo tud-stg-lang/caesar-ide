@@ -18,7 +18,10 @@ import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.CaesarPluginImages;
 import org.caesarj.ui.model.AdviceDeclarationNode;
 import org.caesarj.ui.model.CaesarProgramElementNode;
+import org.caesarj.ui.model.CodeNode;
 import org.caesarj.ui.model.ConstructorDeclarationNode;
+import org.caesarj.ui.model.FieldNode;
+import org.caesarj.ui.model.MethodDeclarationNode;
 import org.caesarj.ui.model.PackageNode;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -107,11 +110,17 @@ public class CaesarOutlineView extends ContentOutlinePage {
 								returnString.lastIndexOf(':'));
 						String advice = returnString.substring(returnString
 								.lastIndexOf(':') + 2, returnString.length());
-						return advice + ":" + className; //$NON-NLS-1$
+						return advice + ":" + className.replaceAll("_Impl", ""); //$NON-NLS-1$
 					} catch (RuntimeException e1) {
 						return returnString.substring(0, returnString.length())
 								+ "()"; //$NON-NLS-1$
 					}
+				} else if (element instanceof ProgramElementNode
+						&& ((ProgramElementNode) element)
+								.getProgramElementKind().equals(
+										ProgramElementNode.Kind.CODE)) {
+					return new CodeNode((ProgramElementNode) element)
+							.getText(super.getText(element));
 				} else
 					return super.getText(element);
 			} catch (NullPointerException e) {
@@ -119,45 +128,6 @@ public class CaesarOutlineView extends ContentOutlinePage {
 			}
 			return "ERROR"; //$NON-NLS-1$
 		}
-
-		//		private String getArgument() {
-		//			if (signature.charAt(0) == '[') {
-		//				signature = signature.substring(1);
-		//				return extractTyp() + "[]";
-		//			} else {
-		//				return extractTyp();
-		//			}
-		//		}
-
-		//		private String extractTyp() {
-		//			switch (signature.charAt(0)) {
-		//				case 'I' :
-		//					signature = signature.substring(1);
-		//					return "int";
-		//				case 'F' :
-		//					signature = signature.substring(1);
-		//					return "float";
-		//				case 'D' :
-		//					signature = signature.substring(1);
-		//					return "double";
-		//				case 'J' :
-		//					signature = signature.substring(1);
-		//					return "long";
-		//				case 'C' :
-		//					signature = signature.substring(1);
-		//					return "char";
-		//				case 'V' :
-		//					signature = signature.substring(1);
-		//					return "void";
-		//				case 'L' :
-		//					String sig = signature.substring(1, signature.indexOf(';'));
-		//					sig = sig.substring(sig.lastIndexOf('/') + 1);
-		//					signature = signature.substring(signature.indexOf(';') + 1);
-		//					return sig;
-		//				default :
-		//					return "";
-		//			}
-		//		}
 
 		public Image getImage(Object element) {
 			try {
@@ -172,8 +142,15 @@ public class CaesarOutlineView extends ContentOutlinePage {
 				} else if (element instanceof CaesarProgramElementNode) {
 					CaesarProgramElementNode cNode = (CaesarProgramElementNode) element;
 					return cNode.getImage();
-				} else
+				} else if (element instanceof ProgramElementNode
+						&& ((ProgramElementNode) element)
+								.getProgramElementKind().equals(
+										ProgramElementNode.Kind.CODE)) {
+					return new CodeNode((ProgramElementNode) element)
+							.getImage();
+				} else {
 					return super.getImage(element);
+				}
 			} catch (Exception e) {
 				logger
 						.error(
@@ -210,9 +187,12 @@ public class CaesarOutlineView extends ContentOutlinePage {
 
 		public Object[] getChildren(Object parentElement) {
 			Vector vec = new Vector();
-
 			if (parentElement instanceof ProgramElementNode) {
 				ProgramElementNode node = (ProgramElementNode) parentElement;
+				if (node.getProgramElementKind().equals(
+						ProgramElementNode.Kind.CODE)) {
+					node = new CodeNode(node);
+				}
 				Iterator it = node.getRelations().iterator();
 				while (it.hasNext()) {
 					Object te = it.next();
@@ -224,10 +204,17 @@ public class CaesarOutlineView extends ContentOutlinePage {
 			StructureNode node = (StructureNode) parentElement;
 			for (Iterator it = node.getChildren().iterator(); it.hasNext();) {
 				Object te = it.next();
-				if (te instanceof ConstructorDeclarationNode
-						&& ((ConstructorDeclarationNode) te).getBytecodeName()
-								.indexOf("_Impl") != -1)
-					continue;
+				if(te instanceof ConstructorDeclarationNode){
+					int i=0;
+					//TODO hier müssen die Constructoren gefiltert werden
+				}
+				if (te instanceof MethodDeclarationNode
+						|| te instanceof FieldNode) {
+					CaesarProgramElementNode elem = (CaesarProgramElementNode) te;
+					if (elem.getName().charAt(0) == '$') {
+						continue;
+					}
+				}
 				vec.add(te);
 			}
 			return vec.toArray();

@@ -84,23 +84,6 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 		checkChildren();
 	}
 
-	public CaesarProgramElementNode(String signature, Kind kind,
-			ISourceLocation sourceLocationArg, int modifiers,
-			String formalComment, List childrenArg, ProgramElementNode node) {
-		this(signature, kind, sourceLocationArg, modifiers, formalComment,
-				childrenArg);
-		this.setRelations(node.getRelations());
-		this.setBytecodeName(node.getBytecodeName());
-		this.setBytecodeSignature(node.getBytecodeSignature());
-		this.setMessage(node.getMessage());
-		this.setImplementor(node.isImplementor());
-		this.setRelations(node.getRelations());
-		this.setRunnable(node.isRunnable());
-		this.setOverrider(node.isOverrider());
-		this.setSourceLocation(node.getSourceLocation());
-		this.name = node.getName();
-	}
-
 	private void checkChildren() {
 		Object child[] = this.children.toArray();
 		List childrenList = new ArrayList();
@@ -108,11 +91,8 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 		for (int i = 0; i < child.length; i++) {
 			if (((ProgramElementNode) child[i]).getProgramElementKind().equals(
 					ProgramElementNode.Kind.CODE)) {
-				ProgramElementNode pNode = (ProgramElementNode) child[i];
-				CodeNode cNode = new CodeNode(pNode.getSignature(),
-						ProgramElementNode.Kind.CODE,
-						pNode.getSourceLocation(), 0, pNode.getFormalComment(),
-						pNode.getChildren(), pNode);
+				CaesarProgramElementNode pNode = (CaesarProgramElementNode) child[i];
+				CodeNode cNode = new CodeNode(pNode);
 				cNode.setParent(this);
 				childrenList.add(cNode);
 			} else {
@@ -133,21 +113,6 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 	public ImportCaesarProgramElementNode getImports() {
 		return this.imports;
 	}
-
-	/*
-	public void addChild(StructureNode sNode) {
-		if (((ProgramElementNode) sNode).getProgramElementKind().equals(
-				ProgramElementNode.Kind.CODE)) {		    
-			ProgramElementNode pNode = (ProgramElementNode) sNode;
-			CodeNode cNode = new CodeNode(pNode.getSignature(),
-					ProgramElementNode.Kind.CODE, pNode.getSourceLocation(), 0,
-					pNode.getFormalComment(), pNode.getChildren(), pNode);
-			super.addChild(cNode);
-		} else {
-			super.addChild(sNode);
-		}
-	}
-	*/
 
 	public Image getImage() {
 		ImageDescriptor img;
@@ -201,12 +166,15 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 						args.put(AdviceMarker.ID, "MethodeLink"); //$NON-NLS-1$
 					}
 				}
-				ISourceLocation src = this.getSourceLocation();
-				IResource resource = ProjectProperties.findResource(src
-						.getSourceFile().getAbsolutePath(), Builder
-						.getLastBuildTarget());
-				args.put(IMarker.LINE_NUMBER, new Integer(this
-						.getSourceLocation().getLine()));
+
+				IResource resource = ProjectProperties
+						.findResource(
+								this.sourceLocation.getSourceFile()
+										.getAbsolutePath(),
+								Builder
+										.getProjectForSourceLocation(this.sourceLocation));
+				args.put(IMarker.LINE_NUMBER, new Integer(this.sourceLocation
+						.getLine()));
 				args.put(IMarker.MESSAGE, messageLocal);
 				args.put(AdviceMarker.LINKS, lNode);
 				try {

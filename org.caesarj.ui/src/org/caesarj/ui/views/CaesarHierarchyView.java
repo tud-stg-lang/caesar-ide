@@ -245,6 +245,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				throw new NullPointerException("No Data.");
 			for (int k = 0; path.length > k; k++) {
 				toolButton.setEnabled(true);
+				filterButton.setEnabled(true);
 				CaesarHierarchyTest nav = new CaesarHierarchyTest(
 						globalPathForInformationAdapter);
 				CClass clazz = nav.load((String) path[k]);
@@ -336,6 +337,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 			n1.setKind(HierarchyNode.EMTY);
 			n1.setName("No informations available.");
 			toolButton.setEnabled(false);
+			filterButton.setEnabled(false);
 			n1.setParent(root);
 			root.addChild(n1);
 			return root;
@@ -420,7 +422,10 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		filterButton
 				.setImage(CaesarPluginImages.DESC_OBJS_INNER_CCLASS_IMPLICID
 						.createImage());
-		filterButton.setEnabled(true);
+		filterButton
+		.setDisabledImage(CaesarPluginImages.DESC_OBJS_INNER_CCLASS_IMPLICID_DISABLED
+				.createImage());
+		filterButton.setEnabled(false);
 		filterButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				if (implicitFilter) {
@@ -438,7 +443,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		toolButton = new ToolItem(toolbar, SWT.FLAT);
 		toolButton.setToolTipText(SUPER);
 		toolButton.setImage(SUPERIMAGE);
-		toolButton.setEnabled(true);
+		toolButton.setEnabled(false);
 		toolButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				log.debug("Button Pressed!!!");
@@ -485,12 +490,24 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				| SWT.V_SCROLL | SWT.HORIZONTAL);
 		listViewer.setContentProvider(lcp);
 		listViewer.setLabelProvider(lp);
-		refreshTree(new String[] { "" });
+		enabled=true;
+		//refreshTree(new String[] { "" });
+		
 	}
 
 	public void setFocus() {
+		enabled = true;
 	}
+	
+	protected static boolean enabled = false;
+	
+	
 
+	public void dispose() {
+		enabled = false;
+		super.dispose();
+	}
+	
 	public static TreeViewer getTreeViewer() {
 		return treeViewer;
 	}
@@ -753,7 +770,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 			
 		}
 
-		if ((part instanceof CaesarEditor)&&actualFile.compareTo(actualFileHelp)!=0) {
+		if ((part instanceof CaesarEditor)&&actualFile.compareTo(actualFileHelp)!=0&&enabled) {
 			actualFileHelp = actualFile;
 			refresh();
 		}		

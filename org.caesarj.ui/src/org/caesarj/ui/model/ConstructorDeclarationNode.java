@@ -53,7 +53,7 @@ public class ConstructorDeclarationNode extends CaesarProgramElementNode {
 				label += ", "; //$NON-NLS-1$
 		}
 		label += ")"; //$NON-NLS-1$
-		return label;
+		return label.replaceAll("_Impl","");
 	}
 
 	protected void initImages() {

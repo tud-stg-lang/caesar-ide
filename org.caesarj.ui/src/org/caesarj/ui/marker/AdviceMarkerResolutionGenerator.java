@@ -2,10 +2,11 @@ package org.caesarj.ui.marker;
 
 import org.apache.log4j.Logger;
 import org.aspectj.asm.LinkNode;
-import org.caesarj.ui.builder.Builder;
+import org.caesarj.ui.editor.CaesarEditor;
 import org.caesarj.ui.util.ProjectProperties;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IMarkerResolution;
@@ -69,7 +70,7 @@ public class AdviceMarkerResolutionGenerator implements
 		}
 
 		public String getLabel() {
-			return this.toAdvice ? "Open Advice: " + this.link.getName():"Open Methode: " + this.link.getName(); //$NON-NLS-1$ //$NON-NLS-2$
+			return this.toAdvice ? "Open Advice: " + this.link.getName() : "Open Methode: " + this.link.getName(); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		public void run(IMarker marker) {
@@ -80,19 +81,20 @@ public class AdviceMarkerResolutionGenerator implements
 			IWorkbenchPage page = w.getActivePage();
 			if (page == null)
 				return;
+			IProject activeProject = ((CaesarEditor)page.getActiveEditor()).getInputJavaElement().getJavaProject()
+			.getProject();
 			try {
-				IDE.openEditor(page, this.getLinkLocation(), true);
+				IDE.openEditor(page, this.getLinkLocation(activeProject), true);
 			} catch (PartInitException e) {
 				MessageDialog.openError(w.getShell(),
 						"ERROR", "Unable to open Editor!"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
-		private IFile getLinkLocation() {
+		private IFile getLinkLocation(IProject activeProject) {
 			String fullPath = this.link.getProgramElementNode()
 					.getSourceLocation().getSourceFile().getAbsolutePath();
-			return (IFile) ProjectProperties.findResource(fullPath, Builder
-					.getLastBuildTarget());
+			return (IFile) ProjectProperties.findResource(fullPath, activeProject);
 		}
 
 	}

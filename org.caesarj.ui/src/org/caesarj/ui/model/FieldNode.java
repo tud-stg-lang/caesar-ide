@@ -39,6 +39,7 @@ public class FieldNode extends CaesarProgramElementNode {
 	public String getText(String text) {
 		String label = text.substring(text.lastIndexOf("]") + 2); //$NON-NLS-1$
 		label += " : " + this.getShortType(); //$NON-NLS-1$
+		label=label.replaceAll("_Impl", "");
 		return label;
 	}
 

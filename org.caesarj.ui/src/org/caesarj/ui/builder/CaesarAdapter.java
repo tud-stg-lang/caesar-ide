@@ -84,6 +84,7 @@ public final class CaesarAdapter extends Main {
 		}
 		AsmBuilder.postBuild(this.model);
 		_dumpModel("final structure model", this.model); //$NON-NLS-1$
+		
 		return success;
 	}
 

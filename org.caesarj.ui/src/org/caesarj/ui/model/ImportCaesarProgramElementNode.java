@@ -62,6 +62,7 @@ public class ImportCaesarProgramElementNode extends CaesarProgramElementNode {
 	public String getText(String text) {
 		String label = text.substring(text.lastIndexOf("]") + 2); //$NON-NLS-1$
 		label = label.replace('/', '.');
+		label=label.replaceFirst("_Impl", "");
 		return label;
 	}
 

@@ -17,23 +17,21 @@ public class AdviceDeclarationNode extends CaesarProgramElementNode {
 
 	private String classFullQualifiedName;
 
-	public AdviceDeclarationNode(
-			String classFullQualifiedNameArg, String signature, Kind kind,
-			ISourceLocation sourceLocationArg, int modifiers,
-			String formalComment, List childrenArg) {
+	public AdviceDeclarationNode(String classFullQualifiedNameArg,
+			String signature, Kind kind, ISourceLocation sourceLocationArg,
+			int modifiers, String formalComment, List childrenArg) {
 		super(signature, kind, sourceLocationArg, modifiers, formalComment,
 				childrenArg);
 		this.initImages();
 		this.classFullQualifiedName = classFullQualifiedNameArg;
 	}
 
-
 	public String getClassFullQualifiedName() {
 		return this.classFullQualifiedName;
 	}
 
 	public String getText(String text) {
-		return this.name;
+		return this.name.replaceAll("_Impl", "");
 		//return text.substring(text.lastIndexOf("]") + 2); //$NON-NLS-1$
 	}
 

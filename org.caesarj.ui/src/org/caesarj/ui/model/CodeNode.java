@@ -1,9 +1,6 @@
 package org.caesarj.ui.model;
 
-import java.util.List;
-
 import org.aspectj.asm.ProgramElementNode;
-import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.ui.CaesarElementImageDescriptor;
 import org.caesarj.ui.CaesarPluginImages;
 import org.eclipse.swt.graphics.Image;
@@ -17,16 +14,27 @@ import org.eclipse.swt.graphics.Image;
  */
 public class CodeNode extends CaesarProgramElementNode {
 
-	public CodeNode(String signature, Kind kind,
-			ISourceLocation sourceLocationArg, int modifiers,
-			String formalComment, List childrenArg, ProgramElementNode pNode) {
-		super(signature, kind, sourceLocationArg, modifiers, formalComment,
-				childrenArg, pNode);
+	public CodeNode(ProgramElementNode pNode) {
+		super(pNode.getSignature(), pNode.getProgramElementKind(), pNode
+				.getSourceLocation(), 0, pNode
+				.getFormalComment(), pNode.getChildren());
+		this.setRelations(pNode.getRelations());
+		this.setBytecodeName(pNode.getBytecodeName());
+		this.setBytecodeSignature(pNode.getBytecodeSignature());
+		this.setMessage(pNode.getMessage());
+		this.setImplementor(pNode.isImplementor());
+		this.setRelations(pNode.getRelations());
+		this.setRunnable(pNode.isRunnable());
+		this.setOverrider(pNode.isOverrider());
+		this.setSourceLocation(pNode.getSourceLocation());
+		this.name = pNode.getName();
 		this.initImages();
 	}
 
 	public String getText(String text) {
-		return text.substring(text.lastIndexOf("]") + 2); //$NON-NLS-1$
+		String label = text.substring(text.lastIndexOf("]") + 1); //$NON-NLS-1$
+		label = label.replaceAll("_Impl", "");
+		return label;
 	}
 
 	protected void initImages() {
