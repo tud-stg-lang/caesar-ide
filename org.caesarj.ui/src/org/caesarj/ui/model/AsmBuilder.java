@@ -142,6 +142,7 @@ public class AsmBuilder extends CaesarVisitor {
 		TokenReference ref = self.getTokenReference();
 		File file = new File(new String(ref.getFile()));
 
+		//TODO Sourcefile unterscheidung einbauen
 		//JavaSourceFileNode
 		//AspectSourceFileNode
 		CaesarProgramElementNode cuNode =

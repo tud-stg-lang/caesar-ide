@@ -21,7 +21,6 @@ public class AspectNode extends CaesarProgramElementNode {
 	 */
 	public AspectNode(String signature, Kind kind, List children) {
 		super(signature, kind, children);
-		// TODO Automatisch erstellter Konstruktoren-Stub
 	}
 
 	/**
@@ -40,7 +39,6 @@ public class AspectNode extends CaesarProgramElementNode {
 		String formalComment,
 		List children) {
 		super(signature, kind, sourceLocation, modifiers, formalComment, children);
-		// TODO Automatisch erstellter Konstruktoren-Stub
 	}
 
 	/**
@@ -71,14 +69,12 @@ public class AspectNode extends CaesarProgramElementNode {
 			children,
 			importedPackages,
 			importedClasses);
-		// TODO Automatisch erstellter Konstruktoren-Stub
 	}
 
 	/* (Kein Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	public int compareTo(Object o) throws ClassCastException {
-		// TODO Automatisch erstellter Methoden-Stub
 		return super.compareTo(o);
 	}
 

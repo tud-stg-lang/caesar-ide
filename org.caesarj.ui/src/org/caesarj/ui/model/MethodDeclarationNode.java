@@ -2,8 +2,6 @@ package org.caesarj.ui.model;
 
 import java.util.List;
 
-import org.aspectj.asm.ProgramElementNode;
-import org.aspectj.asm.StructureNode;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.FjMethodDeclaration;
 import org.caesarj.compiler.ast.JClassDeclaration;
@@ -29,7 +27,6 @@ public class MethodDeclarationNode extends CaesarProgramElementNode {
 		String formalComment,
 		List children) {
 		super(signature, kind, sourceLocation, modifiers, formalComment, children);
-
 		this.methodDeclaration = methodDeclaration;
 		this.classDeclaration = classDeclaration;
 	}
@@ -42,28 +39,12 @@ public class MethodDeclarationNode extends CaesarProgramElementNode {
 		try {
 			return this.methodDeclaration.getMethod().getReturnType();
 		} catch (NullPointerException e) {
+			//TODO Es fehlen Informationen die wahrscheinlich vom Compiler nicht richtig in die AST-Tree übernommen werden
 			return null;
 		}
 	}
 
 	public JClassDeclaration getClassDeclaration() {
 		return classDeclaration;
-	}
-
-	public void addChild(StructureNode sNode) {
-		if (((ProgramElementNode) sNode)
-			.getProgramElementKind()
-			.equals(ProgramElementNode.Kind.CODE)) {
-			ProgramElementNode pNode = (ProgramElementNode) sNode;
-			super.addChild(
-				new CodeNode(
-					pNode.getSignature(),
-					ProgramElementNode.Kind.CODE,
-					pNode.getSourceLocation(),
-					0,
-					pNode.getFormalComment(),
-					pNode.getChildren()));
-		} else
-			super.addChild(sNode);
 	}
 }

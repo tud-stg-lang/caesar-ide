@@ -59,27 +59,28 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 public class CaesarOutlineView extends ContentOutlinePage {
 
-	private static HashMap categoryMap = new HashMap();
+	private static HashMap categoryMap;
 	private String signature;
 	private static final Point SMALL_SIZE = new Point(16, 16);
 	private static final Point BIG_SIZE = new Point(22, 16);
 	private Object imports;
+	private final static int OVERLAY_ICONS = 0x1;
+	private final static int SMALL_ICONS = 0x2;
+	private final static int LIGHT_TYPE_ICONS = 0x4;
 
-	/**
-	* Flags for the JavaImageLabelProvider:
-	* Generate images with overlays.
-	*/
-	public final static int OVERLAY_ICONS = 0x1;
-
-	/**
-	 * Generate small sized images.
-	 */
-	public final static int SMALL_ICONS = 0x2;
-
-	/**
-	 * Use the 'light' style for rendering types.
-	 */
-	public final static int LIGHT_TYPE_ICONS = 0x4;
+	static {
+		categoryMap = new HashMap();
+		categoryMap.put(ProgramElementNode.Kind.PACKAGE, new Integer(0));
+		categoryMap.put(ProgramElementNode.Kind.FILE_JAVA, new Integer(1));
+		categoryMap.put(ProgramElementNode.Kind.ASPECT, new Integer(5));
+		categoryMap.put(ProgramElementNode.Kind.INTERFACE, new Integer(6));
+		categoryMap.put(ProgramElementNode.Kind.CLASS, new Integer(7));
+		categoryMap.put(ProgramElementNode.Kind.FIELD, new Integer(10));
+		categoryMap.put(ProgramElementNode.Kind.CONSTRUCTOR, new Integer(11));
+		categoryMap.put(ProgramElementNode.Kind.METHOD, new Integer(12));
+		categoryMap.put(ProgramElementNode.Kind.ADVICE, new Integer(13));
+		categoryMap.put(ProgramElementNode.Kind.CODE, new Integer(14));
+	}
 
 	class LexicalSorter extends ViewerSorter {
 		/**
@@ -91,10 +92,10 @@ public class CaesarOutlineView extends ContentOutlinePage {
 		 */
 		public int category(Object element) {
 			try {
-				ProgramElementNode node = (ProgramElementNode) element;
-				String kind = node.getKind();
-				Integer intr = (Integer) categoryMap.get(kind);
-				return intr.intValue();
+				return (
+					(Integer) categoryMap.get(
+						((ProgramElementNode) element).getProgramElementKind()))
+					.intValue();
 			} catch (Exception e) {
 				return 999;
 			}
@@ -105,12 +106,12 @@ public class CaesarOutlineView extends ContentOutlinePage {
 
 	class CaesarLabelProvider extends LabelProvider {
 
-		//private JavaElementImageProvider fImageLabelProvider = new JavaElementImageProvider();
-
 		public String getText(Object element) {
 			String label = "ERROR";
 			try {
-				label = super.getText(element);
+				//TODO ist wegen parent=null in LinkNode??? Sollte irgendwo beim AST-Tree aufbau behoben werden.
+				if (!(element instanceof LinkNode))
+					label = super.getText(element);
 				if (element instanceof StructureNode) {
 					StructureNode node = (StructureNode) element;
 					if (element instanceof MethodDeclarationNode) {
@@ -161,11 +162,7 @@ public class CaesarOutlineView extends ContentOutlinePage {
 						label = label.substring(label.lastIndexOf("]") + 2);
 					} else if (element instanceof LinkNode) {
 						LinkNode lNode = (LinkNode) node;
-						Object elem = lNode.getProgramElementNode();
-						if (elem instanceof MethodDeclarationNode)
-							return this.getText(elem);
-						else
-							label = label.substring(label.lastIndexOf("]") + 2);
+						return this.getText(lNode.getProgramElementNode());
 					} else if (element instanceof AdviceDeclarationNode) {
 						label = label.substring(label.lastIndexOf("]") + 2);
 					} else if (element instanceof PackageNode) {
@@ -222,169 +219,178 @@ public class CaesarOutlineView extends ContentOutlinePage {
 		public Image getImage(Object element) {
 			try {
 				Image image = null;
-				logger.debug("Element discription: " + element.toString());
+				//TODO ist wegen parent=null in LinkNode??? Sollte irgendwo beim AST-Tree aufbau behoben werden.
+				if (element instanceof LinkNode)
+					logger.debug("Element discription: LinkNode");
+				else
+					logger.debug("Element discription: " + element.toString());
 				if (element instanceof StructureNode) {
 					StructureNode node = (StructureNode) element;
 					ImageDescriptor img;
 					logger.debug("Structure Node kind: " + node.getKind());
-					if (node instanceof FieldNode) {
-						FieldNode fNode = (FieldNode) element;
-						int adornmentFlags = computeJavaAdornmentFlags(fNode);
-						switch (fNode.getCAModifiers() % 8) {
-							case 1 :
-								img = CaesarPluginImages.DESC_FIELD_PUBLIC;
-								break;
-							case 2 :
-								img = CaesarPluginImages.DESC_FIELD_PRIVATE;
-								break;
-							case 4 :
-								img = CaesarPluginImages.DESC_FIELD_PROTECTED;
-								break;
-
-							default :
-								img = CaesarPluginImages.DESC_FIELD_DEFAULT;
-						}
-						return new JavaElementImageDescriptor(img, adornmentFlags, BIG_SIZE)
-							.createImage();
-					} else if (node instanceof MethodDeclarationNode) {
-						MethodDeclarationNode mNode = (MethodDeclarationNode) node;
-						int adornmentFlags = computeJavaAdornmentFlags(mNode);
-						switch (mNode.getCAModifiers() % 8) {
-							case 1 :
-								img = CaesarPluginImages.DESC_MISC_PUBLIC;
-								break;
-							case 2 :
-								img = CaesarPluginImages.DESC_MISC_PRIVATE;
-								break;
-							case 4 :
-								img = CaesarPluginImages.DESC_MISC_PROTECTED;
-								break;
-							default :
-								img = CaesarPluginImages.DESC_MISC_DEFAULT;
-						}
-						return new JavaElementImageDescriptor(img, adornmentFlags, BIG_SIZE)
-							.createImage();
-					} else if (node instanceof ConstructorDeclarationNode) {
-						ConstructorDeclarationNode cNode = (ConstructorDeclarationNode) element;
-						switch (cNode.getCAModifiers() % 8) {
-							case 1 :
-								img = CaesarPluginImages.DESC_MISC_PUBLIC;
-								break;
-							case 2 :
-								img = CaesarPluginImages.DESC_MISC_PRIVATE;
-								break;
-							case 4 :
-								img = CaesarPluginImages.DESC_MISC_PROTECTED;
-								break;
-							default :
-								img = CaesarPluginImages.DESC_MISC_DEFAULT;
-						}
-						return new JavaElementImageDescriptor(
-							img,
-							JavaElementImageDescriptor.CONSTRUCTOR,
-							BIG_SIZE)
-							.createImage();
-					} else if (node instanceof ClassNode) {
-						ClassNode cNode = (ClassNode) element;
-						int adornmentFlags = computeJavaAdornmentFlags(cNode);
-						switch (cNode.getCAModifiers() % 8) {
-							case 1 :
-								img = CaesarPluginImages.DESC_INNERCLASS_PUBLIC;
-								break;
-							case 2 :
-								img = CaesarPluginImages.DESC_INNERCLASS_PRIVATE;
-								break;
-							case 4 :
-								img = CaesarPluginImages.DESC_INNERCLASS_PROTECTED;
-								break;
-							default :
-								img = CaesarPluginImages.DESC_INNERCLASS_DEFAULT;
-						}
-						return new JavaElementImageDescriptor(img, adornmentFlags, BIG_SIZE)
-							.createImage();
-					} else if (node instanceof InterfaceNode) {
-						InterfaceNode iNode = (InterfaceNode) element;
-						int adornmentFlags = computeJavaAdornmentFlags(iNode);
-						switch (iNode.getCAModifiers() % 8) {
-							case 1 :
-								img = CaesarPluginImages.DESC_INNERINTERFACE_PUBLIC;
-								break;
-							case 2 :
-								img = CaesarPluginImages.DESC_INNERINTERFACE_PRIVATE;
-								break;
-							case 4 :
-								img = CaesarPluginImages.DESC_INNERINTERFACE_PROTECTED;
-								break;
-							default :
-								img = CaesarPluginImages.DESC_INNERINTERFACE_DEFAULT;
-						}
-						return new JavaElementImageDescriptor(img, adornmentFlags, BIG_SIZE)
-							.createImage();
+					if (node instanceof LinkNode) {
+						//TODO Linknode setzt den programmnode nicht richtig.
+						LinkNode lNode = (LinkNode) node;
+						return this.getImage(lNode.getProgramElementNode());
 					} else if (node instanceof RelationNode) {
 						return new JavaElementImageDescriptor(
 							CaesarPluginImages.DESC_ADVICE,
 							0,
 							BIG_SIZE)
 							.createImage();
-					} else if (node instanceof ImportCaesarProgramElementNode) {
-						ImportCaesarProgramElementNode iNode =
-							(ImportCaesarProgramElementNode) node;
-						if (iNode.rootFlag)
+					} else {
+						ProgramElementNode pNode = (ProgramElementNode) node;
+						if (pNode instanceof FieldNode) {
+							FieldNode fNode = (FieldNode) element;
+							int adornmentFlags = computeJavaAdornmentFlags(fNode);
+							switch (fNode.getCAModifiers() % 8) {
+								case 1 :
+									img = CaesarPluginImages.DESC_FIELD_PUBLIC;
+									break;
+								case 2 :
+									img = CaesarPluginImages.DESC_FIELD_PRIVATE;
+									break;
+								case 4 :
+									img = CaesarPluginImages.DESC_FIELD_PROTECTED;
+									break;
+
+								default :
+									img = CaesarPluginImages.DESC_FIELD_DEFAULT;
+							}
+							return new JavaElementImageDescriptor(img, adornmentFlags, BIG_SIZE)
+								.createImage();
+						} else if (pNode instanceof MethodDeclarationNode) {
+							MethodDeclarationNode mNode = (MethodDeclarationNode) pNode;
+							int adornmentFlags = computeJavaAdornmentFlags(mNode);
+							switch (mNode.getCAModifiers() % 8) {
+								case 1 :
+									img = CaesarPluginImages.DESC_MISC_PUBLIC;
+									break;
+								case 2 :
+									img = CaesarPluginImages.DESC_MISC_PRIVATE;
+									break;
+								case 4 :
+									img = CaesarPluginImages.DESC_MISC_PROTECTED;
+									break;
+								default :
+									img = CaesarPluginImages.DESC_MISC_DEFAULT;
+							}
+							return new JavaElementImageDescriptor(img, adornmentFlags, BIG_SIZE)
+								.createImage();
+						} else if (pNode instanceof ConstructorDeclarationNode) {
+							ConstructorDeclarationNode cNode = (ConstructorDeclarationNode) element;
+							switch (cNode.getCAModifiers() % 8) {
+								case 1 :
+									img = CaesarPluginImages.DESC_MISC_PUBLIC;
+									break;
+								case 2 :
+									img = CaesarPluginImages.DESC_MISC_PRIVATE;
+									break;
+								case 4 :
+									img = CaesarPluginImages.DESC_MISC_PROTECTED;
+									break;
+								default :
+									img = CaesarPluginImages.DESC_MISC_DEFAULT;
+							}
 							return new JavaElementImageDescriptor(
-								CaesarPluginImages.DESC_OUT_IMPORTS,
-								0,
+								img,
+								JavaElementImageDescriptor.CONSTRUCTOR,
 								BIG_SIZE)
 								.createImage();
-						else
+						} else if (pNode instanceof ClassNode) {
+							ClassNode cNode = (ClassNode) element;
+							int adornmentFlags = computeJavaAdornmentFlags(cNode);
+							switch (cNode.getCAModifiers() % 8) {
+								case 1 :
+									img = CaesarPluginImages.DESC_INNERCLASS_PUBLIC;
+									break;
+								case 2 :
+									img = CaesarPluginImages.DESC_INNERCLASS_PRIVATE;
+									break;
+								case 4 :
+									img = CaesarPluginImages.DESC_INNERCLASS_PROTECTED;
+									break;
+								default :
+									img = CaesarPluginImages.DESC_INNERCLASS_DEFAULT;
+							}
+							return new JavaElementImageDescriptor(img, adornmentFlags, BIG_SIZE)
+								.createImage();
+						} else if (pNode instanceof InterfaceNode) {
+							InterfaceNode iNode = (InterfaceNode) element;
+							int adornmentFlags = computeJavaAdornmentFlags(iNode);
+							switch (iNode.getCAModifiers() % 8) {
+								case 1 :
+									img = CaesarPluginImages.DESC_INNERINTERFACE_PUBLIC;
+									break;
+								case 2 :
+									img = CaesarPluginImages.DESC_INNERINTERFACE_PRIVATE;
+									break;
+								case 4 :
+									img = CaesarPluginImages.DESC_INNERINTERFACE_PROTECTED;
+									break;
+								default :
+									img = CaesarPluginImages.DESC_INNERINTERFACE_DEFAULT;
+							}
+							return new JavaElementImageDescriptor(img, adornmentFlags, BIG_SIZE)
+								.createImage();
+						} else if (pNode instanceof ImportCaesarProgramElementNode) {
+							ImportCaesarProgramElementNode iNode =
+								(ImportCaesarProgramElementNode) pNode;
+							if (iNode.rootFlag)
+								return new JavaElementImageDescriptor(
+									CaesarPluginImages.DESC_OUT_IMPORTS,
+									0,
+									BIG_SIZE)
+									.createImage();
+							else
+								return new JavaElementImageDescriptor(
+									CaesarPluginImages.DESC_IMPORTS,
+									0,
+									BIG_SIZE)
+									.createImage();
+						} else if (
+							pNode instanceof CodeNode
+								|| pNode.getProgramElementKind().equals(
+									ProgramElementNode.Kind.CODE)) {
 							return new JavaElementImageDescriptor(
-								CaesarPluginImages.DESC_IMPORTS,
+								CaesarPluginImages.DESC_CODE,
 								0,
 								BIG_SIZE)
 								.createImage();
-					} else if (
-						node instanceof CodeNode
-							|| node.getKind().compareTo("decBodyElement") == 0) {
-						return new JavaElementImageDescriptor(
-							CaesarPluginImages.DESC_CODE,
-							0,
-							BIG_SIZE)
-							.createImage();
-					} else if (node instanceof LinkNode) {
-						LinkNode lNode = (LinkNode) node;
-						return this.getImage(lNode.getProgramElementNode());
-					} else if (node instanceof PackageNode) {
-						return new JavaElementImageDescriptor(
-							CaesarPluginImages.DESC_OUT_PACKAGE,
-							0,
-							BIG_SIZE)
-							.createImage();
-					} else if (node instanceof AdviceDeclarationNode) {
-						return image =
-							new JavaElementImageDescriptor(
-								CaesarPluginImages.DESC_JOINPOINT,
+						} else if (pNode instanceof PackageNode) {
+							return new JavaElementImageDescriptor(
+								CaesarPluginImages.DESC_OUT_PACKAGE,
 								0,
 								BIG_SIZE)
 								.createImage();
-					} else if (node instanceof AspectNode) {
-						return image =
-							new JavaElementImageDescriptor(
-								CaesarPluginImages.DESC_ASPECT,
-								0,
-								BIG_SIZE)
-								.createImage();
-					} else if (node instanceof PointcutNode) {
-						return image =
-							new JavaElementImageDescriptor(
+						} else if (pNode instanceof AdviceDeclarationNode) {
+							return image =
+								new JavaElementImageDescriptor(
+									CaesarPluginImages.DESC_JOINPOINT,
+									0,
+									BIG_SIZE)
+									.createImage();
+						} else if (pNode instanceof AspectNode) {
+							return image =
+								new JavaElementImageDescriptor(
+									CaesarPluginImages.DESC_ASPECT,
+									0,
+									BIG_SIZE)
+									.createImage();
+						} else if (pNode instanceof PointcutNode) {
+							return image =
+								new JavaElementImageDescriptor(
+									CaesarPluginImages.DESC_ERROR,
+									0,
+									BIG_SIZE)
+									.createImage();
+						} else
+							return new JavaElementImageDescriptor(
 								CaesarPluginImages.DESC_ERROR,
 								0,
 								BIG_SIZE)
 								.createImage();
-					} else
-						return new JavaElementImageDescriptor(
-							CaesarPluginImages.DESC_ERROR,
-							0,
-							BIG_SIZE)
-							.createImage();
+					}
 				} else
 					return super.getImage(element);
 			} catch (Exception e) {
@@ -482,15 +488,6 @@ public class CaesarOutlineView extends ContentOutlinePage {
 	 */
 	public CaesarOutlineView(CaesarEditor caesarEditor) {
 		super();
-		categoryMap.put("package", new Integer(0));
-		categoryMap.put("java source file", new Integer(1));
-		categoryMap.put("aspect", new Integer(5));
-		categoryMap.put("interface", new Integer(6));
-		categoryMap.put("class", new Integer(7));
-		categoryMap.put("field", new Integer(10));
-		categoryMap.put("constructor", new Integer(11));
-		categoryMap.put("method", new Integer(12));
-		categoryMap.put("advice", new Integer(13));
 		allViews.add(this);
 		this.caesarEditor = caesarEditor;
 	}
