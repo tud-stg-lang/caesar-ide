@@ -2,6 +2,7 @@ package org.caesarj.ui.editor;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -37,6 +38,10 @@ public class CaesarEditor extends CompilationUnitEditor {
 
 	public CaesarEditor() {
 		super();
+	}
+	
+	public IJavaElement getInputJavaElement() {
+		return super.getInputJavaElement();
 	}
 
 	protected void initializeEditor() {

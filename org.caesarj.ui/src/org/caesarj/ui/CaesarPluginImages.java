@@ -21,14 +21,11 @@ public class CaesarPluginImages {
 
 	private static URL fgIconBaseURL = null;
 
-	// Determine display depth. If depth > 4 then we use high color images. Otherwise low color
-	// images are used
 	static {
 		String pathSuffix = "icons/"; //$NON-NLS-1$
 		try {
 			fgIconBaseURL =
-				new URL(CaesarPlugin.getDefault().getBundle().getEntry("/"), pathSuffix); //$NON-NLS-1$
-				//CHANGED was deprecated 
+				new URL(CaesarPlugin.getDefault().getBundle().getEntry("/"), pathSuffix);
 		} catch (MalformedURLException e) {
 			// do nothing
 		}
@@ -55,8 +52,8 @@ public class CaesarPluginImages {
 	private static final String IMG_CCLASS_PRO = NAME_PREFIX + "cclass_protected_obj.gif"; //$NON-NLS-1$
 	private static final String IMG_CCLASS = NAME_PREFIX + "cclass_default_obj.gif"; //$NON-NLS-1$
 	//TODO IMAGE HIERACHY
-	private static final String IMG_HIER_MODE_SUPER = NAME_PREFIX + "advice.gif"; //$NON-NLS-1$
-	private static final String IMG_HIER_MODE_SUB = NAME_PREFIX + "error.gif"; //$NON-NLS-1$
+	private static final String IMG_HIER_MODE_SUPER = NAME_PREFIX + "super_hi.gif"; //$NON-NLS-1$
+	private static final String IMG_HIER_MODE_SUB = NAME_PREFIX + "sub_hi.gif"; //$NON-NLS-1$
 	
 	
 

@@ -10,6 +10,7 @@ import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.editor.CaesarOutlineView;
 import org.caesarj.ui.marker.AdviceMarker;
 import org.caesarj.ui.util.ProjectProperties;
+import org.caesarj.ui.views.CaesarHierarchyView;
 import org.caesarj.util.PositionedError;
 import org.caesarj.util.TokenReference;
 import org.eclipse.core.resources.IMarker;
@@ -88,6 +89,7 @@ public class Builder extends IncrementalProjectBuilder {
 			CaesarPlugin.getDefault().getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					CaesarOutlineView.updateAll();
+					CaesarHierarchyView.updateAll();
 				}
 			});
 		} catch (Throwable t) {

@@ -1,13 +1,18 @@
 package org.caesarj.ui.views;
 
+import java.util.Iterator;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
+import org.aspectj.asm.LinkNode;
+import org.aspectj.asm.ProgramElementNode;
+import org.aspectj.asm.StructureModelManager;
+import org.aspectj.asm.StructureNode;
 import org.caesarj.compiler.export.CClass;
 import org.caesarj.runtime.AdditionalCaesarTypeInformation;
 import org.caesarj.ui.CaesarPluginImages;
-import org.caesarj.ui.builder.Builder;
 import org.caesarj.ui.editor.CaesarEditor;
+import org.caesarj.ui.editor.CaesarOutlineView;
 import org.caesarj.ui.test.CaesarHierarchyTest;
 import org.caesarj.ui.util.ProjectProperties;
 import org.caesarj.ui.views.hierarchymodel.HierarchyNode;
@@ -15,9 +20,13 @@ import org.caesarj.ui.views.hierarchymodel.IHierarchyPropertyChangeListener;
 import org.caesarj.ui.views.hierarchymodel.LinearNode;
 import org.caesarj.ui.views.hierarchymodel.RootNode;
 import org.caesarj.ui.views.hierarchymodel.StandardNode;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.internal.core.JavaElement;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitDocumentProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -36,11 +45,16 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.ViewPart;
 
@@ -60,15 +74,20 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 
 	private static Logger log = Logger.getLogger(CaesarHierarchyView.class);
 
-	private Button toolButton;
+	private ToolItem toolButton;
 
-	protected static final String SUPER = "Super Mode", SUB = "Sub Mode";
+	protected static final String SUPER = "Show the Supertyp Hierarchy",
+			SUB = "Show the Subtyp Hierarchy";
 
 	protected static final Image SUBIMAGE = CaesarPluginImages.DESC_HIER_MODE_SUB
 			.createImage();
 
 	protected static final Image SUPERIMAGE = CaesarPluginImages.DESC_HIER_MODE_SUPER
 			.createImage();
+
+	private IProject ACTIVE_PROJECT;
+
+	private static CaesarHierarchyView selfRef;
 
 	private String filterName(String name) {
 		try {
@@ -85,6 +104,11 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 			log.warn("Filtering names for Hierarchy View.", e);
 			return "Error";
 		}
+	}
+
+	public CaesarHierarchyView() {
+		super();
+		selfRef = this;
 	}
 
 	private StandardNode findAllSub(String[] nestedClasses, StandardNode node) {
@@ -166,8 +190,8 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 			//TODO BUG: bei Zwei geöffneten Projekten wird nicht die Auswahl
 			//			des aktuellen Projekts genommen, sondern das, was als
 			//			letztes gebuildet wurde!!!
-			ProjectProperties projectProperties = new ProjectProperties(Builder
-					.getLastBuildTarget());
+			ProjectProperties projectProperties = new ProjectProperties(
+					ACTIVE_PROJECT);
 			log.debug(projectProperties.getProjectLocation()
 					+ projectProperties.getOutputPath());
 			globalPathForInformationAdapter = projectProperties
@@ -181,7 +205,6 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		root.setKind(HierarchyNode.ROOT);
 		StandardNode node;
 
-		//log.debug(Builder.getLastBuildTarget().getRawLocation().toString());
 		try {
 			toolButton.setEnabled(true);
 			CaesarHierarchyTest nav = new CaesarHierarchyTest(
@@ -305,6 +328,13 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		}
 	}
 
+	public static void updateAll() {
+		try {
+			selfRef.refresh();
+		} catch (NullPointerException e) {
+		}
+	}
+
 	public void createPartControl(Composite parent) {
 		//ORGANIZE FOR ECLIPSE
 		getViewSite().getWorkbenchWindow().getSelectionService()
@@ -317,25 +347,17 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		top.marginHeight = 0;
 		top.marginWidth = 0;
 		parent.setLayout(top);
-		//Group layoutGroup = new Group(parent, SWT.NONE);
-		//GridLayout top = new GridLayout(1,false);
-		//GridData grid = new GridData(GridData.FILL_BOTH);
-		//layoutGroup.setLayoutData(grid);
-		//layoutGroup.setLayout(top);
 
 		//CONTROLL
-		Composite com = new Composite(parent, SWT.NULL);
+		ToolBar toolbar = new ToolBar(parent, SWT.FLAT);
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		com.setLayoutData(gridData);
-		GridLayout grid2 = new GridLayout(2, false);
-		com.setLayout(grid2);
-		GridData gridData3 = new GridData(GridData.FILL_HORIZONTAL);
-		Button NULLBUTTON = new Button(com, SWT.FLAT);
-		NULLBUTTON.setVisible(false);
-		NULLBUTTON.setLayoutData(gridData3);
-		toolButton = new Button(com, SWT.FLAT);
-		toolButton.setToolTipText(SUB);
-		toolButton.setImage(SUBIMAGE);
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.horizontalAlignment = SWT.END;
+		toolbar.setLayoutData(gridData);
+		ToolItem seperator = new ToolItem(toolbar, SWT.SEPARATOR);
+		toolButton = new ToolItem(toolbar, SWT.FLAT);
+		toolButton.setToolTipText(SUPER);
+		toolButton.setImage(SUPERIMAGE);
 		toolButton.setEnabled(true);
 		toolButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -537,11 +559,19 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-		 */
+		private IFile getLinkLocation(String fullQualifiedName) {
+			String fullPath = globalPathForInformationAdapter + "/"
+					+ fullQualifiedName + ".java";
+			IFile iFile = (IFile) ProjectProperties.findResource(fullPath,
+					ACTIVE_PROJECT);
+			return iFile;
+		}
+
+		private IWorkbenchPage getActivePage() {
+			return PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+					.getActivePage();
+		}
+
 		public void selectionChanged(SelectionChangedEvent event) {
 			IStructuredSelection selection = (IStructuredSelection) event
 					.getSelection();
@@ -551,7 +581,15 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				if (markedNode.getKind().compareTo(HierarchyNode.SUPER) == 0) {
 					log.debug("Super class '" + markedNode.getName()
 							+ "' selected.");
-					refreshTree(markedNode.getName());
+					try {
+						IDE.openEditor(getActivePage(),
+								getLinkLocation(markedNode.getName()), true);
+					} catch (PartInitException e) {
+						MessageDialog.openError(PlatformUI.getWorkbench()
+								.getActiveWorkbenchWindow().getShell(),
+								"ERROR", "Unable to open Editor!");
+					}
+					//refreshTree(markedNode.getName());
 					//refreshEditor(markedNode);
 				} else if (markedNode.getKind().compareTo(HierarchyNode.NESTED) == 0) {
 					log.debug("Nested class '" + markedNode.getName()
@@ -578,7 +616,6 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				}
 			}
 		}
-
 	}
 
 	public static ListViewer getListViewer() {
@@ -589,25 +626,16 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		String path;
 		if (part instanceof CaesarEditor) {
 			CaesarEditor editor = (CaesarEditor) part;
-
-			CompilationUnitDocumentProvider compilationUnitProvider = (CompilationUnitDocumentProvider) editor
-					.getDocumentProvider();
-			// TODO Hier habe ich schonmal geschaut, wie man an die
-			// Toplevel-Klassen rankommen könnte.
-			// 		War aber noch nicht erfolgreich!
-			try {
-				IJavaElement[] elements = compilationUnitProvider
-						.getWorkingCopy(editor.getEditorInput()).getJavaModel()
-						.getChildren();
-				for (int i = 0; elements.length > i; i++) {
-					log.debug("JAVAELEMENTS: " + elements[i].getElementName());
-				}
-			} catch (Exception e) {
-
-			}
+			ACTIVE_PROJECT = editor.getInputJavaElement().getJavaProject()
+					.getProject();
+			IJavaElement element = editor.getInputJavaElement();
+			FileEditorInput input = (FileEditorInput) editor.getEditorInput();
+			StructureNode node = getInput(StructureModelManager.INSTANCE
+					.getStructureModel().getRoot(),input);
+			//TODO IM node sind alle cclassen eines sourcefiles (children)
+			
 			if (editor.getEditorInput() instanceof FileEditorInput) {
-				FileEditorInput input = (FileEditorInput) editor
-						.getEditorInput();
+
 				//TODO Ab hier die alte Lösung über den Filenamen
 
 				path = input.getFile().getProjectRelativePath().toString();
@@ -621,6 +649,24 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				refreshTree(path);
 			}
 		}
+	}
+
+	protected StructureNode getInput(StructureNode node, FileEditorInput input) {
+		if (node == null) {
+			return null;
+		}
+		StructureNode r = null;
+		if (node.getName().equals(input.getName())) {
+			r = node;
+		} else {
+			StructureNode res = null;
+			for (Iterator it = node.getChildren().iterator(); it.hasNext()
+					&& res == null;) {
+				res = getInput((StructureNode) it.next(), input);
+			}
+			r = res;
+		}
+		return r;
 	}
 
 	private String qualifiedNameToActualFile = "";
