@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarAdapter.java,v 1.25 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CaesarAdapter.java,v 1.26 2005-02-21 13:40:51 gasiunas Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -99,6 +99,7 @@ public final class CaesarAdapter extends Main {
 			String outputPath, Collection errorsArg,
 			IProgressMonitor progressMonitorArg) {
 
+		//this.model = new StructureModel();
 		this.model = StructureModelManager.INSTANCE.getStructureModel();
 		
 		boolean success = false;
@@ -166,4 +167,11 @@ public final class CaesarAdapter extends Main {
 
 		this.progressMonitor.worked(1);
 	}
+	/**
+	 * @return Returns the model.
+	 */
+	public StructureModel getModel() {
+		return model;
+	}
+
 }
