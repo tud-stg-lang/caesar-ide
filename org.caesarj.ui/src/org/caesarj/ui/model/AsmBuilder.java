@@ -341,19 +341,19 @@ public class AsmBuilder extends BodyVisitor {
 		}
 
 		// get advices and pointcuts visit
-		if (self instanceof FjCleanClassDeclaration) {
-			FjCleanClassDeclaration clazz = (FjCleanClassDeclaration) self;
+		//if (self instanceof FjCleanClassDeclaration) {
+			//FjCleanClassDeclaration clazz = (FjCleanClassDeclaration) self;
 
-			AdviceDeclaration[] advices = clazz.getAdvices();
+			AdviceDeclaration[] advices = self.getAdvices();
 			for (int i = 0; i < advices.length; i++) {
 				advices[i].accept(this);
 			}
 
-			PointcutDeclaration[] pointcuts = clazz.getPointcuts();
+			PointcutDeclaration[] pointcuts = self.getPointcuts();
 			for (int i = 0; i < pointcuts.length; i++) {
 				pointcuts[i].accept(this);
 			}
-		}
+		//}
 
 		asmStack.pop();
 		classStack.pop();
