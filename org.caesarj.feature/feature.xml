@@ -2,7 +2,7 @@
 <feature
       id="org.caesarj.feature"
       label="org.caesarj.feature"
-      version="0.1.1"
+      version="0.2.0"
       provider-name="TUD Darmstadt">
 
    <description>
@@ -35,9 +35,9 @@
    </requires>
 
    <plugin
-         id="org.caesarj.ui"
+         id="org.caesarj"
          download-size="0"
          install-size="0"
-         version="0.1.1"/>
+         version="0.2.0"/>
 
 </feature>
