@@ -110,6 +110,12 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 		} catch (MissingResourceException x) {
 			resourceBundle = null;
 		}
+		
+		if (selectionListener) {
+			plugin.getWorkbench().getActiveWorkbenchWindow()
+					.getSelectionService().addSelectionListener(plugin);
+			selectionListener = false;
+		}
 	}
 
 	/*
@@ -123,11 +129,6 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 	 * Returns the shared instance.
 	 */
 	public static CaesarPlugin getDefault() {
-		if (selectionListener) {
-			plugin.getWorkbench().getActiveWorkbenchWindow()
-					.getSelectionService().addSelectionListener(plugin);
-			selectionListener = false;
-		}
 		return plugin;
 	}
 
