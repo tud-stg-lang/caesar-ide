@@ -2,6 +2,7 @@ package org.caesarj.ui.marker;
 
 import java.util.Map;
 
+import org.caesarj.ui.editor.CaesarEditor;
 import org.eclipse.core.internal.resources.ICoreConstants;
 import org.eclipse.core.internal.resources.MarkerInfo;
 import org.eclipse.core.internal.resources.MarkerManager;
@@ -19,6 +20,9 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 
 /**
  * @author Shadow
@@ -26,17 +30,20 @@ import org.eclipse.core.runtime.Platform;
  * Folgendes auswählen, um die Schablone für den erstellten Typenkommentar zu ändern:
  * Fenster&gt;Benutzervorgaben&gt;Java&gt;Codegenerierung&gt;Code und Kommentare
  */
-public class AdviceMarker implements IMarker {
+public class AdviceMarker implements IMarker{
 
 	/** Marker identifier. */
+	private ListenerList selectionChangedListeners = new ListenerList();
+	private CaesarEditor editor;
 	private long id;
+	private ISelectionProvider selectionProvider;
 	private Workspace workspace;
 	/** Resource with which this marker is associated. */
 	private IResource resource;
 	private Map attributes;
 	public final static java.lang.String ADVICEMARKER = "org.caesarj.advicemarker";
 
-	public AdviceMarker(IResource resource, Map attributes) throws CoreException{
+	public AdviceMarker(IResource resource, Map attributes) throws CoreException {
 		this.resource = resource;
 		this.workspace = getWorkspace();
 		this.attributes = attributes;
@@ -47,25 +54,29 @@ public class AdviceMarker implements IMarker {
 		};
 		resource.getWorkspace().run(r, null);
 	}
+	
+	public void addSelectionChangedListener(ISelectionChangedListener listener) {
+		selectionChangedListeners.add(listener);
+	}
+	
+	
 
-	private void addMarker() throws CoreException{
+	private void addMarker() throws CoreException {
 		try {
 			workspace.prepareOperation();
 			ResourceInfo resourceInfo = getResourceInfo(false, false);
-			//checkAccessible(resourceInfo.getFlags());
 			workspace.beginOperation(true);
 			MarkerInfo info = new MarkerInfo();
 			info.setType(ADVICEMARKER);
 			info.setCreationTime(System.currentTimeMillis());
 			workspace.getMarkerManager().add(resource, new MarkerInfo[] { info });
-			this.id=info.getId();
-			//new Marker(this, info.getId());
+			this.id = info.getId();
 		} finally {
 			workspace.endOperation(false, null);
 		}
 		AdviceMarker.this.setAttributes(attributes);
 	}
-	
+
 	/**
 	 * Returns the resource info.  Returns null if the resource doesn't exist.
 	 * If the phantom flag is true, phantom resources are considered.
@@ -74,7 +85,7 @@ public class AdviceMarker implements IMarker {
 	public ResourceInfo getResourceInfo(boolean phantom, boolean mutable) {
 		return workspace.getResourceInfo(this.resource.getFullPath(), phantom, mutable);
 	}
-	
+
 	/**
 	 * Checks the given marker info to ensure that it is not null.
 	 * Throws an exception if it is.
