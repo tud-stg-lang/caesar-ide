@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Stack;
 
-import org.aspectj.asm.ProgramElementNode;
-import org.aspectj.asm.StructureModel;
-import org.aspectj.asm.StructureNode;
+import org.aspectj.asm.IHierarchy;
+import org.aspectj.asm.IProgramElement;
+import org.aspectj.asm.internal.ProgramElement;
 import org.aspectj.bridge.ISourceLocation;
 import org.aspectj.bridge.SourceLocation;
 import org.caesarj.compiler.TokenReference;
@@ -52,19 +52,19 @@ public class AsmBuilder extends CaesarVisitor {
 
     private static final String REGISTRY_CLASS_NAME = "Registry";
 
-    protected StructureModel structureModel = null;
+    protected IHierarchy structureModel = null;
     protected Stack asmStack = new Stack();
     protected Stack classStack = new Stack();
     
     /**
      * initialize the model
      */
-    public static void preBuild(StructureModel structureModel) {
+    public static void preBuild(IHierarchy structureModel) {
         String rootLabel = "<root>";
         structureModel.setRoot(
-            new ProgramElementNode(
+            new ProgramElement(
                 rootLabel,
-                ProgramElementNode.Kind.FILE_JAVA,
+                IProgramElement.Kind.FILE_JAVA,
                 new ArrayList()
             )
         );
@@ -75,17 +75,17 @@ public class AsmBuilder extends CaesarVisitor {
     /**
      * resolve advice and method signatures before weaving
      */
-    public static void preWeave(StructureModel structureModel) {
+    public static void preWeave(IHierarchy structureModel) {
         SignatureResolver adviceNameVisitor = new SignatureResolver();
-        adviceNameVisitor.visit(structureModel.getRoot());
+        adviceNameVisitor.process(structureModel.getRoot());
     }
     
     /**
      * remove support methods and inner classes
      */
-    public static void postBuild(StructureModel structureModel) {
+    public static void postBuild(IHierarchy structureModel) {
         NodeEliminator nodeEliminator = new NodeEliminator();
-        nodeEliminator.visit(structureModel.getRoot());
+        nodeEliminator.process(structureModel.getRoot());
         nodeEliminator.eliminateNodes();
     }
     
@@ -94,7 +94,7 @@ public class AsmBuilder extends CaesarVisitor {
      */
     public static void build(
         JCompilationUnit unit,
-        StructureModel structureModel
+        IHierarchy structureModel
     ) { 
         new AsmBuilder().internalBuild(unit, structureModel);
     }
@@ -105,7 +105,7 @@ public class AsmBuilder extends CaesarVisitor {
      * 
      * @return true if this node should be removed in final ASM
      */
-    public static boolean isToRemove(StructureNode node) {
+    public static boolean isToRemove(IProgramElement node) {
      
         if(node instanceof AspectRegistryNode) {
             return true;
@@ -126,7 +126,7 @@ public class AsmBuilder extends CaesarVisitor {
     
     private void internalBuild(
         JCompilationUnit unit,
-        StructureModel structureModel
+        IHierarchy structureModel
     ) {
         if(unit==null)
             return;
@@ -156,7 +156,7 @@ public class AsmBuilder extends CaesarVisitor {
 
         CaesarProgramElementNode cuNode = new CaesarProgramElementNode(
             new String(file.getName()),
-            CaesarProgramElementNode.Kind.FILE_JAVA,
+            IProgramElement.Kind.FILE_JAVA,
             makeLocation(ref),
             0,
             "",
@@ -180,7 +180,7 @@ public class AsmBuilder extends CaesarVisitor {
             if (pkgNode == null) {
                 pkgNode = new CaesarProgramElementNode(
                     pkgName, 
-                    CaesarProgramElementNode.Kind.PACKAGE, 
+                    IProgramElement.Kind.PACKAGE, 
                     new ArrayList()
                 );
                 getStructureModel().getRoot().addChild(pkgNode);
@@ -213,7 +213,7 @@ public class AsmBuilder extends CaesarVisitor {
             }
             
             if (duplicate != null) {
-                getStructureModel().getRoot().removeChild(duplicate);
+                getStructureModel().getRoot().getChildren().remove(duplicate);
             }
 
             getCurrentStructureNode().addChild(cuNode);
@@ -255,7 +255,7 @@ public class AsmBuilder extends CaesarVisitor {
     ) {	
         CaesarProgramElementNode peNode = new CaesarProgramElementNode(
             ident,
-            CaesarProgramElementNode.Kind.INTERFACE,
+            IProgramElement.Kind.INTERFACE,
             makeLocation(self.getTokenReference()),
             modifiers,
             "",
@@ -505,15 +505,15 @@ public class AsmBuilder extends CaesarVisitor {
             new SourceLocation(new File(fileName), ref.getLine());
     }
      
-    private StructureNode getCurrentStructureNode() {
-        return (StructureNode)asmStack.peek(); 
+    private ProgramElement getCurrentStructureNode() {
+        return (ProgramElement)asmStack.peek(); 
     }
     
-    private void setStructureModel(StructureModel structureModel) {
+    private void setStructureModel(IHierarchy structureModel) {
         this.structureModel = structureModel;
     }
     
-    private StructureModel getStructureModel() {
+    private IHierarchy getStructureModel() {
         return structureModel;
     }
     

@@ -1,16 +1,12 @@
 package org.caesarj.ui.model;
 
-import java.util.Iterator;
-
-import org.aspectj.asm.StructureNode;
+import org.aspectj.asm.HierarchyWalker;
+import org.aspectj.asm.IProgramElement;
 import org.aspectj.weaver.NameMangler;
 import org.aspectj.weaver.TypeX;
 import org.caesarj.compiler.ast.AdviceDeclaration;
-import org.caesarj.compiler.ast.FjMethodCallExpression;
 import org.caesarj.compiler.ast.FjMethodDeclaration;
-import org.caesarj.kjc.CReferenceType;
 import org.caesarj.kjc.CType;
-import org.caesarj.kjc.JClassDeclaration;
 
 /**
  * Traverses the abstract model tree and resolves the signatures
@@ -18,9 +14,9 @@ import org.caesarj.kjc.JClassDeclaration;
  * 
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
-public class SignatureResolver extends AbstractAsmVisitor {
+public class SignatureResolver extends HierarchyWalker {
 
-    public void visit(StructureNode node) {       
+    public void preProcess(IProgramElement node) {       
 
         if(node instanceof AdviceDeclarationNode) {
             AdviceDeclarationNode adviceNode = (AdviceDeclarationNode)node;
@@ -60,12 +56,9 @@ public class SignatureResolver extends AbstractAsmVisitor {
                     methodDeclaration.getMethod().getReturnType()
                 );
             }
-            catch (Exception e) {
-                System.err.println(e.getMessage());
+            catch (Exception e) {                
             }
         }
-
-        super.visit(node);
     }
     
   

@@ -6,10 +6,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
-import org.aspectj.asm.LinkNode;
-import org.aspectj.asm.ProgramElementNode;
-import org.aspectj.asm.StructureModelManager;
-import org.aspectj.asm.StructureNode;
+import org.aspectj.asm.AsmManager;
+import org.aspectj.asm.IProgramElement;
+import org.aspectj.asm.IRelationship;
+import org.aspectj.asm.IRelationshipMap;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.ui.CaesarPlugin;
 import org.eclipse.core.resources.IMarker;
@@ -34,6 +34,7 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 /**
  * Content Outline Page for Caesar Compilation Unit
  * 
+ * TODO bugs! ClassCastExcpetion, nochmal alles ueberdenken
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
 public class CaesarOutlineView extends ContentOutlinePage {
@@ -42,12 +43,12 @@ public class CaesarOutlineView extends ContentOutlinePage {
     
     static {
         // provides sorting order for ProgramElementNode categories  
-        categoryMap.put(ProgramElementNode.Kind.ASPECT,      new Integer(0));
-        categoryMap.put(ProgramElementNode.Kind.CLASS,       new Integer(1));
-        categoryMap.put(ProgramElementNode.Kind.FIELD,       new Integer(11));
-        categoryMap.put(ProgramElementNode.Kind.CONSTRUCTOR, new Integer(12));
-        categoryMap.put(ProgramElementNode.Kind.METHOD,      new Integer(13));        
-        categoryMap.put(ProgramElementNode.Kind.ADVICE,      new Integer(14));        
+        categoryMap.put(IProgramElement.Kind.ASPECT,      new Integer(0));
+        categoryMap.put(IProgramElement.Kind.CLASS,       new Integer(1));
+        categoryMap.put(IProgramElement.Kind.FIELD,       new Integer(11));
+        categoryMap.put(IProgramElement.Kind.CONSTRUCTOR, new Integer(12));
+        categoryMap.put(IProgramElement.Kind.METHOD,      new Integer(13));        
+        categoryMap.put(IProgramElement.Kind.ADVICE,      new Integer(14));        
     }
          
 
@@ -61,7 +62,7 @@ public class CaesarOutlineView extends ContentOutlinePage {
          */
         public int category(Object element) {
             try {
-                return ((Integer)categoryMap.get(((StructureNode)element).getKind())).intValue();
+                return ((Integer)categoryMap.get(((IProgramElement)element).getKind())).intValue();
             } 
             catch(Exception e) {
                 return 999;
@@ -82,42 +83,46 @@ public class CaesarOutlineView extends ContentOutlinePage {
         }
         
         public Object[] getElements(Object inputElement) {
-            return ((ProgramElementNode)inputElement).getChildren().toArray();
-        }
+            if(!(inputElement instanceof IProgramElement))
+                return new Object[]{};
+            
+            return ((IProgramElement)inputElement).getChildren().toArray();            
+        }   
         
         public Object[] getChildren(Object parentElement) {
-            Vector vec = new Vector();
-            
-            if(parentElement instanceof ProgramElementNode) {
-                ProgramElementNode node = (ProgramElementNode)parentElement;
-                for(Iterator it=node.getRelations().iterator(); it.hasNext(); )
+            try {            
+                IProgramElement parent = (IProgramElement)parentElement;
+                Vector vec = new Vector();
+                IRelationshipMap map = AsmManager.getDefault().getRelationshipMap();
+                
+                List relations = map.get(parent);
+                if(relations != null) {                
+                    for(Iterator it=relations.iterator(); it.hasNext(); )
+                        vec.add(it.next());
+                }
+    
+                for(Iterator it=parent.getChildren().iterator(); it.hasNext(); ) 
                     vec.add(it.next());
+                            
+                return vec.toArray();
             }
-            
-            {
-                StructureNode node = (StructureNode)parentElement;
-                for(Iterator it=node.getChildren().iterator(); it.hasNext(); ) 
-                    vec.add(it.next());
+            catch(Throwable t) {
+                t.printStackTrace();
+                return new Object[]{};
             }
-                        
-            return vec.toArray();
         }
 
         public Object getParent(Object element) {
-            return ((StructureNode)element).getParent();           
+            return ((IProgramElement)element).getParent();           
         }
 
         public boolean hasChildren(Object element) {
-            if(element instanceof ProgramElementNode) {
-                ProgramElementNode node = (ProgramElementNode)element;
-                return
-                    node.getChildren().size() > 0
-                    || node.getRelations().size() > 0;
-            }
-            else {
-                StructureNode node = (StructureNode)element;
-                return node.getChildren().size() > 0;
-            }   
+            IRelationshipMap map = AsmManager.getDefault().getRelationshipMap();
+            IProgramElement node = (IProgramElement)element;
+            
+            return
+                node.getChildren().size() > 0
+                || map.get(node) != null;
         }
     };
 
@@ -157,40 +162,37 @@ public class CaesarOutlineView extends ContentOutlinePage {
         else {
             Object item = ((IStructuredSelection) selection).getFirstElement();
             
-            if(item instanceof LinkNode) {
-                item = ((LinkNode)item).getProgramElementNode();
-            }
-            
-            StructureNode selectedNode = (StructureNode)item;
-            ISourceLocation sourceLocation = selectedNode.getSourceLocation();
-            
-            if(sourceLocation != null) {
-                int line = sourceLocation.getLine();
-                try {
-                                       
-                    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-                    
-                    IPath path = new Path(sourceLocation.getSourceFile().getAbsolutePath());
-                    IResource resource = root.getFileForLocation(path);
-                    IMarker marker;
-
-                    if (resource != null) {
-                        marker = resource.createMarker(IMarker.MARKER);
-                        marker.setAttribute(IMarker.LINE_NUMBER, sourceLocation.getLine());
-                        marker.setAttribute(IMarker.CHAR_START, sourceLocation.getColumn());
-                        
-                        IEditorPart ePart =
-                            CaesarPlugin.getDefault().
-                            getWorkbench().
-                            getActiveWorkbenchWindow().
-                            getActivePage().
-                            openEditor(marker);
-                    }
-                } 
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
+            if(item instanceof IProgramElement) {
+                IProgramElement selectedNode = (IProgramElement)item;
+                ISourceLocation sourceLocation = selectedNode.getSourceLocation();
                 
+                if(sourceLocation != null) {
+                    int line = sourceLocation.getLine();
+                    try {
+                                           
+                        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+                        
+                        IPath path = new Path(sourceLocation.getSourceFile().getAbsolutePath());
+                        IResource resource = root.getFileForLocation(path);
+                        IMarker marker;
+    
+                        if (resource != null) {
+                            marker = resource.createMarker(IMarker.MARKER);
+                            marker.setAttribute(IMarker.LINE_NUMBER, sourceLocation.getLine());
+                            marker.setAttribute(IMarker.CHAR_START, sourceLocation.getColumn());
+                            
+                            IEditorPart ePart =
+                                CaesarPlugin.getDefault().
+                                getWorkbench().
+                                getActiveWorkbenchWindow().
+                                getActivePage().
+                                openEditor(marker);
+                        }
+                    } 
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
@@ -201,7 +203,7 @@ public class CaesarOutlineView extends ContentOutlinePage {
     public void update() {   
         
         if(enabled) {            
-            StructureNode input = getInput(StructureModelManager.INSTANCE.getStructureModel().getRoot());
+            IProgramElement input = getInput(AsmManager.getDefault().getHierarchy().getRoot());
                  
             TreeViewer viewer = getTreeViewer();
             if (viewer != null && input != null) {
@@ -221,7 +223,7 @@ public class CaesarOutlineView extends ContentOutlinePage {
         this.enabled = enabled;
 	}
     
-    protected StructureNode getInput(StructureNode node) {
+    protected IProgramElement getInput(IProgramElement node) {               
         if(node == null) {
             return null;
         }
@@ -230,9 +232,9 @@ public class CaesarOutlineView extends ContentOutlinePage {
             return node;
         }
         else {
-            StructureNode res = null;
+            IProgramElement res = null;
             for(Iterator it=node.getChildren().iterator(); it.hasNext() && res==null; ) {
-                res = getInput((StructureNode)it.next());
+                res = getInput((IProgramElement)it.next());
             }
     
             return res;

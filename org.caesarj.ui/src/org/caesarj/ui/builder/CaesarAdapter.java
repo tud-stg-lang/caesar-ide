@@ -5,8 +5,9 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
-import org.aspectj.asm.StructureModel;
-import org.aspectj.asm.StructureModelManager;
+import org.aspectj.asm.AsmManager;
+import org.aspectj.asm.IHierarchy;
+import org.aspectj.asm.IProgramElement;
 import org.aspectj.weaver.bcel.UnwovenClassFile;
 import org.caesarj.compiler.Main;
 import org.caesarj.compiler.PositionedError;
@@ -59,7 +60,7 @@ public final class CaesarAdapter extends Main {
         IProgressMonitor progressMonitor
     ) {		
         
-        StructureModel model = StructureModelManager.INSTANCE.getStructureModel();
+        IHierarchy model = AsmManager.getDefault().getHierarchy();
         
         AsmBuilder.preBuild(model);
         
@@ -92,7 +93,7 @@ public final class CaesarAdapter extends Main {
         
         AsmBuilder.postBuild(model);        
                 
-        _dumpModel("final structure model", model);
+        _dumpModel("final structure model");
         
         return success;
 	}
@@ -106,7 +107,8 @@ public final class CaesarAdapter extends Main {
         res = super.parseFile(file, env);
         progressMonitor.worked(1);
         
-        AsmBuilder.build(res, StructureModelManager.INSTANCE.getStructureModel());
+        IHierarchy model = AsmManager.getDefault().getHierarchy();
+        AsmBuilder.build(res, model);
 
         return res;
 	}
@@ -117,11 +119,11 @@ public final class CaesarAdapter extends Main {
         
         progressMonitor.subTask("weaving classes...");
         
-        StructureModel model = StructureModelManager.INSTANCE.getStructureModel();
+        IHierarchy model = AsmManager.getDefault().getHierarchy();
 
         AsmBuilder.preWeave(model);
         
-        _dumpModel("structure model before weave", model);
+        _dumpModel("structure model before weave");
 
         // add model to world and WEAVE      
         CaesarBcelWorld world = CaesarBcelWorld.getInstance();
@@ -132,9 +134,12 @@ public final class CaesarAdapter extends Main {
 	}
 
 
-    private void _dumpModel(String description, StructureModel model) {
+    private void _dumpModel(String description) {
         log.debug("--- "+description+" ---");
-        StructureModelDump modelDumpBeforeWeave = new StructureModelDump(System.out);            
-        modelDumpBeforeWeave.print("", model.getRoot());
+        IProgramElement root = 
+            AsmManager.getDefault().getHierarchy().getRoot();
+        
+        StructureModelDump modelDumpBeforeWeave = new StructureModelDump(AsmManager.getDefault(), System.out);
+        modelDumpBeforeWeave.run();            
     }
 }

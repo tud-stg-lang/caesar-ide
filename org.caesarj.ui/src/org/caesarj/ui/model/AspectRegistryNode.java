@@ -2,7 +2,7 @@ package org.caesarj.ui.model;
 
 import java.util.List;
 
-import org.aspectj.asm.ProgramElementNode;
+import org.aspectj.asm.IProgramElement;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.AdviceDeclaration;
 import org.caesarj.kjc.JClassDeclaration;
@@ -16,7 +16,7 @@ public class AspectRegistryNode extends CaesarProgramElementNode {
 
   	public AspectRegistryNode(
     	String signature,
-		Kind kind,
+		IProgramElement.Kind kind,
 		ISourceLocation sourceLocation,
 		int modifiers,
 		String formalComment,

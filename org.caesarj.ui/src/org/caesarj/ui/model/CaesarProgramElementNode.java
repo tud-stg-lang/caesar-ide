@@ -2,8 +2,8 @@ package org.caesarj.ui.model;
 
 import java.util.List;
 
-import org.aspectj.asm.ProgramElementNode;
-import org.aspectj.asm.ProgramElementNode.Kind;
+import org.aspectj.asm.IProgramElement;
+import org.aspectj.asm.internal.ProgramElement;
 import org.aspectj.bridge.ISourceLocation;
 
 /**
@@ -12,10 +12,10 @@ import org.aspectj.bridge.ISourceLocation;
  * 
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
-public class CaesarProgramElementNode extends ProgramElementNode {
+public class CaesarProgramElementNode extends ProgramElement {
     public CaesarProgramElementNode(
         String signature,
-        Kind kind,
+        IProgramElement.Kind kind,
         List children
     ) {
         super(
