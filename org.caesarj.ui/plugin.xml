@@ -163,8 +163,16 @@
    </extension>	
    <extension point="org.eclipse.ui.actionSets">
 		<actionSet label="CaesarJ" visible="true" id="org.caesarj.actionSet">
-  		<action label="CaesarJAnnotation" tooltip="CaesarJ: Enables/Disables live annotation" class="org.caesarj.ui.actionsets.AnnotationShortCut" toolbarPath="Normal/additions" icon="icons/annotation.gif" id="org.caesarj.ui.actionsets.Annotation" />
-  		<action label="CaesarJPreferences" tooltip="CaesarJ Preferences" class="org.caesarj.ui.actionsets.PreferenceShortCut" toolbarPath="Normal/additions" icon="icons/pref.gif" id="org.caesarj.ui.actionsets.Preference" />  
+  		<action
+          retarget="false"
+          toolbarPath="Normal/additions"
+          label="CaesarJAnnotation"
+          tooltip="CaesarJ: Enables/Disables live annotation"
+          class="org.caesarj.ui.actionsets.AnnotationShortCut"
+          icon="icons/annotation.gif"
+          style="toggle"
+          state="false"
+          id="org.caesarj.ui.actionsets.Annotation"/>
    </actionSet>
    </extension>
    <!--extension point="org.eclipse.ui.actionSetPartAssociations">
@@ -176,9 +184,10 @@
  	<extension point="org.eclipse.ui.views">
   		<view name="CaesarJ Hierarchy" icon="icons/sample.gif" category="org.eclipse.jdt.ui.java" class="org.caesarj.ui.views.CaesarHierarchyView" id="org.caesarj.ui.views.CaesarHierarchyView" /> 
  	</extension>
+ 	
  	<extension point="org.eclipse.ui.preferencePages">
-	<page name="TEST" class="org.caesarj.ui.wizard.CaesarConfigPage" id="org.caesarj.ui.wizard.caesarconfigpage">
-     </page>
+		<page name="%PreferencePages.main.title" class="org.caesarj.ui.preferences.CaesarJPreferencePage" id="org.caesarj.ui.preferences.caesarjpreferencepage">
+    	</page>
 	</extension>
 	
 	<extension
