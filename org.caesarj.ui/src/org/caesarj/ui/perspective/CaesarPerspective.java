@@ -76,6 +76,16 @@ public class CaesarPerspective implements IPerspectiveFactory {
 		layout.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);	
 		//layout.addPerspectiveShortcut("org.caesarj.ui.actionsets.AnnotationShortCut");
 		layout.setEditorAreaVisible(true);
+		
+		//Show Preferences
+		CaesarConfigWizard wizard = new CaesarConfigWizard();
+		wizard.init();
+		// Create the wizard dialog
+		org.eclipse.jface.wizard.WizardDialog dialog = new org.eclipse.jface.wizard.WizardDialog(
+				org.eclipse.ui.internal.WorkbenchPlugin.getDefault()
+						.getWorkbench().getActiveWorkbenchWindow()
+						.getShell(),wizard);
+		dialog.open();
 	}
 
 }
