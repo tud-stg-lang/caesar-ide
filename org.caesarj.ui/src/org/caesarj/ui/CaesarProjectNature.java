@@ -7,7 +7,6 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.ui.IWorkbench;
 
 
 /**
@@ -50,9 +49,6 @@ public class CaesarProjectNature implements IProjectNature {
         
         projectDescription.setBuildSpec(newBuildCommands);
         this.project.setDescription(projectDescription, null);
-    
-        IWorkbench workbench = CaesarPlugin.getDefault().getWorkbench();
-        workbench.showPerspective( "org.eclipse.jdt.ui.JavaPerspective" , workbench.getActiveWorkbenchWindow() ); //$NON-NLS-1$
     }
 
     /**
