@@ -8,6 +8,8 @@ package org.caesarj.ui.views.hierarchymodel;
 
 import java.util.Vector;
 
+import org.eclipse.jface.util.PropertyChangeEvent;
+
 /**
  * @author Jochen
  *
@@ -38,7 +40,8 @@ public class RootNode extends HierarchyNode {
 		return children.toArray();
 	}
 	public void addChild(HierarchyNode child) {
-		children.add(child);
+		propertyChange(new PropertyChangeEvent(this, "new child", null, child));
+		children.add(child);		
 	}
 	
 }

@@ -205,20 +205,12 @@ public class CaesarMetricsView
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(Composite)
 	 */
 	 public void createPartControl(Composite parent) {
-		parent.setLayout(new FillLayout());
-		//message = new Text(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		//message.setText(NO_SELECTION_MESSAGE);
-		
+		parent.setLayout(new FillLayout());		
 		TreeViewer viewer = getTreeViewer();
 		viewer = new TreeViewer(parent);
-		//viewer.setSorter(new LexicalSorter());
 		viewer.setContentProvider(new HierarchyContentProvider());
 		viewer.setLabelProvider(new HierarchyLabelProvider());
-		//?? viewer.addSelectionChangedListener(this);
 		viewer.expandAll();
-		//viewer.setInput(new String("TestInput"));
-		
-		// Listen for changes in the Workbench selection.
 		
 	    getViewSite().
 			getWorkbenchWindow().
@@ -246,9 +238,12 @@ public class CaesarMetricsView
 		if (selection instanceof IStructuredSelection) {
 			ICompilationUnit cu = 
 				getCompilationUnit((IStructuredSelection) selection);
-			jm.reset(cu);
+			//jm.reset(cu);
 		}
+		//log.debug("Selection in Editor!");
 	}
+	
+	
 	
 	/* non-Javadoc
 	 * Remove the listeners that were established in <code>createPartControl</code>.
