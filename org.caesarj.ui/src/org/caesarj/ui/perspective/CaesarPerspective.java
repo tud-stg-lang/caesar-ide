@@ -43,14 +43,13 @@ public class CaesarPerspective implements IPerspectiveFactory {
 	public void createInitialLayout(IPageLayout layout) {
 		// Get the editor area.
 		String editorArea = layout.getEditorArea();
-		log.debug("EditorArea name:" + editorArea);
 		// Top left: Resource Navigator view and Bookmarks view placeholder
 		IFolderLayout topLeft =
 			layout.createFolder("topLeft", IPageLayout.LEFT, 0.25f, editorArea);
-		//topLeft.addView(IPageLayout.ID_RES_NAV);
+
 		topLeft.addView(JavaUI.ID_PACKAGES);
 		topLeft.addPlaceholder(IPageLayout.ID_BOOKMARKS);
-		// Bottom left: Outline view and Property Sheet view
+
 		IFolderLayout bottomRight =
 			layout.createFolder(
 				"bottomRight",
@@ -67,7 +66,6 @@ public class CaesarPerspective implements IPerspectiveFactory {
 				editorArea);
 		bottom.addView(IPageLayout.ID_TASK_LIST);
 		bottom.addView(SearchUI.SEARCH_VIEW_ID);
-		bottom.addView(JavaUI.ID_OPEN_ACTION_SET);
 		bottom.addView(JavaUI.ID_SOURCE_VIEW);
 		bottom.addView(IConsoleConstants.ID_CONSOLE_VIEW);
 		
