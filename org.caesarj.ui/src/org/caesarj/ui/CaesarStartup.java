@@ -20,11 +20,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarStartup.java,v 1.2 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CaesarStartup.java,v 1.3 2005-02-21 13:39:37 gasiunas Exp $
  */
 
 package org.caesarj.ui;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.ui.IStartup;
 
@@ -41,6 +42,18 @@ public class CaesarStartup implements IStartup {
 	public void earlyStartup() {
 		// load here the environment variable
 		// otherwise error when importing a project which contains this variable in .classpath
-	    JavaCore.getClasspathVariable(CaesarPlugin.CAESAR_HOME);	    
+	    JavaCore.getClasspathVariable(CaesarPlugin.CAESAR_HOME);
+	    
+	    // build all open caesar projects from the workspace
+	    IProject[] projects = CaesarPlugin.getWorkspace().getRoot().getProjects();
+	    for (int i = 0; i < projects.length; i++) {
+	    	IProject project = projects[i];
+	    	try {
+	    		if (project.hasNature("org.caesarj.caesarprojectnature") && project.isOpen()) {
+	    			project.touch(null);
+	    		}
+	    	} catch (Exception e) {
+	    	}
+	    }
 	}
 }
