@@ -52,14 +52,14 @@ public class CJDTConfigSettings {
 		IEditorRegistry editorRegistry = WorkbenchPlugin.getDefault().getEditorRegistry();
 		IEditorDescriptor desc = editorRegistry.getDefaultEditor("*.java");
 		//TODO weiﬂ nicht was geht
-		return CaesarPlugin.getResourceString(CaesarPlugin.ID_EDITOR).equals(desc.getLabel());
+		return CaesarPlugin.getResourceString("CaesarEditor").equals(desc.getLabel());
 	}
 	
 	static public void enableCaesarJEditorDefault() {
 		EditorRegistry editorRegistry = (EditorRegistry)WorkbenchPlugin.getDefault().getEditorRegistry();
 		IFileEditorMapping[] array = WorkbenchPlugin.getDefault().getEditorRegistry().getFileEditorMappings();
 		editorRegistry.setFileEditorMappings((FileEditorMapping[])array);
-		editorRegistry.setDefaultEditor("*.java", "CompilationUnitEditor");
+		editorRegistry.setDefaultEditor("*.java", "CaesarEditor");
 		editorRegistry.saveAssociations();	
 	}
 
