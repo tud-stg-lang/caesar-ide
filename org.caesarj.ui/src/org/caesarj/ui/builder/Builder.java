@@ -33,150 +33,132 @@ import org.eclipse.swt.widgets.Display;
  */
 public class Builder extends IncrementalProjectBuilder {
 
-    private static Logger log = Logger.getLogger(Builder.class);
+	private static Logger log = Logger.getLogger(Builder.class);
 
-    /**
-     * The last project we did a build for, needed by content outline
-     * view to decide which updates to accept.
-     */
-    private static IProject lastBuiltProject = null;
+	/**
+	 * The last project we did a build for, needed by content outline
+	 * view to decide which updates to accept.
+	 */
+	private static IProject lastBuiltProject = null;
 
-    /** The progress monitor used for this build */
-    private IProgressMonitor monitor;
-    
-    private ProjectProperties projectProperties;
-    private Collection errors = new LinkedList();
+	/** The progress monitor used for this build */
+	private IProgressMonitor monitor;
 
-    /**
-     * Constructor
-     */
-    public Builder() {
-    }
+	private ProjectProperties projectProperties;
+	private Collection errors = new LinkedList();
 
-    /**
-     * What did we last build?
-     */
-    public static IProject getLastBuildTarget( ) {
-        return lastBuiltProject;
-    }
+	/**
+	 * Constructor
+	 */
+	public Builder() {
+	}
 
-    /**
-     * @see IncrementalProjectBuilder#build(int, Map, IProgressMonitor)
-     * kind is one of: FULL_BUILD, INCREMENTAL_BUILD or AUTO_BUILD
-     * currently we do a full build in every case!
-     */
-    protected IProject[] build (
-        int kind,
-        Map args,
-        IProgressMonitor progressMonitor
-    ) throws CoreException {
-        try {
+	/**
+	 * What did we last build?
+	 */
+	public static IProject getLastBuildTarget() {
+		return lastBuiltProject;
+	}
+
+	/**
+	 * @see IncrementalProjectBuilder#build(int, Map, IProgressMonitor)
+	 * kind is one of: FULL_BUILD, INCREMENTAL_BUILD or AUTO_BUILD
+	 * currently we do a full build in every case!
+	 */
+	protected IProject[] build(int kind, Map args, IProgressMonitor progressMonitor)
+		throws CoreException {
+		try {
 			lastBuiltProject = getProject();
-            errors.clear();
-            
-            log.debug("kind: "+kind);
-            
-            projectProperties =
-                new ProjectProperties(getProject());
-            
-            log.debug("----\n"+projectProperties.toString()+"----\n");
-            
-            CaesarAdapter caesarAdapter = 
-                new CaesarAdapter(
-                    projectProperties.getProjectLocation()
-                );
-            
-            // build            
-            boolean success =
-                caesarAdapter.compile(                
-                    projectProperties.getSourceFiles(),
-                    projectProperties.getClassPath(),
-                    projectProperties.getOutputPath(),
-                    errors,
-                    progressMonitor
-                );
-			        
-            // update markers, show errors
-            showErrors();
-            
-            // update outline view         
-            Display display = Display.getDefault();
-            
-            // update has to be executed from Workbenchs Thread
-            
-            CaesarPlugin.getDefault().getDisplay().asyncExec(
-                new Runnable() {
-                    public void run() {
-                        CaesarOutlineView.updateAll();
-					}
-                }
-            );
-            
-        }
-        catch (Throwable t) {           	
-        	t.printStackTrace();                     
-        }
+			errors.clear();
 
-        IProject[] requiredResourceDeltasOnNextInvocation = null;
-        return requiredResourceDeltasOnNextInvocation;
-    }
-        
-    // TODO [optimize] make it efficient
-    // TODO [feature] warnings are missing
-    public void showErrors() {
-        
-        try {
-            Collection sourceFiles = projectProperties.getSourceFiles();
-            for(Iterator it=sourceFiles.iterator(); it.hasNext(); ) {
+			log.debug("kind: " + kind);
 
-                String sourcePath = projectProperties.getProjectLocation()+it.next().toString(); 
+			projectProperties = new ProjectProperties(getProject());
 
-                IResource resource =
-                    ProjectProperties.findResource(
-                        sourcePath,
-                        lastBuiltProject
-                    );                    
-        
-                resource.deleteMarkers(
-                    IMarker.PROBLEM,
-                    true,
-                    IResource.DEPTH_INFINITE
-                );
-            }
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-        }
-        
-        
-        for(Iterator it=errors.iterator(); it.hasNext(); ) {
-            try {
-                PositionedError error = (PositionedError)it.next();
-                TokenReference token = error.getTokenReference();
-                            
-                if(token.getLine() > 0) {
-                    log.debug(
-                        "file: "+token.getFile()+", "+
-                        "line: "+token.getLine()+", "+
-                        "path: "+token.getPath()
-                    );
-                    
-                    IResource resource =
-                        ProjectProperties.findResource(
-                            token.getPath().getAbsolutePath(),
-                            lastBuiltProject
-                        );                    
+			log.debug("----\n" + projectProperties.toString() + "----\n");
 
-                    IMarker marker = resource.createMarker(IMarker.PROBLEM);
-                    marker.setAttribute(IMarker.LINE_NUMBER, token.getLine());
-                    marker.setAttribute(IMarker.MESSAGE, error.getFormattedMessage().getMessage());                    
-                    marker.setAttribute(IMarker.SEVERITY, new Integer(IMarker.SEVERITY_ERROR));
-                }
-            }
-            catch(Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }      
-    
+			CaesarAdapter caesarAdapter = new CaesarAdapter(projectProperties.getProjectLocation());
+
+			// build            
+			boolean success =
+				caesarAdapter.compile(
+					projectProperties.getSourceFiles(),
+					projectProperties.getClassPath(),
+					projectProperties.getOutputPath(),
+					errors,
+					progressMonitor);
+
+			// update markers, show errors
+			showErrors();
+
+			// update outline view         
+			Display display = Display.getDefault();
+
+			// update has to be executed from Workbenchs Thread
+
+			CaesarPlugin.getDefault().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					CaesarOutlineView.updateAll();
+				}
+			});
+
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+
+		IProject[] requiredResourceDeltasOnNextInvocation = null;
+		return requiredResourceDeltasOnNextInvocation;
+	}
+
+	// TODO [optimize] make it efficient
+	// TODO [feature] warnings are missing
+	public void showErrors() {
+
+		try {
+			Collection sourceFiles = projectProperties.getSourceFiles();
+			for (Iterator it = sourceFiles.iterator(); it.hasNext();) {
+
+				String sourcePath = projectProperties.getProjectLocation() + it.next().toString();
+
+				IResource resource = ProjectProperties.findResource(sourcePath, lastBuiltProject);
+
+				resource.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+				//resource.deleteMarkers(IMarker.TASK, true, IResource.DEPTH_INFINITE);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		for (Iterator it = errors.iterator(); it.hasNext();) {
+			try {
+				PositionedError error = (PositionedError) it.next();
+				TokenReference token = error.getTokenReference();
+
+				if (token.getLine() > 0) {
+					log.debug(
+						"file: "
+							+ token.getFile()
+							+ ", "
+							+ "line: "
+							+ token.getLine()
+							+ ", "
+							+ "path: "
+							+ token.getPath());
+
+					IResource resource =
+						ProjectProperties.findResource(
+							token.getPath().getAbsolutePath(),
+							lastBuiltProject);
+
+					IMarker marker = resource.createMarker(IMarker.PROBLEM);
+					marker.setAttribute(IMarker.LINE_NUMBER, token.getLine());
+					marker.setAttribute(IMarker.MESSAGE, error.getFormattedMessage().getMessage());
+					marker.setAttribute(IMarker.SEVERITY, new Integer(IMarker.SEVERITY_ERROR));
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 }
