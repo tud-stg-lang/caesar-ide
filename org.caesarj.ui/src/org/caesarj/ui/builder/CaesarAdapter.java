@@ -111,7 +111,7 @@ public final class CaesarAdapter extends Main {
         return res;
 	}
 
-    protected void weaveClasses(UnwovenClassFile[] classFiles) {
+    protected void weaveClasses() {
         if(progressMonitor.isCanceled())
             return;
         
@@ -126,7 +126,7 @@ public final class CaesarAdapter extends Main {
         // add model to world and WEAVE      
         CaesarBcelWorld world = CaesarBcelWorld.getInstance();
         world.setModel(model);
-		super.weaveClasses(classFiles);        
+		super.weaveClasses();        
                               
         progressMonitor.worked(1);
 	}

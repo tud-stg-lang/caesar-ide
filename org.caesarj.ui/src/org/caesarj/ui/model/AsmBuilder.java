@@ -400,7 +400,7 @@ public class AsmBuilder extends CaesarVisitor {
             peNode = new AdviceDeclarationNode(
                 advice,
                 ((JClassDeclaration)classStack.peek()).getCClass().getQualifiedName(),
-                advice.getKind().getName(),
+                advice.getKind().wrappee().getName(),
                 CaesarProgramElementNode.Kind.ADVICE,
                 makeLocation(self.getTokenReference()),
                 modifiers,

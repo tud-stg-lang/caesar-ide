@@ -31,7 +31,7 @@ public class SignatureResolver extends AbstractAsmVisitor {
             String ident =
                 NameMangler.adviceName(
                     TypeX.forName(adviceNode.getClassFullQualifiedName()),
-                    adviceDeclaration.getKind(),
+                    adviceDeclaration.getKind().wrappee(),
                     adviceDeclaration.getTokenReference().getLine()
                 );
 

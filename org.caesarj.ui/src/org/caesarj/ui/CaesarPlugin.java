@@ -28,7 +28,11 @@ public class CaesarPlugin extends AbstractUIPlugin {
 	// singleton
 	private static CaesarPlugin plugin;
 	
-    public static final String RUNTIME_LIB = "caesar-runtime.jar";
+    public static final String 
+        CAESAR_RUNTIME_LIB  = "caesar-runtime.jar",
+        ASPECTJ_RUNTIME_LIB = "aspectjrt.jar",
+        CAESAR_COMPILER_LIB = "caesar-compiler.jar",
+        BCEL_LIB            = "bcel.jar";
     
     public static final String VERSION    = "0.1.1";
     public static final String PLUGIN_ID  = "org.caesarj.ui";
@@ -40,7 +44,11 @@ public class CaesarPlugin extends AbstractUIPlugin {
     private Display display = Display.getCurrent();
     private ResourceBundle  resourceBundle  = null;
     private CaesarTextTools caesarTextTools = null;
-    private String aspectjrtPath = null;    
+    
+    private String aspectjRuntimePath = null;
+    private String caesarRuntimePath  = null;
+    private String caesarCompilerPath = null; 
+    private String bcelPath           = null;         
     
 	/**
 	 * The constructor.
@@ -110,65 +118,87 @@ public class CaesarPlugin extends AbstractUIPlugin {
         return caesarTextTools;
     }
 
-    /**
-     * Find the path to the caesar runtime libarary.
-     */
-    public String getRuntimeClasspath() {
-        if (aspectjrtPath == null) {
-            StringBuffer cpath = new StringBuffer();
+    public String getCaesarRuntimeClasspath() {
+        if(caesarRuntimePath == null)
+            caesarRuntimePath = getPathFor(CAESAR_RUNTIME_LIB);
+        
+        return caesarRuntimePath;   
+    }
 
-            IPluginRegistry reg = Platform.getPluginRegistry();
+    public String getAspectJRuntimeClasspath() {
+        if(aspectjRuntimePath == null)
+            aspectjRuntimePath = getPathFor(ASPECTJ_RUNTIME_LIB);
+        
+        return aspectjRuntimePath;   
+    }
+    
+    public String getCaesarCompilerClasspath() {
+        if(caesarCompilerPath == null)
+            caesarCompilerPath = getPathFor(CAESAR_COMPILER_LIB);
+        
+        return caesarCompilerPath;   
+    }
 
-            int maj = 1;
-            int min = 1;
-            int svc = 1;
+    public String getBcelClasspath() {
+        if(bcelPath == null)
+            bcelPath = getPathFor(BCEL_LIB);
+        
+        return bcelPath;   
+    }
+    
+    private String getPathFor(String lib) {
+        StringBuffer cpath = new StringBuffer();
+
+        IPluginRegistry reg = Platform.getPluginRegistry();
+
+        int maj = 1;
+        int min = 1;
+        int svc = 1;
+        try {
+            StringTokenizer tok = new StringTokenizer(VERSION,".");
+            maj = Integer.parseInt(tok.nextToken());
+            min = Integer.parseInt(tok.nextToken());
+            svc = Integer.parseInt(tok.nextToken());
+        } 
+        catch ( Exception ex ) {
+            ex.printStackTrace();  
+        }
+
+
+        // first look for the version we really want...
+        IPluginDescriptor ajdePluginDesc = 
+            reg.getPluginDescriptor(PLUGIN_ID, new PluginVersionIdentifier(maj,min, svc));
+
+        if (ajdePluginDesc == null) {
+            // then try *any* version
+            ajdePluginDesc = reg.getPluginDescriptor(PLUGIN_ID); 
+        }
+
+        String pluginLoc = null;
+        if ( ajdePluginDesc != null ) {
+            URL installLoc = ajdePluginDesc.getInstallURL();
+            URL resolved = null;
             try {
-                StringTokenizer tok = new StringTokenizer(VERSION,".");
-                maj = Integer.parseInt(tok.nextToken());
-                min = Integer.parseInt(tok.nextToken());
-                svc = Integer.parseInt(tok.nextToken());
-            } catch ( Exception ex ) {
-                System.err.println( "Exception parsing AJDE version: " + ex );  
+                resolved = Platform.resolve(installLoc);
+                pluginLoc = resolved.toExternalForm();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-
-            // first look for the version we really want...
-            IPluginDescriptor ajdePluginDesc = 
-                reg.getPluginDescriptor(PLUGIN_ID, new PluginVersionIdentifier(maj,min, svc));
-
-            if (ajdePluginDesc == null) {
-                // then try *any* version
-                ajdePluginDesc = reg.getPluginDescriptor(PLUGIN_ID); 
-            }
-
-            String pluginLoc = null;
-            if ( ajdePluginDesc != null ) {
-                URL installLoc = ajdePluginDesc.getInstallURL();
-                URL resolved = null;
-                try {
-                    resolved = Platform.resolve(installLoc);
-                    pluginLoc = resolved.toExternalForm();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }           
-            if ( pluginLoc != null ) {
-                if ( pluginLoc.startsWith( "file:" )) {
-                    cpath.append(pluginLoc.substring( "file:".length() ));  
-                    cpath.append(RUNTIME_LIB);
-                }
-            }
-
-            // Verify that the file actually exists at the plugins location
-            // derived above. If not then it might be because we are inside
-            // a runtime workbench. Check under the workspace directory.
-            if (new File(cpath.toString()).exists())    
-            {
-                // File does exist under the plugins directory 
-                aspectjrtPath = cpath.toString();
+        }           
+        if ( pluginLoc != null ) {
+            if ( pluginLoc.startsWith( "file:" )) {
+                cpath.append(pluginLoc.substring( "file:".length() ));  
+                cpath.append(lib);
             }
         }
+
+        String res = null;
+
+        // Verify that the file actually exists at the plugins location
+        if (new File(cpath.toString()).exists()) {
+            res = cpath.toString();
+        }
         
-        return aspectjrtPath;   
+        return res;
     }
 }

@@ -77,16 +77,11 @@ implements      IExecutableExtension {
             new WorkspaceModifyDelegatingOperation(fJavaPage.getRunnable());
         try {
             getContainer().run(false, true, op);
-        } catch (InvocationTargetException e) {
-            /*
-            String title =
-                AspectJPlugin.getResourceString("NewAspectjProjectCreationWizard.op_error.title");
-            String message =
-                AspectJPlugin.getResourceString("NewAspectjProjectCreationWizard.op_error.message");
-            ExceptionHandler.handle(e, getShell(), title, message);
-            */
+        } 
+        catch (InvocationTargetException e) {
             return false;            
-        } catch (InterruptedException e) {
+        } 
+        catch (InterruptedException e) {
             return false;
         }
         BasicNewProjectResourceWizard.updatePerspective(fConfigElement);
@@ -113,48 +108,44 @@ implements      IExecutableExtension {
             e.printStackTrace();
 		}
         
-        _addCaesarJarToClasspath(javaProject);
+        CaesarPlugin caesarPlugin = CaesarPlugin.getDefault();
+                
+        addClassPath(javaProject, caesarPlugin.getAspectJRuntimeClasspath());
+        addClassPath(javaProject, caesarPlugin.getCaesarRuntimeClasspath());        
+        // TODO this dependencies should be removed (bcel too?)
+        addClassPath(javaProject, caesarPlugin.getCaesarCompilerClasspath());
+        addClassPath(javaProject, caesarPlugin.getBcelClasspath());
 
         return true;
-    }
+    }       
     
-    private void _addCaesarJarToClasspath(IJavaProject javaProject) {
-    
+    private void addClassPath(IJavaProject javaProject, String classPath) {
         try {
-            // Locate the runtime jar
-            String ajrtPath =
-                CaesarPlugin.
-                getDefault().            
-                getRuntimeClasspath();
-
             IClasspathEntry[] originalCP = javaProject.getRawClasspath();
-            IClasspathEntry ajrtCP =
+            IClasspathEntry classpathEntry =
                 JavaCore.newLibraryEntry(
-                    new Path(ajrtPath), // library location
+                    new Path(classPath), // library location
                     null,               // no source
                     null                // no source
                     );
             // Update the raw classpath with the new ajrtCP entry.
             int originalCPLength = originalCP.length;
-            IClasspathEntry[] newCP =
+            IClasspathEntry[] newClasspath =
                 new IClasspathEntry[originalCPLength + 1];
-            System.arraycopy(originalCP, 0, newCP, 0, originalCPLength);
-            newCP[originalCPLength] = ajrtCP;
-            javaProject.setRawClasspath(newCP, new NullProgressMonitor());
+            System.arraycopy(originalCP, 0, newClasspath, 0, originalCPLength);
+            newClasspath[originalCPLength] = classpathEntry;
+            javaProject.setRawClasspath(newClasspath, new NullProgressMonitor());
         }
         catch(Throwable e) {
             e.printStackTrace();
         }
     }
     
-    /*
-     * Stores the configuration element for the wizard.  The config element will be used
-     * in <code>performFinish</code> to set the result perspective.
-     */
     public void setInitializationData(
         IConfigurationElement cfig,
         String propertyName,
-        Object data) {
+        Object data
+    ) {
         fConfigElement = cfig;
     }
 }
