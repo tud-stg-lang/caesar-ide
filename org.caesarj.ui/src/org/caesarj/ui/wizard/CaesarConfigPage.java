@@ -19,11 +19,8 @@ package org.caesarj.ui.wizard;
 import org.apache.log4j.Logger;
 import org.caesarj.ui.CJDTConfigSettings;
 import org.caesarj.ui.preferences.CaesarJPreferences;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.PreferenceConstants;
-import org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -34,9 +31,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 
-/**
- * This class is the only page of the AJDT preferences configuration wizard.  
- */
+
 public class CaesarConfigPage extends WizardPage {
 	private IWorkbench workbench;
 	
@@ -48,9 +43,7 @@ public class CaesarConfigPage extends WizardPage {
 	private Button analyzeAnnotationsCheckbox = null;
 	private Button dontAskAgainCheckbox = null;
 	
-	/**
-	 * Creates the page AJDT Preference Configuration main (only) page.
-	 */
+	
 	public CaesarConfigPage(){
 
 		super("Caesar Preferences");
@@ -81,14 +74,6 @@ public class CaesarConfigPage extends WizardPage {
 				caesarEditorDefaultCheckbox = new Button(workbench, SWT.CHECK);	
 				caesarEditorDefaultCheckbox.setText("Make the CaesarJ editor the default java - editor");
 				caesarEditorDefaultCheckbox.setSelection(CJDTConfigSettings.isCaesarJEditorDefault());
-			
-			/*
-			if (!AJDTConfigSettings.isAnalyzeAnnotationsDisabled()) {	
-				analyzeAnnotationsCheckbox = new Button(workbench, SWT.CHECK);		
-				analyzeAnnotationsCheckbox.setText(AspectJPlugin.getResourceString("AJDTPrefConfigWizardPage.workbench.analyzeannotations"));
-				analyzeAnnotationsCheckbox.setSelection(true);
-			}*/
-			
 							
 		new Label(composite, SWT.NONE); // vertical spacer
 		}
@@ -117,44 +102,8 @@ public class CaesarConfigPage extends WizardPage {
 			else
 				CJDTConfigSettings.disableCaesarJEditorDefault();
 		}
-		
 		boolean dontAskAgain = dontAskAgainCheckbox.getSelection();
 		CaesarJPreferences.setCAESARPrefConfigDone(dontAskAgain);
-		
-		
-		
-		/*
-		boolean disableUnusedImports = false;
-		if (caesarEditorDefaultCheckbox != null) {
-			disableUnusedImports = caesarEditorDefaultCheckbox.getSelection();
-		}
-		
-		boolean disableAnalyzeAnnotations = false;
-		if (analyzeAnnotationsCheckbox != null) {
-			disableAnalyzeAnnotations = analyzeAnnotationsCheckbox.getSelection();
-		} 
-			
-		boolean dontAskAgain = dontAskAgainCheckbox.getSelection();
-		
-		// turn the "analyse annotations" off
-		if (disableAnalyzeAnnotations) {
-			AJDTConfigSettings.disableAnalyzeAnnotations();
-		}
-		
-		// set the unused imports to warning, rather than error
-		if (disableUnusedImports) {
-			AJDTConfigSettings.disableUnusedImports();
-		}
-		
-		*/
-		
-		
-		
-		/*
-		if (dontAskAgain) {
-			AspectJPreferences.setAJDTPrefConfigDone(true);
-		}
-		*/
 		return true;
 	}
 }

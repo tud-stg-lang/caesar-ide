@@ -4,6 +4,7 @@ import java.util.Hashtable;
 
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IEditorDescriptor;
@@ -51,16 +52,25 @@ public class CJDTConfigSettings {
 	static public boolean isCaesarJEditorDefault() {
 		IEditorRegistry editorRegistry = WorkbenchPlugin.getDefault().getEditorRegistry();
 		IEditorDescriptor desc = editorRegistry.getDefaultEditor("*.java");
-		//TODO weiﬂ nicht was geht
-		return CaesarPlugin.getResourceString("CaesarEditor").equals(desc.getLabel());
+		
+		return "CaesarEditor".equals(desc.getLabel());
 	}
 	
 	static public void enableCaesarJEditorDefault() {
 		EditorRegistry editorRegistry = (EditorRegistry)WorkbenchPlugin.getDefault().getEditorRegistry();
 		IFileEditorMapping[] array = WorkbenchPlugin.getDefault().getEditorRegistry().getFileEditorMappings();
 		editorRegistry.setFileEditorMappings((FileEditorMapping[])array);
-		editorRegistry.setDefaultEditor("*.java", "CaesarEditor");
-		editorRegistry.saveAssociations();	
+		editorRegistry.setDefaultEditor("*.java", "org.caesarj.ui.editor.CaesarEditor");
+		editorRegistry.saveAssociations();
+	
+	}
+	static public void disableCaesarJEditorDefault() {
+		EditorRegistry editorRegistry = (EditorRegistry)WorkbenchPlugin.getDefault().getEditorRegistry();
+		IFileEditorMapping[] array = WorkbenchPlugin.getDefault().getEditorRegistry().getFileEditorMappings();
+		editorRegistry.setFileEditorMappings((FileEditorMapping[])array);
+		editorRegistry.setDefaultEditor("*.java", JavaUI.ID_CU_EDITOR);
+		editorRegistry.saveAssociations();
+			
 	}
 
 }

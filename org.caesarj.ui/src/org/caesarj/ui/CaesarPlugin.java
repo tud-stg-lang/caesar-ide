@@ -50,7 +50,7 @@ public class CaesarPlugin extends AbstractUIPlugin {
 
 	public static final String VERSION = "0.1.2";
 	public static final String PLUGIN_ID = "org.caesarj";
-	public static final String ID_EDITOR = PLUGIN_ID + ".editor.caesareditor";
+	public static final String ID_EDITOR = PLUGIN_ID + ".editor.CaesarEditor";
 	public static final String ID_BUILDER = PLUGIN_ID + ".builder.builder";
 	public static final String ID_OUTLINE = PLUGIN_ID + ".caesaroutlineview";
 	public static final String ID_NATURE = PLUGIN_ID + ".caesarprojectnature";
