@@ -15,6 +15,7 @@ import org.caesarj.ui.util.ProjectProperties;
 import org.caesarj.ui.views.CaesarHierarchyView;
 import org.caesarj.util.PositionedError;
 import org.caesarj.util.TokenReference;
+import org.caesarj.util.UnpositionedError;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -77,8 +78,8 @@ public class Builder extends IncrementalProjectBuilder {
 
 			this.projectProperties = new ProjectProperties(getProject());
 
-			log
-					.debug("Building to '" + this.projectProperties.getOutputPath() + "'"); //$NON-NLS-1$//$NON-NLS-2$
+			log.debug("Building to '" + this.projectProperties.getOutputPath() + "'"); //$NON-NLS-1$//$NON-NLS-2$
+			
 			log.debug("kind: " + kind); //$NON-NLS-1$
 
 			log.debug("----\n" + this.projectProperties.toString() + "----\n"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -91,34 +92,39 @@ public class Builder extends IncrementalProjectBuilder {
 					this.projectProperties.getClassPath(),
 					this.projectProperties.getOutputPath(), this.errors,
 					progressMonitor);
-
-			// update markers, show errors
-			showErrors();
-
-			// update outline view
-			Display.getDefault();
-
+		} 
+		catch (Throwable t) {
+			t.printStackTrace();
+			errors.add("internal compiler error: " + t.toString());
+		}
+		
+		// update markers, show errors
+		deleteOldErrors();
+		showErrors();
+		
+		try {
 			// update has to be executed from Workbenchs Thread
-
-			CaesarPlugin.getDefault().getDisplay().asyncExec(new Runnable() {
+			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					CaesarOutlineView.updateAll();
 					CaesarHierarchyView.updateAll();
 				}
 			});
-		} catch (Throwable t) {
+		} 
+		catch (Throwable t) {
 			t.printStackTrace();
 		}
 
 		IProject[] requiredResourceDeltasOnNextInvocation = null;
-		return requiredResourceDeltasOnNextInvocation;
+		return requiredResourceDeltasOnNextInvocation;		
 	}
-
-	// TODO [optimize] make it efficient
-	// TODO [feature] warnings are missing
-	public void showErrors() {
-
+	
+	public void deleteOldErrors() {
 		try {
+			/* delete unpositioned errors */
+			lastBuiltProject.deleteMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+			
+			/* delete positioned errors */
 			Collection sourceFiles = this.projectProperties.getSourceFiles();
 			for (Iterator it = sourceFiles.iterator(); it.hasNext();) {
 
@@ -133,37 +139,61 @@ public class Builder extends IncrementalProjectBuilder {
 				resource.deleteMarkers(AdviceMarker.ADVICEMARKER, true,
 						IResource.DEPTH_INFINITE);
 			}
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
 
+	// TODO [optimize] make it efficient
+	// TODO [feature] warnings are missing
+	public void showErrors() {
 		for (Iterator it = this.errors.iterator(); it.hasNext();) {
 			try {
-				PositionedError error = (PositionedError) it.next();
-				TokenReference token = error.getTokenReference();
-
-				if (token.getLine() > 0) {
-					log.debug("file: " + token.getFile() + ", " + "line: " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							+ token.getLine() + ", " + "path: " //$NON-NLS-1$//$NON-NLS-2$
-							+ token.getPath());
-
-					IResource resource = ProjectProperties.findResource(token
-							.getPath().getAbsolutePath(), lastBuiltProject);
-
-					IMarker marker = resource.createMarker(IMarker.PROBLEM);
-					marker.setAttribute(IMarker.LINE_NUMBER, token.getLine());
-					marker.setAttribute(IMarker.MESSAGE, error
-							.getFormattedMessage().getMessage());
-					marker.setAttribute(IMarker.SEVERITY, new Integer(
-							IMarker.SEVERITY_ERROR));
+				Object err = it.next();
+				
+				/* errors can be represented by PositionedError, UnpositionedError or String */
+				if (err instanceof PositionedError) {
+					PositionedError error = (PositionedError)err;
+					TokenReference token = error.getTokenReference();
+	
+					if (token.getLine() > 0) {
+						log.debug("file: " + token.getFile() + ", " + "line: " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								+ token.getLine() + ", " + "path: " //$NON-NLS-1$//$NON-NLS-2$
+								+ token.getPath());
+	
+						IResource resource = ProjectProperties.findResource(token
+								.getPath().getAbsolutePath(), lastBuiltProject);
+	
+						IMarker marker = resource.createMarker(IMarker.PROBLEM);
+						marker.setAttribute(IMarker.LINE_NUMBER, token.getLine());
+						marker.setAttribute(IMarker.MESSAGE, error
+								.getFormattedMessage().getMessage());
+						marker.setAttribute(IMarker.SEVERITY, new Integer(
+								IMarker.SEVERITY_ERROR));
+					}
 				}
-			} catch (Exception e) {
+				else { /* create unpositioned error at the scope of the project */					
+					String msg;
+					if (err instanceof UnpositionedError) {
+						msg = ((UnpositionedError)err).getFormattedMessage().getMessage();
+					}
+					else {
+						msg = (String)err; // for internal errors
+					}
+					
+					IMarker marker = lastBuiltProject.createMarker(IMarker.PROBLEM);
+					marker.setAttribute(IMarker.MESSAGE, msg);
+					marker.setAttribute(IMarker.SEVERITY, new Integer(IMarker.SEVERITY_ERROR));
+				}
+			} 
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
-
-public static IProject getProjectForSourceLocation(ISourceLocation location) {
+	
+	public static IProject getProjectForSourceLocation(ISourceLocation location) {
 		String path = location.getSourceFile().getAbsolutePath();
 		Iterator iter = allBuildedProjects.iterator();
 		IProject ret = null;

@@ -13,6 +13,7 @@ import org.caesarj.compiler.ast.phylum.JCompilationUnit;
 import org.caesarj.ui.model.AsmBuilder;
 import org.caesarj.ui.model.StructureModelDump;
 import org.caesarj.util.PositionedError;
+import org.caesarj.util.UnpositionedError;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -43,6 +44,10 @@ public final class CaesarAdapter extends Main {
 	public void inform(PositionedError error) {
 		this.errors.add(error);
 	}
+	
+	public void inform(UnpositionedError error) {
+		this.errors.add(error);
+    }
 
 	public boolean compile(Collection sourceFiles, String classPath,
 			String outputPath, Collection errorsArg) {
@@ -79,16 +84,16 @@ public final class CaesarAdapter extends Main {
 
 		try {
 			success = run(args);
-		} catch (RuntimeException e) {
-			logger.warn("Fehler im Compiler", e); //$NON-NLS-1$
+		} 
+		catch (RuntimeException e) {
+			e.printStackTrace();
+			errors.add("internal compiler error: " + e.toString());	
 		}
 		AsmBuilder.postBuild(this.model);
 		//_dumpModel("final structure model", this.model); //$NON-NLS-1$
 		
 		return success;
 	}
-
-	
 	
 	protected JCompilationUnit parseFile(File file, KjcEnvironment env) {
 		if (this.progressMonitor.isCanceled()) {
