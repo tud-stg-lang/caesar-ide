@@ -184,11 +184,19 @@
    		</actionSetPartAssociation>
    </extension-->
  	<extension point="org.eclipse.ui.views">
-  		<view name="CaesarJ Hierarchy" icon="icons/sample.gif" category="org.eclipse.jdt.ui.java" class="org.caesarj.ui.views.CaesarHierarchyView" id="org.caesarj.ui.views.CaesarHierarchyView" /> 
+  		<view 
+  			name="%HierarchyView.main.title" 
+  			icon="icons/sample.gif"
+  			category="org.eclipse.jdt.ui.java"
+  			class="org.caesarj.ui.views.CaesarHierarchyView"
+  			id="org.caesarj.ui.views.CaesarHierarchyView" /> 
  	</extension>
  	
  	<extension point="org.eclipse.ui.preferencePages">
-		<page name="%PreferencePages.main.title" class="org.caesarj.ui.preferences.CaesarJPreferencePage" id="org.caesarj.ui.preferences.caesarjpreferencepage">
+		<page
+			name="%PreferencePages.main.title"
+			class="org.caesarj.ui.preferences.CaesarJPreferencePage"
+			id="org.caesarj.ui.preferences.caesarjpreferencepage">
     	</page>
 	</extension>
 	
