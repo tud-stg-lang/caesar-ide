@@ -102,7 +102,7 @@ public class CaesarProgramElementNode extends ProgramElementNode {
 			.getProgramElementKind()
 			.equals(ProgramElementNode.Kind.CODE)) {
 			ProgramElementNode pNode = (ProgramElementNode) sNode;
-			CodeNode cNode =
+			sNode =
 				new CodeNode(
 					pNode.getSignature(),
 					ProgramElementNode.Kind.CODE,
@@ -110,10 +110,8 @@ public class CaesarProgramElementNode extends ProgramElementNode {
 					0,
 					pNode.getFormalComment(),
 					pNode.getChildren());
-			cNode.setParent(this);
 			this.removeChild(sNode);
-			super.addChild(cNode);
-		} else
+			}
 			super.addChild(sNode);
 	}
 }

@@ -2,16 +2,10 @@ package org.caesarj.ui.model;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.JClassImport;
 import org.caesarj.compiler.ast.JPackageImport;
-import org.caesarj.ui.builder.Builder;
-import org.caesarj.ui.util.ProjectProperties;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-
-import org.apache.log4j.Logger;
 /**
  * @author Shadow
  *
@@ -46,19 +40,7 @@ public class CodeNode extends CaesarProgramElementNode {
 		String formalComment,
 		List children) {
 		super(signature, kind, sourceLocation, modifiers, formalComment, children);
-		IResource resource =
-			ProjectProperties.findResource(
-				sourceLocation.getSourceFile().getAbsolutePath(),
-				Builder.getLastBuildTarget());
 
-		try {
-			IMarker marker = resource.createMarker(IMarker.TASK);
-			marker.setAttribute(IMarker.LINE_NUMBER, sourceLocation.getLine());
-			marker.setAttribute(IMarker.MESSAGE, "DIES IST ein ADVICE TEST");
-			marker.setAttribute(IMarker.SEVERITY, new Integer(IMarker.SEVERITY_INFO));
-		} catch (CoreException e) {
-			logger.error("FEHLER BEIM MARKER ERZEUGEN", e);
-		}
 	}
 
 	/**
@@ -89,20 +71,6 @@ public class CodeNode extends CaesarProgramElementNode {
 			children,
 			importedPackages,
 			importedClasses);
-
-		IResource resource =
-			ProjectProperties.findResource(
-				sourceLocation.getSourceFile().getAbsolutePath(),
-				Builder.getLastBuildTarget());
-
-		try {
-			IMarker marker = resource.createMarker(IMarker.TASK);
-			marker.setAttribute(IMarker.LINE_NUMBER, sourceLocation.getLine());
-			marker.setAttribute(IMarker.MESSAGE, "DIES IST ein ADVICE TEST");
-			marker.setAttribute(IMarker.SEVERITY, new Integer(IMarker.SEVERITY_INFO));
-		} catch (CoreException e) {
-			logger.error("FEHLER BEIM MARKER ERZEUGEN", e);
-		}
 	}
 
 	/* (Kein Javadoc)
