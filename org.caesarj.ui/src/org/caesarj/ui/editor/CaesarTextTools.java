@@ -32,8 +32,8 @@ public class CaesarTextTools extends JavaTextTools {
 
     public boolean affectsBehavior(PropertyChangeEvent event) {
         return
-            codeScanner.affectsBehavior(event) ||
-            super.affectsBehavior(event);
+            codeScanner.affectsBehavior(event); // Changed was depricatied||
+            //super.affectsBehavior(event);
     }
 
     /**

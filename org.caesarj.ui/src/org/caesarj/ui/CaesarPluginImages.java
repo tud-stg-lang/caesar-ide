@@ -27,7 +27,8 @@ public class CaesarPluginImages {
 		String pathSuffix = "icons/"; //$NON-NLS-1$
 		try {
 			fgIconBaseURL =
-				new URL(CaesarPlugin.getDefault().getDescriptor().getInstallURL(), pathSuffix);
+				new URL(CaesarPlugin.getDefault().getBundle().getEntry("/"), pathSuffix);
+				//CHANGED was deprecated 
 		} catch (MalformedURLException e) {
 			// do nothing
 		}

@@ -10,7 +10,6 @@ package org.caesarj.ui.perspective;
  */
  
 import org.eclipse.ui.plugin.*;
-import org.eclipse.core.runtime.*;
 import org.eclipse.core.resources.*;
 
 /**
@@ -23,8 +22,8 @@ public class CaesarPerspectivePlugin extends AbstractUIPlugin {
 	/**
 	 * The constructor.
 	 */
-	public CaesarPerspectivePlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public CaesarPerspectivePlugin() {
+		//super(descriptor); Chenged was deprecated
 		plugin = this;
 	}
 

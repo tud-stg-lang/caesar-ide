@@ -43,7 +43,7 @@ public class CaesarEditor extends CompilationUnitEditor {
         		CaesarPlugin.getDefault().getCaesarTextTools();
         	JavaSourceViewerConfiguration svConfig = 
         		new JavaSourceViewerConfiguration(textTools, this);  
-        
+
         	setSourceViewerConfiguration(svConfig);
         	log.debug("CaesarJ Editor Initialized.");
         }

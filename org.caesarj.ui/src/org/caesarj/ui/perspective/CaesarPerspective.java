@@ -8,7 +8,7 @@ package org.caesarj.ui.perspective;
  * 
  * Code or samples provided herein are provided without warranty of any kind.
  */
- 
+
 import org.apache.log4j.Logger;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.ui.JavaUI;

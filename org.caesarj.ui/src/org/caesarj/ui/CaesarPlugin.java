@@ -57,6 +57,7 @@ public class CaesarPlugin extends AbstractUIPlugin {
 	/**
 	 * The constructor.
 	 */
+	
 	public CaesarPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		plugin = this;
