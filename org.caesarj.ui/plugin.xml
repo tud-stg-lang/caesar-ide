@@ -129,7 +129,7 @@
          id="advicemarker"
          name="AdviceMarker"
          point="org.eclipse.core.resources.markers">
-      <super type="org.eclipse.jdt.core.problem"/>
+      <super type="org.eclipse.core.resources.marker"/>
       <persistent
             value="false">
       </persistent>
@@ -160,7 +160,7 @@
    <perspective
          icon="icons/sample.gif"
          class="org.caesarj.ui.perspective.CaesarPerspective"
-         name="CaesarJ Development Tool"
+         name="CaesarJ"
          id="org.caesarj.ui.perspective.CaesarPerspective">
    </perspective>
    </extension>	
