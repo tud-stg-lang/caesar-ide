@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="org.caesarj.ui"
+   name="Caesar Plug-in"
+   version="0.1.1"
+   provider-name="TU Darmstadt"
+   class="org.caesarj.ui.CaesarPlugin">
+
+   <runtime>
+      <library name="caesar-compiler.jar"/>
+      <library name="caesar-runtime.jar"/>
+      <library name="aspectjtools.jar"/>
+      <library name="java-getopt-1.0.9.jar"/>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.search" export="true"/>
+      <import plugin="org.eclipse.core.runtime" export="true"/>
+      <import plugin="org.eclipse.core.resources" export="true"/>
+      <import plugin="org.eclipse.ui" export="true"/>
+      <import plugin="org.eclipse.jdt.ui" export="true"/>
+      <import plugin="org.eclipse.debug.core" export="true"/>
+      <import plugin="org.eclipse.jdt.core" export="true"/>
+      <import plugin="org.eclipse.pde.core" export="true"/>
+      <import plugin="org.eclipse.pde.runtime" export="true"/>
+      <import plugin="org.eclipse.pde" export="true"/>
+      <import plugin="org.eclipse.debug.ui" export="true"/>
+      <import plugin="org.eclipse.jdt.debug.ui" export="true"/>
+      <import plugin="org.eclipse.swt" export="true"/>
+      <import plugin="org.eclipse.jdt.launching" export="true"/>
+   </requires>
+
+
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="Caesar"
+            id="Caesar">
+      </category>
+      <wizard
+            name="Caesar Project"
+            icon="icons/sample.gif"
+            category="Caesar"
+            class="org.caesarj.ui.wizard.NewCaesarProjectWizard"
+            project="true"
+            finalPerspective="org.eclipse.jdt.ui.JavaPerspective"
+            id="caesarprojectwizard">
+         <description>
+            Create a Caesar Project
+         </description>
+      </wizard>
+   </extension>
+   <extension
+         id="caesarprojectnature"
+         name="caesarNature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.caesarj.ui.CaesarProjectNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="builder.builder"
+         name="Caesar Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.caesarj.ui.builder.Builder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="editor.caesareditor"
+         point="org.eclipse.ui.editors">
+      <editor
+            name="CaesarEditor"
+            icon="icons/jdt/jcu_obj.gif"
+            extensions="java"
+            contributorClass="org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditorActionContributor"
+            class="org.caesarj.ui.editor.CaesarEditor"
+            id="CompilationUnitEditor">
+      </editor>
+   </extension>
+
+</plugin>
