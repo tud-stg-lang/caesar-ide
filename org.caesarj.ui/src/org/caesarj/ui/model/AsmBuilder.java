@@ -254,7 +254,7 @@ public class AsmBuilder {
 			peNode = new AspectNode(self.getIdent(),
 					CaesarProgramElementNode.Kind.ASPECT, makeLocation(self
 							.getTokenReference()), self.getModifiers(), "", //$NON-NLS-1$
-					new ArrayList());
+					new ArrayList(), self.getCClass());
 		} else if (self instanceof CjVirtualClassDeclaration) {
 
 			if (self.getCClass().isImplicit()) {

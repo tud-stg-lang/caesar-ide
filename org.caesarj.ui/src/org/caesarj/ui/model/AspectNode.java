@@ -3,6 +3,7 @@ package org.caesarj.ui.model;
 import java.util.List;
 
 import org.aspectj.bridge.ISourceLocation;
+import org.caesarj.compiler.export.CClass;
 import org.caesarj.ui.CaesarElementImageDescriptor;
 import org.caesarj.ui.CaesarPluginImages;
 import org.eclipse.swt.graphics.Image;
@@ -14,13 +15,13 @@ import org.eclipse.swt.graphics.Image;
  * ändern: Fenster&gt;Benutzervorgaben&gt;Java&gt;Codegenerierung&gt;Code und
  * Kommentare
  */
-public class AspectNode extends CaesarProgramElementNode {
+public class AspectNode extends CClassNode {
 
 	public AspectNode(String signature, Kind kind,
 			ISourceLocation sourceLocationArg, int modifiers,
-			String formalComment, List childrenArg) {
+			String formalComment, List childrenArg, CClass cclass) {
 		super(signature, kind, sourceLocationArg, modifiers, formalComment,
-				childrenArg);
+				childrenArg, cclass);
 		this.initImages();
 	}
 
