@@ -6,7 +6,7 @@ Version=4
 MainFile=USERGUIDE.tex
 UseBibTeX=0
 UseMakeIndex=0
-ActiveProfile=LaTeX => PDF
+ActiveProfile=Latex
 ProjectLanguage=en
 ProjectDialect=US
 
