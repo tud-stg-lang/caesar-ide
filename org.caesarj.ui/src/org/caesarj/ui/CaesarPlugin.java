@@ -13,6 +13,7 @@ import java.util.StringTokenizer;
 import org.apache.log4j.Logger;
 import org.caesarj.ui.editor.CaesarEditor;
 import org.caesarj.ui.editor.CaesarTextTools;
+import org.caesarj.ui.preferences.CaesarJPreferences;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPluginDescriptor;
@@ -104,10 +105,9 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 	 * datas.length; i++) { updateTemplate(datas[i]); } }
 	 * 
 	 * fCodeTemplateTree.refresh();
-	 * updateSourceViewerInput(fCodeTemplateTree.getSelectedElements());
-	 *  } catch (FileNotFoundException e) { openReadErrorDialog(e); } catch
-	 * (IOException e) { openReadErrorDialog(e); }
-	 *  }
+	 * updateSourceViewerInput(fCodeTemplateTree.getSelectedElements()); } catch
+	 * (FileNotFoundException e) { openReadErrorDialog(e); } catch (IOException
+	 * e) { openReadErrorDialog(e); } }
 	 */
 
 	/**
@@ -135,9 +135,10 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 	 * Returns the shared instance.
 	 */
 	public static CaesarPlugin getDefault() {
-		if(selectionListener){
-			plugin.getWorkbench().getActiveWorkbenchWindow().getSelectionService().addSelectionListener(plugin);
-			selectionListener=false;
+		if (selectionListener) {
+			plugin.getWorkbench().getActiveWorkbenchWindow()
+					.getSelectionService().addSelectionListener(plugin);
+			selectionListener = false;
 		}
 		return plugin;
 	}
@@ -270,9 +271,12 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 	}
 
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if (part instanceof CaesarEditor) {
-			CJDTConfigSettings.disableAnalyzeAnnotations();
-		} else if (part instanceof CompilationUnitEditor)
-			CJDTConfigSettings.enableAnalyzeAnnotations();
+		if (CaesarJPreferences.isCAESARAutoSwitch()) {
+			if (part instanceof CaesarEditor) {
+				CJDTConfigSettings.disableAnalyzeAnnotations();
+			} else if (part instanceof CompilationUnitEditor) {
+				CJDTConfigSettings.enableAnalyzeAnnotations();
+			}
+		}
 	}
 }
