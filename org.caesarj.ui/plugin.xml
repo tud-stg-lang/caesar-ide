@@ -154,12 +154,13 @@
          id="editor.caesareditor"
          point="org.eclipse.ui.editors">
       <editor
-            name="CaesarEditor"
-            icon="icons/sample.gif"
-            extensions="java"
-            contributorClass="org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditorActionContributor"
             class="org.caesarj.ui.editor.CaesarEditor"
-            id="org.caesar.j.ui.editor.CaesarEditor">
+            icon="icons/sample.gif"
+            default="true"
+            contributorClass="org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditorActionContributor"
+            name="CaesarEditor"
+            id="org.caesar.j.ui.editor.CaesarEditor"
+            extensions="java">
       </editor>
    </extension>
    <extension
@@ -210,8 +211,9 @@
 	<extension
       point="org.eclipse.ui.perspectives">
    <perspective
-         name="CaesarJDT Perspective"
+         icon="icons/sample.gif"
          class="org.caesarj.ui.perspective.CaesarPerspective"
+         name="CaesarJDT Perspective"
          id="org.caesarj.ui.perspective.CaesarPerspective">
    </perspective>
 </extension>

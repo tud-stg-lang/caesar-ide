@@ -9,19 +9,29 @@ package org.caesarj.ui.perspective;
  * Code or samples provided herein are provided without warranty of any kind.
  */
  
+import org.apache.log4j.Logger;
+import org.caesarj.ui.CaesarPlugin;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.jdt.ui.IPackagesViewPart;
+import org.eclipse.jdt.ui.JavaUI;
 
 /**
  * Creates a perspective using views, perspective shortcuts and wizard shortcuts.
  */
 public class CaesarPerspective implements IPerspectiveFactory {
-	public static final String ID_CAESAROUTLINE = "org.caesarj.ui.editor.CaesarOutlineView";
-	public static final String ID_EDUWIZARD =
-		"com.ibm.lab.soln.dialogs.wizard.Basic";
-	public static final String ID_EDU_JAVA_PERSPECTIVE =
-		"org.eclipse.jdt.ui.JavaHierarchyPerspective";
+	//public static final String ID_CAESAROUTLINE = "org.caesarj.ui.editor.CaesarOutlineView";
+	//public static final String ID_EDUWIZARD =
+		//"com.ibm.lab.soln.dialogs.wizard.Basic";
+	//public static final String ID_EDU_JAVA_PERSPECTIVE =
+		//"org.eclipse.jdt.ui.JavaHierarchyPerspective";
+	private static Logger log = Logger.getLogger(CaesarPerspective.class);
+
 	/**
 	 * Constructor for CaesarPerspective
 	 */
@@ -44,9 +54,9 @@ public class CaesarPerspective implements IPerspectiveFactory {
 		// Top left: Resource Navigator view and Bookmarks view placeholder
 		IFolderLayout topLeft =
 			layout.createFolder("topLeft", IPageLayout.LEFT, 0.25f, editorArea);
-		topLeft.addView(IPageLayout.ID_RES_NAV);
+		//topLeft.addView(IPageLayout.ID_RES_NAV);
+		topLeft.addView(JavaUI.ID_PACKAGES);
 		topLeft.addPlaceholder(IPageLayout.ID_BOOKMARKS);
-
 		// Bottom left: Outline view and Property Sheet view
 		IFolderLayout bottomLeft =
 			layout.createFolder(
@@ -57,9 +67,20 @@ public class CaesarPerspective implements IPerspectiveFactory {
 		bottomLeft.addView(IPageLayout.ID_OUTLINE);
 		bottomLeft.addView(IPageLayout.ID_PROP_SHEET);
 
-		// Bottom right: EDU view lab
-		//layout.addView(ID_CAESAROUTLINE, IPageLayout.TOP, 0.66f, editorArea);
 		layout.setEditorAreaVisible(true);
+		IWorkbenchWindow w = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (w == null)
+			return;
+		
+		
+		IWorkbenchPage[] page = w.getPages();
+		if (page == null)
+			return;
+		IViewPart viewPart = page[0].findView(JavaUI.ID_PACKAGES);
+		if (viewPart==null)
+			return;
+		IPackagesViewPart packageView = (IPackagesViewPart)viewPart;
+		log.debug("PackageView found: '"+packageView+"'!");
 		//layout.addNewWizardShortcut(ID_EDUWIZARD);
 		//layout.addPerspectiveShortcut(ID_EDU_JAVA_PERSPECTIVE);
 	}
