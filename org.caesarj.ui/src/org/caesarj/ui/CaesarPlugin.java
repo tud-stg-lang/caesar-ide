@@ -67,6 +67,16 @@ public class CaesarPlugin extends AbstractUIPlugin {
 			resourceBundle = null;
 		}
 	}
+	/* So sollte es richtig sein ... Plugin startet dann blos nicht.
+	public CaesarPlugin() {
+		super();
+		plugin = this;
+		try {
+			resourceBundle = ResourceBundle.getBundle("caesar.CaesarPluginResources");
+		} catch (MissingResourceException x) {
+			resourceBundle = null;
+		}
+	}*/
 
 	/**
 	 * Returns the shared instance.

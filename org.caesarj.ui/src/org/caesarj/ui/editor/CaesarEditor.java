@@ -39,11 +39,13 @@ public class CaesarEditor extends CompilationUnitEditor {
         super();
         log.debug("Initializing CaesarJ Editor.");
         try {
+        	
         	CaesarTextTools textTools =
         		CaesarPlugin.getDefault().getCaesarTextTools();
-        	JavaSourceViewerConfiguration svConfig = 
-        		new JavaSourceViewerConfiguration(textTools, this);  
 
+        	JavaSourceViewerConfiguration svConfig = 
+        		new JavaSourceViewerConfiguration(textTools.getColorManager(),CaesarPlugin.getDefault().getPreferenceStore(), this,"Hmm");
+        		//Changed was deprecated new JavaSourceViewerConfiguration(textTools, this);  
         	setSourceViewerConfiguration(svConfig);
         	log.debug("CaesarJ Editor Initialized.");
         }

@@ -346,7 +346,6 @@ public class CaesarOutlineView extends ContentOutlinePage {
 			for (Iterator it = node.getChildren().iterator(); it.hasNext() && res == null;) {
 				res = getInput((StructureNode) it.next());
 			}
-
 			return res;
 		}
 	}

@@ -16,7 +16,6 @@ public class CaesarTextTools extends JavaTextTools {
 
     public CaesarTextTools(IPreferenceStore ips) {
         super(ips);
-
         codeScanner = new CaesarCodeScanner(getColorManager(), ips);
     } 
 
@@ -32,7 +31,7 @@ public class CaesarTextTools extends JavaTextTools {
 
     public boolean affectsBehavior(PropertyChangeEvent event) {
         return
-            codeScanner.affectsBehavior(event); // Changed was depricatied||
+            codeScanner.affectsBehavior(event); // Changed was deprecated||
             //super.affectsBehavior(event);
     }
 
@@ -45,7 +44,7 @@ public class CaesarTextTools extends JavaTextTools {
     protected void adaptToPreferenceChange(PropertyChangeEvent event) {
         if (codeScanner.affectsBehavior(event))
             codeScanner.adaptToPreferenceChange(event);
-        
-        super.adaptToPreferenceChange(event);
+        	//      Changed was deprecated||
+       		//super.adaptToPreferenceChange(event);
     }
 }
