@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -67,6 +68,8 @@ public class Builder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map args,
 			IProgressMonitor progressMonitor) {
 		try {
+		    JavaCore.getClasspathVariable(CaesarPlugin.CAESAR_HOME);
+		    
 			lastBuiltProject = getProject();
 			if (!allBuildedProjects.contains(lastBuiltProject))
 				allBuildedProjects.add(lastBuiltProject);
