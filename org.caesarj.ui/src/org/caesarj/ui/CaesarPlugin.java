@@ -21,8 +21,12 @@ import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.activities.ActivityManagerEvent;
+import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -37,7 +41,7 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 
 	public static final String CAESAR_RUNTIME_LIB = "caesar-runtime.jar", //$NON-NLS-1$
 			ASPECTJ_RUNTIME_LIB = "aspectjrt.jar", //$NON-NLS-1$
-			CAESAR_COMPILER_LIB = "caesar-compiler.jar", BCEL_LIB = "bcel.jar";  //$NON-NLS-1$//$NON-NLS-2$
+			CAESAR_COMPILER_LIB = "caesar-compiler.jar", BCEL_LIB = "bcel.jar"; //$NON-NLS-1$//$NON-NLS-2$
 
 	public static final String VERSION = "0.1.2"; //$NON-NLS-1$
 
@@ -104,7 +108,6 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 		} catch (MissingResourceException x) {
 			this.resourceBundle = null;
 		}
-		
 		if (selectionListener) {
 			plugin.getWorkbench().getActiveWorkbenchWindow()
 					.getSelectionService().addSelectionListener(plugin);
@@ -265,4 +268,5 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 			}
 		}
 	}
+
 }

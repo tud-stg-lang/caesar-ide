@@ -18,6 +18,7 @@ import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.CaesarPluginImages;
 import org.caesarj.ui.model.AdviceDeclarationNode;
 import org.caesarj.ui.model.CaesarProgramElementNode;
+import org.caesarj.ui.model.ConstructorDeclarationNode;
 import org.caesarj.ui.model.PackageNode;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -50,7 +51,6 @@ import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 public class CaesarOutlineView extends ContentOutlinePage {
 
 	static HashMap categoryMap;
-
 
 	Object imports;
 
@@ -216,13 +216,20 @@ public class CaesarOutlineView extends ContentOutlinePage {
 				Iterator it = node.getRelations().iterator();
 				while (it.hasNext()) {
 					Object te = it.next();
-					if (!(te instanceof AdviceDeclarationNode))
+					if (!(te instanceof AdviceDeclarationNode)) {
 						vec.add(te);
+					}
 				}
 			}
 			StructureNode node = (StructureNode) parentElement;
-			for (Iterator it = node.getChildren().iterator(); it.hasNext();)
-				vec.add(it.next());
+			for (Iterator it = node.getChildren().iterator(); it.hasNext();) {
+				Object te = it.next();
+				if (te instanceof ConstructorDeclarationNode
+						&& ((ConstructorDeclarationNode) te).getBytecodeName()
+								.indexOf("_Impl") != -1)
+					continue;
+				vec.add(te);
+			}
 			return vec.toArray();
 		}
 

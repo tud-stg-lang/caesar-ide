@@ -6,6 +6,8 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -55,7 +57,6 @@ public class CaesarEditor extends CompilationUnitEditor {
 			JavaSourceViewerConfiguration svConfig = new CaesarSourceViewerConfiguration(
 					textTools, this, store);
 			setSourceViewerConfiguration(svConfig);
-
 			log.debug("CaesarJ Editor Initialized."); //$NON-NLS-1$
 		} catch (Exception e) {
 			log.error("Initalizing CaesarJ Editor.", e); //$NON-NLS-1$
