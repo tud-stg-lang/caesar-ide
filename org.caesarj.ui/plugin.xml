@@ -26,6 +26,9 @@
       <library name="cj-rmic.jar">
          <export name="*"/>
       </library>
+      <library name="log4j-1.2.8.jar">
+         <export name="*"/>
+      </library>
    </runtime>
               
    <requires>
