@@ -2,7 +2,7 @@
 The following two sections describe the installation of the \caesarj ~eclipse plugin. Two scenarios are possible: clean installation and updating an existing installation.
 \subsection{Clean Installation} 
 
-The \cjdt ~is installed using the Eclipse Update Manager. We recommend you to use Eclipse 3.x.
+The \cjdt ~is installed by using the Eclipse Update Manager. We recommend you to use Eclipse 3.x.
 \subsubsection{Using A Proxy Server} 
 If you need to use a proxy server to access the internet, the first thing
 to do is to configure the proxy preference details, so that the update manager can contact the
@@ -17,14 +17,13 @@ to do is to configure the proxy preference details, so that the update manager c
 
 \subsubsection{Installing via Update Manager} 
 Create an update site bookmark for the \cjdt ~update site, and start the install procedure.
-% Ob man das brauch? \label{sec:In Eclipse 3.0}
-From the help menu, select \markedtext{Software Updates} $\rightarrow$ \markedtext{Find and Install}. Select \markedtext{Search for new features to install} and click \markedtext{Next}.
-Click \markedtext{Add Update Site} and enter the name \markedtext{\caesarj ~update site} and the folowing URL:  
+From the help menu, select \markedtext{Software Updates} $\rightarrow$ \markedtext{Find and Install}. Then select \markedtext{Search for new features to install} and click \markedtext{Next}.
+Afterwards click \markedtext{Add Update Site} and enter the name \markedtext{\caesarj ~update site} and the following URL:  
 \begin{center}
 \href{http://cage.st.informatik.tu-darmstadt.de/caesar/updatesite/0.3.1}{http://cage.st.informatik.tu-darmstadt.de/caesar/updatesite/0.3.1}
 \end{center}
 Click \markedtext{OK}.
-Fully expand the appearing \cjdt ~update site node and select \markedtext{\caesarj}. Click
+Fully expand the appearing \cjdt ~update site node and select \markedtext{\caesarj}. Pick
 \markedtext{Next}. Select \markedtext{org.caesarj.feature} as shown in figure \ref{fig:installpage30} and click \markedtext{Next}.\\
 
 \begin{figure*}[htbp]
@@ -37,12 +36,12 @@ Fully expand the appearing \cjdt ~update site node and select \markedtext{\caesa
 Accept the \markedtext{license agreement} and proceed to the installation.
 
 \subsection{Updating an Existing Installation}
-Proceed as for a clean install, except that the \cjdt ~update site bookmark should already
-exist. All you need to do, is to expand the bookmark node and go on. If the version you have
-installed is the same as the version on the update site (or more recent even),
-then you will not be presented with any installing options.
+Proceed as as in section clean install, except that in this case the \cjdt ~update site bookmark is already
+existing. You only need to expand the bookmark node and go on. If the version you have
+installed is the same as the version on the update site (or even more recent),
+then you will not be confronted by any installing options.
 
-\subsection{Is Everything OK?} 
+\subsection{Has the Installation been successful?} 
 Restart the Eclipse workbench. Try to open a new perspective by clicking \markedtext{Window} $\rightarrow$ \markedtext{Open Perspective}. Pick \markedtext{other} and select \markedtext{CaesarJ Perspective} in the upcoming list.
 When the perspective opens successfully, the installation of your \cjdt ~works fine.
 %\begin{figure}[htbp]
