@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: Builder.java,v 1.26 2005-03-04 09:28:19 thiago Exp $
+ * $Id: Builder.java,v 1.27 2005-03-09 14:29:09 thiago Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -219,7 +219,7 @@ public class Builder extends IncrementalProjectBuilder {
 	}
 	
 	/**
-	 * Gets an folder and removes all files recursivelly
+	 * Gets an folder and removes all class files recursivelly
 	 * 
 	 * @param output The absolute path to a folder.
 	 */
@@ -230,7 +230,7 @@ public class Builder extends IncrementalProjectBuilder {
 	}
 	
 	/**
-	 * Removes all the files, including directories
+	 * Removes all the files that terminate in .class
 	 * 
 	 * @param files
 	 * @throws CoreException
@@ -245,8 +245,9 @@ public class Builder extends IncrementalProjectBuilder {
 				if (f.isDirectory()) {
 					cleanFolder(f.listFiles());
 				}
-				// Remove the file
-				f.delete();
+				// Remove the file if it is a class file
+				if (f.getName().indexOf(".class") >= 0)
+					f.delete();
 			}
 		}
 	}

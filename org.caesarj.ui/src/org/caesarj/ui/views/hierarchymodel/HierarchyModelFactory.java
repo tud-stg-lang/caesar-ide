@@ -260,7 +260,7 @@ public class HierarchyModelFactory {
 			// Get the nested classes
 			String[] nestedClasses = info.getNestedClasses();
 			
-			// Sort the nested classes to be sure they appear in alfabetical order (string compare) 
+			// Sort the nested classes to be sure they appear in alphabetical order (string compare) 
 			Arrays.sort(nestedClasses);
 			
 			if (nestedClasses.length > 0) {
