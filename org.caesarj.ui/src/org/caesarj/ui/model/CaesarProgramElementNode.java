@@ -136,7 +136,10 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 			this.removeChild(sNode);
 		}
 		super.addChild(sNode);
+		IEditorPart part;
+		
 	}
+	
 
 	public Image getImage() {
 		ImageDescriptor img;
@@ -153,7 +156,7 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 			default :
 				img = DEFAULT;
 		}
-		return new CaesarElementImageDescriptor(img, this, BIG_SIZE).createImage();
+		return new CaesarElementImageDescriptor(img, this, BIG_SIZE, false).createImage();
 	}
 
 	public List getRelations() {
@@ -162,39 +165,21 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 			Object node = it.next();
 			if (node instanceof RelationNode) {
 				Object[] nodes = ((RelationNode) node).getChildren().toArray();
-				HashMap args = new HashMap();
-				String message = ((RelationNode) node).getName().toUpperCase() + ": ";
+				String message = ((RelationNode) node).getName().toUpperCase()+":\n\n";
 				LinkNode lNode[] = new LinkNode[nodes.length];
-				String tempString, className, adviceName;
-				for (int i = 0; i < nodes.length; i++) {
+				for (int i = 0; i < nodes.length; i++){
 					lNode[i] = (LinkNode) nodes[i];
-					try {
-						tempString = lNode[i].toLongString();
-					} catch (Exception e) {
-						continue;
-					}
-					tempString = tempString.substring(tempString.lastIndexOf(']') + 1);
-					try{
-						className = tempString.substring(0, tempString.lastIndexOf(':'));
-						adviceName =
-												tempString.substring(
-													tempString.lastIndexOf(':') + 2,
-													tempString.length() - 1);
-						message += "!" + adviceName + ":" + className + "!  ";
-						args.put(AdviceMarker.ID, "AdviceLink");
-					}catch (Exception e){
-						message += "!" +tempString.substring(1,tempString.length()-1)+"()!  ";
-						args.put(AdviceMarker.ID, "MethodeLink");
-					}
-				}
+					message += lNode[i].getName() + "\n";}
 				ISourceLocation src = this.getSourceLocation();
 				IResource resource =
 					ProjectProperties.findResource(
 						src.getSourceFile().getAbsolutePath(),
 						Builder.getLastBuildTarget());
+				HashMap args = new HashMap();
 				args.put(IMarker.LINE_NUMBER, new Integer(this.getSourceLocation().getLine()));
 				args.put(IMarker.MESSAGE, message);
-				args.put(AdviceMarker.LINKS, lNode);
+				//args.put(AdviceMarker.LINKS, lNode);
+				//args.put(AdviceMarker.ID,"1");
 				try {
 					new AdviceMarker(resource, args);
 				} catch (CoreException e) {

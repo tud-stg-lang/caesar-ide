@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
 <plugin
    id="org.caesarj"
    name="Caesar Plug-in"
@@ -8,30 +9,103 @@
 
    <runtime>
       <library name="caesar.jar"/>
-      <library name="caesar-compiler.jar"/>
-      <library name="caesar-runtime.jar"/>
-      <library name="aspectjtools.jar"/>
-      <library name="aspectjrt.jar"/>
-      <library name="bcel.jar"/>
-      <library name="java-getopt-1.0.9.jar"/>
-      <library name="log4j-1.2.8.jar"/>
-      <library name="cjbuildtools.jar"/>
+      <library name="caesar-compiler.jar">
+         <export name="*"/>
+      </library>
+      <library name="caesar-runtime.jar">
+         <export name="*"/>
+      </library>
+      <library name="aspectjtools.jar">
+         <export name="*"/>
+      </library>
+      <library name="aspectjrt.jar">
+         <export name="*"/>
+      </library>
+      <library name="bcel.jar">
+         <export name="*"/>
+      </library>
+      <library name="java-getopt-1.0.9.jar">
+         <export name="*"/>
+      </library>
+      <library name="log4j-1.2.8.jar">
+         <export name="*"/>
+      </library>
    </runtime>
    <requires>
-      <import plugin="org.eclipse.search" export="true"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.core.runtime" export="true"/>
       <import plugin="org.eclipse.core.resources" export="true"/>
       <import plugin="org.eclipse.ui" export="true"/>
       <import plugin="org.eclipse.jdt.ui" export="true"/>
-      <import plugin="org.eclipse.debug.core" export="true"/>
       <import plugin="org.eclipse.jdt.core" export="true"/>
-      <import plugin="org.eclipse.pde.core" export="true"/>
-      <import plugin="org.eclipse.pde.runtime" export="true"/>
-      <import plugin="org.eclipse.pde" export="true"/>
-      <import plugin="org.eclipse.debug.ui" export="true"/>
-      <import plugin="org.eclipse.jdt.debug.ui" export="true"/>
       <import plugin="org.eclipse.swt" export="true"/>
-      <import plugin="org.eclipse.jdt.launching" export="true"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.help"/>
+      <import plugin="org.eclipse.help.base"/>
+      <import plugin="org.eclipse.jface.text"/>
+      <import plugin="org.eclipse.text"/>
+      <import plugin="org.eclipse.ui.editors"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.ui.views"/>
+      <import plugin="org.apache.ant"/>
+      <import plugin="org.apache.lucene"/>
+      <import plugin="org.eclipse.ant.core"/>
+      <import plugin="org.eclipse.ant.ui"/>
+      <import plugin="org.eclipse.compare"/>
+      <import plugin="org.eclipse.core.boot"/>
+      <import plugin="org.eclipse.core.expressions"/>
+      <import plugin="org.eclipse.core.variables"/>
+      <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.debug.ui"/>
+      <import plugin="org.eclipse.help.appserver"/>
+      <import plugin="org.eclipse.help.ide"/>
+      <import plugin="org.eclipse.help.ui"/>
+      <import plugin="org.eclipse.help.webapp"/>
+      <import plugin="org.eclipse.jdt"/>
+      <import plugin="org.eclipse.jdt.debug"/>
+      <import plugin="org.eclipse.jdt.debug.ui"/>
+      <import plugin="org.eclipse.jdt.doc.isv"/>
+      <import plugin="org.eclipse.jdt.doc.user"/>
+      <import plugin="org.eclipse.jdt.junit"/>
+      <import plugin="org.eclipse.jdt.junit.runtime"/>
+      <import plugin="org.eclipse.jdt.launching"/>
+      <import plugin="org.eclipse.jdt.source"/>
+      <import plugin="org.eclipse.ltk.core.refactoring"/>
+      <import plugin="org.eclipse.ltk.ui.refactoring"/>
+      <import plugin="org.eclipse.osgi.services"/>
+      <import plugin="org.eclipse.osgi.util"/>
+      <import plugin="org.eclipse.pde"/>
+      <import plugin="org.eclipse.pde.build"/>
+      <import plugin="org.eclipse.pde.core"/>
+      <import plugin="org.eclipse.pde.doc.user"/>
+      <import plugin="org.eclipse.pde.junit.runtime"/>
+      <import plugin="org.eclipse.pde.runtime"/>
+      <import plugin="org.eclipse.pde.source"/>
+      <import plugin="org.eclipse.pde.ui"/>
+      <import plugin="org.eclipse.platform"/>
+      <import plugin="org.eclipse.platform.doc.isv"/>
+      <import plugin="org.eclipse.platform.doc.user"/>
+      <import plugin="org.eclipse.platform.source"/>
+      <import plugin="org.eclipse.sdk"/>
+      <import plugin="org.eclipse.search"/>
+      <import plugin="org.eclipse.team.core"/>
+      <import plugin="org.eclipse.team.cvs.core"/>
+      <import plugin="org.eclipse.team.cvs.ssh"/>
+      <import plugin="org.eclipse.team.cvs.ssh2"/>
+      <import plugin="org.eclipse.team.cvs.ui"/>
+      <import plugin="org.eclipse.team.ui"/>
+      <import plugin="org.eclipse.tomcat"/>
+      <import plugin="org.eclipse.ui.cheatsheets"/>
+      <import plugin="org.eclipse.ui.console"/>
+      <import plugin="org.eclipse.ui.externaltools"/>
+      <import plugin="org.eclipse.ui.forms"/>
+      <import plugin="org.eclipse.ui.internal.r21presentation"/>
+      <import plugin="org.eclipse.ui.intro"/>
+      <import plugin="org.eclipse.ui.workbench.texteditor"/>
+      <import plugin="org.eclipse.update.core"/>
+      <import plugin="org.eclipse.update.scheduler"/>
+      <import plugin="org.eclipse.update.ui"/>
+      <import plugin="org.junit"/>
    </requires>
 
 
@@ -79,11 +153,11 @@
          point="org.eclipse.ui.editors">
       <editor
             name="CaesarEditor"
-            icon="icons/jdt/jcu_obj.gif"
+            icon="icons/sample.gif"
             extensions="java"
             contributorClass="org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditorActionContributor"
             class="org.caesarj.ui.editor.CaesarEditor"
-            id="CompilationUnitEditor">
+            id="org.caesar.j.ui.editor.CaesarEditor">
       </editor>
    </extension>
    <extension
@@ -95,40 +169,30 @@
    </extension>
    <extension
          id="advicemarker"
-         name="AdviceMarker"
+         name="%adviceMarker"
          point="org.eclipse.core.resources.markers">
-      <super type="org.eclipse.core.resources.textmarker"/>
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
       <persistent
             value="true">
       </persistent>
       <attribute
-            name="org.caesarj.links">
+            name="message">
       </attribute>
       <attribute
-            name="org.caesarj.adviceid">
+            name="line">
+      </attribute>
+      <attribute
+            name="flags">
       </attribute>
    </extension>
    <extension
-         point="org.eclipse.ui.markerImageProviders">
+         point="org.eclipse.ide.markerImageProviders">
       <imageprovider
             markertype="org.caesarj.advicemarker"
             icon="icons/joinPoint.gif"
-            id="org.eclipse.ui.adviceMarkerProvider">
+            id="org.eclipse.ui.searchMarkerProvider.adviceMarkerProvider">
       </imageprovider>
    </extension>
-   <!--extension
-         point="org.eclipse.ui.markerResolution">
-      <markerResolutionGenerator
-            markerType="org.caesarj.advicemarker"
-            class="org.caesarj.ui.marker.AdviceMarkerResolutionGenerator">
-      </markerResolutionGenerator>
-   </extension>
-	<extension point="org.eclipse.ui.markerHelp">
-		<markerHelp markerType="org.caesarj.advicemarker" helpContextId="org.caesarj.marker_example1_context">
-			<attribute name="org.caesarj.advicemarker" value="AdviceLink"/>
-		</markerHelp>
-		<markerHelp markerType="org.caesarj.advicemarker" helpContextId="org.caesarj.marker_example2_context">
-			<attribute name="org.caesarj.advicemarker" value="MethodeLink"/>
-		</markerHelp>
-	</extension-->
 </plugin>
