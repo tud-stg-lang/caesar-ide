@@ -14,12 +14,14 @@ import org.aspectj.asm.StructureModelManager;
 import org.aspectj.asm.StructureNode;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.JFormalParameter;
+import org.caesarj.compiler.types.CType;
 import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.CaesarPluginImages;
 import org.caesarj.ui.model.AdviceDeclarationNode;
 import org.caesarj.ui.model.AspectNode;
 import org.caesarj.ui.model.CaesarProgramElementNode;
 import org.caesarj.ui.model.ClassNode;
+import org.caesarj.ui.model.CodeNode;
 import org.caesarj.ui.model.ConstructorDeclarationNode;
 import org.caesarj.ui.model.FieldNode;
 import org.caesarj.ui.model.ImportCaesarProgramElementNode;
@@ -109,48 +111,71 @@ public class CaesarOutlineView extends ContentOutlinePage {
 			String label = "ERROR";
 			try {
 				label = super.getText(element);
-				label = label.substring(label.lastIndexOf("]") + 2);
 				if (element instanceof StructureNode) {
 					StructureNode node = (StructureNode) element;
 					if (element instanceof MethodDeclarationNode) {
 						MethodDeclarationNode mNode = (MethodDeclarationNode) element;
+						label = label.substring(label.lastIndexOf("]") + 2);
 						label += "(";
 						JFormalParameter[] para = mNode.getMethodDeclaration().getArgs();
 						int paraSize = para.length;
-						for(int i= 0; i < paraSize;i++){
-							label += para[i];
-							if (i< paraSize-1)
+						for (int i = 0; i < paraSize; i++) {
+							String arg = para[i].getType().toString();
+							label += arg.substring(arg.lastIndexOf('.') + 1);
+							if (i < paraSize - 1)
 								label += ", ";
 						}
 						label += ") : ";
-						//TODO returntyp
+						CType type = mNode.getReturnTyp();
+						if (type == null) {
+							label += "no statement";
+						} else if (type.toString().compareTo("") == 0)
+							label += "void";
+						else
+							label
+								+= type.toString().substring(type.toString().lastIndexOf('.') + 1);
 					} else if (node instanceof ConstructorDeclarationNode) {
 						ConstructorDeclarationNode cNode = (ConstructorDeclarationNode) element;
+						label = label.substring(label.lastIndexOf("]") + 2);
 						label += "(";
-						signature = cNode.getBytecodeSignature();
-						if (signature != null) {
-							signature = signature.substring(1);
-							while (signature.compareTo("") != 0) {
-								label += this.getArgument();
-								if (signature.charAt(0) != ')')
-									label += ", ";
-								else
-									break;
-							}
+						JFormalParameter[] para = cNode.getConstructorDeclaration().getArgs();
+						int paraSize = para.length;
+						for (int i = 0; i < paraSize; i++) {
+							label += para[i];
+							if (i < paraSize - 1)
+								label += ", ";
 						}
 						label += ")";
-					}
-					if (element instanceof ImportCaesarProgramElementNode) {
+					} else if (node instanceof FieldNode) {
+						FieldNode fNode = (FieldNode) element;
+						label = label.substring(label.lastIndexOf("]") + 2);
+						label += " : " + fNode.getShortType();
+					} else if (element instanceof ImportCaesarProgramElementNode) {
 						ImportCaesarProgramElementNode iNode =
 							(ImportCaesarProgramElementNode) element;
+						label = label.substring(label.lastIndexOf("]") + 2);
 						label = label.replace('/', '.');
+					} else if (element instanceof ClassNode) {
+						label = label.substring(label.lastIndexOf("]") + 2);
+					} else if (element instanceof AspectNode) {
+						label = label.substring(label.lastIndexOf("]") + 2);
+					} else if (element instanceof LinkNode) {
+						LinkNode lNode = (LinkNode) node;
+						Object elem = lNode.getProgramElementNode();
+						if (elem instanceof MethodDeclarationNode)
+							return this.getText(elem);
+						else
+							label = label.substring(label.lastIndexOf("]") + 2);
+					} else if (element instanceof AdviceDeclarationNode) {
+						label = label.substring(label.lastIndexOf("]") + 2);
+					} else if (element instanceof PackageNode) {
+						label = label.substring(label.lastIndexOf("]") + 2);
+					} else if (element instanceof CodeNode) {
+						label = label.substring(label.lastIndexOf("]") + 2);
 					}
 				}
 			} catch (NullPointerException e) {
-				logger.error(
-					"Nullpointer in Methoden Signature(ByteSign null? Sollte nicht sein.",
-					e);
-				//TODO Nullpointer in Bytecode-Signature.
+				logger.error("Sollte es nicht geben!", e);
 			}
 			return label;
 		}
@@ -316,18 +341,17 @@ public class CaesarOutlineView extends ContentOutlinePage {
 								0,
 								BIG_SIZE)
 								.createImage();
-					} else if (node.getKind().compareTo("decBodyElement") == 0) {
+					} else if (
+						node instanceof CodeNode
+							|| node.getKind().compareTo("decBodyElement") == 0) {
 						return new JavaElementImageDescriptor(
-							CaesarPluginImages.DESC_ERROR,
+							CaesarPluginImages.DESC_CODE,
 							0,
 							BIG_SIZE)
 							.createImage();
 					} else if (node instanceof LinkNode) {
-						return new JavaElementImageDescriptor(
-							CaesarPluginImages.DESC_ASPECT,
-							0,
-							BIG_SIZE)
-							.createImage();
+						LinkNode lNode = (LinkNode) node;
+						return this.getImage(lNode.getProgramElementNode());
 					} else if (node instanceof PackageNode) {
 						return new JavaElementImageDescriptor(
 							CaesarPluginImages.DESC_OUT_PACKAGE,

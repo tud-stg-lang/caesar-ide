@@ -32,7 +32,7 @@ public class StructureModelDump {
 		if (node instanceof ProgramElementNode) {
 			ProgramElementNode peNode = (ProgramElementNode) node;
 			out.print(
-				" '" + peNode.getBytecodeName() + "' '" + peNode.getBytecodeSignature() + peNode.getAccessibility()+":"+peNode.getDeclaringType()+":"+":"+peNode.getModifiers()+":"+peNode.getPackageName()+ "'");
+				" '" + peNode.getBytecodeName() + "' '" + peNode.getBytecodeSignature() + peNode.getAccessibility()+"'");
 
 			out.println();
 

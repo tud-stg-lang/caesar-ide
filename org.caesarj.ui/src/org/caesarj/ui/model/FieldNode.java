@@ -5,6 +5,7 @@ import java.util.List;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.JClassImport;
 import org.caesarj.compiler.ast.JPackageImport;
+import org.caesarj.compiler.types.CType;
 
 /**
  * @author Shadow
@@ -14,6 +15,8 @@ import org.caesarj.compiler.ast.JPackageImport;
  */
 public class FieldNode extends CaesarProgramElementNode {
 
+	private CType type;
+	
 	/**
 	 * @param signature
 	 * @param kind
@@ -35,10 +38,12 @@ public class FieldNode extends CaesarProgramElementNode {
 		String signature,
 		Kind kind,
 		ISourceLocation sourceLocation,
+		CType type,
 		int modifiers,
 		String formalComment,
 		List children) {
 		super(signature, kind, sourceLocation, modifiers, formalComment, children);
+		this.type=type;
 	}
 
 	/**
@@ -76,6 +81,11 @@ public class FieldNode extends CaesarProgramElementNode {
 	 */
 	public int compareTo(Object o) throws ClassCastException {
 		return super.compareTo(o);
+	}
+	
+	public String getShortType(){
+		String typDef = this.type.toString();
+		return typDef.substring(typDef.lastIndexOf('.')+1);
 	}
 
 }

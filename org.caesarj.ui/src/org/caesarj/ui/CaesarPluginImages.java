@@ -19,8 +19,6 @@ public class CaesarPluginImages {
 	private static final int NAME_PREFIX_LENGTH = NAME_PREFIX.length();
 
 	private static URL fgIconBaseURL = null;
-	
-	
 
 	// Determine display depth. If depth > 4 then we use high color images. Otherwise low color
 	// images are used
@@ -70,6 +68,7 @@ public class CaesarPluginImages {
 		NAME_PREFIX + "innerinterface_private_obj.gif";
 	public static final String IMG_INNERINTERFACE_DEFAULT =
 		NAME_PREFIX + "innerinterface_default_obj.gif";
+	public static final String IMG_CODE = NAME_PREFIX + "code.gif";
 
 	public static final String IMG_ERROR = NAME_PREFIX + "error.gif";
 	public static final String IMG_ADVICE = NAME_PREFIX + "advice.gif";
@@ -80,29 +79,39 @@ public class CaesarPluginImages {
 	public static final String IMG_IMPORTS = NAME_PREFIX + "imp_obj.gif";
 
 	public static final ImageDescriptor DESC_MISC_PUBLIC = createManaged(IMG_MISC_PUBLIC);
-	public static final ImageDescriptor DESC_MISC_PROTECTED = createManaged( IMG_MISC_PROTECTED);
+	public static final ImageDescriptor DESC_MISC_PROTECTED = createManaged(IMG_MISC_PROTECTED);
 	public static final ImageDescriptor DESC_MISC_PRIVATE = createManaged(IMG_MISC_PRIVATE);
 	public static final ImageDescriptor DESC_MISC_DEFAULT = createManaged(IMG_MISC_DEFAULT);
 
 	public static final ImageDescriptor DESC_FIELD_PUBLIC = createManaged(IMG_FIELD_PUBLIC);
-	public static final ImageDescriptor DESC_FIELD_PROTECTED =createManaged(IMG_FIELD_PROTECTED);
+	public static final ImageDescriptor DESC_FIELD_PROTECTED = createManaged(IMG_FIELD_PROTECTED);
 	public static final ImageDescriptor DESC_FIELD_PRIVATE = createManaged(IMG_FIELD_PRIVATE);
 	public static final ImageDescriptor DESC_FIELD_DEFAULT = createManaged(IMG_FIELD_DEFAULT);
 
 	public static final ImageDescriptor DESC_OBJS_CLASS = createManaged(IMG_OBJS_CLASS);
-	public static final ImageDescriptor DESC_OBJS_CLASS_DEFAULT =createManaged(IMG_OBJS_CLASS_DEFAULT);
+	public static final ImageDescriptor DESC_OBJS_CLASS_DEFAULT =
+		createManaged(IMG_OBJS_CLASS_DEFAULT);
 	public static final ImageDescriptor DESC_OBJS_INTERFACE = createManaged(IMG_OBJS_INTERFACE);
-	public static final ImageDescriptor DESC_OBJS_INTERFACE_DEFAULT =createManaged(IMG_OBJS_INTERFACE_DEFAULT);
+	public static final ImageDescriptor DESC_OBJS_INTERFACE_DEFAULT =
+		createManaged(IMG_OBJS_INTERFACE_DEFAULT);
 
-	public static final ImageDescriptor DESC_INNERCLASS_PUBLIC =createManaged(IMG_INNERCLASS_PUBLIC);
-	public static final ImageDescriptor DESC_INNERCLASS_PROTECTED =createManaged(IMG_INNERCLASS_PROTECTED);
-	public static final ImageDescriptor DESC_INNERCLASS_PRIVATE =createManaged(IMG_INNERCLASS_PRIVATE);
-	public static final ImageDescriptor DESC_INNERCLASS_DEFAULT =createManaged(IMG_INNERCLASS_DEFAULT);
+	public static final ImageDescriptor DESC_INNERCLASS_PUBLIC =
+		createManaged(IMG_INNERCLASS_PUBLIC);
+	public static final ImageDescriptor DESC_INNERCLASS_PROTECTED =
+		createManaged(IMG_INNERCLASS_PROTECTED);
+	public static final ImageDescriptor DESC_INNERCLASS_PRIVATE =
+		createManaged(IMG_INNERCLASS_PRIVATE);
+	public static final ImageDescriptor DESC_INNERCLASS_DEFAULT =
+		createManaged(IMG_INNERCLASS_DEFAULT);
 
-	public static final ImageDescriptor DESC_INNERINTERFACE_PUBLIC =createManaged(IMG_INNERINTERFACE_PUBLIC);
-	public static final ImageDescriptor DESC_INNERINTERFACE_PROTECTED =createManaged(IMG_INNERINTERFACE_PROTECTED);
-	public static final ImageDescriptor DESC_INNERINTERFACE_PRIVATE =createManaged(IMG_INNERINTERFACE_PRIVATE);
-	public static final ImageDescriptor DESC_INNERINTERFACE_DEFAULT =createManaged(IMG_INNERINTERFACE_DEFAULT);
+	public static final ImageDescriptor DESC_INNERINTERFACE_PUBLIC =
+		createManaged(IMG_INNERINTERFACE_PUBLIC);
+	public static final ImageDescriptor DESC_INNERINTERFACE_PROTECTED =
+		createManaged(IMG_INNERINTERFACE_PROTECTED);
+	public static final ImageDescriptor DESC_INNERINTERFACE_PRIVATE =
+		createManaged(IMG_INNERINTERFACE_PRIVATE);
+	public static final ImageDescriptor DESC_INNERINTERFACE_DEFAULT =
+		createManaged(IMG_INNERINTERFACE_DEFAULT);
 
 	public static final ImageDescriptor DESC_ERROR = createManaged(IMG_ERROR);
 	public static final ImageDescriptor DESC_ADVICE = createManaged(IMG_ADVICE);
@@ -111,7 +120,8 @@ public class CaesarPluginImages {
 	public static final ImageDescriptor DESC_OUT_PACKAGE = createManaged(IMG_OUT_PACKAGE);
 	public static final ImageDescriptor DESC_OUT_IMPORTS = createManaged(IMG_OUT_IMPORTS);
 	public static final ImageDescriptor DESC_IMPORTS = createManaged(IMG_IMPORTS);
-
+	public static final ImageDescriptor DESC_CODE = createManaged(IMG_CODE);
+	
 	/**
 	 * Returns the image managed under the given key in this registry.
 	 * 
@@ -125,8 +135,7 @@ public class CaesarPluginImages {
 	private static ImageDescriptor createManaged(String name) {
 		try {
 			ImageDescriptor result =
-				ImageDescriptor.createFromURL(
-					makeIconFileURL(name.substring(NAME_PREFIX_LENGTH)));
+				ImageDescriptor.createFromURL(makeIconFileURL(name.substring(NAME_PREFIX_LENGTH)));
 			if (fgAvoidSWTErrorMap == null) {
 				fgAvoidSWTErrorMap = new HashMap();
 			}
@@ -171,8 +180,7 @@ public class CaesarPluginImages {
 		StringBuffer buffer = new StringBuffer(name);
 		return new URL(fgIconBaseURL, buffer.toString());
 	}
-	
-//	---- Helper methods to access icons on the file system --------------------------------------
 
-	  
+	//	---- Helper methods to access icons on the file system --------------------------------------
+
 }

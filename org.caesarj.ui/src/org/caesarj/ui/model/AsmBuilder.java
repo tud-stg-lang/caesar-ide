@@ -212,7 +212,7 @@ public class AsmBuilder extends CaesarVisitor {
 			//StructureModelManager.INSTANCE.getStructureModel().getFileMap().put(
 			getStructureModel().addToFileMap(file.getCanonicalPath(), cuNode);
 		} catch (IOException ioe) {
-			logger.error("WAS weiß ich den watt hier pasiere töt",ioe);
+			logger.error("WAS weiß ich den watt hier pasiere töt", ioe);
 		}
 
 		asmStack.push(cuNode);
@@ -271,7 +271,7 @@ public class AsmBuilder extends CaesarVisitor {
 		classStack.push(self);
 
 		CaesarProgramElementNode peNode;
-		
+
 		if (CModifier.contains(modifiers, CModifier.ACC_CROSSCUTTING)) {
 			peNode =
 				new AspectNode(
@@ -467,6 +467,7 @@ public class AsmBuilder extends CaesarVisitor {
 				ident,
 				CaesarProgramElementNode.Kind.FIELD,
 				makeLocation(self.getTokenReference()),
+				type,
 				modifiers,
 				"",
 				new ArrayList());
