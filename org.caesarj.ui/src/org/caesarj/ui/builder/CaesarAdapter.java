@@ -34,6 +34,8 @@ public final class CaesarAdapter extends Main {
 
 	private StructureModel model;
 
+	static Logger logger = Logger.getLogger(CaesarAdapter.class);
+
 	public CaesarAdapter(String projectLocation) {
 		super(projectLocation, null);
 	}
@@ -51,10 +53,9 @@ public final class CaesarAdapter extends Main {
 			String outputPath, Collection errors,
 			IProgressMonitor progressMonitor) {
 
-		model = StructureModelManager.INSTANCE
-				.getStructureModel();
+		model = StructureModelManager.INSTANCE.getStructureModel();
 		AsmBuilder.preBuild(model);
-		boolean success;
+		boolean success = false;
 		String args[] = new String[sourceFiles.size() + 4];
 
 		int i = 0;
@@ -76,9 +77,13 @@ public final class CaesarAdapter extends Main {
 		this.progressMonitor.beginTask("compiling source files", sourceFiles
 				.size() + 1);
 
-		success = run(args);
+		try {
+			success = run(args);
+		} catch (RuntimeException e) {
+			logger.warn("Fehler im Compiler", e);
+		}
 		AsmBuilder.postBuild(model);
-		 _dumpModel("final structure model", model); 
+		_dumpModel("final structure model", model);
 		return success;
 	}
 
@@ -106,11 +111,11 @@ public final class CaesarAdapter extends Main {
 
 		//_dumpModel("structure model before weave", model);
 		// add model to world and WEAVE
-//		CaesarBcelWorld world = CaesarBcelWorld.getInstance();
-//		world.setModel(model);
-		
+		//		CaesarBcelWorld world = CaesarBcelWorld.getInstance();
+		//		world.setModel(model);
+
 		super.weaveClasses();
-		
+
 		progressMonitor.worked(1);
 	}
 
