@@ -192,10 +192,12 @@ public class AsmAdaptor {
 			if (member.getName().equals(node.getBytecodeName()) &&
 				member.getSignature().equals(node.getBytecodeSignature()))
 			{
+                System.out.println("~~~ we've found what we've searched for");
 				return node;
 			}
 		}
 	 	// if we can't find the member, we'll just put it in the class
+        System.out.println("~~~ node not found, returning class node");
 		return classNode;
 	}
 
