@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: StandardNode.java,v 1.7 2005-01-24 16:57:22 aracic Exp $
+ * $Id: StandardNode.java,v 1.8 2005-03-09 00:05:13 thiago Exp $
  */
 
 package org.caesarj.ui.views.hierarchymodel;
@@ -55,7 +55,7 @@ public class StandardNode extends RootNode {
 	public StandardNode (String kind, String name, StandardNode parent, AdditionalCaesarTypeInformation info)
 	{
 		this(kind, name, parent);
-		this.setTypeInforamtion(info);
+		this.setTypeInformation(info);
 	}
 	
 	/* (non-Javadoc)
@@ -99,6 +99,19 @@ public class StandardNode extends RootNode {
 	{
 		log.debug("Removeing Node '"+node.getName()+"' from Node '"+this.getName()+"'.");
 		children.remove(node);
+	}
+	
+	/**
+	 * Sets the further binding variable, according to
+	 * the increment and implicit states
+	 *
+	 */
+	public void checkFurtherBinding() {
+		
+		String[] increment = typeInformation.getIncrementFor();
+		boolean isImplicit = typeInformation.isImplicit();
+		
+		setFurtherBinding(! isImplicit && increment.length !=0);
 	}
 
 }

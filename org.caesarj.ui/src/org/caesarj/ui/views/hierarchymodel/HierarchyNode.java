@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: HierarchyNode.java,v 1.8 2005-01-24 16:57:22 aracic Exp $
+ * $Id: HierarchyNode.java,v 1.9 2005-03-09 00:05:13 thiago Exp $
  */
 
 package org.caesarj.ui.views.hierarchymodel;
@@ -42,7 +42,7 @@ public class HierarchyNode implements ISelection {
 		name = "no name specified";
 		additionalName = "no name specified";
 		additionalNameSet = false;
-		typeInforamtion = null;
+		typeInformation = null;
 		ll = new ListenerList();
 	}
 	
@@ -55,12 +55,12 @@ public class HierarchyNode implements ISelection {
 		return null;
 	}
 	
-	private String kind;
-	private String name;
-	private String additionalName;
-	private boolean additionalNameSet;
-	private ListenerList ll;
-	private AdditionalCaesarTypeInformation typeInforamtion;
+	protected String kind;
+	protected String name;
+	protected String additionalName;
+	protected boolean additionalNameSet;
+	protected ListenerList ll;
+	protected AdditionalCaesarTypeInformation typeInformation;
 	protected static Logger log = Logger.getLogger(HierarchyNode.class);
 	public static String CLASS = new String("class");
 	public static String PARENTS = new String("parents");
@@ -71,7 +71,7 @@ public class HierarchyNode implements ISelection {
 	public static String NESTEDSUPER = new String("nestedsuper");
 	public static String ROOT = new String("rootnode");
 	public static String LIST = new String("list");
-	public static String EMTY = new String("emty");
+	public static String EMPTY = new String("empty");
 	
 	public boolean hasAdditionalName()
 	{
@@ -148,12 +148,11 @@ public class HierarchyNode implements ISelection {
 	public boolean isEmpty() {
 		return false;
 	}
-	public AdditionalCaesarTypeInformation getTypeInforamtion() {
-		return typeInforamtion;
+	public AdditionalCaesarTypeInformation getTypeInformation() {
+		return typeInformation;
 	}
-	public void setTypeInforamtion(
-			AdditionalCaesarTypeInformation typeInforamtion) {
-		this.typeInforamtion = typeInforamtion;
+	public void setTypeInformation(AdditionalCaesarTypeInformation typeInformation) {
+		this.typeInformation = typeInformation;
 	}
 	public String getAdditionalName() {
 		return additionalName;

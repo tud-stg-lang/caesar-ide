@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: LinearNode.java,v 1.3 2005-01-24 16:57:22 aracic Exp $
+ * $Id: LinearNode.java,v 1.4 2005-03-09 00:05:13 thiago Exp $
  */
 
 package org.caesarj.ui.views.hierarchymodel;
@@ -35,6 +35,11 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  */
 public class LinearNode extends HierarchyNode {
 
+	public LinearNode(String kind) {
+		super();
+		this.setKind(kind);
+	}
+	
 	/**
 	 * 
 	 */

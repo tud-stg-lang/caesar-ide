@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: RootNode.java,v 1.6 2005-01-24 16:57:22 aracic Exp $
+ * $Id: RootNode.java,v 1.7 2005-03-09 00:05:13 thiago Exp $
  */
 
 package org.caesarj.ui.views.hierarchymodel;
@@ -46,6 +46,11 @@ public class RootNode extends HierarchyNode {
 		this.furtherBinding = furtherBinding;
 	}
 	
+	public RootNode(String kind) {
+		super();
+		this.setKind(kind);
+	}
+	
 	public RootNode()
 	{
 		super();
@@ -64,6 +69,9 @@ public class RootNode extends HierarchyNode {
 	 */
 	public Object[] getChildren() {
 		return children.toArray();
+	}
+	public Vector getChildrenVector() {
+		return children;
 	}
 	public void addChild(HierarchyNode child) {
 		propertyChange(new PropertyChangeEvent(this, "new child", null, child));
