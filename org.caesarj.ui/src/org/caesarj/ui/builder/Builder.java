@@ -32,6 +32,8 @@ import org.eclipse.swt.widgets.Display;
  * 
  * @author Ivica Aracic
  */
+
+//TODO leeres Project geht nicht sollte abgefangen werden
 public class Builder extends IncrementalProjectBuilder {
 
 	private static Logger log = Logger.getLogger(Builder.class);

@@ -24,6 +24,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.texteditor.MarkerUtilities;
 /**
  * Adds additional methods needed in NodeEliminator Visitor.
  * @see isToRemove
@@ -198,11 +199,9 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 						Builder.getLastBuildTarget());
 				args.put(IMarker.LINE_NUMBER, new Integer(this.getSourceLocation().getLine()));
 				args.put(IMarker.MESSAGE, message);
-				//args.put(AdviceMarker.LINKS, lNode);
-				//args.put(AdviceMarker.ID,"1");
 				args.put(AdviceMarker.LINKS, lNode);
 				try {
-					new AdviceMarker(resource, args);
+					MarkerUtilities.createMarker(resource,args,AdviceMarker.ADVICEMARKER);
 				} catch (CoreException e) {
 					logger.error("FEHLER BEIM MARKER ERZEUGEN", e);
 				}
