@@ -9,19 +9,18 @@ import org.caesarj.kjc.JClassDeclaration;
 import org.caesarj.kjc.JFormalParameter;
 
 /**
- * ...
+ * Adds additional methods for AdviceDeclarations.
+ * Needed by SignatureResolver Visitor in order to resolve the advice signature.
  * 
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
 public class AdviceDeclarationNode extends CaesarProgramElementNode {
 
     private AdviceDeclaration adviceDeclaration;
-    //private JClassDeclaration classDeclaration;
     private String classFullQualifiedName;
 
 	public AdviceDeclarationNode(
         AdviceDeclaration adviceDeclaration,        
-        //JClassDeclaration classDeclaration,
         String classFullQualifiedName,
 		String signature,
 		Kind kind,
@@ -40,7 +39,6 @@ public class AdviceDeclarationNode extends CaesarProgramElementNode {
         );
         
         this.adviceDeclaration = adviceDeclaration;
-        //this.classDeclaration = classDeclaration;
         this.classFullQualifiedName = classFullQualifiedName;
 	}
 
@@ -51,11 +49,5 @@ public class AdviceDeclarationNode extends CaesarProgramElementNode {
     public String getClassFullQualifiedName() {
         return classFullQualifiedName;
     }
-    
-    /*
-    public JClassDeclaration getClassDeclaration() {
-        return classDeclaration;
-    }
-    */
-    
+
 }

@@ -20,6 +20,11 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
+/**
+ * Central Class for obtaining all relevant data from an IProject Object
+ * 
+ * @author Ivica Aracic <ivica.aracic@bytelords.de>
+ */
 public class ProjectProperties {
     
     private String outputPath;

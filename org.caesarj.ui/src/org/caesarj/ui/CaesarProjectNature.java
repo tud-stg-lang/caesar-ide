@@ -11,10 +11,10 @@ import org.eclipse.ui.IWorkbench;
 
 
 /**
- * @author ia
- *
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * CaesarProjectNature, responsible for adding caesar specific build commands
+ * and project behaviour.
+ * 
+ * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
 public class CaesarProjectNature implements IProjectNature {
     
@@ -139,9 +139,6 @@ public class CaesarProjectNature implements IProjectNature {
 
     /**
      * Remove a build command from a list
-     */
-        /**
-     * Insert a new build command at the front of an existing list
      */
     private ICommand[] remove( ICommand[] sourceCommands, String builderId ) {
         ICommand[] newCommands = new ICommand[ sourceCommands.length - 1 ];

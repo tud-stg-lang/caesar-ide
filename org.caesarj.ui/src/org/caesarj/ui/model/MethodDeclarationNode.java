@@ -10,7 +10,7 @@ import org.caesarj.kjc.JClassDeclaration;
 import org.caesarj.kjc.JFormalParameter;
 
 /**
- * ...
+ * ASM Node marking a method declaration.
  * 
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */

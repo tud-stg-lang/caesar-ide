@@ -6,7 +6,7 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
- * CaesarTextTools
+ * CaesarTextTools, replaces JavaTextTools code scanner with CaesarCodeScanner.
  * 
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */

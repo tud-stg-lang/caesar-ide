@@ -7,7 +7,8 @@ import java.util.List;
 import org.aspectj.asm.StructureNode;
 
 /**
- * Dumps StructureModel using PrintStream
+ * Collects nodes for elimination.
+ * Calling eliminateNodes method removes them from the ASM.
  * 
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */

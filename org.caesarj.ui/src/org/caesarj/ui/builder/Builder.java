@@ -24,9 +24,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * Builder
+ * Builder is responsible for building a caesar project.
+ * Steps done are:
+ * 1) setupModel
+ * 2) collect project properties
+ * 3) calling caesar compiler
+ * 4) displaying errors
+ * 5) refreshing the outlineview
  * 
- * TODO [build] incremental build?
+ * TODO [build] Incremental build? Is there support in caesarj compiler?
  * 
  * @author Ivica Aracic
  */

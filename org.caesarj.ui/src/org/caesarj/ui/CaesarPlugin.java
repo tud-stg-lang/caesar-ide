@@ -21,6 +21,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /** 
  * The main plugin class to be used in the desktop.
+ * 
+ * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
 public class CaesarPlugin extends AbstractUIPlugin {
 	// singleton
@@ -108,10 +110,10 @@ public class CaesarPlugin extends AbstractUIPlugin {
         return caesarTextTools;
     }
 
-    /*
-     * find the path to the caesar runtime libarary
+    /**
+     * Find the path to the caesar runtime libarary.
      */
-    public String getAspectjrtClasspath() {
+    public String getRuntimeClasspath() {
         if (aspectjrtPath == null) {
             StringBuffer cpath = new StringBuffer();
 

@@ -8,7 +8,7 @@ import org.caesarj.compiler.ast.AdviceDeclaration;
 import org.caesarj.kjc.JClassDeclaration;
 
 /**
- * ...
+ * ASM Node marking inner advice Registry classes.
  * 
  * @author ivica
  */

@@ -38,6 +38,8 @@ import org.caesarj.kjc.JPhylum;
 import org.caesarj.kjc.JTypeDeclaration;
 
 /**
+ * Main Class for generating ASM for caesar source code.
+ * 
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
 public class AsmBuilder extends CaesarVisitor {

@@ -31,7 +31,9 @@ import org.caesarj.ui.model.StructureModelDump;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * CaesarCompiler
+ * This is the main interface to caesar compiler.
+ * Responsible for invoking the compiler, displaying progress,
+ * building the structure model and collecting compiler errors.
  * 
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */

@@ -5,7 +5,7 @@ import java.util.Iterator;
 import org.aspectj.asm.StructureNode;
 
 /**
- * ...
+ * Generic ASM Visitor
  * 
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */

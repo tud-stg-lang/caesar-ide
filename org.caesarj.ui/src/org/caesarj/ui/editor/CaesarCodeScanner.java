@@ -21,7 +21,9 @@ import org.eclipse.jface.text.rules.WordRule;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
- * Caesar code scanner 
+ * Caesar code scanner responsible for syntax highlighting
+ * 
+ * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
 public final class CaesarCodeScanner extends AbstractJavaScanner {
 

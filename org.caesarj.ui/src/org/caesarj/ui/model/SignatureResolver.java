@@ -13,7 +13,8 @@ import org.caesarj.kjc.CType;
 import org.caesarj.kjc.JClassDeclaration;
 
 /**
- * Dumps StructureModel using PrintStream
+ * Traverses the abstract model tree and resolves the signatures
+ * for advices and methods
  * 
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
@@ -68,10 +69,9 @@ public class SignatureResolver extends AbstractAsmVisitor {
     }
     
   
-    /*
-     * HELPER METHODS
+    /**
+     * generates and sets bytecode signature
      */
-  
     private void setBytecodeSignature(
         CaesarProgramElementNode peNode,
         String ident,

@@ -3,7 +3,7 @@ package org.caesarj.ui.builder;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * ...
+ * null device. does nothing.
  * 
  * @author ivica
  */

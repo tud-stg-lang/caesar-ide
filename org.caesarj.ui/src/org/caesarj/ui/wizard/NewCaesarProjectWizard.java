@@ -25,7 +25,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 /**
  * NewCaesarProjectWizard
  * 
- * @author Ivica Aracic
+ * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
 public class    NewCaesarProjectWizard
 extends         BasicNewProjectResourceWizard
@@ -125,7 +125,7 @@ implements      IExecutableExtension {
             String ajrtPath =
                 CaesarPlugin.
                 getDefault().            
-                getAspectjrtClasspath();
+                getRuntimeClasspath();
 
             IClasspathEntry[] originalCP = javaProject.getRawClasspath();
             IClasspathEntry ajrtCP =
