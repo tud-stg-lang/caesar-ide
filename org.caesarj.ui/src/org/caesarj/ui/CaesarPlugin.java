@@ -1,22 +1,15 @@
 package org.caesarj.ui;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 
 import org.caesarj.ui.editor.CaesarEditor;
 import org.caesarj.ui.editor.CaesarTextTools;
 import org.caesarj.ui.preferences.CaesarJPreferences;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginRegistry;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -36,11 +29,9 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 	// singleton
 	private static CaesarPlugin plugin;
 
-	public static final String CAESAR_RUNTIME_LIB = "caesar-runtime.jar", //$NON-NLS-1$
-			ASPECTJ_RUNTIME_LIB = "aspectjrt.jar", //$NON-NLS-1$
-			CAESAR_COMPILER_LIB = "caesar-compiler.jar", BCEL_LIB = "bcel.jar"; //$NON-NLS-1$//$NON-NLS-2$
-
-	public static final String VERSION = "0.1.2"; //$NON-NLS-1$
+	public static final String 
+		CAESAR_RUNTIME_LIB = "caesar-runtime.jar",
+		ASPECTJ_RUNTIME_LIB = "aspectjrt.jar";
 
 	public static final String PLUGIN_ID = "org.caesarj"; //$NON-NLS-1$
 
@@ -51,6 +42,8 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 	public static final String ID_OUTLINE = PLUGIN_ID + ".caesaroutlineview"; //$NON-NLS-1$
 
 	public static final String ID_NATURE = PLUGIN_ID + ".caesarprojectnature"; //$NON-NLS-1$
+
+	public static final String CAESAR_HOME = "CAESAR_HOME";
 
 	private Display display = Display.getCurrent();
 
@@ -110,6 +103,10 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 					.getSelectionService().addSelectionListener(plugin);
 			selectionListener = false;
 		}
+		
+		// load here the environment variable
+		// otherwise error when importing a project which contains this variable in .classpath
+	    JavaCore.getClasspathVariable(CAESAR_HOME);
 	}
 
 	/*
@@ -186,22 +183,12 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 		return this.aspectjRuntimePath;
 	}
 
-	public String getCaesarCompilerClasspath() {
-		if (this.caesarCompilerPath == null) {
-			this.caesarCompilerPath = getPathFor(CAESAR_COMPILER_LIB);
-		}
-
-		return this.caesarCompilerPath;
+	private String getPathFor(String lib) {
+		String res = CAESAR_HOME + "/" + lib;
+		return res;
 	}
-
-	public String getBcelClasspath() {
-		if (this.bcelPath == null) {
-			this.bcelPath = getPathFor(BCEL_LIB);
-		}
-
-		return this.bcelPath;
-	}
-
+	
+	/*
 	private String getPathFor(String lib) {
 		StringBuffer cpath = new StringBuffer();
 
@@ -255,6 +242,7 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 
 		return res;
 	}
+	*/
 
 	public void selectionChanged(IWorkbenchPart part, ISelection selectionArg) {
 		if (CaesarJPreferences.isCAESARAutoSwitch()) {
