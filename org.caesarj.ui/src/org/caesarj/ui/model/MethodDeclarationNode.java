@@ -6,6 +6,7 @@ import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.FjMethodDeclaration;
 import org.caesarj.compiler.ast.JClassDeclaration;
 import org.caesarj.compiler.ast.JFormalParameter;
+import org.caesarj.compiler.ast.JTypeDeclaration;
 import org.caesarj.compiler.types.CType;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 
@@ -17,11 +18,11 @@ import org.eclipse.jdt.internal.ui.JavaPluginImages;
 public class MethodDeclarationNode extends CaesarProgramElementNode {
 
 	private FjMethodDeclaration methodDeclaration;
-	private JClassDeclaration classDeclaration;
+	private JTypeDeclaration classDeclaration;
 	
 	public MethodDeclarationNode(
 		FjMethodDeclaration methodDeclaration,
-		JClassDeclaration classDeclaration,
+		JTypeDeclaration classDeclaration,
 		String signature,
 		Kind kind,
 		ISourceLocation sourceLocation,
@@ -39,9 +40,9 @@ public class MethodDeclarationNode extends CaesarProgramElementNode {
 
 	public CType getReturnTyp() {
 		try {
-			return this.methodDeclaration.getMethod().getReturnType();
+			return this.methodDeclaration.getReturnType();
 		} catch (NullPointerException e) {
-			//TODO Es fehlen Informationen die wahrscheinlich vom Compiler nicht richtig in die AST-Tree übernommen werden
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -76,7 +77,7 @@ public class MethodDeclarationNode extends CaesarProgramElementNode {
 		return label;
 	}
 
-	public JClassDeclaration getClassDeclaration() {
+	public JTypeDeclaration getClassDeclaration() {
 		return classDeclaration;
 	}
 	

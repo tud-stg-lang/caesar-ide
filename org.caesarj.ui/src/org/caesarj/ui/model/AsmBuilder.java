@@ -16,6 +16,7 @@ import org.aspectj.bridge.ISourceLocation;
 import org.aspectj.bridge.SourceLocation;
 import org.caesarj.compiler.ast.AdviceDeclaration;
 import org.caesarj.compiler.ast.BodyVisitor;
+import org.caesarj.compiler.ast.CciInterfaceDeclaration;
 import org.caesarj.compiler.ast.FjCleanClassDeclaration;
 import org.caesarj.compiler.ast.FjMethodDeclaration;
 import org.caesarj.compiler.ast.JBlock;
@@ -227,6 +228,12 @@ public class AsmBuilder extends BodyVisitor {
 
 		asmStack.pop();
 	}
+	
+	public void visitCciInterfaceDeclaration(CciInterfaceDeclaration arg0,
+			int arg1, String arg2, CReferenceType[] arg3, JPhylum[] arg4,
+			JMethodDeclaration[] arg5) {
+		visitInterfaceDeclaration(arg0, arg1, arg2, arg3, arg4, arg5);
+	}
 
 	/**
 	 * Interface visit method
@@ -249,6 +256,7 @@ public class AsmBuilder extends BodyVisitor {
 
 		getCurrentStructureNode().addChild(peNode);
 		asmStack.push(peNode);
+		classStack.push(self);
 
 		//FIELDS
 		JFieldDeclaration types[] = self.getFields();
@@ -257,10 +265,10 @@ public class AsmBuilder extends BodyVisitor {
 		}
 		
 		//TODO In methodenvisitor gibt es beim Aufruf einen Nullpointer!!!
-		/*METHODEN
+		//METHODEN
 		for (int i = 0; i < methods.length; i++) {
 			methods[i].accept(this);
-		}*/
+		}
 
 		JTypeDeclaration inners[] = self.getInners();
 		for (int i = 0; i < inners.length; i++) {
@@ -268,6 +276,7 @@ public class AsmBuilder extends BodyVisitor {
 		}
 
 		asmStack.pop();
+		classStack.pop();
 	}
 
 	/**
@@ -401,7 +410,7 @@ public class AsmBuilder extends BodyVisitor {
 			peNode =
 				new AdviceDeclarationNode(
 					advice,
-					((JClassDeclaration) classStack.peek()).getCClass().getQualifiedName(),
+					((JTypeDeclaration) classStack.peek()).getCClass().getQualifiedName(),
 					advice.getKind().wrappee().getName(),
 					CaesarProgramElementNode.Kind.ADVICE,
 					makeLocation(self.getTokenReference()),
@@ -411,7 +420,7 @@ public class AsmBuilder extends BodyVisitor {
 
 			if (CModifier
 				.contains(
-					((JClassDeclaration) classStack.peek()).getModifiers(),
+					((JTypeDeclaration) classStack.peek()).getModifiers(),
 					CModifier.ACC_DEPLOYED)) {
 				getCurrentStructureNode().addChild(peNode);
 			} else {
@@ -452,7 +461,7 @@ public class AsmBuilder extends BodyVisitor {
 			peNode =
 				new MethodDeclarationNode(
 					(FjMethodDeclaration) self,
-					((JClassDeclaration) classStack.peek()),
+					((JTypeDeclaration) classStack.peek()),
 					ident,
 					CaesarProgramElementNode.Kind.METHOD,
 					makeLocation(self.getTokenReference()),
