@@ -9,8 +9,6 @@ import java.util.List;
 import org.eclipse.core.internal.resources.Container;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -92,13 +90,14 @@ public class ProjectProperties {
         }
     }
     
-    public static IResource findResource(String fullPath, IProject p) {    
-        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();        
-        IPath rootPath = root.getLocation();
-        IPath path = new Path(fullPath);
-        if(rootPath.isPrefixOf(path)) {
+    public static IResource findResource(String fullPath, IProject p) {
+    	
+    	IPath projectPath= p.getLocation();
+		IPath path = new Path(fullPath);
+		
+        if (projectPath.isPrefixOf(path)) {
             // remove project location and project name segment
-            path = path.removeFirstSegments( rootPath.segmentCount()+1 );
+            path = path.removeFirstSegments(projectPath.segmentCount());
         }
         // find resource relative to project
         IResource ret = p.findMember(path);
