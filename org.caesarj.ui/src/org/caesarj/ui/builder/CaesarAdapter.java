@@ -9,7 +9,6 @@ import org.aspectj.asm.StructureModel;
 import org.aspectj.asm.StructureModelManager;
 import org.caesarj.compiler.KjcEnvironment;
 import org.caesarj.compiler.Main;
-import org.caesarj.compiler.aspectj.CaesarBcelWorld;
 import org.caesarj.compiler.ast.phylum.JCompilationUnit;
 import org.caesarj.ui.model.AsmBuilder;
 import org.caesarj.ui.model.StructureModelDump;
