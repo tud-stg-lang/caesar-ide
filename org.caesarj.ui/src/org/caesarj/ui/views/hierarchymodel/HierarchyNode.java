@@ -49,10 +49,10 @@ public class HierarchyNode implements ISelection {
 	public static String PARENTS = new String("parents");
 	public static String NESTED = new String("nested");
 	public static String SUPER = new String("super");
-	public static String NESTEDPARENTS = new String("nestedparents");
+	public static String NESTEDCLASSES = new String("nestedclasses");
+	public static String NESTEDSUB = new String("nestedsub");
 	public static String NESTEDSUPER = new String("nestedsuper");
 	public static String ROOT = new String("rootnode");
-	public static String INCREMENTCLASSES = new String("incrementclasses");
 	public static String LIST = new String("list");
 	public static String EMTY = new String("emty");
 	
@@ -142,7 +142,10 @@ public class HierarchyNode implements ISelection {
 		return additionalName;
 	}
 	public void setAdditionalName(String additionalName) {
-		this.additionalName = additionalName;
+		if (additionalNameSet)
+			this.additionalName = this.additionalName + " - " + additionalName;
+		else
+			this.additionalName = additionalName;
 		additionalNameSet = true;
 	}
 }

@@ -15,7 +15,9 @@ import org.caesarj.ui.views.hierarchymodel.IHierarchyPropertyChangeListener;
 import org.caesarj.ui.views.hierarchymodel.LinearNode;
 import org.caesarj.ui.views.hierarchymodel.RootNode;
 import org.caesarj.ui.views.hierarchymodel.StandardNode;
+import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
+import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitDocumentProvider;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -28,8 +30,12 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.ISelectionListener;
@@ -88,6 +94,8 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 			if (elementInArray(node.getName(),superClasses))
 			{
 				StandardNode subNode = new StandardNode(HierarchyNode.NESTEDSUB, nestedClasses[j], node, helpInfo);
+				if (helpInfo.isImplicit())
+					subNode.setAdditionalName("Implicid");
 				for (int k=0;superClasses.length>k;k++)
 				{
 					if (k==0)
@@ -176,9 +184,12 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 			classNode.setTypeInforamtion(info);
 			classNode.setParent(root);
 			root.addChild(classNode);
-			StandardNode parentNode = new StandardNode(HierarchyNode.PARENTS, "Super", classNode);
-								
 			String [] superClasses = info.getSuperClasses();
+			StandardNode parentNode = new StandardNode();
+			
+			if (superClasses.length>0)
+				parentNode = new StandardNode(HierarchyNode.PARENTS, "Super", classNode);								
+			
 			for (int i=0; superClasses.length>i; i++)
 			{
 				node = new StandardNode();
@@ -189,7 +200,13 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 			}
 			
 			String [] nestedClasses = info.getNestedClasses();
-						
+			
+			StandardNode nestedClassesNode = new StandardNode();
+			if (nestedClasses.length>0)
+				if (superView)
+					nestedClassesNode = new StandardNode(HierarchyNode.NESTEDCLASSES, "Contains (Super Hierarchy)", classNode);
+				else
+					nestedClassesNode = new StandardNode(HierarchyNode.NESTEDCLASSES, "Contains (Sub Hierarchy)", classNode);
 			
 			//new Implemtation 
 			for (int i=0; nestedClasses.length>i; i++)
@@ -202,7 +219,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 				node.setName(nestedClasses[i]);
 				if (nestedInfo.isImplicit())
 					node.setAdditionalName("Implicid");
-				node.setParent(classNode);
+				node.setParent(nestedClassesNode);
 				if (superView) //SuperView
 				{
 					node = findAllSuper(node);					
@@ -210,52 +227,10 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 				{
 					node = findAllSub(nestedClasses, node);					
 				}
-				classNode.addChild(node);
+				nestedClassesNode.addChild(node);
 							
 			}
-		
-			/* Old Implementation
-			for (int i=0; nestedClasses.length>i; i++)
-			{
-				node = new StandardNode();
-				node.setKind(HierarchyNode.NESTED);
-				node.setName(nestedClasses[i]);
-				node.setParent(classNode);
-				classNode.addChild(node);
-				String[] nestedIncrementClasses = nav.load(nestedClasses[i]).getAdditionalTypeInformation().getIncrementFor();
-				String[] nestedSuperClasses = nav.load(nestedClasses[i]).getAdditionalTypeInformation().getSuperClasses();
-				if (nav.load(nestedClasses[i]).getAdditionalTypeInformation().isImplicit())
-				{
-					node.setAdditionalName(nestedIncrementClasses[0]);
-				}
-				if (nestedIncrementClasses.length>0)
-				{
-					StandardNode subNode = new StandardNode(HierarchyNode.INCREMENTCLASSES, "Increment for", node);
-					node.addChild(subNode);
-					for (int j=0; nestedIncrementClasses.length>j; j++)
-					{
-						node = new StandardNode();
-						node.setKind(HierarchyNode.NESTEDSUPER);
-						node.setName(nestedIncrementClasses[j]);
-						node.setParent(subNode);
-						subNode.addChild(node);
-					}
-				}
-				if (nestedSuperClasses.length>0)
-				{
-					StandardNode subNode = new StandardNode(HierarchyNode.NESTEDSUPER, "Super", node);
-					node.addChild(subNode);
-					for (int j=0; nestedIncrementClasses.length>j; j++)
-					{
-						node = new StandardNode();
-						node.setKind(HierarchyNode.NESTEDSUPER);
-						node.setName(nestedSuperClasses[j]);
-						node.setParent(subNode);
-						subNode.addChild(node);
-					}
-				}
-			}*/
-			
+				
 			return root;
 		} 
 		  catch (NullPointerException e) {
@@ -354,13 +329,22 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		listViewer.setLabelProvider(lp);
 		refreshTree("");
 		
-		FillLayout layout = new FillLayout();
-		layout.type = SWT.VERTICAL;
-		layoutGroup.setLayout(layout);
-		topGroup.setLayout(layout);
-		buttomGroup.setLayout(layout);
+		FillLayout fillLayout = new FillLayout();
+		fillLayout.type = SWT.VERTICAL;
+		layoutGroup.setLayout(fillLayout);
+		topGroup.setLayout(fillLayout);
+		buttomGroup.setLayout(fillLayout);
 		
-		controlGroup.setLayout(layout);
+		RowLayout rowLayout = new RowLayout();
+		rowLayout.justify=true;
+				
+		controlGroup.setLayout(rowLayout);
+		
+		Button button = new Button(controlGroup, SWT.PUSH);
+
+		button.setText("Super/Sub Mode");
+		HierarchyMouseListener ml = new HierarchyMouseListener();
+		button.addMouseListener(ml);
 		
 		getViewSite().
 		getWorkbenchWindow().
@@ -492,8 +476,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 				)
 					return CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PUBLIC.createImage();
 				else if (0==node.getKind().compareTo(HierarchyNode.PARENTS)|
-						0==node.getKind().compareTo(HierarchyNode.NESTEDPARENTS)|
-						0==node.getKind().compareTo(HierarchyNode.INCREMENTCLASSES)
+						0==node.getKind().compareTo(HierarchyNode.NESTEDCLASSES)
 				)
 					return JavaPluginImages.DESC_OBJS_IMPCONT.createImage();
 				else
@@ -543,6 +526,35 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		
 	}
 	
+	
+	private class HierarchyMouseListener implements MouseListener
+	{
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseDoubleClick(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseDown(MouseEvent e) {
+			
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
+		 */
+		public void mouseUp(MouseEvent e) {
+			log.debug("Button Pressed!!!");
+			setSuperView(!isSuperView());
+			refresh();
+		}
+		
+	}
 	
 	private class HierarchySelectionChangedListener implements ISelectionChangedListener
 	{
@@ -609,30 +621,52 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		String path;
 		if (part instanceof CaesarEditor) {			
 			CaesarEditor editor = (CaesarEditor)part;
+
+			CompilationUnitDocumentProvider compilationUnitProvider = (CompilationUnitDocumentProvider)editor.getDocumentProvider();
+			// TODO Hier weiter machen
+			try
+			{
+				IJavaElement[] elements = compilationUnitProvider.getWorkingCopy(editor.getEditorInput()).getJavaModel().getChildren();
+				for (int i = 0; elements.length>i;i++)
+				{
+					log.debug("JAVAELEMENTS: "+elements[i].getElementName());
+				}
+			}
+			catch(Exception e)
+			{
+				
+			}
 			if (editor.getEditorInput() instanceof FileEditorInput) {
 				FileEditorInput input = (FileEditorInput) editor.getEditorInput();
 				//TODO noch nicht sicher, ob das gehen wird
+		
 				path = input.getFile().getProjectRelativePath().toString();
 				path = path.substring(0,path.indexOf(input.getFile().getFileExtension())-1);
+				
 				log.debug("Selection in Editor! \n\tFile: '"+editor.getEditorInput().getName()+"'.\n\tQualified name: "+path+"'");
+				qualifiedNameToActualFile = path;
 				refreshTree(path);
 			}
 	    
 		}		
 		//log.debug("Selection in Editor! Part: '"+part+"'.");
 	}
-
+		
+	private String qualifiedNameToActualFile = "";	
+	
 	public void refresh()
 	{
 		log.debug("Refresh!!!");
+		refreshTree(qualifiedNameToActualFile);
+		refreshList(qualifiedNameToActualFile);
 	}
 	
 	public void refreshTree(String path)
 	{
 		log.debug("Refreshing Hierarchy Tree for '"+path+"'!");
 		treeViewer.setInput(buildTreeModel(path));
-		treeViewer.expandAll();
-		//treeViewer.expandToLevel(3);
+		//treeViewer.expandAll();
+		treeViewer.expandToLevel(3);
 		refreshList(path);
 	}
 	
@@ -642,4 +676,10 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		listViewer.setInput(buildListModel(path));
 	}
 	
+	public boolean isSuperView() {
+		return superView;
+	}
+	public void setSuperView(boolean superView) {
+		this.superView = superView;
+	}
 }

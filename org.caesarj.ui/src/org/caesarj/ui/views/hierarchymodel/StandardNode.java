@@ -25,14 +25,15 @@ public class StandardNode extends RootNode {
 		super();
 	}
 	
-	public StandardNode (String kind, String name, HierarchyNode parent) {
+	public StandardNode (String kind, String name, StandardNode parent) {
 		super();
 		this.setKind(kind);
 		this.setName(name);
 		this.setParent(parent);
+		parent.addChild(this);
 	}
 
-	public StandardNode (String kind, String name, HierarchyNode parent, AdditionalCaesarTypeInformation info)
+	public StandardNode (String kind, String name, StandardNode parent, AdditionalCaesarTypeInformation info)
 	{
 		this(kind, name, parent);
 		this.setTypeInforamtion(info);
