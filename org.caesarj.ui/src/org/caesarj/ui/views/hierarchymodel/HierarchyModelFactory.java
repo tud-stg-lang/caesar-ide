@@ -24,6 +24,7 @@
 package org.caesarj.ui.views.hierarchymodel;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -258,7 +259,10 @@ public class HierarchyModelFactory {
 			
 			// Get the nested classes
 			String[] nestedClasses = info.getNestedClasses();
-
+			
+			// Sort the nested classes to be sure they appear in alfabetical order (string compare) 
+			Arrays.sort(nestedClasses);
+			
 			if (nestedClasses.length > 0) {
 				// If there is a super class, create the "contains icon"
 				StandardNode nestedNode;
