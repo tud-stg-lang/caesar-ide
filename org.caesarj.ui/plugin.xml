@@ -3,7 +3,7 @@
 <plugin
    id="org.caesarj"
    name="Caesar Plug-in"
-   version="0.4.0"
+   version="0.5.0"
    provider-name="TU Darmstadt"
    class="org.caesarj.ui.CaesarPlugin">
 
@@ -38,7 +38,6 @@
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.debug.ui"/>
       <import plugin="org.eclipse.help"/>
       <import plugin="org.eclipse.help.base"/>
@@ -56,7 +55,6 @@
       <import plugin="org.eclipse.ui.workbench"/>
       <import plugin="org.eclipse.ui.views"/>
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.apache.lucene"/>
    </requires>
 
 
