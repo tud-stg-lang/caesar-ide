@@ -134,9 +134,10 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 		return this.imports;
 	}
 
+	/*
 	public void addChild(StructureNode sNode) {
 		if (((ProgramElementNode) sNode).getProgramElementKind().equals(
-				ProgramElementNode.Kind.CODE)) {
+				ProgramElementNode.Kind.CODE)) {		    
 			ProgramElementNode pNode = (ProgramElementNode) sNode;
 			CodeNode cNode = new CodeNode(pNode.getSignature(),
 					ProgramElementNode.Kind.CODE, pNode.getSourceLocation(), 0,
@@ -146,6 +147,7 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 			super.addChild(sNode);
 		}
 	}
+	*/
 
 	public Image getImage() {
 		ImageDescriptor img;
