@@ -7,6 +7,7 @@ import java.util.Iterator;
 import org.apache.bcel.classfile.Attribute;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.Unknown;
+import org.aspectj.asm.StructureModel;
 import org.aspectj.asm.StructureModelManager;
 import org.aspectj.weaver.AjAttribute;
 import org.aspectj.weaver.ResolvedMember;
@@ -20,6 +21,7 @@ import org.caesarj.compiler.Main;
 import org.caesarj.compiler.PositionedError;
 import org.caesarj.kjc.JCompilationUnit;
 import org.caesarj.kjc.KjcEnvironment;
+import org.caesarj.ui.util.StructureModelDump;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -82,11 +84,11 @@ public final class CaesarAdapter extends Main {
         progressMonitor.subTask("compiling "+file.getName());        
         res = super.parseFile(file, env);
         progressMonitor.worked(1);
-        
+
                 
         // build aspectj structure model
         AsmBuilder.build(res, StructureModelManager.INSTANCE.getStructureModel());
-        
+                
         return res;
 	}
 
@@ -101,10 +103,41 @@ public final class CaesarAdapter extends Main {
         
         progressMonitor.subTask("weaving classes...");
         
+        StructureModel model = StructureModelManager.INSTANCE.getStructureModel();
+        
+        System.out.println("--- structure model before weave ---");
+        StructureModelDump modelDumpBeforeWeave = new StructureModelDump(model);            
+        modelDumpBeforeWeave.print();
+        
+        // add model to world
+        // TODO set structure model in CaesarBcelWorld
+        /*
+        CaesarBcelWorld world = CaesarBcelWorld.getInstance();
+        world.setModel(model);
+        */        
+                
 		super.weaveClasses(classFiles);
         
+        System.out.println("--- structure model after weave ---");
+        StructureModelDump modelDumpAfterWeave = new StructureModelDump(model);            
+        modelDumpAfterWeave.print();
+                
         progressMonitor.worked(1);
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     /*
@@ -129,7 +162,6 @@ public final class CaesarAdapter extends Main {
         }
                 
     }
-
 
     public void showClassAttributes(Attribute a) {
         
