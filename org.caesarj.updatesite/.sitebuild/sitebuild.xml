@@ -3,5 +3,5 @@
       autobuild="false"
       scrub-output="false"
       use-console="false">
-   <feature id="org.caesarj.feature" version="0.3.0"/>
+   <feature id="org.caesarj.feature" version="0.4.0"/>
 </site-build>
