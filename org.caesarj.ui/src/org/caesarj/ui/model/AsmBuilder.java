@@ -17,6 +17,9 @@ import org.aspectj.bridge.SourceLocation;
 import org.caesarj.classfile.ClassfileConstants2;
 import org.caesarj.compiler.ast.phylum.JCompilationUnit;
 import org.caesarj.compiler.ast.phylum.declaration.CjAdviceDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.CjAdviceMethodDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.CjDeploymentSupportClassDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.CjInterfaceDeclaration;
 import org.caesarj.compiler.ast.phylum.declaration.CjMixinInterfaceDeclaration;
 import org.caesarj.compiler.ast.phylum.declaration.CjPointcutDeclaration;
 import org.caesarj.compiler.ast.phylum.declaration.CjVirtualClassDeclaration;
@@ -51,6 +54,7 @@ public class AsmBuilder {
 
 	static Logger logger = Logger.getLogger(AsmBuilder.class);
 
+		
 	/**
 	 * initialize the model
 	 */
@@ -66,8 +70,7 @@ public class AsmBuilder {
 	 * resolve advice and method signatures before weaving
 	 */
 	public static void preWeave(StructureModel structureModel) {
-		SignatureResolver adviceNameVisitor = new SignatureResolver();
-		adviceNameVisitor.visit(structureModel.getRoot());
+		
 	}
 
 	/**
@@ -224,11 +227,20 @@ public class AsmBuilder {
 		this.classStack.pop();
 	}
 
-	// don't visit CjMixinInterfaceDeclaration (we have already all data from
-	// CjVirtualClassDeclaration)
-	public boolean visit(CjMixinInterfaceDeclaration self) {
-		return false;
-	}
+    // dont't visit mixin interface
+    public boolean visit(CjMixinInterfaceDeclaration self) {
+        return false;
+    }
+    
+    // dont't visit support ifcs
+    public boolean visit(CjInterfaceDeclaration self) {
+        return false;
+    }
+    
+    // don't visit registry class    
+    public boolean visit(CjDeploymentSupportClassDeclaration self) {        
+        return false;
+    }   
 
 	/*
 	 * CLASS DECLARATIONS
@@ -249,6 +261,12 @@ public class AsmBuilder {
 							.getTokenReference()), self.getModifiers(), "", //$NON-NLS-1$
 					new ArrayList());
 		} else if (self instanceof CjVirtualClassDeclaration) {
+		    
+		    if(self.getCClass().isImplicit()) {
+		        this.asmStack.push(null);
+		        return false;
+		    }
+		    
 			peNode = new CClassNode(self.getIdent(),
 					CaesarProgramElementNode.Kind.CLASS, makeLocation(self
 							.getTokenReference()), self.getModifiers(), "", //$NON-NLS-1$
@@ -282,6 +300,10 @@ public class AsmBuilder {
 				makeLocation(self.getTokenReference()), self.getModifiers(),
 				"", //$NON-NLS-1$
 				new ArrayList());
+		
+		peNode.setBytecodeName(self.getIdent());
+		peNode.setBytecodeSignature(self.getMethod().getSignature());
+		
 		getCurrentStructureNode().addChild(peNode);
 		return false;
 	}
@@ -290,12 +312,19 @@ public class AsmBuilder {
 	 * MethodDeclaration
 	 */
 	public boolean visit(JMethodDeclaration self) {
+	    
+	    if(self.getIdent().startsWith("$"))
+	        return false;
+	    
 		CaesarProgramElementNode peNode = new MethodDeclarationNode(self,
 				((JTypeDeclaration) this.classStack.peek()), self.getIdent(),
 				CaesarProgramElementNode.Kind.METHOD, makeLocation(self
 						.getTokenReference()), self.getModifiers(), "", //$NON-NLS-1$
 				new ArrayList());
 
+		peNode.setBytecodeName(self.getIdent());
+		peNode.setBytecodeSignature(self.getMethod().getSignature());
+		
 		if (self.getIdent().equals("main")) { //$NON-NLS-1$
 			peNode.setRunnable(true);
 		}
@@ -316,25 +345,27 @@ public class AsmBuilder {
 		return false;
 	}
 
-	public boolean visit(CjAdviceDeclaration advice) {
-		CaesarProgramElementNode peNode = new AdviceDeclarationNode(advice,
+	public boolean visit(CjAdviceMethodDeclaration self) {
+		CaesarProgramElementNode peNode = new AdviceDeclarationNode(
 				((JTypeDeclaration) this.classStack.peek()).getCClass()
-						.getQualifiedName(), advice.getKind().wrappee()
-						.getName(), CaesarProgramElementNode.Kind.ADVICE,
-				makeLocation(advice.getTokenReference()),
-				advice.getModifiers(), "", //$NON-NLS-1$
+						.getQualifiedName(), 
+						self.getAdvice().getKind().wrappee().getName(), 
+						CaesarProgramElementNode.Kind.ADVICE,
+				makeLocation(self.getTokenReference()),
+				self.getModifiers(), "", //$NON-NLS-1$
 				new ArrayList());
-		if (CModifier.contains(((JTypeDeclaration) this.classStack.peek())
-				.getModifiers(), ClassfileConstants2.ACC_DEPLOYED)) {
-			getCurrentStructureNode().addChild(peNode);
-		} else {
-			CaesarProgramElementNode registryNode = findChildByName(
+		
+		peNode.setBytecodeName(self.getIdent());
+		peNode.setBytecodeSignature(self.getMethod().getSignature());
+		
+		{
+		    CaesarProgramElementNode registryNode = findChildByName(
 					getCurrentStructureNode().getChildren(),
 					REGISTRY_CLASS_NAME);
 			if (registryNode == null) {
-				registryNode = new AspectRegistryNode("Registry", //$NON-NLS-1$
+				registryNode = new AspectRegistryNode(REGISTRY_CLASS_NAME, //$NON-NLS-1$
 						CaesarProgramElementNode.Kind.CLASS,
-						makeLocation(advice.getTokenReference()), advice
+						makeLocation(self.getTokenReference()), self
 								.getModifiers(), "", //$NON-NLS-1$
 						new ArrayList());
 				getCurrentStructureNode().addChild(registryNode);
@@ -344,10 +375,32 @@ public class AsmBuilder {
 		return false;
 	}
 
+	public boolean visit(CjAdviceDeclaration self) {
+		CaesarProgramElementNode peNode = new AdviceDeclarationNode(
+				((JTypeDeclaration) this.classStack.peek()).getCClass()
+						.getQualifiedName(), 
+						self.getKind().wrappee().getName(), 
+						CaesarProgramElementNode.Kind.ADVICE,
+				makeLocation(self.getTokenReference()),
+				self.getModifiers(), "", //$NON-NLS-1$
+				new ArrayList());
+		
+		peNode.setBytecodeName(self.getIdent());
+		peNode.setBytecodeSignature(self.getMethod().getSignature());
+		
+		getCurrentStructureNode().addChild(peNode);
+
+		return false;
+	}
+	
 	/**
 	 * FIELD
 	 */
 	public boolean visit(JFieldDeclaration self) {
+	    
+	    if(self.getVariable().getIdent().startsWith("$"))
+	        return false;
+	    
 		JVariableDefinition var = self.getVariable();
 		FieldNode peNode = new FieldNode(var.getIdent(),
 				CaesarProgramElementNode.Kind.FIELD, makeLocation(self
