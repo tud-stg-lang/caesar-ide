@@ -11,6 +11,7 @@ import org.aspectj.asm.StructureModelManager;
 import org.aspectj.asm.StructureNode;
 import org.caesarj.compiler.export.CClass;
 import org.caesarj.runtime.AdditionalCaesarTypeInformation;
+import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.CaesarPluginImages;
 import org.caesarj.ui.editor.CaesarEditor;
 import org.caesarj.ui.model.CClassNode;
@@ -26,6 +27,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -722,35 +724,18 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		String path;
-		try {
-			if ((part instanceof CaesarEditor)) {
-				CaesarEditor editor = (CaesarEditor) part;
-				ACTIVE_PROJECT = editor.getInputJavaElement().getJavaProject()
-						.getProject();
-				IJavaElement element = editor.getInputJavaElement();
-				FileEditorInput input = (FileEditorInput) editor
-						.getEditorInput();
-				StructureNode node = getInput(StructureModelManager.INSTANCE
-						.getStructureModel().getRoot(), input);
-
-				List listOfToplevelClasses = node.getChildren();
-				ArrayList listOfFullQualifiedNames = new ArrayList();
-				Object[] arrayOfFullQualifiedNames;
-				String help = "";
-				ListIterator iter = listOfToplevelClasses.listIterator();
-				for (int i = 0; iter.hasNext(); i++) {
-					CClassNode topLevelClass = (CClassNode) iter.next();
-					help = topLevelClass.getName();
-					help = help.substring(0, help.indexOf("_Impl"));
-					listOfFullQualifiedNames.add(topLevelClass.getPackageName()
-							+ "/" + help);
-				}
-
-				refreshTree(listOfFullQualifiedNames.toArray());
-			}
-		} catch (Exception e) {
-			log.debug("Could not locate the editors input for Hierarchy View.");
+		
+		int selectionLength = 0;
+		if (selection instanceof TextSelection) {
+			TextSelection textSelection = (TextSelection) selection;
+			selectionLength = textSelection.getLength();
+			
 		}
+
+		if ((part instanceof CaesarEditor)&&selectionLength==0) {				
+			refresh();
+		}
+	
 		/*
 		 * The old version if (editor.getEditorInput() instanceof
 		 * FileEditorInput) {
@@ -791,6 +776,35 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 
 	public void refresh() {
 		log.debug("Refresh!!!");
+		try {
+			if (CaesarPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor() instanceof CaesarEditor) {
+				CaesarEditor editor = (CaesarEditor) CaesarPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+				IJavaElement element = editor.getInputJavaElement();
+				
+				FileEditorInput input = (FileEditorInput) editor
+						.getEditorInput();
+				StructureNode node = getInput(StructureModelManager.INSTANCE
+						.getStructureModel().getRoot(), input);
+
+				List listOfToplevelClasses = node.getChildren();
+				ArrayList listOfFullQualifiedNames = new ArrayList();
+				Object[] arrayOfFullQualifiedNames;
+				String help = "";
+				ListIterator iter = listOfToplevelClasses.listIterator();
+				for (int i = 0; iter.hasNext(); i++) {
+					CClassNode topLevelClass = (CClassNode) iter.next();
+					help = topLevelClass.getName();
+					help = help.substring(0, help.indexOf("_Impl"));
+					listOfFullQualifiedNames.add(topLevelClass.getPackageName()
+							+ "/" + help);
+				}
+				qualifiedNameToActualClasses = listOfFullQualifiedNames.toArray();
+				ACTIVE_PROJECT = editor.getInputJavaElement().getJavaProject()
+				.getProject();
+			}
+		} catch (Exception e) {
+			log.debug("Refreshfehler: ");
+		}
 		refreshTree(qualifiedNameToActualClasses);
 	}
 
