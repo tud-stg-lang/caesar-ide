@@ -87,6 +87,8 @@ public final class CaesarAdapter extends Main {
 		return success;
 	}
 
+	
+	
 	protected JCompilationUnit parseFile(File file, KjcEnvironment env) {
 		if (this.progressMonitor.isCanceled()) {
 			return null;
@@ -97,10 +99,17 @@ public final class CaesarAdapter extends Main {
 		res = super.parseFile(file, env);
 		this.progressMonitor.worked(1);
 
-		AsmBuilder.build(res, this.model);
+		//AsmBuilder.build(res, this.model);
 
 		return res;
 	}
+	
+	protected void preWeaveProcessing(JCompilationUnit[] cu) {
+        for (int i = 0; i < cu.length; i++) {
+            AsmBuilder.build(cu[i], this.model);
+        }
+    }
+	
 
 	protected void weaveClasses() {
 		if (this.progressMonitor.isCanceled()) {
