@@ -7,9 +7,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.ui.IJavaHelpContextIds;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
-import org.eclipse.jdt.internal.ui.javaeditor.IJavaAnnotation;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.Position;
@@ -17,15 +15,16 @@ import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorExtension;
+import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.SelectMarkerRulerAction;
 
 public class CaesarSelectMarkerRulerAction extends SelectMarkerRulerAction {
-	
+
 	private ITextEditor fTextEditor;
+
 	private Position fPosition;
 
 	public CaesarSelectMarkerRulerAction(ResourceBundle bundle, String prefix,
@@ -33,7 +32,7 @@ public class CaesarSelectMarkerRulerAction extends SelectMarkerRulerAction {
 		super(bundle, prefix, editor, ruler);
 		fTextEditor = editor;
 		//WorkbenchHelp.setHelp(this,
-			//	IJavaHelpContextIds.JAVA_SELECT_MARKER_RULER_ACTION);
+		//	IJavaHelpContextIds.JAVA_SELECT_MARKER_RULER_ACTION);
 	}
 
 	public void run() {
@@ -76,22 +75,22 @@ public class CaesarSelectMarkerRulerAction extends SelectMarkerRulerAction {
 			return null;
 		}
 
-//		boolean hasAssistLightbulb = PreferenceConstants.getPreferenceStore()
-//				.getBoolean(
-//						PreferenceConstants.APPEARANCE_QUICKASSIST_LIGHTBULB);
+		//		boolean hasAssistLightbulb = PreferenceConstants.getPreferenceStore()
+		//				.getBoolean(
+		//						PreferenceConstants.APPEARANCE_QUICKASSIST_LIGHTBULB);
 		Annotation assistAnnotation = null;
 
 		Iterator iter = model.getAnnotationIterator();
 		while (iter.hasNext()) {
 			Annotation annotation = (Annotation) iter.next();
-			if (annotation instanceof IJavaAnnotation) {
-				IJavaAnnotation javaAnnotation = (IJavaAnnotation) annotation;
-				if (!javaAnnotation.isMarkedDeleted()) {
+			if (annotation instanceof MarkerAnnotation) {
+				MarkerAnnotation markerAnnotation = (MarkerAnnotation) annotation;
+				if (!markerAnnotation.isMarkedDeleted()) {
 					Position position = model.getPosition(annotation);
 					if (includesRulerLine(position, document))
 						return position;
 				}
-			} 
+			}
 		}
 		if (assistAnnotation != null) {
 			Position position = model.getPosition(assistAnnotation);

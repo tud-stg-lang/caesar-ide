@@ -133,59 +133,60 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 				.createImage();
 	}
 
-	public List getRelations() {
+	public Iterator getRelationNodes() {
 		List relations = super.getRelations();
+		List returnList = new ArrayList();
 		for (Iterator it = relations.iterator(); it.hasNext();) {
 			Object node = it.next();
 			if (node instanceof RelationNode) {
-				Object[] nodes = ((RelationNode) node).getChildren().toArray();
-				HashMap args = new HashMap();
-				String messageLocal = ((RelationNode) node).getName()
-						.toUpperCase()
-						+ ": "; //$NON-NLS-1$
-				LinkNode lNode[] = new LinkNode[nodes.length];
-				String tempString, className, adviceName;
-				for (int i = 0; i < nodes.length; i++) {
-					lNode[i] = (LinkNode) nodes[i];
-					try {
-						tempString = lNode[i].toLongString();
-					} catch (Exception e) {
-						continue;
-					}
-					tempString = tempString.substring(tempString
-							.lastIndexOf(']') + 1);
-					try {
-						className = tempString.substring(0, tempString
-								.lastIndexOf(':'));
-						adviceName = tempString.substring(tempString
-								.lastIndexOf(':') + 2, tempString.length() - 1);
-						messageLocal += "!" + adviceName + ":" + className + "!  "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						args.put(AdviceMarker.ID, "AdviceLink"); //$NON-NLS-1$
-					} catch (Exception e) {
-						messageLocal += "!" + tempString.substring(1, tempString.length() - 1) + "()!  "; //$NON-NLS-1$//$NON-NLS-2$
-						args.put(AdviceMarker.ID, "MethodeLink"); //$NON-NLS-1$
-					}
-				}
-
-				IResource resource = ProjectProperties
-						.findResource(
-								this.sourceLocation.getSourceFile()
-										.getAbsolutePath(),
-								Builder
-										.getProjectForSourceLocation(this.sourceLocation));
-				args.put(IMarker.LINE_NUMBER, new Integer(this.sourceLocation
-						.getLine()));
-				args.put(IMarker.MESSAGE, messageLocal);
-				args.put(AdviceMarker.LINKS, lNode);
-				try {
-					MarkerUtilities.createMarker(resource, args,
-							AdviceMarker.ADVICEMARKER);
-				} catch (CoreException e) {
-					logger.error("FEHLER BEIM MARKER ERZEUGEN", e); //$NON-NLS-1$
-				}
+				returnList.add(node);
 			}
 		}
-		return relations;
+		return returnList.iterator();
+	}
+
+	public void markWitchAdviceMarker(RelationNode node) {
+		Object[] nodes = node.getChildren().toArray();
+		HashMap args = new HashMap();
+		String messageLocal = node.getName().toUpperCase()
+				+ ": "; //$NON-NLS-1$
+		LinkNode lNode[] = new LinkNode[nodes.length];
+		String tempString, className, adviceName;
+		for (int i = 0; i < nodes.length; i++) {
+			lNode[i] = (LinkNode) nodes[i];
+			try {
+				tempString = lNode[i].toLongString();
+			} catch (Exception e) {
+				continue;
+			}
+			tempString = tempString.substring(tempString.lastIndexOf(']') + 1);
+			try {
+				className = tempString
+						.substring(0, tempString.lastIndexOf(':'));
+				adviceName = tempString.substring(
+						tempString.lastIndexOf(':') + 2,
+						tempString.length() - 1);
+				messageLocal += "!" + adviceName + ":" + className + "!  "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				args.put(AdviceMarker.ID, "AdviceLink"); //$NON-NLS-1$
+			} catch (Exception e) {
+				messageLocal += "!" + tempString.substring(1, tempString.length() - 1) + "()!  "; //$NON-NLS-1$//$NON-NLS-2$
+				args.put(AdviceMarker.ID, "MethodeLink"); //$NON-NLS-1$
+			}
+		}
+
+		IResource resource = ProjectProperties.findResource(this.sourceLocation
+				.getSourceFile().getAbsolutePath(), Builder
+				.getProjectForSourceLocation(this.sourceLocation));
+		args.put(IMarker.LINE_NUMBER,
+				new Integer(this.sourceLocation.getLine()));
+		args.put(IMarker.MESSAGE, messageLocal);
+		args.put(AdviceMarker.LINKS, lNode);
+		try {
+			MarkerUtilities.createMarker(resource, args,
+					AdviceMarker.ADVICEMARKER);
+		} catch (CoreException e) {
+			logger.error("FEHLER BEIM MARKER ERZEUGEN", e); //$NON-NLS-1$
+		}
 	}
 
 	protected abstract void initImages();

@@ -135,12 +135,12 @@ public class CaesarOutlineView extends ContentOutlinePage {
 							.getProgramElementNode();
 					if (pNode instanceof AdviceDeclarationNode) {
 						return new CaesarElementImageDescriptor(
-								CaesarPluginImages.DESC_JOINPOINT_BACK,
-								null, BIG_SIZE).createImage();
+								CaesarPluginImages.DESC_JOINPOINT_BACK, null,
+								BIG_SIZE).createImage();
 					} else {
 						return new CaesarElementImageDescriptor(
-								CaesarPluginImages.DESC_JOINPOINT_FORWARD, null,
-								BIG_SIZE).createImage();
+								CaesarPluginImages.DESC_JOINPOINT_FORWARD,
+								null, BIG_SIZE).createImage();
 					}
 				} else if (element instanceof RelationNode) {
 					return new CaesarElementImageDescriptor(
@@ -205,6 +205,13 @@ public class CaesarOutlineView extends ContentOutlinePage {
 					Object te = it.next();
 					if (!(te instanceof AdviceDeclarationNode)) {
 						vec.add(te);
+					}
+				}
+				if (node instanceof CaesarProgramElementNode) {
+					CaesarProgramElementNode cNode = (CaesarProgramElementNode) node;
+					it = cNode.getRelationNodes();
+					while (it.hasNext()) {
+						cNode.markWitchAdviceMarker((RelationNode) it.next());
 					}
 				}
 			}

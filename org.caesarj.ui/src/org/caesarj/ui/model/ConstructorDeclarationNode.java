@@ -6,6 +6,7 @@ import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.phylum.declaration.JClassDeclaration;
 import org.caesarj.compiler.ast.phylum.declaration.JConstructorDeclaration;
 import org.caesarj.compiler.ast.phylum.variable.JFormalParameter;
+import org.caesarj.ui.CaesarElementImageDescriptor;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 
 /**
@@ -54,16 +55,21 @@ public class ConstructorDeclarationNode extends CaesarProgramElementNode {
 		}
 		label += ")"; //$NON-NLS-1$
 		label = label.replaceAll("_Impl", "");
-		if (this.parent instanceof CClassNode || this.parent instanceof AspectNode) {
-			label = label.substring(0, label.indexOf('(')+1) + ")";
+		if (this.parent instanceof CClassNode
+				|| this.parent instanceof AspectNode) {
+			label = label.substring(0, label.indexOf('(') + 1) + ")";
 		}
 		return label;
 	}
 
 	protected void initImages() {
-		this.PUBLIC = JavaPluginImages.DESC_MISC_PUBLIC;
-		this.PRIVATE = JavaPluginImages.DESC_MISC_PRIVATE;
-		this.PROTECTED = JavaPluginImages.DESC_MISC_PROTECTED;
-		this.DEFAULT = JavaPluginImages.DESC_MISC_DEFAULT;
+		this.PUBLIC = new CaesarElementImageDescriptor(
+				JavaPluginImages.DESC_MISC_PUBLIC, null, BIG_SIZE);
+		this.PRIVATE = new CaesarElementImageDescriptor(
+				JavaPluginImages.DESC_MISC_PRIVATE, null, BIG_SIZE);
+		this.PROTECTED = new CaesarElementImageDescriptor(
+				JavaPluginImages.DESC_MISC_PROTECTED, null, BIG_SIZE);
+		this.DEFAULT = new CaesarElementImageDescriptor(
+				JavaPluginImages.DESC_MISC_DEFAULT, null, BIG_SIZE);
 	}
 }

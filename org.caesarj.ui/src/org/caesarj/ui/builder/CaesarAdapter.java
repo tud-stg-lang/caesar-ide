@@ -83,7 +83,7 @@ public final class CaesarAdapter extends Main {
 			logger.warn("Fehler im Compiler", e); //$NON-NLS-1$
 		}
 		AsmBuilder.postBuild(this.model);
-		_dumpModel("final structure model", this.model); //$NON-NLS-1$
+		//_dumpModel("final structure model", this.model); //$NON-NLS-1$
 		
 		return success;
 	}
