@@ -72,10 +72,11 @@ public class Builder extends IncrementalProjectBuilder {
 		try {
 			lastBuiltProject = getProject();
 			errors.clear();
-
-			log.debug("kind: " + kind);
-
+			
 			projectProperties = new ProjectProperties(getProject());
+			
+			log.debug("Building to '" + projectProperties.getOutputPath() + "'");
+			log.debug("kind: " + kind);
 
 			log.debug("----\n" + projectProperties.toString() + "----\n");
 

@@ -44,6 +44,7 @@ public class HierarchyNode implements ISelection {
 	public static String SUPER = new String("super");
 	public static String NESTEDPARENTS = new String("nestedparents");
 	public static String NESTEDSUPER = new String("nestedsuper");
+	public static String ROOT = new String("rootnode");
 	
 	/**
 	 * @return Returns the kind.

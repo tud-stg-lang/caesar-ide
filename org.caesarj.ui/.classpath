@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/"/>
-	<classpathentry exported="true" kind="lib" path="caesar-compiler.jar"/>
+	<classpathentry exported="true" sourcepath="/Caesar-Compiler/src" kind="lib" path="caesar-compiler.jar"/>
 	<classpathentry exported="true" kind="lib" path="caesar-runtime.jar"/>
 	<classpathentry exported="true" kind="lib" path="aspectjtools.jar"/>
 	<classpathentry exported="true" kind="lib" path="aspectjrt.jar"/>

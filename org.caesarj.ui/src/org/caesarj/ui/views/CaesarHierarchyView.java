@@ -3,6 +3,9 @@ package org.caesarj.ui.views;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
+import org.caesarj.compiler.export.CClass;
+import org.caesarj.navigator.CaesarByteCodeNavigator;
+import org.caesarj.runtime.AdditionalCaesarTypeInformation;
 import org.caesarj.ui.editor.CaesarEditor;
 import org.caesarj.ui.views.hierarchymodel.HierarchyNode;
 import org.caesarj.ui.views.hierarchymodel.IHierarchyPropertyChangeListener;
@@ -25,7 +28,9 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
@@ -44,6 +49,37 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 	
 	
 	private RootNode buildTreeModel()
+	{	
+		RootNode root = new RootNode();
+		root.setKind(HierarchyNode.ROOT);
+		try {
+			CaesarByteCodeNavigator nav = new CaesarByteCodeNavigator("");
+			CClass clazz = nav.load("C:/Programme/eclipse30/runtime-workbench-workspace/TestCaesar/pricing/DiscountPricing.class");
+			AdditionalCaesarTypeInformation info = clazz.getAdditionalTypeInformation();
+			StandardNode n1 = new StandardNode();
+			n1.setKind(HierarchyNode.CLASS);
+			n1.setName(info.getImplClassName());
+			//n1.setName(clazz.getQualifiedName());
+			n1.setParent(root);
+			root.addChild(n1);
+			return root;
+		} 
+		  catch (NullPointerException e) {
+		  	StandardNode n1 = new StandardNode();
+		  	n1.setKind(HierarchyNode.CLASS);
+			n1.setName("No informations available.");
+			n1.setParent(root);
+			root.addChild(n1);
+			return root;
+		}
+		  catch (Exception e) {
+			log.warn("Building hierarchy tree.",e);
+			return root;
+		} 
+		
+	}
+	
+	private RootNode buildTestTreeModel()
 	{
 		RootNode root = new RootNode();
 		root.setKind("Root Node");
@@ -95,13 +131,13 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		LinearNode n3 = new LinearNode();
 				
 		n1.setKind("linearizedclass");
-		n1.setName("Subclass");
+		n1.setName("Subclass 2");
 		
 		n2.setKind("linearizedclass");
-		n2.setName("Sample class");
+		n2.setName("Subclass 1");
 		
 		n3.setKind("linearizedclass");
-		n3.setName("Super class");
+		n3.setName("Sample class");
 	
 		n1.setNextNode(n2);
 		n2.setNextNode(n3);
@@ -113,7 +149,13 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		treeViewer = new TreeViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
+		Group layoutGroup = new Group(parent,SWT.NONE);
+		Group topGroup = new Group(layoutGroup,SWT.NONE);
+		Group buttomGroup = new Group(layoutGroup,SWT.NONE);
+		topGroup.setText("Tree View");
+		buttomGroup.setText("Linearized View");
+		treeViewer = new TreeViewer(topGroup, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.HORIZONTAL);
+
 		HierarchyTreeContentProvider cp = new HierarchyTreeContentProvider();
 		HierarchySelectionChangedListener scl = new HierarchySelectionChangedListener();
 		HierarchyLabelProvider lp = new HierarchyLabelProvider();
@@ -121,13 +163,21 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		treeViewer.setLabelProvider(lp);
 		treeViewer.addSelectionChangedListener(scl);
 		treeViewer.setInput(buildTreeModel());
+		//for testing treeViewer.setInput(buildTestTreeModel());
+		
 		treeViewer.expandAll();
 		
 		HierarchyListContentProvider lcp = new HierarchyListContentProvider();
-		listViewer = new ListViewer(parent);
+		listViewer = new ListViewer(buttomGroup, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.HORIZONTAL);
 		listViewer.setContentProvider(lcp);
 		listViewer.setLabelProvider(lp);
 		listViewer.setInput(buildListModel());
+		
+		FillLayout layout = new FillLayout();
+		layout.type = SWT.VERTICAL;
+		layoutGroup.setLayout(layout);
+		topGroup.setLayout(layout);
+		buttomGroup.setLayout(layout);
 		
 		getViewSite().
 		getWorkbenchWindow().
@@ -293,7 +343,10 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 					//TODO Selectevent eintragen (Linearisierung updaten) 
 				}
 				else
+				{
 					log.debug("Not interested in selection of '"+markedNode.getName()+"'.");
+					getTreeViewer().setInput(buildTreeModel());
+				}
 			}
 		}
 		
@@ -311,10 +364,10 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		if (part instanceof CaesarEditor) {
-			/*ICompilationUnit cu = 
+			ICompilationUnit cu = 
 				getCompilationUnit((IStructuredSelection) selection);
 			log.debug("Selection in Editor '"+cu.getElementName()+"'");
-			jm.reset(cu);*/
+			//jm.reset(cu);
 			CaesarEditor editor = (CaesarEditor)part;
 			log.debug("Selection in Editor! Editor: '"+editor.getEditorInput().getName()+"'.");
 			//TODO HIER weiter machen
@@ -328,6 +381,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 			return (ICompilationUnit) je.getAncestor(IJavaElement.COMPILATION_UNIT);
 		}
 		if (ss.getFirstElement() instanceof IFile) {
+			log.debug("CompilationUnitElement was a file.");
 			IFile f = (IFile) ss.getFirstElement();
 			if (f.getFileExtension() != null &&
 				f.getFileExtension().compareToIgnoreCase("java") == 0)
