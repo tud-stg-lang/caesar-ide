@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarOutlineViewContentProvider.java,v 1.2 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CaesarOutlineViewContentProvider.java,v 1.3 2005-02-21 13:47:11 gasiunas Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -35,10 +35,10 @@ import org.aspectj.asm.ProgramElementNode;
 import org.aspectj.asm.RelationNode;
 import org.aspectj.asm.StructureNode;
 import org.caesarj.compiler.asm.CaesarProgramElementNode;
-import org.caesarj.ui.builder.Builder;
 import org.caesarj.ui.marker.AdviceMarker;
 import org.caesarj.ui.util.ProjectProperties;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -52,10 +52,17 @@ import org.eclipse.ui.texteditor.MarkerUtilities;
  */
 public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
 
+	private IProject project = null;
+	
+	public CaesarOutlineViewContentProvider(IProject project) {
+		this.project = project;
+	}
+	
 	public void dispose() {
 	}
 
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		
 	}
 
 	public Object[] getElements(Object inputElement) {
@@ -241,8 +248,7 @@ public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
 		}
 
 		IResource resource = ProjectProperties.findResource(node.getSourceLocation()
-				.getSourceFile().getAbsolutePath(), Builder
-				.getProjectForSourceLocation(node.getSourceLocation()));
+				.getSourceFile().getAbsolutePath(), project);
 		args.put(IMarker.LINE_NUMBER,
 				new Integer(node.getSourceLocation().getLine()));
 		args.put(IMarker.MESSAGE, messageLocal);
