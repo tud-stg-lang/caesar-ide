@@ -111,6 +111,42 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		super();
 		selfRef = this;
 	}
+	
+	private boolean isNodeInSuperlist(String qualifiedNameOfNode, String[] nestedClasses, CaesarHierarchyTest nav) throws Exception
+	{
+		AdditionalCaesarTypeInformation info;
+		CClass clazz;
+		String[] help;
+		boolean result = false;
+		
+		for (int i = 0; nestedClasses.length>i ; i++)
+		{
+			clazz = nav.load(nestedClasses[i]);
+			info = clazz.getAdditionalTypeInformation();
+			help = info.getSuperClasses();
+			result = result | isElementInArray(qualifiedNameOfNode, help);
+		}
+		
+		return result;
+	}
+	
+	private boolean isNodeInSubList(String qualifiedNameOfNode, String[] nestedClasses, CaesarHierarchyTest nav) throws Exception
+	{
+		AdditionalCaesarTypeInformation info;
+		CClass clazz;
+		String[] help;
+		boolean result = false;
+		
+		for (int i = 0; nestedClasses.length>i ; i++)
+		{
+			clazz = nav.load(nestedClasses[i]);
+			info = clazz.getAdditionalTypeInformation();
+			help = info.getSuperClasses();
+			result = result | isElementInArray(qualifiedNameOfNode, help);
+		}
+		
+		return result;
+	}
 
 	private StandardNode findAllSub(String[] nestedClasses, StandardNode node) {
 		CaesarHierarchyTest nav = new CaesarHierarchyTest(
@@ -124,7 +160,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 			clazz = nav.load(nestedClasses[j]);
 			helpInfo = clazz.getAdditionalTypeInformation();
 			superClasses = helpInfo.getSuperClasses();
-			if (elementInArray(node.getName(), superClasses)) {
+			if (isElementInArray(node.getName(), superClasses)) {
 				StandardNode subNode = new StandardNode(
 						HierarchyNode.NESTEDSUB, nestedClasses[j], node,
 						helpInfo);
@@ -175,7 +211,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 
 	}
 
-	private boolean elementInArray(String element, String[] array) {
+	private boolean isElementInArray(String element, String[] array) {
 		boolean help = false;
 		for (int i = 0; array.length > i; i++) {
 			help = help | (element.compareTo(array[i]) == 0);
@@ -242,15 +278,17 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 								HierarchyNode.NESTEDCLASSES,
 								"Contains (Sub Hierarchy)", classNode);
 
-				for (int i = 0; nestedClasses.length > i; i++) {
+				for (int i = 0; nestedClasses.length > i; i++) 
+				{
 					clazz = nav.load(nestedClasses[i]);
 					AdditionalCaesarTypeInformation nestedInfo = clazz
 							.getAdditionalTypeInformation();
+					
+				
 					node = new StandardNode();
 					node.setTypeInforamtion(nestedInfo);
 					node.setKind(HierarchyNode.NESTED);
 					node.setName(nestedClasses[i]);
-					node.setParent(nestedClassesNode);
 					if (superView) //SuperView
 					{
 						node = findAllSuper(node);
@@ -258,8 +296,32 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 					{
 						node = findAllSub(nestedClasses, node);
 					}
-					nestedClassesNode.addChild(node);
-
+					if ((!isNodeInSuperlist(nestedClasses[i], nestedClasses, nav) && superView)
+							|(/*!isNodeInSubList(nestedClasses[i], nestedClasses, nav)&&*/!superView))
+					{
+						nestedClassesNode.addChild(node);
+						node.setParent(nestedClassesNode);
+					}		
+				}
+				if (!superView)
+				{
+					Object[] helpNestedClasses = nestedClassesNode.getChildren();
+					for (int i = 0; helpNestedClasses.length>i; i++)
+					{
+		
+						for (int j = 0; helpNestedClasses.length>j; j++)
+						{
+							if ((i!=j)&&((StandardNode)helpNestedClasses[j]).hasSubNode(((StandardNode)helpNestedClasses[i])))
+							{
+								((StandardNode)helpNestedClasses[i]).setParent(null);
+								nestedClassesNode.removeChild((StandardNode)helpNestedClasses[i]);
+							}
+							else
+							{
+								log.debug("Hmmm");
+							}
+						}
+					}
 				}
 			}
 			return root;
