@@ -8,7 +8,6 @@ import org.caesarj.ui.editor.CaesarTextTools;
 import org.caesarj.ui.preferences.CaesarJPreferences;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -43,7 +42,7 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 	public static final String ID_NATURE = PLUGIN_ID + ".caesarprojectnature"; //$NON-NLS-1$
 
 	public static final String CAESAR_HOME = "CAESAR_HOME";
-
+	
 	private CaesarTextTools caesarTextTools = null;
 
 	private String aspectjRuntimePath = null;
@@ -95,10 +94,6 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 		} catch (MissingResourceException x) {
 			this.resourceBundle = null;
 		}
-		
-		// load here the environment variable
-		// otherwise error when importing a project which contains this variable in .classpath
-	    JavaCore.getClasspathVariable(CAESAR_HOME);
 	}
 	
 	public void initPluginUI() {
