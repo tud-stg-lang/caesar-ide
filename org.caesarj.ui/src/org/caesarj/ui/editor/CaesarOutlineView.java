@@ -98,14 +98,17 @@ public class CaesarOutlineView extends ContentOutlinePage {
 					return cNode.getText(super.getText(element));
 				} else if (element instanceof LinkNode) {
 					LinkNode lNode = (LinkNode) element;
-					String returnString = lNode.toLongString();
+					String returnString = lNode.toString();
 					returnString = returnString.substring(returnString.lastIndexOf(']') + 2);
 					try {
 						String className = returnString.substring(0, returnString.lastIndexOf(':'));
-						String advice = returnString.substring(returnString.lastIndexOf(':')+2,returnString.length()-1);
+						String advice =
+							returnString.substring(
+								returnString.lastIndexOf(':') + 2,
+								returnString.length());
 						return advice + ":" + className;
 					} catch (RuntimeException e1) {
-						return returnString.substring(0,returnString.length()-1);
+						return returnString.substring(0, returnString.length())+"()";
 					}
 				} else
 					return super.getText(element);
@@ -157,16 +160,15 @@ public class CaesarOutlineView extends ContentOutlinePage {
 		public Image getImage(Object element) {
 			try {
 				Image image = null;
-				//TODO ist wegen parent=null in LinkNode??? Sollte irgendwo beim AST-Tree aufbau behoben werden.
-				if (element instanceof LinkNode)
-					logger.debug("Element discription: LinkNode");
-				else
-					logger.debug("Element discription: " + element.toString());
 				ImageDescriptor img;
 				if (element instanceof LinkNode) {
-					//TODO Linknode setzt den programmnode nicht richtig.
 					LinkNode lNode = (LinkNode) element;
-					return this.getImage(lNode.getProgramElementNode());
+					return new CaesarElementImageDescriptor(
+						CaesarPluginImages.DESC_JOINPOINT,
+						null,
+						BIG_SIZE,
+						false)
+						.createImage();
 				} else if (element instanceof RelationNode) {
 					return new CaesarElementImageDescriptor(
 						CaesarPluginImages.DESC_ADVICE,
@@ -211,17 +213,16 @@ public class CaesarOutlineView extends ContentOutlinePage {
 
 			if (parentElement instanceof ProgramElementNode) {
 				ProgramElementNode node = (ProgramElementNode) parentElement;
-				for (Iterator it = node.getRelations().iterator(); it.hasNext();)
-					if (!(it instanceof AdviceDeclarationNode))
-						vec.add(it.next());
+				Iterator it = node.getRelations().iterator();
+				while(it.hasNext()){
+					Object te = it.next();	
+					if (!(te instanceof AdviceDeclarationNode))
+						vec.add(te);
+				}
 			}
-
-			{
-				StructureNode node = (StructureNode) parentElement;
-				for (Iterator it = node.getChildren().iterator(); it.hasNext();)
-					vec.add(it.next());
-			}
-
+			StructureNode node = (StructureNode) parentElement;
+			for (Iterator it = node.getChildren().iterator(); it.hasNext();)
+				vec.add(it.next());
 			return vec.toArray();
 		}
 

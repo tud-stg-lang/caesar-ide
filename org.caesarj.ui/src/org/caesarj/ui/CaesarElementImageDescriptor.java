@@ -63,6 +63,7 @@ public class CaesarElementImageDescriptor extends CompositeImageDescriptor {
 			flags |= RUNNABLE;
 
 		int modif = node.getCAModifiers();
+		//if((modif/ 6)%2==1) flags |= PRIVILIGED;
 		if ((modif / 8) % 2 == 1)
 			flags |= STATIC;
 		if ((modif / 16) % 2 == 1)
@@ -71,10 +72,11 @@ public class CaesarElementImageDescriptor extends CompositeImageDescriptor {
 			flags |= SYNCHRONIZED;
 		//if((modif/64)%2==1) flags |= VOLATILE;
 		//if((modif/128)%2==1) flags |= TRANSIENT;
-		if((modif/256)%2==1) flags |= WARNING;
-		if((modif/512)%2==1) flags |= ERROR;
+		//if((modif/256)%2==1) flags |= NATIVE;
+		//if((modif/512)%2==1) flags |= INTERFACE;
 		if ((modif / 1024) % 2 == 1)
 			flags |= ABSTRACT;
+		//if((modif/512)%2==1) flags |= STRICTFP;	
 		return flags;
 	}
 

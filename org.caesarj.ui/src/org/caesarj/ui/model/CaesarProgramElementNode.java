@@ -183,7 +183,7 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 						message += "!" + adviceName + ":" + className + "!  ";
 						args.put(AdviceMarker.ID, "AdviceLink");
 					}catch (Exception e){
-						message += "!" +tempString.substring(1,tempString.length()-1) +"!  ";
+						message += "!" +tempString.substring(1,tempString.length()-1)+"()!  ";
 						args.put(AdviceMarker.ID, "MethodeLink");
 					}
 				}

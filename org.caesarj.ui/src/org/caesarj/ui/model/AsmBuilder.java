@@ -141,6 +141,7 @@ public class AsmBuilder extends BodyVisitor {
 		TokenReference ref = self.getTokenReference();
 		File file = new File(new String(ref.getFile()));
 
+		//TODO Es gibt keine Felder für Error oder Warnings.???
 		//TODO Sourcefile unterscheidung einbauen
 		//JavaSourceFileNode
 		//AspectSourceFileNode
@@ -237,7 +238,6 @@ public class AsmBuilder extends BodyVisitor {
 		CReferenceType[] interfaces,
 		JPhylum[] body,
 		JMethodDeclaration[] methods) {
-		//TODOWo sind den Fields und inner Interfaces
 		InterfaceNode peNode =
 			new InterfaceNode(
 				ident,
@@ -249,6 +249,18 @@ public class AsmBuilder extends BodyVisitor {
 
 		getCurrentStructureNode().addChild(peNode);
 		asmStack.push(peNode);
+
+		//FIELDS
+		JFieldDeclaration types[] = self.getFields();
+		for (int i = 0; i < types.length; i++) {
+			types[i].accept(this);
+		}
+		
+		//TODO In methodenvisitor gibt es beim Aufruf einen Nullpointer!!!
+		/*METHODEN
+		for (int i = 0; i < methods.length; i++) {
+			methods[i].accept(this);
+		}*/
 
 		JTypeDeclaration inners[] = self.getInners();
 		for (int i = 0; i < inners.length; i++) {
