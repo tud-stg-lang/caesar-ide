@@ -50,6 +50,38 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 	
 	private static Logger log = Logger.getLogger(CaesarHierarchyView.class);
 	
+	private StandardNode findAllSuper(StandardNode classNode)
+	{
+		try {
+			if (classNode==null)
+				throw new Exception("Node is null!");
+			if (classNode.getTypeInforamtion()==null)
+				throw new Exception("Node had no Type Information!");
+			AdditionalCaesarTypeInformation info = classNode.getTypeInforamtion();
+			log.debug("Information of "+classNode.getName()+"\n"+info);
+			
+			String[] superNodes = info.getSuperClasses();
+			for (int i=0;superNodes.length>i ;i++)
+			{
+				StandardNode help = new StandardNode();
+				CaesarHierarchyTest nav = new CaesarHierarchyTest(globalPathForInformationAdapter);
+		        CClass clazz = nav.load(superNodes[i]);
+				help.setTypeInforamtion(clazz.getAdditionalTypeInformation());
+				help.setName(superNodes[i]);
+				help.setParent(classNode);
+				help.setKind(StandardNode.NESTEDSUPER);
+				classNode.addChild(help);
+				help = findAllSuper(help);
+			}
+			return classNode;
+			
+		} catch (Exception e)
+		{
+			log.warn("Finding all Super classes",e);
+			return null;
+		}
+		
+	}
 	
 	private RootNode buildTreeModel(String path)
 	{
@@ -94,6 +126,23 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 			}
 			
 			String [] nestedClasses = info.getNestedClasses();
+			
+			//new Implemtation
+			for (int i=0; nestedClasses.length>i; i++)
+			{
+				clazz = nav.load(nestedClasses[i]);
+				AdditionalCaesarTypeInformation nestedInfo = clazz.getAdditionalTypeInformation();
+				node = new StandardNode();
+				node.setTypeInforamtion(nestedInfo);
+				node.setKind(HierarchyNode.NESTED);
+				node.setName(nestedClasses[i]);
+				if (nestedInfo.isImplicit())
+					node.setAdditionalName("Implicid");
+				node.setParent(classNode);
+				node = findAllSuper(node);
+				classNode.addChild(node);			
+			}
+			/* Old Implementation
 			for (int i=0; nestedClasses.length>i; i++)
 			{
 				node = new StandardNode();
@@ -133,7 +182,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 						subNode.addChild(node);
 					}
 				}
-			}
+			}*/
 			
 			return root;
 		} 
@@ -450,9 +499,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 				help = filterName(node.getName());
 				if (node.hasAdditionalName())
 				{
-					String help2 = node.getAdditionalName();
-					help2 = help2.substring(help2.lastIndexOf("/")+1,help2.lastIndexOf("$"));
-					help = help + " (" + help2 + ")";
+					help = help + " (" + node.getAdditionalName() + ")";
 				}
 				return replaceAll(help,"$",".");
 			}
@@ -488,10 +535,10 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 				int dollarPos = name.lastIndexOf("$");
 				if (slashPos>0)
 					help = name.substring(slashPos+1);
-				/*if (dollarPos>slashPos)
+				if (dollarPos>slashPos)
 				{
 					help = name.substring(dollarPos+1);
-				}*/		
+				}
 				return help;
 			}
 			catch(Exception e)
@@ -573,7 +620,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 			}
 	    
 		}		
-		log.debug("Selection in Editor! Part: '"+part+"'.");
+		//log.debug("Selection in Editor! Part: '"+part+"'.");
 	}
 
 	public void refresh()
