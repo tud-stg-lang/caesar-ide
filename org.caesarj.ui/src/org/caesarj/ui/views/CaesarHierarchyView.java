@@ -222,17 +222,6 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 	}
 
 	private RootNode buildTreeModel(Object[] path) {
-		String projectOutputPath = "";
-		try {
-			ProjectProperties projectProperties = new ProjectProperties(
-					ACTIVE_PROJECT);
-			projectOutputPath = projectProperties.getProjectLocation()
-					+ projectProperties.getOutputPath();
-			log.debug("Project output path: " + projectOutputPath);
-			globalPathForInformationAdapter = projectOutputPath;
-		} catch (Exception e) {
-
-		}
 
 		RootNode root = new RootNode();
 		root.setKind(HierarchyNode.ROOT);
@@ -318,17 +307,13 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 								((StandardNode)helpNestedClasses[i]).setParent(null);
 								nestedClassesNode.removeChild((StandardNode)helpNestedClasses[i]);
 							}
-							else
-							{
-								log.debug("Hmmm");
-							}
 						}
 					}
 				}
 			}
 			return root;
 		} catch (NullPointerException e) {
-			log.debug("No Information.");
+			log.debug("No Information.",e);
 			StandardNode n1 = new StandardNode();
 			n1.setKind(HierarchyNode.EMTY);
 			n1.setName("No informations available.");
@@ -735,21 +720,6 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		if ((part instanceof CaesarEditor)&&selectionLength==0) {				
 			refresh();
 		}
-	
-		/*
-		 * The old version if (editor.getEditorInput() instanceof
-		 * FileEditorInput) {
-		 * 
-		 * path = input.getFile().getProjectRelativePath().toString(); path =
-		 * path.substring(0, path.indexOf(input.getFile() .getFileExtension()) -
-		 * 1);
-		 * 
-		 * log.debug("Selection in Editor! \n\tFile: '" +
-		 * editor.getEditorInput().getName() + "'.\n\tQualified name: " + path +
-		 * "'");
-		 * 
-		 * refreshTree(path); }
-		 */
 
 	}
 
@@ -801,6 +771,9 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				qualifiedNameToActualClasses = listOfFullQualifiedNames.toArray();
 				ACTIVE_PROJECT = editor.getInputJavaElement().getJavaProject()
 				.getProject();
+				
+				ProjectProperties prob = new ProjectProperties(ACTIVE_PROJECT);
+				globalPathForInformationAdapter = prob.getOutputPath();
 			}
 		} catch (Exception e) {
 			log.debug("Refreshfehler: ");
