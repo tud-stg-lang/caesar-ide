@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<contexts>
+	<context id="marker_example1_context">
+		<description>Open Aspect Location</description>
+	</context>
+	<context id="marker_example2_context">
+		<description>Open Methode Location</description>
+	</context>
+</contexts>
