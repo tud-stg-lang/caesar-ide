@@ -23,13 +23,7 @@
       <library name="aspectjrt.jar">
          <export name="*"/>
       </library>
-      <library name="java-getopt-1.0.9.jar">
-         <export name="*"/>
-      </library>
-      <library name="log4j-1.2.8.jar">
-         <export name="*"/>
-      </library>
-      <library name="cjbuildtools.jar">
+      <library name="cj-rmic.jar">
          <export name="*"/>
       </library>
    </runtime>
@@ -197,4 +191,8 @@
          </action>
       </editorContribution>
    </extension>
+ <extension
+       point="org.eclipse.ui.startup">
+    <startup class="org.caesarj.ui.CaesarStartup"/>
+ </extension>
 </plugin>
