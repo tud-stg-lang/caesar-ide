@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.caesarj.ui.CaesarPlugin;
-import org.caesarj.ui.editor.CaesarOutlineView;
+//import org.caesarj.ui.editor.CaesarOutlineView;
 import org.caesarj.ui.marker.AdviceMarker;
 import org.caesarj.ui.util.ProjectProperties;
 import org.caesarj.util.PositionedError;
@@ -98,13 +98,14 @@ public class Builder extends IncrementalProjectBuilder {
 			Display display = Display.getDefault();
 
 			// update has to be executed from Workbenchs Thread
-
+			
+/* V.G. START: Model switched off
 			CaesarPlugin.getDefault().getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					CaesarOutlineView.updateAll();
 				}
 			});
-
+V.G. END: Model switched off */
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}

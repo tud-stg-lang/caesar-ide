@@ -10,9 +10,9 @@ import org.aspectj.asm.StructureModelManager;
 import org.caesarj.compiler.KjcEnvironment;
 import org.caesarj.compiler.Main;
 import org.caesarj.compiler.aspectj.CaesarBcelWorld;
-import org.caesarj.compiler.ast.JCompilationUnit;
-import org.caesarj.ui.model.AsmBuilder;
-import org.caesarj.ui.model.StructureModelDump;
+import org.caesarj.compiler.ast.phylum.JCompilationUnit;
+//import org.caesarj.ui.model.AsmBuilder;
+//import org.caesarj.ui.model.StructureModelDump;
 import org.caesarj.util.PositionedError;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -59,9 +59,9 @@ public final class CaesarAdapter extends Main {
     ) {		
         
         StructureModel model = StructureModelManager.INSTANCE.getStructureModel();
-        
+/* V.G. START: Model switched off         
         AsmBuilder.preBuild(model);
-        
+V.G. END: Model switched off */
 		boolean success;
 		String args[] = new String[sourceFiles.size()+4];
 				
@@ -88,14 +88,15 @@ public final class CaesarAdapter extends Main {
         );
         
 		success = run(args);
-        
+/* V.G. START: Model switched off        
         AsmBuilder.postBuild(model);        
                 
         _dumpModel("final structure model", model);
-        
+V.G. END: Model switched off */       
         return success;
 	}
-    
+
+/* V.G. START: Model switched off    
 	protected JCompilationUnit parseFile(File file, KjcEnvironment env) {
         if(progressMonitor.isCanceled())
             return null;
@@ -104,7 +105,7 @@ public final class CaesarAdapter extends Main {
         progressMonitor.subTask("compiling "+file.getName());
         res = super.parseFile(file, env);
         progressMonitor.worked(1);
-        
+         
         AsmBuilder.build(res, StructureModelManager.INSTANCE.getStructureModel());
 
         return res;
@@ -130,10 +131,12 @@ public final class CaesarAdapter extends Main {
         progressMonitor.worked(1);
 	}
 
-
     private void _dumpModel(String description, StructureModel model) {
+  	
         log.debug("--- "+description+" ---");
         StructureModelDump modelDumpBeforeWeave = new StructureModelDump(System.out);            
         modelDumpBeforeWeave.print("", model.getRoot());
+
     }
+V.G. END: Model switched off */
 }
