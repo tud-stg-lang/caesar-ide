@@ -18,7 +18,6 @@ import org.caesarj.compiler.types.CType;
 import org.caesarj.ui.CaesarElementImageDescriptor;
 import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.CaesarPluginImages;
-import org.caesarj.ui.builder.Builder;
 import org.caesarj.ui.model.AdviceDeclarationNode;
 import org.caesarj.ui.model.AspectNode;
 import org.caesarj.ui.model.CaesarProgramElementNode;
@@ -31,12 +30,10 @@ import org.caesarj.ui.model.InterfaceNode;
 import org.caesarj.ui.model.MethodDeclarationNode;
 import org.caesarj.ui.model.PackageNode;
 import org.caesarj.ui.model.PointcutNode;
-import org.caesarj.ui.util.ProjectProperties;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
@@ -354,26 +351,6 @@ public class CaesarOutlineView extends ContentOutlinePage {
 							pNode instanceof CodeNode
 								|| pNode.getProgramElementKind().equals(
 									ProgramElementNode.Kind.CODE)) {
-							IResource resource =
-								ProjectProperties.findResource(
-									node
-										.getParent()
-										.getSourceLocation()
-										.getSourceFile()
-										.getAbsolutePath(),
-									Builder.getLastBuildTarget());
-							try {
-								IMarker marker = resource.createMarker(IMarker.TASK);
-								marker.setAttribute(
-									IMarker.LINE_NUMBER,
-									node.getParent().getSourceLocation().getLine());
-								marker.setAttribute(IMarker.MESSAGE, "DIES IST ein ADVICE TEST");
-								marker.setAttribute(
-									IMarker.SEVERITY,
-									new Integer(IMarker.SEVERITY_INFO));
-							} catch (CoreException e) {
-								logger.error("FEHLER BEIM MARKER ERZEUGEN", e);
-							}
 							return new CaesarElementImageDescriptor(
 								CaesarPluginImages.DESC_CODE,
 								null,
@@ -427,6 +404,24 @@ public class CaesarOutlineView extends ContentOutlinePage {
 			}
 		}
 	}
+
+	/*IResource resource =
+		ProjectProperties.findResource(
+			node.getParent().getSourceLocation().getSourceFile().getAbsolutePath(),
+			Builder.getLastBuildTarget());
+	try {
+		IMarker marker = resource.createMarker(IMarker.TASK);
+		marker.setAttribute(
+			IMarker.LINE_NUMBER,
+			node.getParent().getSourceLocation().getLine());
+		marker.setAttribute(IMarker.MESSAGE, "DIES IST ein ADVICE TEST");
+		marker.setAttribute(
+			IMarker.SEVERITY,
+			new Integer(IMarker.SEVERITY_INFO));
+	} catch (CoreException e) {
+		logger.error("FEHLER BEIM MARKER ERZEUGEN", e);
+	}
+						*/
 
 	/**
 	 * uses Structure Model to extract the data for TreeViewer
