@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarHierarchyView.java,v 1.37 2005-03-09 00:05:49 thiago Exp $
+ * $Id: CaesarHierarchyView.java,v 1.38 2005-03-10 09:51:09 gasiunas Exp $
  */
 
 package org.caesarj.ui.views;
@@ -59,6 +59,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -320,7 +321,19 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 	
 		// If there is a change in the caesar editor and we are enabled, refresh the view
 		if ((part instanceof CaesarEditor) && enabled) {
-			refresh(((CaesarEditor)part).getInputJavaElement());
+			IJavaElement javaElement = ((CaesarEditor)part).getInputJavaElement();
+			// refresh only if the contents changed
+			if (javaElement != activeJavaElement) {
+				refresh(javaElement);
+			}
+		}
+		// reset contents if not CaesarEditor
+		else if ((part instanceof EditorPart) && enabled) {
+			if (activeJavaElement != null) {
+				activeProjectProperties = null;
+				activeJavaElement = null;
+				refresh();				
+			}
 		}
 	}
 	
