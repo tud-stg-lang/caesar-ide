@@ -1,13 +1,12 @@
 package org.caesarj.ui.editor;
 
 import org.apache.log4j.Logger;
-import org.caesarj.ui.CaesarPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
  * CaesarEditor
@@ -31,40 +30,43 @@ public class CaesarEditor extends CompilationUnitEditor {
 
     private static Logger log = Logger.getLogger(CaesarEditor.class);
         
-    private CaesarOutlineView outlineView;
-    
     private CompositeRuler caesarVerticalRuler;
     
     public CaesarEditor() {
-        super();
-        log.debug("Initializing CaesarJ Editor.");
-        try {
+        super();                
+    }
+    
+    protected void initializeEditor() 
+    {
+		super.initializeEditor();
+		
+		log.debug("Initializing CaesarJ Editor.");
+        try 
+		{
+        	IPreferenceStore store = this.getPreferenceStore();
+    		CaesarTextTools textTools = new CaesarTextTools(store);
+    		JavaSourceViewerConfiguration svConfig =  new CaesarSourceViewerConfiguration(textTools, this, store);
+           	setSourceViewerConfiguration(svConfig);
         	
-        	CaesarTextTools textTools =
-        		CaesarPlugin.getDefault().getCaesarTextTools();
-
-        	JavaSourceViewerConfiguration svConfig = 
-        		new JavaSourceViewerConfiguration(textTools.getColorManager(),CaesarPlugin.getDefault().getPreferenceStore(), this,"Hmm");
-        		//Changed was deprecated new JavaSourceViewerConfiguration(textTools, this);  
-        	setSourceViewerConfiguration(svConfig);
-        	log.debug("CaesarJ Editor Initialized.");
+           	log.debug("CaesarJ Editor Initialized.");
         }
         catch(Exception e)
 		{
         	log.error("Initalizing CaesarJ Editor.",e);
 		}
-        
-    }
+	}
+    
+    /* overriden to create correct source viewer configuration */
+    protected void setPreferenceStore(IPreferenceStore store) 
+    {
+		super.setPreferenceStore(store);
+		
+		CaesarTextTools textTools = new CaesarTextTools(store);
+		JavaSourceViewerConfiguration svConfig =  new CaesarSourceViewerConfiguration(textTools, this, store);
+       	setSourceViewerConfiguration(svConfig);
+	}
     
     public Object getAdapter(Class key) {                  
-        if(key.equals(IContentOutlinePage.class)) {
-            if(outlineView == null) {
-                outlineView = new CaesarOutlineView(this);
-                outlineView.setEnabled(true);
-            }
-            
-            return outlineView;
-        }
         return super.getAdapter(key);
     }    
     
@@ -74,7 +76,5 @@ public class CaesarEditor extends CompilationUnitEditor {
     
     public void dispose() {
         log.debug("dispose");
-        outlineView.setEnabled(false);
-    }
-  	
+    }  	
 }

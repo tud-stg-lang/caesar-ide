@@ -3,7 +3,6 @@ package org.caesarj.ui.editor;
 import org.eclipse.jdt.ui.text.JavaTextTools;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
-import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * CaesarTextTools, replaces JavaTextTools code scanner with CaesarCodeScanner.
@@ -22,29 +21,12 @@ public class CaesarTextTools extends JavaTextTools {
     public RuleBasedScanner getCodeScanner() {
         return codeScanner;
     }
+	/**
+	 * Disposes all the individual tools of this tools collection.
+	 */
+	public void dispose() {
 
-    public void dispose() {
-        codeScanner = null;
-
-        super.dispose();
-    }
-
-    public boolean affectsBehavior(PropertyChangeEvent event) {
-        return
-            codeScanner.affectsBehavior(event); // Changed was deprecated||
-            //super.affectsBehavior(event);
-    }
-
-    /**
-     * Adapts the behavior of the contained components to the change
-     * encoded in the given event.
-     * 
-     * @param event the event to whch to adapt
-     */
-    protected void adaptToPreferenceChange(PropertyChangeEvent event) {
-        if (codeScanner.affectsBehavior(event))
-            codeScanner.adaptToPreferenceChange(event);
-        	//      Changed was deprecated||
-       		//super.adaptToPreferenceChange(event);
-    }
+		codeScanner = null;
+		super.dispose();
+	}
 }

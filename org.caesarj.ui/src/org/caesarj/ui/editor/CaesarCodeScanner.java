@@ -114,38 +114,41 @@ public final class CaesarCodeScanner extends AbstractJavaScanner {
         "volatile", //$NON-NLS-1$
         "while" //$NON-NLS-1$
     };
+    
+    // AspectJ keywords
+	private static String[] ajKeywords = { /*"aspect",*/ "pointcut", "privileged",
+		// Pointcut designators: methods and constructora
+		"call", "execution", "initialization", "preinitialization" ,
+		// Pointcut designators: exception handlers
+		"handler",
+		// Pointcut designators: fields
+		"get", "set",
+		// Pointcut designators: static initialization
+		"staticinitialization",
+		// Pointcut designators: object
+		// (this already a Java keyword)
+		"target", "args",
+		// Pointcut designators: lexical extents
+		"within", "withincode",
+		// Pointcut designators: control flow
+		"cflow", "cflowbelow",
+		// Advice
+		"before", "after", "around", "proceed", "throwing" , "returning" ,
+		/*"adviceexecution" ,*/
+		// Declarations
+		/* "declare", "parents" , "warning" , "error", "soft" , "precedence", */
+		// variables
+		"thisJoinPoint" , "thisJoinPointStaticPart" , "thisEnclosingJoinPointStaticPart" ,
+		// Associations
+		/*"issingleton", "perthis", "pertarget", "percflow", "percflowbelow"*/ };
 
     // Caesar keywords
     private static String[] caesarKeywords = {
-		"call",         
-        "virtual",
-        "override",
-        "clean",
-        "===",
-        "after",
-        "around",
-        "before",
-        "crosscutting",
-        "declare",
-        "deploy",
-        "deployed",
-        "pointcut",
-        "precedence",
-        "privileged",
-        "returning",
-        "throwing",
-        "cflow",
-        "target",
-        "args",
-        "proceed",
-        
-        "provides",
-        "collaboration",
-        "provided",
-        "expected",
-        "wraps",
-        "binds",
-        "wrappee"
+		"cclass",
+		"wraps",
+		"wrappee",
+		"deploy",
+		"deployed"		
     };
 
     private static String[] fgNewKeywords = { "assert" }; //$NON-NLS-1$
@@ -231,6 +234,9 @@ public final class CaesarCodeScanner extends AbstractJavaScanner {
 
         for (int i = 0; i < fgKeywords.length; i++)
             wordRule.addWord(fgKeywords[i], token);
+        
+        for (int i = 0; i < ajKeywords.length; i++)
+            wordRule.addWord(ajKeywords[i], token);
 
         for (int i = 0; i < caesarKeywords.length; i++)
             wordRule.addWord(caesarKeywords[i], token);
