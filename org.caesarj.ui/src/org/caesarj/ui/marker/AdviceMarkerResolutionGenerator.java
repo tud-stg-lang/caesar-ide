@@ -28,16 +28,16 @@ public class AdviceMarkerResolutionGenerator implements IMarkerResolutionGenerat
 	static Logger logger = Logger.getLogger(AdviceMarkerResolutionGenerator.class);
 	
 	public IMarkerResolution[] getResolutions(IMarker marker) {
-		IMarkerResolution res[] = null;
 		try {
 			LinkNode advices[] = (LinkNode[]) marker.getAttribute(AdviceMarker.LINKS);
-			res = new IMarkerResolution[advices.length];
+			IMarkerResolution res[] = new AdviceMarkerResolution[advices.length];
 			for (int i = 0; i < advices.length; i++)
 				res[i] =new AdviceMarkerResolution(advices[1]) ;
+			return res;
 		} catch (CoreException e) {
 			logger.error("Fehler beim auslesen der LINKS aus AdviceMarker",e);
 		}
-		return res;
+		return null;
 	}
 
 	/* (Kein Javadoc)

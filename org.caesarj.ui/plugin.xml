@@ -102,7 +102,6 @@
       <import plugin="org.eclipse.ui.console"/>
       <import plugin="org.eclipse.ui.externaltools"/>
       <import plugin="org.eclipse.ui.forms"/>
-      <import plugin="org.eclipse.ui.internal.r21presentation"/>
       <import plugin="org.eclipse.ui.intro"/>
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
       <import plugin="org.eclipse.update.core"/>
@@ -186,21 +185,21 @@
       </attribute>
    </extension>
    <extension
-         point="org.eclipse.ide.markerImageProviders">
+         point="org.eclipse.ui.ide.markerImageProviders">
       <imageprovider
             markertype="org.caesarj.advicemarker"
             icon="icons/joinPoint.gif"
             id="org.eclipse.ui.adviceMarkerProvider">
       </imageprovider>
    </extension>
-   <!--extension
-         point="org.eclipse.ui.markerResolution">
+   <extension
+         point="org.eclipse.ui.ide.markerResolution">
       <markerResolutionGenerator
             markerType="org.caesarj.advicemarker"
             class="org.caesarj.ui.marker.AdviceMarkerResolutionGenerator">
       </markerResolutionGenerator>
    </extension>
-	<extension point="org.eclipse.ui.markerHelp">
+	<!--extension point="org.eclipse.ui.markerHelp">
 		<markerHelp markerType="org.caesarj.advicemarker" helpContextId="org.caesarj.marker_example1_context">
 			<attribute name="org.caesarj.advicemarker" value="AdviceLink"/>
 		</markerHelp>
