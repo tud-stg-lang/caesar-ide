@@ -73,7 +73,9 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 
 	private static Logger log = Logger.getLogger(CaesarHierarchyView.class);
 
-	private ToolItem toolButton;
+	private ToolItem toolButton, filterButton;
+
+	private boolean implicitFilter = false;
 
 	protected static final String SUPER = "Show the Supertyp Hierarchy",
 			SUB = "Show the Subtyp Hierarchy";
@@ -183,14 +185,15 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 
 	private RootNode buildTreeModel(Object[] path) {
 		String projectOutputPath = "";
-		try {			
+		try {
 			ProjectProperties projectProperties = new ProjectProperties(
 					ACTIVE_PROJECT);
-			projectOutputPath = projectProperties.getProjectLocation() + projectProperties.getOutputPath();
+			projectOutputPath = projectProperties.getProjectLocation()
+					+ projectProperties.getOutputPath();
 			log.debug("Project output path: " + projectOutputPath);
 			globalPathForInformationAdapter = projectOutputPath;
 		} catch (Exception e) {
-			
+
 		}
 
 		RootNode root = new RootNode();
@@ -198,12 +201,11 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		StandardNode node;
 
 		try {
-			for (int k = 0; path.length>k ; k++)
-			{
+			for (int k = 0; path.length > k; k++) {
 				toolButton.setEnabled(true);
 				CaesarHierarchyTest nav = new CaesarHierarchyTest(
 						globalPathForInformationAdapter);
-				CClass clazz = nav.load((String)path[k]);
+				CClass clazz = nav.load((String) path[k]);
 				AdditionalCaesarTypeInformation info = clazz
 						.getAdditionalTypeInformation();
 				StandardNode classNode = new StandardNode();
@@ -214,11 +216,11 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				root.addChild(classNode);
 				String[] superClasses = info.getSuperClasses();
 				StandardNode parentNode = new StandardNode();
-	
+
 				if (superClasses.length > 0)
-					parentNode = new StandardNode(HierarchyNode.PARENTS, "Super",
-							classNode);
-	
+					parentNode = new StandardNode(HierarchyNode.PARENTS,
+							"Super", classNode);
+
 				for (int i = 0; superClasses.length > i; i++) {
 					node = new StandardNode();
 					node.setKind(HierarchyNode.SUPER);
@@ -226,9 +228,9 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 					node.setParent(parentNode);
 					parentNode.addChild(node);
 				}
-	
+
 				String[] nestedClasses = info.getNestedClasses();
-	
+
 				StandardNode nestedClassesNode = new StandardNode();
 				if (nestedClasses.length > 0)
 					if (superView)
@@ -239,7 +241,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 						nestedClassesNode = new StandardNode(
 								HierarchyNode.NESTEDCLASSES,
 								"Contains (Sub Hierarchy)", classNode);
-	
+
 				for (int i = 0; nestedClasses.length > i; i++) {
 					clazz = nav.load(nestedClasses[i]);
 					AdditionalCaesarTypeInformation nestedInfo = clazz
@@ -247,7 +249,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 					node = new StandardNode();
 					node.setTypeInforamtion(nestedInfo);
 					node.setKind(HierarchyNode.NESTED);
-					node.setName(nestedClasses[i]);					
+					node.setName(nestedClasses[i]);
 					node.setParent(nestedClassesNode);
 					if (superView) //SuperView
 					{
@@ -257,7 +259,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 						node = findAllSub(nestedClasses, node);
 					}
 					nestedClassesNode.addChild(node);
-	
+
 				}
 			}
 			return root;
@@ -346,6 +348,26 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		gridData.horizontalAlignment = SWT.END;
 		toolbar.setLayoutData(gridData);
 		ToolItem seperator = new ToolItem(toolbar, SWT.SEPARATOR);
+		filterButton = new ToolItem(toolbar, SWT.CHECK);
+		filterButton.setToolTipText("Filter IMPLICID-Typs");
+		filterButton
+				.setImage(CaesarPluginImages.DESC_OBJS_INNER_CCLASS_IMPLICID
+						.createImage());
+		filterButton.setEnabled(true);
+		filterButton.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				if (implicitFilter) {
+					implicitFilter = false;
+				} else {
+					implicitFilter = true;
+				}
+				refresh();
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		ToolItem seperator2 = new ToolItem(toolbar, SWT.SEPARATOR);
 		toolButton = new ToolItem(toolbar, SWT.FLAT);
 		toolButton.setToolTipText(SUPER);
 		toolButton.setImage(SUPERIMAGE);
@@ -396,7 +418,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				| SWT.V_SCROLL | SWT.HORIZONTAL);
 		listViewer.setContentProvider(lcp);
 		listViewer.setLabelProvider(lp);
-		refreshTree(new String[]{""});
+		refreshTree(new String[] { "" });
 	}
 
 	public void setFocus() {
@@ -457,7 +479,19 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 			Vector vec = new Vector();
 			if (parentElement instanceof HierarchyNode) {
 				HierarchyNode element = (HierarchyNode) parentElement;
-				return element.getChildren();
+				if (implicitFilter) {
+					Object all[] = element.getChildren();
+					for (int i = 0; i < all.length; i++) {
+						AdditionalCaesarTypeInformation typInfo = ((HierarchyNode) all[i])
+								.getTypeInforamtion();
+						if (typInfo == null || !typInfo.isImplicit()) {
+							vec.add(all[i]);
+						}
+					}
+					return vec.toArray();
+				} else {
+					return element.getChildren();
+				}
 			}
 			return vec.toArray();
 		}
@@ -496,16 +530,18 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 						| 0 == node.getKind()
 								.compareTo(HierarchyNode.NESTEDSUB))
 					try {
-						if(node.getTypeInforamtion().isImplicit())
-							return CaesarPluginImages.DESC_OBJS_INNER_CCLASS_IMPLICID.createImage();
+						if (node.getTypeInforamtion().isImplicit())
+							return CaesarPluginImages.DESC_OBJS_INNER_CCLASS_IMPLICID
+									.createImage();
 						else
-							return CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PUBLIC.createImage();
-					} catch (NullPointerException e)
-					{
+							return CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PUBLIC
+									.createImage();
+					} catch (NullPointerException e) {
 						//For nodes, which do not have any typ information
-						return CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PUBLIC.createImage();
+						return CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PUBLIC
+								.createImage();
 					}
-							
+
 				else if (0 == node.getKind().compareTo(HierarchyNode.PARENTS)
 						| 0 == node.getKind().compareTo(
 								HierarchyNode.NESTEDCLASSES))
@@ -630,48 +666,48 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				ACTIVE_PROJECT = editor.getInputJavaElement().getJavaProject()
 						.getProject();
 				IJavaElement element = editor.getInputJavaElement();
-				FileEditorInput input = (FileEditorInput) editor.getEditorInput();
+				FileEditorInput input = (FileEditorInput) editor
+						.getEditorInput();
 				StructureNode node = getInput(StructureModelManager.INSTANCE
-						.getStructureModel().getRoot(),input);
-				
+						.getStructureModel().getRoot(), input);
+
 				List listOfToplevelClasses = node.getChildren();
 				ArrayList listOfFullQualifiedNames = new ArrayList();
 				Object[] arrayOfFullQualifiedNames;
 				String help = "";
 				ListIterator iter = listOfToplevelClasses.listIterator();
-				for (int i = 0;iter.hasNext();i++)
-				{
-					CClassNode topLevelClass = (CClassNode)iter.next();
+				for (int i = 0; iter.hasNext(); i++) {
+					CClassNode topLevelClass = (CClassNode) iter.next();
 					help = topLevelClass.getName();
-					help = help.substring(0,help.indexOf("_Impl"));					
-					listOfFullQualifiedNames.add(topLevelClass.getPackageName()+"/"+help);					
+					help = help.substring(0, help.indexOf("_Impl"));
+					listOfFullQualifiedNames.add(topLevelClass.getPackageName()
+							+ "/" + help);
 				}
-				
+
 				refreshTree(listOfFullQualifiedNames.toArray());
 			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			log.debug("Could not locate the editors input for Hierarchy View.");
 		}
-			/* The old version
-			if (editor.getEditorInput() instanceof FileEditorInput) {
+		/*
+		 * The old version if (editor.getEditorInput() instanceof
+		 * FileEditorInput) {
+		 * 
+		 * path = input.getFile().getProjectRelativePath().toString(); path =
+		 * path.substring(0, path.indexOf(input.getFile() .getFileExtension()) -
+		 * 1);
+		 * 
+		 * log.debug("Selection in Editor! \n\tFile: '" +
+		 * editor.getEditorInput().getName() + "'.\n\tQualified name: " + path +
+		 * "'");
+		 * 
+		 * refreshTree(path); }
+		 */
 
-				path = input.getFile().getProjectRelativePath().toString();
-				path = path.substring(0, path.indexOf(input.getFile()
-						.getFileExtension()) - 1);
-
-				log.debug("Selection in Editor! \n\tFile: '"
-						+ editor.getEditorInput().getName()
-						+ "'.\n\tQualified name: " + path + "'");
-
-				refreshTree(path);
-			}
-			*/
-		
 	}
 
-	protected StructureNode getInput(StructureNode node, FileEditorInput input) throws Exception{
+	protected StructureNode getInput(StructureNode node, FileEditorInput input)
+			throws Exception {
 		if (node == null) {
 			return null;
 		}
