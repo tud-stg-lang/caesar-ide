@@ -136,7 +136,7 @@
       </type>
    </extension>
    <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
-		<specification annotationType="org.caesarj.ui.adviceannotation"  icon="icons/joinPoint.gif" >
+		<specification annotationType="org.caesarj.ui.adviceannotation"  icon="icons/PointCut.gif" >
 	  </specification>
 	</extension>
 	<extension
@@ -174,4 +174,18 @@
 	<page name="TEST" class="org.caesarj.ui.wizard.CaesarConfigPage" id="org.caesarj.ui.wizard.caesarconfigpage">
      </page>
 	</extension>
+	
+	<extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            targetID="org.caesarj.ui.editor.CaesarEditor"
+            id="org.eclipse.caesarj.ui.QuickFixRulerMenuAction">
+         <action
+			 label="%Dummy.label"
+              class="org.caesarj.ui.marker.CaesarSelectRulerAction"
+              actionID="RulerClick"
+              id="org.caesarj.ui.marker.CaesarSelectMarkerRulerAction">
+         </action>
+      </editorContribution>
+   </extension>
 </plugin>

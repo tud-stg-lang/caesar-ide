@@ -36,8 +36,10 @@ public class AdviceMarkerResolutionGenerator implements
 			LinkNode advices[] = (LinkNode[]) marker
 					.getAttribute(AdviceMarker.LINKS);
 			IMarkerResolution res[] = new AdviceMarkerResolution[advices.length];
-			for (int i = 0; i < advices.length; i++)
+			IMarkerResolution temp = null;
+			for (int i = 0; i < advices.length; i++) {
 				res[i] = new AdviceMarkerResolution(advices[i], marker);
+			}
 			return res;
 		} catch (CoreException e) {
 			logger.error("Fehler beim auslesen der LINKS aus AdviceMarker", e); //$NON-NLS-1$
@@ -45,11 +47,6 @@ public class AdviceMarkerResolutionGenerator implements
 		return null;
 	}
 
-	/*
-	 * (Kein Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IMarkerResolutionGenerator2#hasResolutions(org.eclipse.core.resources.IMarker)
-	 */
 	public boolean hasResolutions(IMarker marker) {
 		return true;
 	}
@@ -81,8 +78,8 @@ public class AdviceMarkerResolutionGenerator implements
 			IWorkbenchPage page = w.getActivePage();
 			if (page == null)
 				return;
-			IProject activeProject = ((CaesarEditor)page.getActiveEditor()).getInputJavaElement().getJavaProject()
-			.getProject();
+			IProject activeProject = ((CaesarEditor) page.getActiveEditor())
+					.getInputJavaElement().getJavaProject().getProject();
 			try {
 				IDE.openEditor(page, this.getLinkLocation(activeProject), true);
 			} catch (PartInitException e) {
@@ -94,7 +91,8 @@ public class AdviceMarkerResolutionGenerator implements
 		private IFile getLinkLocation(IProject activeProject) {
 			String fullPath = this.link.getProgramElementNode()
 					.getSourceLocation().getSourceFile().getAbsolutePath();
-			return (IFile) ProjectProperties.findResource(fullPath, activeProject);
+			return (IFile) ProjectProperties.findResource(fullPath,
+					activeProject);
 		}
 
 	}

@@ -15,7 +15,7 @@ import org.eclipse.swt.graphics.Image;
  */
 public class AdviceDeclarationNode extends CaesarProgramElementNode {
 
-	private String classFullQualifiedName;
+	private String classFullQualifiedName;	
 
 	public AdviceDeclarationNode(String classFullQualifiedNameArg,
 			String signature, Kind kind, ISourceLocation sourceLocationArg,
@@ -37,7 +37,7 @@ public class AdviceDeclarationNode extends CaesarProgramElementNode {
 
 	public Image getImage() {
 		return new CaesarElementImageDescriptor(
-				CaesarPluginImages.DESC_JOINPOINT, null, BIG_SIZE)
+				CaesarPluginImages.DESC_ADVICE_NODE, null, BIG_SIZE)
 				.createImage();
 	}
 

@@ -5,6 +5,10 @@ import java.util.List;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.phylum.declaration.CjPointcutDeclaration;
 import org.caesarj.compiler.ast.phylum.declaration.JClassDeclaration;
+import org.caesarj.compiler.ast.phylum.variable.JFormalParameter;
+import org.caesarj.ui.CaesarElementImageDescriptor;
+import org.caesarj.ui.CaesarPluginImages;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * @author Shadow
@@ -25,7 +29,6 @@ public class PointcutNode extends CaesarProgramElementNode {
 			String formalComment, List childrenArg) {
 		super(signature, kind, sourceLocationArg, modifiers, formalComment,
 				childrenArg);
-		this.initImages();
 		this.pointCutDeclaration = pointCutDeclarationArg;
 		this.classDeclaration = classDeclarationArg;
 	}
@@ -33,14 +36,27 @@ public class PointcutNode extends CaesarProgramElementNode {
 	protected void initImages() {
 	}
 
-	
 	public String getText(String text) {
-		return null;
+		String ret = this.getName() + "(";
+		JFormalParameter allPara[] = this.pointCutDeclaration.getArgs();
+		String arg = allPara[0].getType().toString();
+		ret += arg.subSequence(arg.lastIndexOf('.') + 1, arg.length());
+		for (int i = 1; i < allPara.length; i++) {
+			arg = allPara[i].getType().toString();
+			ret += ", "
+					+ arg.subSequence(arg.lastIndexOf('.') + 1, arg.length());
+		}
+		ret += ")";
+		return ret;
 	}
 
-	
 	public int compareTo(Object o) {
 		return 0;
+	}
+	
+	public Image getImage() {
+		return new CaesarElementImageDescriptor(CaesarPluginImages.DESC_POINTCUT,
+				null, BIG_SIZE).createImage();
 	}
 
 	/**
@@ -49,22 +65,28 @@ public class PointcutNode extends CaesarProgramElementNode {
 	public JClassDeclaration getClassDeclaration() {
 		return this.classDeclaration;
 	}
+
 	/**
-	 * @param classDeclarationArg The classDeclaration to set.
+	 * @param classDeclarationArg
+	 *            The classDeclaration to set.
 	 */
 	public void setClassDeclaration(JClassDeclaration classDeclarationArg) {
 		this.classDeclaration = classDeclarationArg;
 	}
+
 	/**
 	 * @return Returns the pointCutDeclaration.
 	 */
 	public CjPointcutDeclaration getPointCutDeclaration() {
 		return this.pointCutDeclaration;
 	}
+
 	/**
-	 * @param pointCutDeclarationArg The pointCutDeclaration to set.
+	 * @param pointCutDeclarationArg
+	 *            The pointCutDeclaration to set.
 	 */
-	public void setPointCutDeclaration(CjPointcutDeclaration pointCutDeclarationArg) {
+	public void setPointCutDeclaration(
+			CjPointcutDeclaration pointCutDeclarationArg) {
 		this.pointCutDeclaration = pointCutDeclarationArg;
 	}
 }

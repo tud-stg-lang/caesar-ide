@@ -1,4 +1,4 @@
-\section{Using the Visualiser and Views}
+\section{Using the Visualisers and Views}
 If this is the first time you use the \cjdt, switch to the \caesarj ~perspective by selecting \markedtext{Window} $\rightarrow$ \markedtext{Open Perspective} $\rightarrow$ \markedtext{Other}. Pick \markedtext{CaesarJDT Perspective} (see figure \ref{fig:select_persp}) in the list.
 
 \begin{figure*}[htbp]
@@ -9,9 +9,9 @@ If this is the first time you use the \cjdt, switch to the \caesarj ~perspective
 \end{figure*}
 
 This perspective extends the Java perspective. Especially a new view is available. The \markedtext{\caesarj ~Hierarchy View}. See section \ref{hierarchyview} for detailed information.\\
-You can switch between the Java and Caesar Visualization perspectives using the perspective icons in the top right of the menu bar.\\
+You can switch between the Java and Caesar Visualization perspectives using the perspective icons located in the top right of the menu bar.\\
 \subsection{Outline view}
-The outline view is showing structural members and crosscutting relationships. It extends the Java outline view by additional information (e.g advice declarations to the places it advises). A sample outline view bar is shown in figure \ref{fig:outline_view}. \textbf{TODO Bild noch nicht das richtige.}\\
+The outline view is showing structural members and crosscutting relationships. It extends the Java outline view by additional information (e.g advice declarations to the places it advises). A sample outline view bar is shown in figure \ref{fig:outline_view}.
 
 \begin{figure*}[htbp]
 	\centering
@@ -36,5 +36,13 @@ A \caesarj ~hierarchy view displays the hierarchical relationships of \caesarj ~
 \end{figure*}
 
 The modes can be switched by pressing the control button in the upper-right of the view. The second part of the view, named "Mixin view", shows the mixin composition of the currently selected (nested-) cclass.\\
-\textbf{Note:} Because this view needs meta information from the compiler, the view refreshes when a project was (re-)built successfully.
+\textbf{Note:} Since this view needs meta information from the compiler, the view refreshes when a project is (re-)built successfully.
 
+\section{Common Problems and Limitations}
+The \cjdt ~is under development. That is why there are some restrictions in this release. Some of these are listed below:
+\begin{itemize}
+	\item This release does not support live annotation while typing. To get this available, an \caesarj ~AST\footnote{Abstract Syntax Tree} would have to be built while changing code. This is not done yet.
+	\item Showing the class hierarchy of an cclass marked in the editor by pressing \markedtext{F4}. Only the hierarchy view of an entire file and its included classes is supported.
+	\item In-time refreshing of the outline bar and of the hierarchy view is not supported yet. In this release both of the views need meta information from the compiler. That is why they only refresh after a (re-) build of the entire project.
+	\item It is not possible to declare breakpoints in advices, when debugging an \caesarj ~application.
+\end{itemize}

@@ -131,9 +131,17 @@ public class CaesarOutlineView extends ContentOutlinePage {
 		public Image getImage(Object element) {
 			try {
 				if (element instanceof LinkNode) {
-					return new CaesarElementImageDescriptor(
-							CaesarPluginImages.DESC_JOINPOINT, null, BIG_SIZE)
-							.createImage();
+					ProgramElementNode pNode = ((LinkNode) element)
+							.getProgramElementNode();
+					if (pNode instanceof AdviceDeclarationNode) {
+						return new CaesarElementImageDescriptor(
+								CaesarPluginImages.DESC_JOINPOINT_BACK,
+								null, BIG_SIZE).createImage();
+					} else {
+						return new CaesarElementImageDescriptor(
+								CaesarPluginImages.DESC_JOINPOINT_FORWARD, null,
+								BIG_SIZE).createImage();
+					}
 				} else if (element instanceof RelationNode) {
 					return new CaesarElementImageDescriptor(
 							CaesarPluginImages.DESC_ADVICE, null, BIG_SIZE)
@@ -203,9 +211,9 @@ public class CaesarOutlineView extends ContentOutlinePage {
 			StructureNode node = (StructureNode) parentElement;
 			for (Iterator it = node.getChildren().iterator(); it.hasNext();) {
 				Object te = it.next();
-				if(te instanceof MethodDeclarationNode){
+				if (te instanceof MethodDeclarationNode) {
 					MethodDeclarationNode no = (MethodDeclarationNode) te;
-					if(no.getName().equals("aspectOf"))
+					if (no.getName().equals("aspectOf"))
 						continue;
 				}
 				if (te instanceof MethodDeclarationNode
