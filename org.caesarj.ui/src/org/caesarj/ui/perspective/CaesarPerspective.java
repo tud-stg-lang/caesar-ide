@@ -10,6 +10,7 @@ package org.caesarj.ui.perspective;
  */
 
 import org.apache.log4j.Logger;
+import org.caesarj.ui.preferences.CaesarJPreferences;
 import org.caesarj.ui.wizard.CaesarConfigWizard;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.ui.JavaUI;
@@ -81,11 +82,15 @@ public class CaesarPerspective implements IPerspectiveFactory {
 		CaesarConfigWizard wizard = new CaesarConfigWizard();
 		wizard.init();
 		// Create the wizard dialog
-		org.eclipse.jface.wizard.WizardDialog dialog = new org.eclipse.jface.wizard.WizardDialog(
+		CaesarJPreferences dfsf;
+		if(CaesarJPreferences.isCAESARPrefConfigDone())
+		{
+			org.eclipse.jface.wizard.WizardDialog dialog = new org.eclipse.jface.wizard.WizardDialog(
 				org.eclipse.ui.internal.WorkbenchPlugin.getDefault()
 						.getWorkbench().getActiveWorkbenchWindow()
 						.getShell(),wizard);
-		dialog.open();
+			dialog.open();
+		}
 	}
 
 }
