@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+
+   <description url="index.html">
+      CaesarJ Update Site
+   </description>
+   <feature url="features/org.caesarj.feature_0.1.1.jar" id="org.caesarj.feature" version="0.1.1">
+      <category name="CaesarJ"/>
+   </feature>
+   <category-def name="CaesarJ" label="CaesarJ"/>
+</site>

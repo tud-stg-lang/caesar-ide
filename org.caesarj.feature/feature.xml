@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.caesarj.feature"
+      label="org.caesarj.feature"
+      version="0.1.1"
+      provider-name="TUD Darmstadt">
+
+   <description>
+      CaesarJ UI
+   </description>
+
+   <copyright>
+      COPYRIGHT NOTICE
+   </copyright>
+
+   <license>
+      LICENCE AGREEMENT
+   </license>
+
+   <requires>
+      <import plugin="org.eclipse.search"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.jdt.ui"/>
+      <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="org.eclipse.pde.core"/>
+      <import plugin="org.eclipse.pde.runtime"/>
+      <import plugin="org.eclipse.pde"/>
+      <import plugin="org.eclipse.debug.ui"/>
+      <import plugin="org.eclipse.jdt.debug.ui"/>
+      <import plugin="org.eclipse.swt"/>
+      <import plugin="org.eclipse.jdt.launching"/>
+   </requires>
+
+   <plugin
+         id="org.caesarj.ui"
+         download-size="0"
+         install-size="0"
+         version="0.1.1"/>
+
+</feature>
