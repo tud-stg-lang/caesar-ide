@@ -16,8 +16,12 @@ package org.caesarj.ui.wizard;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.apache.log4j.Logger;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.PreferenceConstants;
+import org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -33,10 +37,12 @@ import org.eclipse.ui.IWorkbench;
  */
 public class CaesarConfigPage extends WizardPage {
 	private IWorkbench workbench;
+	
+	  private static Logger log = Logger.getLogger(CaesarConfigPage.class);
 
 	// widgets
-	private Button aspectJEditorDefaultCheckbox = null;
-	private Button unusedImportsCheckbox = null;
+	private Button caesarJAnnotationCheckbox = null;
+	private Button caesarEditorDefaultCheckbox = null;
 	private Button analyzeAnnotationsCheckbox = null;
 	private Button dontAskAgainCheckbox = null;
 	
@@ -44,15 +50,13 @@ public class CaesarConfigPage extends WizardPage {
 	 * Creates the page AJDT Preference Configuration main (only) page.
 	 */
 	public CaesarConfigPage(){
-		super("Test1");
-		this.setTitle("Test2");		
-		this.setDescription("Test3");
+
+		super("Caesar Preferences");
+		this.setTitle("Caesar Preferences");		
+		this.setDescription("To costomize your CaesarJ Plugin choose your preferences");
 	}
 	
-	/**
-     * Build the GUI representation of the page.
-     * @param Composite The parent control.
-	 */
+	
 	public void createControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -62,24 +66,21 @@ public class CaesarConfigPage extends WizardPage {
 		setControl(composite);
 	
 		// create workbench preferences group
-		
+		try {
 			Group workbench = new Group(composite, SWT.NONE);
 			workbench.setLayout(new GridLayout());
-			workbench.setText("Group1");
+			workbench.setText("CaesarJ Preference");
 			workbench.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	
-			// create workbench preferences checkboxes; only create checkboxes
-			// for those settings that are not already configured for AJDT
-			if (true) {			
-				aspectJEditorDefaultCheckbox = new Button(workbench, SWT.CHECK);		
-				aspectJEditorDefaultCheckbox.setText("Live Annotation");
-				aspectJEditorDefaultCheckbox.setSelection(JavaPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS));
-			}/*
-			if (!AJDTConfigSettings.isUnusedImportsDisabled()) {	
-				unusedImportsCheckbox = new Button(workbench, SWT.CHECK);	
-				unusedImportsCheckbox.setText(AspectJPlugin.getResourceString("AJDTPrefConfigWizardPage.workbench.unusedimports"));
-				unusedImportsCheckbox.setSelection(true);
-			}
+			
+				caesarJAnnotationCheckbox = new Button(workbench, SWT.CHECK);		
+				caesarJAnnotationCheckbox.setText("Annotation while typing");
+				caesarJAnnotationCheckbox.setSelection(JavaPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS));
+			
+				caesarEditorDefaultCheckbox = new Button(workbench, SWT.CHECK);	
+				caesarEditorDefaultCheckbox.setText("Make the CaesarJ editor the default java - editor");
+				caesarEditorDefaultCheckbox.setSelection(true);
+			
+			/*
 			if (!AJDTConfigSettings.isAnalyzeAnnotationsDisabled()) {	
 				analyzeAnnotationsCheckbox = new Button(workbench, SWT.CHECK);		
 				analyzeAnnotationsCheckbox.setText(AspectJPlugin.getResourceString("AJDTPrefConfigWizardPage.workbench.analyzeannotations"));
@@ -88,31 +89,33 @@ public class CaesarConfigPage extends WizardPage {
 			
 							
 		new Label(composite, SWT.NONE); // vertical spacer
+		}
+		catch (Exception e)
+		{
+			log.warn("Error while drawing ConfigPage", e);
+		}
 		
-		// create "don't ask again" checkbox
-		//dontAskAgainCheckbox = new Button(composite, SWT.CHECK);
-		//dontAskAgainCheckbox.setText(AspectJPlugin.getResourceString("AJDTPrefConfigWizardPage.workbench.askagain"));
-		//dontAskAgainCheckbox.setSelection(true);
+		dontAskAgainCheckbox = new Button(composite, SWT.CHECK);
+		dontAskAgainCheckbox.setText("Ask again next time");
+		dontAskAgainCheckbox.setSelection(true);
 	}
 	
 	
-	/**
-	 * Applies the AJDT Conmfiguration settings chosen by the user. If everything
-	 * is OK then answer true. If not, false will cause the dialog
-	 * to stay open.
-	 *
-	 * @return boolean whether creation was successful
-	 * @see ReadmeCreationWizard#performFinish()
-	 */
 	public boolean finish() {
+		
+		if (caesarJAnnotationCheckbox != null) {
+			JavaPlugin.getDefault().getPreferenceStore().setValue(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS,caesarJAnnotationCheckbox.getSelection());	
+		}
+		if (caesarEditorDefaultCheckbox != null) {
+			
+		}
+		
+		boolean dontAskAgain = dontAskAgainCheckbox.getSelection();
+		
 		/*
-		boolean makeAspectJEditorDefault = false;
-		if (aspectJEditorDefaultCheckbox != null) {
-			makeAspectJEditorDefault = aspectJEditorDefaultCheckbox.getSelection();
-		} 
 		boolean disableUnusedImports = false;
-		if (unusedImportsCheckbox != null) {
-			disableUnusedImports = unusedImportsCheckbox.getSelection();
+		if (caesarEditorDefaultCheckbox != null) {
+			disableUnusedImports = caesarEditorDefaultCheckbox.getSelection();
 		}
 		
 		boolean disableAnalyzeAnnotations = false;
@@ -132,11 +135,11 @@ public class CaesarConfigPage extends WizardPage {
 			AJDTConfigSettings.disableUnusedImports();
 		}
 		
-		// set the AspectJ editor to be the default editor for .java files
-		if (makeAspectJEditorDefault) {
-			AJDTConfigSettings.setAspectJEditorDefault();
-		}
+		*/
 		
+		
+		
+		/*
 		if (dontAskAgain) {
 			AspectJPreferences.setAJDTPrefConfigDone(true);
 		}

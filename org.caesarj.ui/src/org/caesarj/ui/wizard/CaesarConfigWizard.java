@@ -10,26 +10,30 @@ Mik Kersten, Julie Waterhouse - initial version
 **********************************************************************/
 package org.caesarj.ui.wizard;
 
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 
-/**
- * This wizard sets preferences to customize the AJDT enviroment.
- * Specifically:
- * 1. Turn off analyze annotations (red squiggles)
- * 2. Make the AspectJ editor the default for .java files
- * 3. Set the unused imports to "warning"
- * 4. Add Aspect and AspectJ Project wizards to the File->New menu for the
- * Java perspective (currently disabled)
- */
+
 public class CaesarConfigWizard extends Wizard {
+
 	private CaesarConfigPage mainPage;
+	private NewJavaProjectWizardPage fJavaPage;//test
+	private WizardNewProjectCreationPage fMainPage;
 
 	/** 
 	 * Adds the CaesarConfigPage (only page for this wizard)
 	 */
 	public void addPages() {
+		
 		mainPage = new CaesarConfigPage();
 		addPage(mainPage);
+//		fMainPage = new WizardNewProjectCreationPage("NewAspectjProjectCreationWizard");
+//		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+//        fJavaPage = new NewJavaProjectWizardPage(root, fMainPage);
+//        addPage(fJavaPage);
 	}
 	
 	/** 

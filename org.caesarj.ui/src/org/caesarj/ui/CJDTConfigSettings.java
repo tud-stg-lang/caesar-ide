@@ -37,14 +37,14 @@ public class CJDTConfigSettings {
 		JavaCore.setOptions(map);
 	}
 	
-	static public boolean isAspectJEditorDefault() {
+	static public boolean isCaesarJEditorDefault() {
 		IEditorRegistry editorRegistry = WorkbenchPlugin.getDefault().getEditorRegistry();
 		IEditorDescriptor desc = editorRegistry.getDefaultEditor("*.java");
 		//TODO weiﬂ nicht was geht
 		return CaesarPlugin.getResourceString(CaesarPlugin.ID_EDITOR).equals(desc.getLabel());
 	}
 	
-	static public void setAspectJEditorDefault() {
+	static public void setCaesarJEditorDefault() {
 		EditorRegistry editorRegistry = (EditorRegistry)WorkbenchPlugin.getDefault().getEditorRegistry();
 		IFileEditorMapping[] array = WorkbenchPlugin.getDefault().getEditorRegistry().getFileEditorMappings();
 		editorRegistry.setFileEditorMappings((FileEditorMapping[])array);

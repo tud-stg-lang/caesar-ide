@@ -13,22 +13,22 @@ public class CaesarJPreferences {
 	 * Identifier (key) for indication of whether AJDTPrefConfigWizard should be
 	 * shown again. If true, don't show.
 	 */
-	public static final String AJDT_PREF_CONFIG_DONE = "org.caesarj.ui.preferences.ajdtPrefConfigDone";
+	public static final String CAESAR_PREF_CONFIG_DONE = "org.caesarj.ui.preferences.ajdtPrefConfigDone";
 
 	public static final String PDE_AUTO_IMPORT_CONFIG_DONE = "org.caesarj.ui.preferences.pdeAutoImportConfigDone";
 
 	public static final String ASK_PDE_AUTO_IMPORT = "org.caesarj.ui.preferences.askPdeAutoImport";
 
-	static public void setAJDTPrefConfigDone(boolean done) {
+	static public void setCAESARPrefConfigDone(boolean done) {
 		IPreferenceStore store = CaesarPlugin.getDefault()
 				.getPreferenceStore();
-		store.setValue(AJDT_PREF_CONFIG_DONE, done);
+		store.setValue(CAESAR_PREF_CONFIG_DONE, done);
 	}
 
-	static public boolean isAJDTPrefConfigDone() {
+	static public boolean isCAESARPrefConfigDone() {
 		IPreferenceStore store = CaesarPlugin.getDefault()
 				.getPreferenceStore();
-		return store.getBoolean(AJDT_PREF_CONFIG_DONE);
+		return store.getBoolean(CAESAR_PREF_CONFIG_DONE);
 	}
 
 	static public void setAskPDEAutoImport(boolean ask) {

@@ -1,16 +1,12 @@
 /*
- * Created on 05.06.2004
+ * Created on 29.06.2004
  *
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
 package org.caesarj.ui.actionsets;
 
-import org.apache.log4j.Logger;
-import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.wizard.CaesarConfigWizard;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -22,15 +18,11 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class AnnotationShortCut implements IWorkbenchWindowActionDelegate{
+public class PreferenceShortCut implements IWorkbenchWindowActionDelegate {
 
-	private static Logger log = Logger.getLogger(AnnotationShortCut.class);
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
-	
-	private boolean status; 
-	
 	public void dispose() {
 	}
 
@@ -38,17 +30,21 @@ public class AnnotationShortCut implements IWorkbenchWindowActionDelegate{
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
-		status = JavaPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS);
+
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		log.debug("Annotation action was activated!");
-		JavaPlugin.getDefault().getPreferenceStore().setValue(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS, !status);
-		//JavaPlugin.getDefault().getPreferenceStore().notifyAll();
-		status = JavaPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS);
+		CaesarConfigWizard wizard = new CaesarConfigWizard();
+		wizard.init();
+		// Create the wizard dialog
+		org.eclipse.jface.wizard.WizardDialog dialog = new org.eclipse.jface.wizard.WizardDialog(
+				org.eclipse.ui.internal.WorkbenchPlugin.getDefault()
+						.getWorkbench().getActiveWorkbenchWindow()
+						.getShell(),wizard);
+		dialog.open();
 	}
 
 	/* (non-Javadoc)
@@ -56,7 +52,7 @@ public class AnnotationShortCut implements IWorkbenchWindowActionDelegate{
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
