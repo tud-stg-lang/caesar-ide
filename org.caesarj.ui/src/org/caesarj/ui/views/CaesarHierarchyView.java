@@ -699,6 +699,13 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				} else if (markedNode.getKind().compareTo(HierarchyNode.NESTED) == 0) {
 					log.debug("Nested class '" + markedNode.getName()
 							+ "' selected.");
+					if (markedNode.getTypeInforamtion().getNestedClasses().length>0)
+					{
+						ArrayList list = new ArrayList();
+						list.add(markedNode.getName());
+						refreshTree(list.toArray());
+						actualFileHelp = "-";
+					}
 					refreshList(markedNode.getName());
 				} else if (markedNode.getKind().compareTo(
 						HierarchyNode.NESTEDSUPER) == 0) {
