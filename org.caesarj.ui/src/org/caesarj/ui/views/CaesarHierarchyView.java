@@ -11,9 +11,11 @@ import org.aspectj.asm.StructureModelManager;
 import org.aspectj.asm.StructureNode;
 import org.caesarj.compiler.export.CClass;
 import org.caesarj.runtime.AdditionalCaesarTypeInformation;
+import org.caesarj.ui.CaesarElementImageDescriptor;
 import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.CaesarPluginImages;
 import org.caesarj.ui.editor.CaesarEditor;
+import org.caesarj.ui.editor.CaesarOutlineView;
 import org.caesarj.ui.model.CClassNode;
 import org.caesarj.ui.test.CaesarHierarchyTest;
 import org.caesarj.ui.util.ProjectProperties;
@@ -166,6 +168,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				StandardNode subNode = new StandardNode(
 						HierarchyNode.NESTEDSUB, nestedClasses[j], node,
 						helpInfo);
+				subNode = checkFurtherBinding(subNode);
 				for (int k = 0; superClasses.length > k; k++) {
 					if (k == 0)
 						additionalInfo = filterName(superClasses[k]);
@@ -200,6 +203,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				help.setTypeInforamtion(clazz.getAdditionalTypeInformation());
 				help.setName(superNodes[i]);
 				help.setParent(classNode);
+				help = checkFurtherBinding(help);
 				help.setKind(StandardNode.NESTEDSUPER);
 				classNode.addChild(help);
 				help = findAllSuper(help);
@@ -220,6 +224,15 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		}
 		return help;
 	}
+	
+	private StandardNode checkFurtherBinding(StandardNode node)
+	{
+		String [] increment = node.getTypeInforamtion().getIncrementFor();
+		boolean isImplicid = node.getTypeInforamtion().isImplicit();
+		
+		node.setFurtherBinding(!isImplicid&&!(increment.length==0));
+		return node;
+	}
 
 	private RootNode buildTreeModel(Object[] path) {
 
@@ -228,6 +241,8 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		StandardNode node;
 
 		try {
+			if (path.length==0) 
+				throw new NullPointerException("No Data.");
 			for (int k = 0; path.length > k; k++) {
 				toolButton.setEnabled(true);
 				CaesarHierarchyTest nav = new CaesarHierarchyTest(
@@ -240,6 +255,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				classNode.setName(info.getQualifiedName());
 				classNode.setTypeInforamtion(info);
 				classNode.setParent(root);
+				classNode = checkFurtherBinding(classNode);
 				root.addChild(classNode);
 				String[] superClasses = info.getSuperClasses();
 				StandardNode parentNode = new StandardNode();
@@ -253,6 +269,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 					node.setKind(HierarchyNode.SUPER);
 					node.setName(superClasses[i]);
 					node.setParent(parentNode);
+					node.setTypeInforamtion(nav.load(superClasses[i]).getAdditionalTypeInformation());
 					parentNode.addChild(node);
 				}
 
@@ -263,11 +280,11 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 					if (superView)
 						nestedClassesNode = new StandardNode(
 								HierarchyNode.NESTEDCLASSES,
-								"Contains (Super Hierarchy)", classNode);
+								"Contains (Super)", classNode);
 					else
 						nestedClassesNode = new StandardNode(
 								HierarchyNode.NESTEDCLASSES,
-								"Contains (Sub Hierarchy)", classNode);
+								"Contains (Sub)", classNode);
 
 				for (int i = 0; nestedClasses.length > i; i++) 
 				{
@@ -280,6 +297,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 					node.setTypeInforamtion(nestedInfo);
 					node.setKind(HierarchyNode.NESTED);
 					node.setName(nestedClasses[i]);
+					node = checkFurtherBinding(node);
 					if (superView) //SuperView
 					{
 						node = findAllSuper(node);
@@ -313,7 +331,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 			}
 			return root;
 		} catch (NullPointerException e) {
-			log.debug("No Information.",e);
+			log.debug("No Information.");
 			StandardNode n1 = new StandardNode();
 			n1.setKind(HierarchyNode.EMTY);
 			n1.setName("No informations available.");
@@ -580,15 +598,12 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 								.compareTo(HierarchyNode.NESTEDSUB))
 					try {
 						if (node.getTypeInforamtion().isImplicit())
-							return CaesarPluginImages.DESC_OBJS_INNER_CCLASS_IMPLICID
-									.createImage();
+							return new CaesarElementImageDescriptor(CaesarPluginImages.DESC_OBJS_INNER_CCLASS_IMPLICID, CaesarOutlineView.BIG_SIZE, node).createImage();
 						else
-							return CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PUBLIC
-									.createImage();
+							return new CaesarElementImageDescriptor(CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PUBLIC, CaesarOutlineView.BIG_SIZE, node).createImage();							
 					} catch (NullPointerException e) {
 						//For nodes, which do not have any typ information
-						return CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PUBLIC
-								.createImage();
+						return new CaesarElementImageDescriptor(CaesarPluginImages.DESC_OBJS_INNER_CCLASS_IMPLICID, CaesarOutlineView.BIG_SIZE, node).createImage();
 					}
 
 				else if (0 == node.getKind().compareTo(HierarchyNode.PARENTS)
@@ -608,9 +623,14 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 				//help = node.getName();
 				help = filterName(node.getName());
 				if (node.hasAdditionalName()) {
-					help = help + " (" + node.getAdditionalName() + ")";
+					help = help + " (" + node.getAdditionalName() + ")";					
 				}
-				return replaceAll(help, "$", ".");
+				help = replaceAll(help, "$", ".");
+				/*if (node.isFurtherBinding())
+				{
+					help = help + "(F)";
+				}*/
+				return help;
 			} else if (element instanceof LinearNode) {
 				LinearNode node = (LinearNode) element;
 				return replaceAll(node.getName(), "$", ".");
@@ -706,9 +726,18 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 	public static ListViewer getListViewer() {
 		return listViewer;
 	}
-
+	
+	String actualFile = "";
+	String actualFileHelp = "-";
+	
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		String path;
+		
+		 try {
+			findJavaRootElement();
+		} catch (Exception e) {
+			actualFileHelp = "-";
+		}
 		
 		int selectionLength = 0;
 		if (selection instanceof TextSelection) {
@@ -717,9 +746,10 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 			
 		}
 
-		if ((part instanceof CaesarEditor)&&selectionLength==0) {				
+		if ((part instanceof CaesarEditor)&&actualFile.compareTo(actualFileHelp)!=0) {
+			actualFileHelp = actualFile;
 			refresh();
-		}
+		}		
 
 	}
 
@@ -744,41 +774,48 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 
 	private Object[] qualifiedNameToActualClasses = null;
 
+	private StructureNode findJavaRootElement() throws Exception {
+		
+		CaesarEditor editor = (CaesarEditor) CaesarPlugin.getDefault()
+				.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+				.getActiveEditor();
+		IJavaElement element = editor.getInputJavaElement();
+
+		FileEditorInput input = (FileEditorInput) editor.getEditorInput();
+		StructureNode node = getInput(StructureModelManager.INSTANCE
+				.getStructureModel().getRoot(), input);
+		
+		actualFile = node.getName();
+		
+		ACTIVE_PROJECT = editor.getInputJavaElement().getJavaProject()
+		.getProject();
+		
+		return node;
+	}
+	
 	public void refresh() {
 		log.debug("Refresh!!!");
-		try {
-			if (CaesarPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor() instanceof CaesarEditor) {
-				CaesarEditor editor = (CaesarEditor) CaesarPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-				IJavaElement element = editor.getInputJavaElement();
-				
-				FileEditorInput input = (FileEditorInput) editor
-						.getEditorInput();
-				StructureNode node = getInput(StructureModelManager.INSTANCE
-						.getStructureModel().getRoot(), input);
-
-				List listOfToplevelClasses = node.getChildren();
-				ArrayList listOfFullQualifiedNames = new ArrayList();
-				Object[] arrayOfFullQualifiedNames;
-				String help = "";
-				ListIterator iter = listOfToplevelClasses.listIterator();
-				for (int i = 0; iter.hasNext(); i++) {
-					CClassNode topLevelClass = (CClassNode) iter.next();
-					help = topLevelClass.getName();
-					help = help.substring(0, help.indexOf("_Impl"));
-					listOfFullQualifiedNames.add(topLevelClass.getPackageName()
-							+ "/" + help);
-				}
-				qualifiedNameToActualClasses = listOfFullQualifiedNames.toArray();
-				ACTIVE_PROJECT = editor.getInputJavaElement().getJavaProject()
-				.getProject();
-				
-				ProjectProperties prob = new ProjectProperties(ACTIVE_PROJECT);
-				globalPathForInformationAdapter = prob.getOutputPath();
+		ArrayList listOfFullQualifiedNames = new ArrayList();
+		try {			
+			List listOfToplevelClasses = findJavaRootElement().getChildren();			
+			
+			Object[] arrayOfFullQualifiedNames;
+			String help = "";
+			ListIterator iter = listOfToplevelClasses.listIterator();
+			for (int i = 0; iter.hasNext(); i++) {
+				CClassNode topLevelClass = (CClassNode) iter.next();
+				help = topLevelClass.getName();
+				help = help.substring(0, help.indexOf("_Impl"));
+				listOfFullQualifiedNames.add(topLevelClass.getPackageName()
+						+ "/" + help);
 			}
+			qualifiedNameToActualClasses = listOfFullQualifiedNames.toArray();			
+			ProjectProperties prob = new ProjectProperties(ACTIVE_PROJECT);
+			globalPathForInformationAdapter = prob.getProjectLocation()+prob.getOutputPath();
+			refreshTree(qualifiedNameToActualClasses);
 		} catch (Exception e) {
-			log.debug("Refreshfehler: ");
+			refreshTree(listOfFullQualifiedNames.toArray());
 		}
-		refreshTree(qualifiedNameToActualClasses);
 	}
 
 	public void refreshTree(Object[] path) {

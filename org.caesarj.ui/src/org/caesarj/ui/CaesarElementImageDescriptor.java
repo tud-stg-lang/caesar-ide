@@ -1,6 +1,7 @@
 package org.caesarj.ui;
 
 import org.caesarj.ui.model.CaesarProgramElementNode;
+import org.caesarj.ui.views.hierarchymodel.RootNode;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -81,6 +82,17 @@ public class CaesarElementImageDescriptor extends CompositeImageDescriptor {
 		if((modif/2048)%2==1) flags |= STRICTFP;	
 		return flags;
 	}
+	
+	private int computeJavaAdornmentFlags(RootNode node) {
+		int flags = 0;
+		if(node == null)return flags;
+		//String modifiers = node.getModifiers().toString();
+
+		if (node.isFurtherBinding())
+			flags |= OVERRIDES;
+
+		return flags;
+	}
 
 private ImageDescriptor fBaseImage;
 private int fFlags;
@@ -98,6 +110,18 @@ public CaesarElementImageDescriptor(
 	this.fSize = size;
 	Assert.isNotNull(this.fSize);
 }
+
+public CaesarElementImageDescriptor(
+		ImageDescriptor baseImage,
+		Point size,
+		RootNode node) {
+		this.fBaseImage = baseImage;
+		Assert.isNotNull(this.fBaseImage);
+		this.fFlags = this.computeJavaAdornmentFlags(node);
+		Assert.isTrue(this.fFlags >= 0);
+		this.fSize = size;
+		Assert.isNotNull(this.fSize);
+	}
 
 public void setAdornments(int adornments) {
 	Assert.isTrue(adornments >= 0);

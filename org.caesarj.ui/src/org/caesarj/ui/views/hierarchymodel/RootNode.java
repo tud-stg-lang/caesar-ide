@@ -15,6 +15,15 @@ public class RootNode extends HierarchyNode {
 	
 	Vector children;
 	
+	boolean furtherBinding = false;
+
+	public boolean isFurtherBinding() {
+		return furtherBinding;
+	}
+	public void setFurtherBinding(boolean furtherBinding) {
+		this.furtherBinding = furtherBinding;
+	}
+	
 	public RootNode()
 	{
 		super();
