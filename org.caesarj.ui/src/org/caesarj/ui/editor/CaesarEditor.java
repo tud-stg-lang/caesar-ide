@@ -5,6 +5,8 @@ import org.caesarj.ui.CaesarPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
+import org.eclipse.jface.text.source.CompositeRuler;
+import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -20,13 +22,37 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  */
 
 public class CaesarEditor extends CompilationUnitEditor {
+	
+
     
+	/**
+	 * @author Jochen
+	 *
+	 * To change the template for this generated type comment go to
+	 * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+	 */
+
     private static Logger log = Logger.getLogger(CaesarEditor.class);
         
     private CaesarOutlineView outlineView;
     
+    private CompositeRuler caesarVerticalRuler;
+    
     public CaesarEditor() {
         super();
+        
+		caesarVerticalRuler = (CompositeRuler)this.createVerticalRuler();
+		IVerticalRulerColumn column = this.createLineNumberRulerColumn();
+		
+
+		try{
+			caesarVerticalRuler.addDecorator(1,column);
+		}
+		catch(Exception e)
+		{
+			log.error("Sideruler error:",e);
+		}
+		//caesarVerticalRuler.update();
         
         CaesarTextTools textTools =
             CaesarPlugin.getDefault().getCaesarTextTools();
@@ -60,5 +86,5 @@ public class CaesarEditor extends CompilationUnitEditor {
         log.debug("dispose");
         outlineView.setEnabled(false);
     }
-  
+  	
 }
