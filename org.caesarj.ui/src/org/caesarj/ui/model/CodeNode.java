@@ -46,6 +46,19 @@ public class CodeNode extends CaesarProgramElementNode {
 		String formalComment,
 		List children) {
 		super(signature, kind, sourceLocation, modifiers, formalComment, children);
+		IResource resource =
+			ProjectProperties.findResource(
+				sourceLocation.getSourceFile().getAbsolutePath(),
+				Builder.getLastBuildTarget());
+
+		try {
+			IMarker marker = resource.createMarker(IMarker.TASK);
+			marker.setAttribute(IMarker.LINE_NUMBER, sourceLocation.getLine());
+			marker.setAttribute(IMarker.MESSAGE, "DIES IST ein ADVICE TEST");
+			marker.setAttribute(IMarker.SEVERITY, new Integer(IMarker.SEVERITY_INFO));
+		} catch (CoreException e) {
+			logger.error("FEHLER BEIM MARKER ERZEUGEN", e);
+		}
 	}
 
 	/**
@@ -76,6 +89,7 @@ public class CodeNode extends CaesarProgramElementNode {
 			children,
 			importedPackages,
 			importedClasses);
+
 		IResource resource =
 			ProjectProperties.findResource(
 				sourceLocation.getSourceFile().getAbsolutePath(),
