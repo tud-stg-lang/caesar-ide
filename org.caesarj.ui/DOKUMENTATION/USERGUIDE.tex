@@ -1,5 +1,5 @@
 \documentclass[a4paper,12pt,twoside,titlepage]{article}
-\usepackage[pdftitle={Userguide Caesar Development Tools},pdfborder=0,pdfauthor={Jochen Unger, Daniel Zwicker},colorlinks=false,linkcolor=blue,linkbordercolor=255 255 255]{hyperref}
+\usepackage[pdftitle={Userguide Caesar Development Tools},pdfborder=0,pdfauthor={Jochen Unger, Daniel Zwicker},colorlinks=true,linkcolor=blue,linkbordercolor=255 255 255]{hyperref}
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage[ansinew]{inputenc}
@@ -18,8 +18,17 @@
 \newcommand{\code}[1]
 {\textbf{"#1"}}
 
+\newcommand{\caesarj}
+{\caesar}
+
+\newcommand{\markedtext}[1]
+{\textbf{#1}}
+
 \newcommand{\caesar}
 {CaesarJ}
+
+\newcommand{\jdt}
+{Java Development Tool}
 
 \newcommand{\cjdt}
 {CaesarJ Development Tool}
@@ -52,41 +61,33 @@
 \tableofcontents
 
 \newpage
-\section{Introduction}
 \input{intro}
 
 \newpage
-\section{Getting Started with CJDT}
 \input{start}
 
 \newpage
-\section{CJDT Installation}
 \input{installation}
 
 
 \newpage
-\section{Features}
+\section{Features\label{features}}
 The following section describes the extending features of the CaesarJ Plugin. 
-\subsection{Creating an CaesarJ Project}
+
 \input{create-project}
 
-\subsection{Adding a Class to Your Project}
 \input{newclass}
 
 \input{addaspect}
 
-\subsection{Running an Caesar Program}
 \input{launch}
 
-\subsection{Debugging Caesar Programs}
 \input{debugging}
 
 \newpage
-\section{Propertie and Shortcuts}
 \input{propertiesShortcuts}
 
 \newpage
-\section{Using the Visualiser}
 \input{view}
 
 \end{document}
