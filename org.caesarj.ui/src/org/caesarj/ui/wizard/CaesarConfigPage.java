@@ -17,6 +17,8 @@ package org.caesarj.ui.wizard;
  * All Rights Reserved.
  */
 import org.apache.log4j.Logger;
+import org.caesarj.ui.CJDTConfigSettings;
+import org.caesarj.ui.preferences.CaesarJPreferences;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
@@ -78,7 +80,7 @@ public class CaesarConfigPage extends WizardPage {
 			
 				caesarEditorDefaultCheckbox = new Button(workbench, SWT.CHECK);	
 				caesarEditorDefaultCheckbox.setText("Make the CaesarJ editor the default java - editor");
-				caesarEditorDefaultCheckbox.setSelection(true);
+				caesarEditorDefaultCheckbox.setSelection(CJDTConfigSettings.isCaesarJEditorDefault());
 			
 			/*
 			if (!AJDTConfigSettings.isAnalyzeAnnotationsDisabled()) {	
@@ -96,21 +98,30 @@ public class CaesarConfigPage extends WizardPage {
 		}
 		
 		dontAskAgainCheckbox = new Button(composite, SWT.CHECK);
-		dontAskAgainCheckbox.setText("Ask again next time");
-		dontAskAgainCheckbox.setSelection(true);
+		dontAskAgainCheckbox.setText("Open this dialog next time you open the CaesarJ perspective?");
+		dontAskAgainCheckbox.setSelection(CaesarJPreferences.isCAESARPrefConfigDone());
 	}
 	
 	
 	public boolean finish() {
 		
 		if (caesarJAnnotationCheckbox != null) {
-			JavaPlugin.getDefault().getPreferenceStore().setValue(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS,caesarJAnnotationCheckbox.getSelection());	
+			if (!caesarJAnnotationCheckbox.getSelection())
+				CJDTConfigSettings.disableAnalyzeAnnotations();
+			else
+				CJDTConfigSettings.enableAnalyzeAnnotations();
 		}
 		if (caesarEditorDefaultCheckbox != null) {
-			
+			if (caesarEditorDefaultCheckbox.getSelection())
+				CJDTConfigSettings.enableCaesarJEditorDefault();
+			else
+				CJDTConfigSettings.disableCaesarJEditorDefault();
 		}
 		
 		boolean dontAskAgain = dontAskAgainCheckbox.getSelection();
+		CaesarJPreferences.setCAESARPrefConfigDone(dontAskAgain);
+		
+		
 		
 		/*
 		boolean disableUnusedImports = false;
