@@ -15,6 +15,7 @@ import org.caesarj.ui.views.hierarchymodel.IHierarchyPropertyChangeListener;
 import org.caesarj.ui.views.hierarchymodel.LinearNode;
 import org.caesarj.ui.views.hierarchymodel.RootNode;
 import org.caesarj.ui.views.hierarchymodel.StandardNode;
+import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -45,14 +46,17 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 
 	private static TreeViewer treeViewer;
 	private static ListViewer listViewer;
-	private static String globalPathForInformationAdapter = new String("");
+	private String globalPathForInformationAdapter = new String("");
 	
 	private static Logger log = Logger.getLogger(CaesarHierarchyView.class);
 	
 	
 	private RootNode buildTreeModel(String path)
 	{
-		try {		
+		try {
+			//TODO BUG: bei Zwei geöffneten Projekten wird nicht die Auswahl 
+			//			des aktuellen Projekts genommen, sondern das, was als
+			//			letztes gebuildet wurde!!!
 			ProjectProperties projectProperties = new ProjectProperties(Builder.getLastBuildTarget());
 			log.debug(projectProperties.getProjectLocation()+projectProperties.getOutputPath());
 			globalPathForInformationAdapter = projectProperties.getProjectLocation()+projectProperties.getOutputPath();
@@ -425,8 +429,13 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 						0==node.getKind().compareTo(HierarchyNode.NESTEDSUPER)
 				)
 					return CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PUBLIC.createImage();
+				else if (0==node.getKind().compareTo(HierarchyNode.PARENTS)|
+						0==node.getKind().compareTo(HierarchyNode.NESTEDPARENTS)|
+						0==node.getKind().compareTo(HierarchyNode.INCREMENTCLASSES)
+				)
+					return JavaPluginImages.DESC_OBJS_IMPCONT.createImage();
 				else
-					return null;
+					return super.getImage(element);
 			}
 			else
 				return null;
@@ -437,23 +446,37 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 			String help;
 			if (element instanceof RootNode) {
 				RootNode node = (RootNode) element;
+				//help = node.getName();
 				help = filterName(node.getName());
 				if (node.hasAdditionalName())
 				{
 					String help2 = node.getAdditionalName();
-					log.debug(help2);
 					help2 = help2.substring(help2.lastIndexOf("/")+1,help2.lastIndexOf("$"));
 					help = help + " (" + help2 + ")";
 				}
-				return help;
+				return replaceAll(help,"$",".");
 			}
 			else if (element instanceof LinearNode) {
 				LinearNode node = (LinearNode) element;
-				return node.getName();
+				return replaceAll(node.getName(),"$",".");
 			}
 			else
 			{
 				return "unknown object";
+			}
+		}
+		private String replaceAll(String source, String orig_val, String new_val)
+		{
+			try {
+				String help = source;
+				for (;help.lastIndexOf(orig_val)>0;)
+				{
+					help = help.substring(0,help.lastIndexOf(orig_val))+new_val+help.substring(help.lastIndexOf(orig_val)+1);
+				} 
+				return help;
+			} catch (Exception e) {
+				log.warn("Replacing '"+orig_val+"' with '"+new_val+"' in '"+source+"'.",e);
+				return source;
 			}
 		}
 		
@@ -465,10 +488,10 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 				int dollarPos = name.lastIndexOf("$");
 				if (slashPos>0)
 					help = name.substring(slashPos+1);
-				if (dollarPos>slashPos)
+				/*if (dollarPos>slashPos)
 				{
 					help = name.substring(dollarPos+1);
-				}		
+				}*/		
 				return help;
 			}
 			catch(Exception e)
