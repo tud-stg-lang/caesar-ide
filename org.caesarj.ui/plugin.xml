@@ -78,8 +78,8 @@
             category="Caesar"
             class="org.caesarj.ui.wizard.NewCaesarProjectWizard"
             project="true"
-            finalPerspective="org.eclipse.jdt.ui.JavaPerspective"
-            id="caesarprojectwizard">
+            finalPerspective="org.caesarj.ui.perspective.CaesarPerspective"
+            id="org.caesarj.newprojectwizard">
          <description>
             Create a Caesar Project
          </description>
