@@ -238,6 +238,7 @@ public class AsmBuilder extends CaesarVisitor {
 		CReferenceType[] interfaces,
 		JPhylum[] body,
 		JMethodDeclaration[] methods) {
+			//TODOWo sind den Fields und inner Interfaces
 		InterfaceNode peNode =
 			new InterfaceNode(
 				ident,

@@ -15,6 +15,7 @@ import org.aspectj.asm.StructureNode;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.JFormalParameter;
 import org.caesarj.compiler.types.CType;
+import org.caesarj.ui.CaesarElementImageDescriptor;
 import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.CaesarPluginImages;
 import org.caesarj.ui.model.AdviceDeclarationNode;
@@ -35,7 +36,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.ui.JavaElementImageDescriptor;
+import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -167,6 +168,8 @@ public class CaesarOutlineView extends ContentOutlinePage {
 						label = label.substring(label.lastIndexOf("]") + 2);
 					} else if (element instanceof PackageNode) {
 						label = label.substring(label.lastIndexOf("]") + 2);
+					} else if (element instanceof InterfaceNode) {
+						label = label.substring(label.lastIndexOf("]") + 2);
 					} else if (element instanceof CodeNode) {
 						label = label.substring(label.lastIndexOf("]") + 2);
 					}
@@ -233,162 +236,164 @@ public class CaesarOutlineView extends ContentOutlinePage {
 						LinkNode lNode = (LinkNode) node;
 						return this.getImage(lNode.getProgramElementNode());
 					} else if (node instanceof RelationNode) {
-						return new JavaElementImageDescriptor(
+						return new CaesarElementImageDescriptor(
 							CaesarPluginImages.DESC_ADVICE,
-							0,
-							BIG_SIZE)
+							null,
+							BIG_SIZE,
+							false)
 							.createImage();
 					} else {
 						ProgramElementNode pNode = (ProgramElementNode) node;
 						if (pNode instanceof FieldNode) {
 							FieldNode fNode = (FieldNode) element;
-							int adornmentFlags = computeJavaAdornmentFlags(fNode);
 							switch (fNode.getCAModifiers() % 8) {
 								case 1 :
-									img = CaesarPluginImages.DESC_FIELD_PUBLIC;
+									img = JavaPluginImages.DESC_FIELD_PUBLIC;
 									break;
 								case 2 :
-									img = CaesarPluginImages.DESC_FIELD_PRIVATE;
+									img = JavaPluginImages.DESC_FIELD_PRIVATE;
 									break;
 								case 4 :
-									img = CaesarPluginImages.DESC_FIELD_PROTECTED;
+									img = JavaPluginImages.DESC_FIELD_PROTECTED;
 									break;
 
 								default :
-									img = CaesarPluginImages.DESC_FIELD_DEFAULT;
+									img = JavaPluginImages.DESC_FIELD_DEFAULT;
 							}
-							return new JavaElementImageDescriptor(img, adornmentFlags, BIG_SIZE)
+							return new CaesarElementImageDescriptor(img, fNode, BIG_SIZE, false)
 								.createImage();
 						} else if (pNode instanceof MethodDeclarationNode) {
 							MethodDeclarationNode mNode = (MethodDeclarationNode) pNode;
-							int adornmentFlags = computeJavaAdornmentFlags(mNode);
 							switch (mNode.getCAModifiers() % 8) {
 								case 1 :
-									img = CaesarPluginImages.DESC_MISC_PUBLIC;
+									img = JavaPluginImages.DESC_MISC_PUBLIC;
 									break;
 								case 2 :
-									img = CaesarPluginImages.DESC_MISC_PRIVATE;
+									img = JavaPluginImages.DESC_MISC_PRIVATE;
 									break;
 								case 4 :
-									img = CaesarPluginImages.DESC_MISC_PROTECTED;
+									img = JavaPluginImages.DESC_MISC_PROTECTED;
 									break;
 								default :
-									img = CaesarPluginImages.DESC_MISC_DEFAULT;
+									img = JavaPluginImages.DESC_MISC_DEFAULT;
 							}
-							return new JavaElementImageDescriptor(img, adornmentFlags, BIG_SIZE)
+							return new CaesarElementImageDescriptor(img, mNode, BIG_SIZE, false)
 								.createImage();
 						} else if (pNode instanceof ConstructorDeclarationNode) {
 							ConstructorDeclarationNode cNode = (ConstructorDeclarationNode) element;
 							switch (cNode.getCAModifiers() % 8) {
 								case 1 :
-									img = CaesarPluginImages.DESC_MISC_PUBLIC;
+									img = JavaPluginImages.DESC_MISC_PUBLIC;
 									break;
 								case 2 :
-									img = CaesarPluginImages.DESC_MISC_PRIVATE;
+									img = JavaPluginImages.DESC_MISC_PRIVATE;
 									break;
 								case 4 :
-									img = CaesarPluginImages.DESC_MISC_PROTECTED;
+									img = JavaPluginImages.DESC_MISC_PROTECTED;
 									break;
 								default :
-									img = CaesarPluginImages.DESC_MISC_DEFAULT;
+									img = JavaPluginImages.DESC_MISC_DEFAULT;
 							}
-							return new JavaElementImageDescriptor(
-								img,
-								JavaElementImageDescriptor.CONSTRUCTOR,
-								BIG_SIZE)
+							return new CaesarElementImageDescriptor(img, cNode, BIG_SIZE, false)
 								.createImage();
 						} else if (pNode instanceof ClassNode) {
 							ClassNode cNode = (ClassNode) element;
-							int adornmentFlags = computeJavaAdornmentFlags(cNode);
 							switch (cNode.getCAModifiers() % 8) {
 								case 1 :
-									img = CaesarPluginImages.DESC_INNERCLASS_PUBLIC;
+									img = JavaPluginImages.DESC_OBJS_INNER_CLASS_PUBLIC;
 									break;
 								case 2 :
-									img = CaesarPluginImages.DESC_INNERCLASS_PRIVATE;
+									img = JavaPluginImages.DESC_OBJS_INNER_CLASS_PRIVATE;
 									break;
 								case 4 :
-									img = CaesarPluginImages.DESC_INNERCLASS_PROTECTED;
+									img = JavaPluginImages.DESC_OBJS_INNER_CLASS_PROTECTED;
 									break;
 								default :
-									img = CaesarPluginImages.DESC_INNERCLASS_DEFAULT;
+									img = JavaPluginImages.DESC_OBJS_INNER_CLASS_DEFAULT;
 							}
-							return new JavaElementImageDescriptor(img, adornmentFlags, BIG_SIZE)
+							return new CaesarElementImageDescriptor(img, cNode, BIG_SIZE, false)
 								.createImage();
 						} else if (pNode instanceof InterfaceNode) {
 							InterfaceNode iNode = (InterfaceNode) element;
-							int adornmentFlags = computeJavaAdornmentFlags(iNode);
 							switch (iNode.getCAModifiers() % 8) {
 								case 1 :
-									img = CaesarPluginImages.DESC_INNERINTERFACE_PUBLIC;
+									img = JavaPluginImages.DESC_OBJS_INNER_INTERFACE_PUBLIC;
 									break;
 								case 2 :
-									img = CaesarPluginImages.DESC_INNERINTERFACE_PRIVATE;
+									img = JavaPluginImages.DESC_OBJS_INNER_INTERFACE_PRIVATE;
 									break;
 								case 4 :
-									img = CaesarPluginImages.DESC_INNERINTERFACE_PROTECTED;
+									img = JavaPluginImages.DESC_OBJS_INNER_INTERFACE_PROTECTED;
 									break;
 								default :
-									img = CaesarPluginImages.DESC_INNERINTERFACE_DEFAULT;
+									img = JavaPluginImages.DESC_OBJS_INNER_INTERFACE_DEFAULT;
 							}
-							return new JavaElementImageDescriptor(img, adornmentFlags, BIG_SIZE)
+							return new CaesarElementImageDescriptor(img, iNode, BIG_SIZE, true)
 								.createImage();
 						} else if (pNode instanceof ImportCaesarProgramElementNode) {
 							ImportCaesarProgramElementNode iNode =
 								(ImportCaesarProgramElementNode) pNode;
 							if (iNode.rootFlag)
-								return new JavaElementImageDescriptor(
+								return new CaesarElementImageDescriptor(
 									CaesarPluginImages.DESC_OUT_IMPORTS,
-									0,
-									BIG_SIZE)
+									iNode,
+									BIG_SIZE,
+									false)
 									.createImage();
 							else
-								return new JavaElementImageDescriptor(
+								return new CaesarElementImageDescriptor(
 									CaesarPluginImages.DESC_IMPORTS,
-									0,
-									BIG_SIZE)
+									iNode,
+									BIG_SIZE,
+									false)
 									.createImage();
 						} else if (
 							pNode instanceof CodeNode
 								|| pNode.getProgramElementKind().equals(
 									ProgramElementNode.Kind.CODE)) {
-							return new JavaElementImageDescriptor(
+							return new CaesarElementImageDescriptor(
 								CaesarPluginImages.DESC_CODE,
-								0,
-								BIG_SIZE)
+								null,
+								BIG_SIZE,
+								false)
 								.createImage();
 						} else if (pNode instanceof PackageNode) {
-							return new JavaElementImageDescriptor(
+							return new CaesarElementImageDescriptor(
 								CaesarPluginImages.DESC_OUT_PACKAGE,
-								0,
-								BIG_SIZE)
+								null,
+								BIG_SIZE,
+								false)
 								.createImage();
 						} else if (pNode instanceof AdviceDeclarationNode) {
 							return image =
-								new JavaElementImageDescriptor(
+								new CaesarElementImageDescriptor(
 									CaesarPluginImages.DESC_JOINPOINT,
-									0,
-									BIG_SIZE)
+									null,
+									BIG_SIZE,
+									false)
 									.createImage();
 						} else if (pNode instanceof AspectNode) {
 							return image =
-								new JavaElementImageDescriptor(
+								new CaesarElementImageDescriptor(
 									CaesarPluginImages.DESC_ASPECT,
-									0,
-									BIG_SIZE)
+									null,
+									BIG_SIZE,
+									false)
 									.createImage();
 						} else if (pNode instanceof PointcutNode) {
 							return image =
-								new JavaElementImageDescriptor(
+								new CaesarElementImageDescriptor(
 									CaesarPluginImages.DESC_ERROR,
-									0,
-									BIG_SIZE)
+									null,
+									BIG_SIZE,
+									false)
 									.createImage();
 						} else
-							return new JavaElementImageDescriptor(
+							return new CaesarElementImageDescriptor(
 								CaesarPluginImages.DESC_ERROR,
-								0,
-								BIG_SIZE)
+								null,
+								BIG_SIZE,
+								false)
 								.createImage();
 					}
 				} else
@@ -397,32 +402,6 @@ public class CaesarOutlineView extends ContentOutlinePage {
 				logger.error("Error while loading icon images for caesar outline view.", e);
 				return super.getImage(element);
 			}
-		}
-
-		private int computeJavaAdornmentFlags(CaesarProgramElementNode node) {
-			int flags = 0;
-			//String modifiers = node.getModifiers().toString();
-			if (node.isImplementor())
-				flags |= JavaElementImageDescriptor.IMPLEMENTS;
-			if (node.isOverrider())
-				flags |= JavaElementImageDescriptor.OVERRIDES;
-			if (node.isRunnable())
-				flags |= JavaElementImageDescriptor.RUNNABLE;
-
-			int modif = node.getCAModifiers();
-			if ((modif / 8) % 2 == 1)
-				flags |= JavaElementImageDescriptor.STATIC;
-			if ((modif / 16) % 2 == 1)
-				flags |= JavaElementImageDescriptor.FINAL;
-			if ((modif / 32) % 2 == 1)
-				flags |= JavaElementImageDescriptor.SYNCHRONIZED;
-			//if((modif/64)%2==1) flags |= JavaElementImageDescriptor.VOLATILE;
-			//if((modif/128)%2==1) flags |= JavaElementImageDescriptor.TRANSIENT;
-			//if((modif/256)%2==1) flags |= JavaElementImageDescriptor.WARNING;
-			//if((modif/512)%2==1) flags |= JavaElementImageDescriptor.ERROR;
-			if ((modif / 1024) % 2 == 1)
-				flags |= JavaElementImageDescriptor.ABSTRACT;
-			return flags;
 		}
 	}
 
@@ -478,7 +457,7 @@ public class CaesarOutlineView extends ContentOutlinePage {
 				return node.getChildren().size() > 0;
 			}
 		}
-	};
+	}
 
 	protected CaesarEditor caesarEditor;
 	protected boolean enabled;
