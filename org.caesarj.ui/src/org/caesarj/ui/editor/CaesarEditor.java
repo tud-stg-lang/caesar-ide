@@ -31,9 +31,9 @@ public class CaesarEditor extends CompilationUnitEditor {
 	 */
 
     private static Logger log = Logger.getLogger(CaesarEditor.class);
-    
+/* V.G. START: Model switched off    
     private CaesarOutlineView outlineView;
-        
+V.G. END: Model switched off */       
     private CompositeRuler caesarVerticalRuler;
     
     public CaesarEditor() {
@@ -69,16 +69,17 @@ public class CaesarEditor extends CompilationUnitEditor {
 		JavaSourceViewerConfiguration svConfig =  new CaesarSourceViewerConfiguration(textTools, this, store);
        	setSourceViewerConfiguration(svConfig);
 	}
-    
+   
     public Object getAdapter(Class key) {                  
-        if(key.equals(IContentOutlinePage.class)) {
+/* V.G. START: Model switched off 
+    	if(key.equals(IContentOutlinePage.class)) {
             if(outlineView == null) {
                 outlineView = new CaesarOutlineView(this);
                 outlineView.setEnabled(true);
             }
-            
             return outlineView;
         }
+V.G. END: Model switched off */
         return super.getAdapter(key);
     }    
     
@@ -88,6 +89,8 @@ public class CaesarEditor extends CompilationUnitEditor {
     
     public void dispose() {
         log.debug("dispose");
+/* V.G. START: Model switched off
         outlineView.setEnabled(false);
+V.G. END: Model switched off */
     }  	
 }
