@@ -1,8 +1,8 @@
 package org.caesarj.ui;
 
-import org.caesarj.compiler.export.CClass;
 import org.caesarj.ui.model.CClassNode;
 import org.caesarj.ui.model.CaesarProgramElementNode;
+import org.caesarj.ui.model.ConstructorDeclarationNode;
 import org.caesarj.ui.views.hierarchymodel.RootNode;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
@@ -60,6 +60,8 @@ public class CaesarElementImageDescriptor extends CompositeImageDescriptor {
 		int flags = 0;
 		if (node == null)
 			return flags;
+		if(node instanceof ConstructorDeclarationNode)
+			flags |= CONSTRUCTOR;
 		if (node.isImplementor())
 			flags |= IMPLEMENTS;
 		if (node.isOverrider())
