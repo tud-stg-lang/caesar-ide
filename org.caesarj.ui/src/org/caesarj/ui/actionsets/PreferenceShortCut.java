@@ -1,8 +1,6 @@
 /*
  * Created on 29.06.2004
  *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 package org.caesarj.ui.actionsets;
 
@@ -14,8 +12,6 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 /**
  * @author Jochen
- *
- * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
 public class PreferenceShortCut implements IWorkbenchWindowActionDelegate {
@@ -51,8 +47,6 @@ public class PreferenceShortCut implements IWorkbenchWindowActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-		// TODO Auto-generated method stub
-
 	}
 
 }

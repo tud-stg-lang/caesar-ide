@@ -168,7 +168,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		{
 		
 		}
-		//TODO Herausfinden, welchen Knoten noch die AdditionalInfos mitgegeben werden müssen.
+		
 		RootNode root = new RootNode();
 		root.setKind(HierarchyNode.ROOT);
 		StandardNode node;
@@ -307,6 +307,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		Group controlGroup = new Group(layoutGroup,SWT.NONE);
 		Group topGroup = new Group(layoutGroup,SWT.NONE);
 		Group buttomGroup = new Group(layoutGroup,SWT.NONE);
+		//TODO Formatierung des Buttons für das Umschalten zwischen sub und super mode
 		controlGroup.setText("View Control");
 		topGroup.setText("Tree View");
 		buttomGroup.setText("Mixin View");
@@ -382,7 +383,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			// TODO Auto-generated method stub
+
 		}
 
 		/* (non-Javadoc)
@@ -534,7 +535,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseDoubleClick(MouseEvent e) {
-			// TODO Auto-generated method stub
+
 			
 		}
 
@@ -623,7 +624,8 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 			CaesarEditor editor = (CaesarEditor)part;
 
 			CompilationUnitDocumentProvider compilationUnitProvider = (CompilationUnitDocumentProvider)editor.getDocumentProvider();
-			// TODO Hier weiter machen
+			// TODO Hier habe ich schonmal geschaut, wie man an die Toplevel-Klassen rankommen könnte.
+			// 		War aber noch nicht erfolgreich!
 			try
 			{
 				IJavaElement[] elements = compilationUnitProvider.getWorkingCopy(editor.getEditorInput()).getJavaModel().getChildren();
@@ -638,7 +640,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener{
 			}
 			if (editor.getEditorInput() instanceof FileEditorInput) {
 				FileEditorInput input = (FileEditorInput) editor.getEditorInput();
-				//TODO noch nicht sicher, ob das gehen wird
+				//TODO Ab hier die alte Lösung über den Filenamen
 		
 				path = input.getFile().getProjectRelativePath().toString();
 				path = path.substring(0,path.indexOf(input.getFile().getFileExtension())-1);
