@@ -161,20 +161,22 @@
          id="org.caesarj.ui.perspective.CaesarPerspective">
    </perspective>
    </extension>	
-   <extension point="org.eclipse.ui.actionSets">
+   
+	<extension point="org.eclipse.ui.actionSets">
 		<actionSet label="CaesarJ" visible="true" id="org.caesarj.actionSet">
-  		<action
-          retarget="false"
-          toolbarPath="Normal/additions"
-          label="CaesarJAnnotation"
-          tooltip="CaesarJ: Enables/Disables live annotation"
-          class="org.caesarj.ui.actionsets.AnnotationShortCut"
-          icon="icons/annotation.gif"
-          style="toggle"
-          state="false"
-          id="org.caesarj.ui.actionsets.Annotation"/>
-   </actionSet>
-   </extension>
+  			<action
+        		retarget="false"
+        		toolbarPath="Normal/additions"
+        		label="CaesarJAnnotation"
+        		tooltip="CaesarJ: Enables/Disables live annotation"
+        		class="org.caesarj.ui.actionsets.AnnotationShortCut"
+        		icon="icons/annotation.gif"
+        		style="toggle"
+        		state="false"
+        		id="org.caesarj.ui.actionsets.Annotation"/>
+		</actionSet>
+	</extension>
+	
    <!--extension point="org.eclipse.ui.actionSetPartAssociations">
    		<actionSetPartAssociation
    		targetID="org.caesarj.actionSet">
