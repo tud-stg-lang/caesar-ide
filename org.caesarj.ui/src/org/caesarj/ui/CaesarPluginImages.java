@@ -50,7 +50,12 @@ public class CaesarPluginImages {
 	public static final String IMG_OUT_IMPORTS = NAME_PREFIX + "impc_obj.gif";
 	public static final String IMG_IMPORTS = NAME_PREFIX + "imp_obj.gif";
 	public static final String IMG_CODE = NAME_PREFIX + "code.gif";
-
+	//TODO DZ: Images einbauen
+	private static final String IMG_CCLASS_PUB = NAME_PREFIX + "error.gif";
+	private static final String IMG_CCLASS_PRI = NAME_PREFIX + "error.gif";
+	private static final String IMG_CCLASS_PRO = NAME_PREFIX + "error.gif";
+	private static final String IMG_CCLASS = NAME_PREFIX + "error.gif";
+	
 	
 
 	public static final ImageDescriptor DESC_ERROR = createManaged(IMG_ERROR);
@@ -62,6 +67,11 @@ public class CaesarPluginImages {
 	public static final ImageDescriptor DESC_IMPORTS = createManaged(IMG_IMPORTS);
 	public static final ImageDescriptor DESC_CODE = createManaged(IMG_CODE);
 	public static final ImageDescriptor DESC_COLLAB_CO = JavaPluginImages.DESC_OVR_CONSTRUCTOR;
+	public static final ImageDescriptor DESC_OBJS_INNER_CCLASS_PUBLIC = createManaged(IMG_CCLASS_PUB);
+	public static final ImageDescriptor DESC_OBJS_INNER_CCLASS_PRIVATE = createManaged(IMG_CCLASS_PRI);
+	public static final ImageDescriptor DESC_OBJS_INNER_CCLASS_PROTECTED = createManaged(IMG_CCLASS_PRO);
+	public static final ImageDescriptor DESC_OBJS_INNER_CCLASS_DEFAULT = createManaged(IMG_CCLASS);
+	
 
 	/**
 	 * Returns the image managed under the given key in this registry.

@@ -198,12 +198,13 @@ public class CaesarOutlineView extends ContentOutlinePage {
 		}
 
 		public Object[] getElements(Object inputElement) {
-			Object[] ret = new Object[3];
-			ret[0] = ((PackageNode) ((CaesarProgramElementNode) inputElement).getParent()).clone();
-			ret[1] = ((CaesarProgramElementNode) inputElement).getImports();
-			CaesarOutlineView.this.imports = ret[1];
-			ret[2] = ((CaesarProgramElementNode) inputElement).getChildren().toArray()[0];
-			return ret;
+			Vector elements = new Vector();
+			elements.add(((PackageNode) ((CaesarProgramElementNode) inputElement).getParent()).clone());
+			Object temp = ((CaesarProgramElementNode) inputElement).getImports();
+			CaesarOutlineView.this.imports = temp;
+			elements.add(temp);
+			elements.addAll(((CaesarProgramElementNode) inputElement).getChildren());
+			return elements.toArray();
 		}
 
 		public Object[] getChildren(Object parentElement) {
