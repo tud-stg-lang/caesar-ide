@@ -20,13 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CJDTConfigSettings.java,v 1.7 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CJDTConfigSettings.java,v 1.8 2005-02-15 17:39:12 gasiunas Exp $
  */
 
 package org.caesarj.ui;
 
 import java.util.Hashtable;
 
+import org.caesarj.ui.preferences.CaesarJPreferences;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.JavaUI;
@@ -42,19 +43,14 @@ import org.eclipse.ui.internal.registry.FileEditorMapping;
 
 public class CJDTConfigSettings {	
 	
-	static public boolean isAnalyzeAnnotationsDisabled() {
+	static public boolean isAnalyzeAnnotationsEnabled() {
 		IPreferenceStore store = JavaPlugin.getDefault().getPreferenceStore();		
-		return (store.getBoolean(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS) == false) ? true : false;		
+		return store.getBoolean(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS);		
 	}
 	
-	static public void disableAnalyzeAnnotations() {
+	static public void setAnalyzeAnnotations(boolean enabled) {
 		IPreferenceStore store = JavaPlugin.getDefault().getPreferenceStore();		
-		store.setValue(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS, false);		
-	}
-	
-	static public void enableAnalyzeAnnotations() {
-		IPreferenceStore store = JavaPlugin.getDefault().getPreferenceStore();		
-		store.setValue(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS, true);		
+		store.setValue(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS, enabled);		
 	}
 	
 	static public boolean isUnusedImportsDisabled() {
@@ -81,21 +77,26 @@ public class CJDTConfigSettings {
 		return "CaesarEditor".equals(desc.getLabel()); //$NON-NLS-1$
 	}
 	
-	static public void enableCaesarJEditorDefault() {
+	static public void setCaesarJEditorDefault(boolean enabled) {
 		EditorRegistry editorRegistry = (EditorRegistry)WorkbenchPlugin.getDefault().getEditorRegistry();
 		IFileEditorMapping[] array = WorkbenchPlugin.getDefault().getEditorRegistry().getFileEditorMappings();
 		editorRegistry.setFileEditorMappings((FileEditorMapping[])array);
-		editorRegistry.setDefaultEditor("*.java", "org.caesarj.ui.editor.CaesarEditor"); //$NON-NLS-1$ //$NON-NLS-2$
+		if (enabled) {
+			editorRegistry.setDefaultEditor("*.java", "org.caesarj.ui.editor.CaesarEditor"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		else {
+			editorRegistry.setDefaultEditor("*.java", JavaUI.ID_CU_EDITOR); //$NON-NLS-1$			
+		}
 		editorRegistry.saveAssociations();
+	}
 	
+	static public void applyCaesarPreferences() {
+		setCaesarJEditorDefault(CaesarJPreferences.isCaesarDefaultEditor());
+		setAnalyzeAnnotations(CaesarJPreferences.isAnalyzeAnnotationsEnabled());
 	}
-	static public void disableCaesarJEditorDefault() {
-		EditorRegistry editorRegistry = (EditorRegistry)WorkbenchPlugin.getDefault().getEditorRegistry();
-		IFileEditorMapping[] array = WorkbenchPlugin.getDefault().getEditorRegistry().getFileEditorMappings();
-		editorRegistry.setFileEditorMappings((FileEditorMapping[])array);
-		editorRegistry.setDefaultEditor("*.java", JavaUI.ID_CU_EDITOR); //$NON-NLS-1$
-		editorRegistry.saveAssociations();
-			
+	
+	static public void updateCaesarPreferences() {
+		CaesarJPreferences.setCaesarDefaultEditor(isCaesarJEditorDefault());
+		CaesarJPreferences.setAnalizeAnnotations(isAnalyzeAnnotationsEnabled());
 	}
-
 }

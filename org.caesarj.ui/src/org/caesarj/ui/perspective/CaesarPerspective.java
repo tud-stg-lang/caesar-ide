@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarPerspective.java,v 1.18 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CaesarPerspective.java,v 1.19 2005-02-15 17:39:47 gasiunas Exp $
  */
 
 package org.caesarj.ui.perspective;
@@ -146,7 +146,7 @@ public class CaesarPerspective implements IPerspectiveFactory {
 		//Show Preferences
 		CaesarConfigWizard wizard = new CaesarConfigWizard();
 		wizard.init();
-		if (!CaesarJPreferences.isCAESARPrefConfigDone())
+		if (!CaesarJPreferences.isPrefConfigDone())
 		{
 			org.eclipse.jface.wizard.WizardDialog dialog = new org.eclipse.jface.wizard.WizardDialog(
 					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),

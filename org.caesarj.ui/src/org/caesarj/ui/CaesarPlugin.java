@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarPlugin.java,v 1.21 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CaesarPlugin.java,v 1.22 2005-02-15 17:39:12 gasiunas Exp $
  */
 
 package org.caesarj.ui;
@@ -182,11 +182,11 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 	}
 	
 	public void selectionChanged(IWorkbenchPart part, ISelection selectionArg) {
-		if (CaesarJPreferences.isCAESARAutoSwitch()) {
+		if (CaesarJPreferences.isAutoSwitch()) {
 			if (part instanceof CaesarEditor) {
-				CJDTConfigSettings.disableAnalyzeAnnotations();
+				CJDTConfigSettings.setAnalyzeAnnotations(false);
 			} else if (part instanceof CompilationUnitEditor) {
-				CJDTConfigSettings.enableAnalyzeAnnotations();
+				CJDTConfigSettings.setAnalyzeAnnotations(true);
 			}
 		}
 	}

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarJPreferences.java,v 1.5 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CaesarJPreferences.java,v 1.6 2005-02-15 17:39:12 gasiunas Exp $
  */
 
 package org.caesarj.ui.preferences;
@@ -30,61 +30,48 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 
 public class CaesarJPreferences {
-
 	
 	public static final String CAESAR_PREF_CONFIG_DONE = "org.caesarj.ui.preferences.ajdtPrefConfigDone"; //$NON-NLS-1$
 
 	public static final String CAESAR_AUTO_SWITCH = "org.caesarj.ui.preferences.autoSwitch"; //$NON-NLS-1$
 	
-	public static final String PDE_AUTO_IMPORT_CONFIG_DONE = "org.caesarj.ui.preferences.pdeAutoImportConfigDone"; //$NON-NLS-1$
-
-	public static final String ASK_PDE_AUTO_IMPORT = "org.caesarj.ui.preferences.askPdeAutoImport"; //$NON-NLS-1$
-
-	public static void setCAESARAutoSwitch(boolean arg)
-	{
-		IPreferenceStore store = CaesarPlugin.getDefault().getPreferenceStore();
-		store.setValue(CAESAR_AUTO_SWITCH, arg);
+	public static final String CAESAR_IS_DEFAULT_EDITOR = "org.caesarj.ui.preferences.isDefaultEditor";
+	
+	public static final String CAESAR_ANALIZE_ANNOTATIONS = "org.caesarj.ui.preferences.analizeAnnotations";
+	
+	public static boolean isAutoSwitch() {
+		return getCjPrefStore().getBoolean(CAESAR_AUTO_SWITCH);
 	}
 	
-	public static boolean isCAESARAutoSwitch()
-	{
-		IPreferenceStore store = CaesarPlugin.getDefault().getPreferenceStore();
-		return store.getBoolean(CAESAR_AUTO_SWITCH);
+	public static void setAutoSwitch(boolean arg) {
+		getCjPrefStore().setValue(CAESAR_AUTO_SWITCH, arg);
 	}
 	
-	static public void setCAESARPrefConfigDone(boolean done) {
-		IPreferenceStore store = CaesarPlugin.getDefault()
-				.getPreferenceStore();
-		store.setValue(CAESAR_PREF_CONFIG_DONE, done);
+	public static boolean isCaesarDefaultEditor() {
+		return getCjPrefStore().getBoolean(CAESAR_IS_DEFAULT_EDITOR);
 	}
-
-	static public boolean isCAESARPrefConfigDone() {
-		IPreferenceStore store = CaesarPlugin.getDefault()
-				.getPreferenceStore();
-		return store.getBoolean(CAESAR_PREF_CONFIG_DONE);
+	
+	public static void setCaesarDefaultEditor(boolean arg) {
+		getCjPrefStore().setValue(CAESAR_IS_DEFAULT_EDITOR, arg);
 	}
-
-	static public void setAskPDEAutoImport(boolean ask) {
-		IPreferenceStore store = CaesarPlugin.getDefault()
-				.getPreferenceStore();
-		store.setValue(ASK_PDE_AUTO_IMPORT, ask);
+	
+	public static boolean isAnalyzeAnnotationsEnabled() {
+		return getCjPrefStore().getBoolean(CAESAR_ANALIZE_ANNOTATIONS);
 	}
-
-	static public boolean askPDEAutoImport() {
-		IPreferenceStore store = CaesarPlugin.getDefault()
-				.getPreferenceStore();
-		return store.getBoolean(ASK_PDE_AUTO_IMPORT);
+	
+	public static void setAnalizeAnnotations(boolean arg) {
+		getCjPrefStore().setValue(CAESAR_ANALIZE_ANNOTATIONS, arg);
 	}
-
-	static public void setPDEAutoImportConfigDone(boolean done) {
-		IPreferenceStore store = CaesarPlugin.getDefault()
-				.getPreferenceStore();
-		store.setValue(PDE_AUTO_IMPORT_CONFIG_DONE, done);
+	
+	public static boolean isPrefConfigDone() {
+		return getCjPrefStore().getBoolean(CAESAR_PREF_CONFIG_DONE);
 	}
-
-	public static boolean isPDEAutoImportConfigDone() {
-		IPreferenceStore store = CaesarPlugin.getDefault()
-				.getPreferenceStore();
-		return store.getBoolean(PDE_AUTO_IMPORT_CONFIG_DONE);
+	
+	public static void setPrefConfigDone(boolean done) {
+		getCjPrefStore().setValue(CAESAR_PREF_CONFIG_DONE, done);
+	}
+	
+	private static IPreferenceStore getCjPrefStore() {
+		return CaesarPlugin.getDefault().getPreferenceStore();
 	}
 }
