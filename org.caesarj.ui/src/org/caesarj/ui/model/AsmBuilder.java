@@ -19,6 +19,7 @@ import org.caesarj.compiler.ast.phylum.JCompilationUnit;
 import org.caesarj.compiler.ast.phylum.declaration.CjAdviceDeclaration;
 import org.caesarj.compiler.ast.phylum.declaration.CjMixinInterfaceDeclaration;
 import org.caesarj.compiler.ast.phylum.declaration.CjPointcutDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.CjVirtualClassDeclaration;
 import org.caesarj.compiler.ast.phylum.declaration.JClassDeclaration;
 import org.caesarj.compiler.ast.phylum.declaration.JConstructorDeclaration;
 import org.caesarj.compiler.ast.phylum.declaration.JFieldDeclaration;
@@ -268,6 +269,16 @@ public class AsmBuilder {
 					"", //$NON-NLS-1$
 					new ArrayList());
 		} 
+		else if(self instanceof CjVirtualClassDeclaration){
+			peNode =
+				new CClassNode(
+					self.getIdent(),
+					CaesarProgramElementNode.Kind.CLASS,
+					makeLocation(self.getTokenReference()),
+					self.getModifiers(),
+					"", //$NON-NLS-1$
+					new ArrayList());
+		}
 		else {
 			peNode =
 				new ClassNode(

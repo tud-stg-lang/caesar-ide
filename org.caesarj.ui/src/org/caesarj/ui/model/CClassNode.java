@@ -8,7 +8,7 @@ import org.caesarj.compiler.ast.phylum.JPackageImport;
 import org.caesarj.ui.CaesarPluginImages;
 
 
-public class CClassNode extends CaesarProgramElementNode {
+public class CClassNode extends ClassNode {
 
 	/**
 	 * @param signature
@@ -17,7 +17,7 @@ public class CClassNode extends CaesarProgramElementNode {
 	 */
 	public CClassNode(String signature, Kind kind, List childrenArg) {
 		super(signature, kind, childrenArg);
-		// TODO Auto-generated constructor stub
+		this.initImages();
 	}
 
 	/**
@@ -33,7 +33,7 @@ public class CClassNode extends CaesarProgramElementNode {
 			String formalComment, List childrenArg) {
 		super(signature, kind, sourceLocationArg, modifiers, formalComment,
 				childrenArg);
-		// TODO Auto-generated constructor stub
+		this.initImages();
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class CClassNode extends CaesarProgramElementNode {
 			JPackageImport[] importedPackages, JClassImport[] importedClasses) {
 		super(signature, kind, sourceLocationArg, modifiers, formalComment,
 				childrenArg, importedPackages, importedClasses);
-		// TODO Auto-generated constructor stub
+		this.initImages();
 	}
 
 	
@@ -62,11 +62,4 @@ public class CClassNode extends CaesarProgramElementNode {
 		this.PROTECTED = CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PROTECTED;
 		this.DEFAULT = CaesarPluginImages.DESC_OBJS_INNER_CCLASS_DEFAULT;
 	}
-
-	
-	public String getText(String text) {
-		// TODO Auto-generated method stub
-		return "CClass"; //$NON-NLS-1$
-	}
-
 }
