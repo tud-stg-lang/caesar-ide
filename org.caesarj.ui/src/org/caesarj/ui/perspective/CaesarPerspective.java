@@ -56,7 +56,8 @@ public class CaesarPerspective implements IPerspectiveFactory {
 				IPageLayout.RIGHT,
 				0.75f,
 				editorArea);
-		bottomRight.addView(IPageLayout.ID_OUTLINE); 
+		bottomRight.addView(IPageLayout.ID_OUTLINE);
+		bottomRight.addView("org.caesarj.ui.views.CaesarMetricsView"); 
 		
 		IFolderLayout bottom =
 			layout.createFolder(
