@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Stack;
 
+import org.apache.log4j.Logger;
 import org.aspectj.asm.ProgramElementNode;
 import org.aspectj.asm.StructureModel;
 import org.aspectj.asm.StructureNode;
@@ -38,8 +39,6 @@ import org.caesarj.compiler.types.CReferenceType;
 import org.caesarj.compiler.types.CType;
 import org.caesarj.compiler.types.CTypeVariable;
 import org.caesarj.util.TokenReference;
-
-import org.apache.log4j.Logger;
 /**
  * Main Class for generating ASM for caesar source code.
  * 
@@ -238,7 +237,7 @@ public class AsmBuilder extends CaesarVisitor {
 		CReferenceType[] interfaces,
 		JPhylum[] body,
 		JMethodDeclaration[] methods) {
-			//TODOWo sind den Fields und inner Interfaces
+		//TODOWo sind den Fields und inner Interfaces
 		InterfaceNode peNode =
 			new InterfaceNode(
 				ident,
