@@ -12,14 +12,14 @@ package org.caesarj.ui.views.hierarchymodel;
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class ParentsNode extends RootNode {
+public class StandardNode extends RootNode {
 	
 	HierarchyNode parent;
 
 	/**
 	 * 
 	 */
-	public ParentsNode() {
+	public StandardNode() {
 		super();
 	}
 
