@@ -41,7 +41,6 @@ public class CaesarEditor extends CompilationUnitEditor {
         try {
         	CaesarTextTools textTools =
         		CaesarPlugin.getDefault().getCaesarTextTools();
-        
         	JavaSourceViewerConfiguration svConfig = 
         		new JavaSourceViewerConfiguration(textTools, this);  
         

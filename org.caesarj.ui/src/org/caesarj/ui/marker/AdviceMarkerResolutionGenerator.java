@@ -2,6 +2,8 @@ package org.caesarj.ui.marker;
 
 import org.apache.log4j.Logger;
 import org.aspectj.asm.LinkNode;
+import org.caesarj.ui.builder.Builder;
+import org.caesarj.ui.util.ProjectProperties;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -56,7 +58,7 @@ public class AdviceMarkerResolutionGenerator implements IMarkerResolutionGenerat
 		}
 
 		public String getLabel() {
-			return "Goto Advice: " + link.getName();
+			return "Open Advice: " + link.getName();
 		}
 
 		public void run(IMarker marker) {
@@ -69,10 +71,15 @@ public class AdviceMarkerResolutionGenerator implements IMarkerResolutionGenerat
 			IFileEditorInput input = new FileEditorInput((IFile) marker.getResource());
 			IEditorPart editorPart = page.findEditor(input);
 			try {		
-				editorPart = IDE.openEditor(page, (IFile) marker.getResource());
+				editorPart = IDE.openEditor(page, this.getLinkLocation(),true);
 			} catch (PartInitException e) {
 				MessageDialog.openError(w.getShell(), "ERROR","Unable to open Editor!"); //$NON-NLS-1$
 			}
+		}
+		
+		private IFile getLinkLocation(){
+			String fullPath = this.link.getProgramElementNode().getSourceLocation().getSourceFile().getAbsolutePath();
+			return (IFile) ProjectProperties.findResource(fullPath,Builder.getLastBuildTarget());
 		}
 
 	}
