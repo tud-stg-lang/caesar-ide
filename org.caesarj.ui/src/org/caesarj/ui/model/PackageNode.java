@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.aspectj.bridge.ISourceLocation;
-import org.caesarj.compiler.ast.JClassImport;
-import org.caesarj.compiler.ast.JPackageImport;
+import org.caesarj.compiler.ast.phylum.JClassImport;
+import org.caesarj.compiler.ast.phylum.JPackageImport;
 import org.caesarj.ui.CaesarElementImageDescriptor;
 import org.caesarj.ui.CaesarPluginImages;
 import org.eclipse.swt.graphics.Image;

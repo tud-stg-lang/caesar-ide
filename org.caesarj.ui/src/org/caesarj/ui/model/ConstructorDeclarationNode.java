@@ -3,9 +3,9 @@ package org.caesarj.ui.model;
 import java.util.List;
 
 import org.aspectj.bridge.ISourceLocation;
-import org.caesarj.compiler.ast.JClassDeclaration;
-import org.caesarj.compiler.ast.JConstructorDeclaration;
-import org.caesarj.compiler.ast.JFormalParameter;
+import org.caesarj.compiler.ast.phylum.declaration.JClassDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.JConstructorDeclaration;
+import org.caesarj.compiler.ast.phylum.variable.JFormalParameter;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 
 /**

@@ -3,8 +3,8 @@ package org.caesarj.ui.model;
 import java.util.List;
 
 import org.aspectj.bridge.ISourceLocation;
-import org.caesarj.compiler.ast.JClassImport;
-import org.caesarj.compiler.ast.JPackageImport;
+import org.caesarj.compiler.ast.phylum.JClassImport;
+import org.caesarj.compiler.ast.phylum.JPackageImport;
 import org.caesarj.compiler.types.CType;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 

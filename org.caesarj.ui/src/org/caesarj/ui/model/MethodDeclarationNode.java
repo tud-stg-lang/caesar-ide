@@ -3,9 +3,9 @@ package org.caesarj.ui.model;
 import java.util.List;
 
 import org.aspectj.bridge.ISourceLocation;
-import org.caesarj.compiler.ast.FjMethodDeclaration;
-import org.caesarj.compiler.ast.JFormalParameter;
-import org.caesarj.compiler.ast.JTypeDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.JMethodDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.JTypeDeclaration;
+import org.caesarj.compiler.ast.phylum.variable.JFormalParameter;
 import org.caesarj.compiler.types.CType;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 
@@ -16,24 +16,23 @@ import org.eclipse.jdt.internal.ui.JavaPluginImages;
  */
 public class MethodDeclarationNode extends CaesarProgramElementNode {
 
-	private FjMethodDeclaration methodDeclaration;
+	private JMethodDeclaration methodDeclaration;
+
 	private JTypeDeclaration classDeclaration;
-	
-	public MethodDeclarationNode(
-		FjMethodDeclaration methodDeclaration,
-		JTypeDeclaration classDeclaration,
-		String signature,
-		Kind kind,
-		ISourceLocation sourceLocation,
-		int modifiers,
-		String formalComment,
-		List children) {
-		super(signature, kind, sourceLocation, modifiers, formalComment, children);
-		this.initImages();this.methodDeclaration = methodDeclaration;
+
+	public MethodDeclarationNode(JMethodDeclaration methodDeclaration,
+			JTypeDeclaration classDeclaration, 
+			String signature, Kind kind,
+			ISourceLocation sourceLocation, int modifiers,
+			String formalComment, List children) {
+		super(signature, kind, sourceLocation, modifiers, formalComment,
+				children);
+		this.initImages();
+		this.methodDeclaration = methodDeclaration;
 		this.classDeclaration = classDeclaration;
 	}
 
-	public FjMethodDeclaration getMethodDeclaration() {
+	public JMethodDeclaration getMethodDeclaration() {
 		return methodDeclaration;
 	}
 
@@ -72,21 +71,13 @@ public class MethodDeclarationNode extends CaesarProgramElementNode {
 		} else if (type.toString().compareTo("") == 0)
 			label += "void";
 		else
-			label += type.toString().substring(type.toString().lastIndexOf('.') + 1);
+			label += type.toString().substring(
+					type.toString().lastIndexOf('.') + 1);
 		return label;
 	}
 
 	public JTypeDeclaration getClassDeclaration() {
 		return classDeclaration;
-	}
-	
-
-	/* (Kein Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	public int compareTo(Object o) throws ClassCastException {
-		// TODO Automatisch erstellter Methoden-Stub
-		return super.compareTo(o);
 	}
 
 }

@@ -3,9 +3,9 @@ package org.caesarj.ui.model;
 import org.aspectj.asm.StructureNode;
 import org.aspectj.weaver.NameMangler;
 import org.aspectj.weaver.TypeX;
-import org.caesarj.compiler.ast.AdviceDeclaration;
-import org.caesarj.compiler.ast.FjMethodDeclaration;
-import org.caesarj.compiler.ast.JConstructorDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.CjAdviceDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.JConstructorDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.JMethodDeclaration;
 import org.caesarj.compiler.types.CType;
 
 /**
@@ -21,7 +21,7 @@ public class SignatureResolver extends AbstractAsmVisitor {
 		if (node instanceof AdviceDeclarationNode) {
 			AdviceDeclarationNode adviceNode = (AdviceDeclarationNode) node;
 
-			AdviceDeclaration adviceDeclaration = adviceNode.getAdviceDeclaration();
+			CjAdviceDeclaration adviceDeclaration = adviceNode.getAdviceDeclaration();
 			//JClassDeclaration classDeclaration  = adviceNode.getClassDeclaration();
 
 			String ident =
@@ -35,13 +35,13 @@ public class SignatureResolver extends AbstractAsmVisitor {
 					adviceNode,
 					ident,
 					adviceDeclaration.getMethod().getParameters(),
-					adviceDeclaration.getMethod().getReturnType());
+					adviceDeclaration.getReturnType());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		} else if (node instanceof MethodDeclarationNode) {
 			MethodDeclarationNode methodNode = (MethodDeclarationNode) node;
-			FjMethodDeclaration methodDeclaration = methodNode.getMethodDeclaration();
+			JMethodDeclaration methodDeclaration = methodNode.getMethodDeclaration();
 
 			try {
 				setBytecodeSignature(
@@ -69,26 +69,22 @@ public class SignatureResolver extends AbstractAsmVisitor {
 
 		super.visit(node);
 	}
-
-	/**
-	 * generates and sets bytecode signature
-	 */
+	
 	private void setBytecodeSignature(
-		CaesarProgramElementNode peNode,
-		String ident,
-		CType[] parameters,
-		CType returnType) {
-		StringBuffer byteCodeSig = new StringBuffer();
+			CaesarProgramElementNode peNode,
+			String ident,
+			CType[] arguments,
+			CType returnType) {
+			StringBuffer byteCodeSig = new StringBuffer();
 
-		byteCodeSig.append("(");
-		for (int i = 0; i < parameters.length; i++) {
-			byteCodeSig.append(parameters[i].getSignature());
+			byteCodeSig.append("(");
+			for (int i = 0; i < arguments.length; i++) {
+				byteCodeSig.append(arguments[i].getSignature());
+			}
+			byteCodeSig.append(")");
+			byteCodeSig.append(returnType.getSignature());
+
+			peNode.setBytecodeName(ident);
+			peNode.setBytecodeSignature(byteCodeSig.toString());
 		}
-		byteCodeSig.append(")");
-		byteCodeSig.append(returnType.getSignature());
-
-		peNode.setBytecodeName(ident);
-		peNode.setBytecodeSignature(byteCodeSig.toString());
-	}
-
 }

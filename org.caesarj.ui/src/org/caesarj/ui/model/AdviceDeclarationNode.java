@@ -3,7 +3,7 @@ package org.caesarj.ui.model;
 import java.util.List;
 
 import org.aspectj.bridge.ISourceLocation;
-import org.caesarj.compiler.ast.AdviceDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.CjAdviceDeclaration;
 import org.caesarj.ui.CaesarElementImageDescriptor;
 import org.caesarj.ui.CaesarPluginImages;
 import org.eclipse.swt.graphics.Image;
@@ -16,11 +16,11 @@ import org.eclipse.swt.graphics.Image;
  */
 public class AdviceDeclarationNode extends CaesarProgramElementNode {
 
-	private AdviceDeclaration adviceDeclaration;
+	private CjAdviceDeclaration adviceDeclaration;
 	private String classFullQualifiedName;
 
 	public AdviceDeclarationNode(
-		AdviceDeclaration adviceDeclaration,
+		CjAdviceDeclaration adviceDeclaration,
 		String classFullQualifiedName,
 		String signature,
 		Kind kind,
@@ -34,7 +34,7 @@ public class AdviceDeclarationNode extends CaesarProgramElementNode {
 		this.classFullQualifiedName = classFullQualifiedName;
 	}
 
-	public AdviceDeclaration getAdviceDeclaration() {
+	public CjAdviceDeclaration getAdviceDeclaration() {
 		return adviceDeclaration;
 	}
 

@@ -14,26 +14,26 @@ import org.aspectj.asm.StructureModel;
 import org.aspectj.asm.StructureNode;
 import org.aspectj.bridge.ISourceLocation;
 import org.aspectj.bridge.SourceLocation;
-import org.caesarj.compiler.ast.AdviceDeclaration;
-import org.caesarj.compiler.ast.BodyVisitor;
-import org.caesarj.compiler.ast.CciInterfaceDeclaration;
-import org.caesarj.compiler.ast.FjMethodDeclaration;
-import org.caesarj.compiler.ast.JBlock;
-import org.caesarj.compiler.ast.JClassDeclaration;
-import org.caesarj.compiler.ast.JClassImport;
-import org.caesarj.compiler.ast.JCompilationUnit;
-import org.caesarj.compiler.ast.JConstructorBlock;
-import org.caesarj.compiler.ast.JConstructorDeclaration;
-import org.caesarj.compiler.ast.JExpression;
-import org.caesarj.compiler.ast.JFieldDeclaration;
-import org.caesarj.compiler.ast.JFormalParameter;
-import org.caesarj.compiler.ast.JInterfaceDeclaration;
-import org.caesarj.compiler.ast.JMethodDeclaration;
-import org.caesarj.compiler.ast.JPackageImport;
-import org.caesarj.compiler.ast.JPackageName;
-import org.caesarj.compiler.ast.JPhylum;
-import org.caesarj.compiler.ast.JTypeDeclaration;
-import org.caesarj.compiler.ast.PointcutDeclaration;
+import org.caesarj.compiler.ast.phylum.JClassImport;
+import org.caesarj.compiler.ast.phylum.JCompilationUnit;
+import org.caesarj.compiler.ast.phylum.JPackageImport;
+import org.caesarj.compiler.ast.phylum.JPackageName;
+import org.caesarj.compiler.ast.phylum.JPhylum;
+import org.caesarj.compiler.ast.phylum.declaration.CjAdviceDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.CjClassDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.CjInterfaceDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.CjPointcutDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.JClassDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.JConstructorDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.JFieldDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.JInterfaceDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.JMethodDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.JTypeDeclaration;
+import org.caesarj.compiler.ast.phylum.expression.JExpression;
+import org.caesarj.compiler.ast.phylum.statement.JBlock;
+import org.caesarj.compiler.ast.phylum.statement.JConstructorBlock;
+import org.caesarj.compiler.ast.phylum.variable.JFormalParameter;
+import org.caesarj.compiler.ast.visitor.BodyVisitor;
 import org.caesarj.compiler.export.CModifier;
 import org.caesarj.compiler.types.CReferenceType;
 import org.caesarj.compiler.types.CType;
@@ -228,7 +228,7 @@ public class AsmBuilder extends BodyVisitor {
 		asmStack.pop();
 	}
 	
-	public void visitCciInterfaceDeclaration(CciInterfaceDeclaration arg0,
+	public void visitCciInterfaceDeclaration(CjInterfaceDeclaration arg0,
 			int arg1, String arg2, CReferenceType[] arg3, JPhylum[] arg4,
 			JMethodDeclaration[] arg5) {
 		visitInterfaceDeclaration(arg0, arg1, arg2, arg3, arg4, arg5);
@@ -340,19 +340,19 @@ public class AsmBuilder extends BodyVisitor {
 		}
 
 		// get advices and pointcuts visit
-		//if (self instanceof FjCleanClassDeclaration) {
-			//FjCleanClassDeclaration clazz = (FjCleanClassDeclaration) self;
+		if (self instanceof CjClassDeclaration) {
+			CjClassDeclaration clazz = (CjClassDeclaration) self;
 
-			AdviceDeclaration[] advices = self.getAdvices();
+			CjAdviceDeclaration[] advices = clazz.getAdvices();
 			for (int i = 0; i < advices.length; i++) {
 				advices[i].accept(this);
 			}
 
-			PointcutDeclaration[] pointcuts = self.getPointcuts();
+			CjPointcutDeclaration[] pointcuts = clazz.getPointcuts();
 			for (int i = 0; i < pointcuts.length; i++) {
 				pointcuts[i].accept(this);
 			}
-		//}
+		}
 
 		asmStack.pop();
 		classStack.pop();
@@ -403,8 +403,8 @@ public class AsmBuilder extends BodyVisitor {
 		JBlock body) {
 		CaesarProgramElementNode peNode = null;
 
-		if (self instanceof AdviceDeclaration) {
-			AdviceDeclaration advice = (AdviceDeclaration) self;
+		if (self instanceof CjAdviceDeclaration) {
+			CjAdviceDeclaration advice = (CjAdviceDeclaration) self;
 
 			peNode =
 				new AdviceDeclarationNode(
@@ -441,8 +441,8 @@ public class AsmBuilder extends BodyVisitor {
 
 				registryNode.addChild(peNode);
 			}
-		} else if (self instanceof PointcutDeclaration) {
-			PointcutDeclaration pointcut = (PointcutDeclaration) self;
+		} else if (self instanceof CjPointcutDeclaration) {
+			CjPointcutDeclaration pointcut = (CjPointcutDeclaration) self;
 
 			peNode =
 				new PointcutNode(
@@ -459,7 +459,7 @@ public class AsmBuilder extends BodyVisitor {
 		} else {
 			peNode =
 				new MethodDeclarationNode(
-					(FjMethodDeclaration) self,
+					self,
 					((JTypeDeclaration) classStack.peek()),
 					ident,
 					CaesarProgramElementNode.Kind.METHOD,
@@ -499,11 +499,7 @@ public class AsmBuilder extends BodyVisitor {
 		getCurrentStructureNode().addChild(peNode);
 	}
 
-	/*
-	 *
-	 * HELPER METHODS
-	 *  
-	 */
+	
 	private ISourceLocation makeLocation(TokenReference ref) {
 		String fileName = new String(ref.getFile());
 
