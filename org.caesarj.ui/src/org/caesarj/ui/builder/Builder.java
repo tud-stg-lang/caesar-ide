@@ -1,15 +1,11 @@
 package org.caesarj.ui.builder;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.aspectj.asm.ProgramElementNode;
-import org.aspectj.asm.StructureModelManager;
 import org.caesarj.compiler.PositionedError;
 import org.caesarj.compiler.TokenReference;
 import org.caesarj.ui.CaesarPlugin;
@@ -26,11 +22,10 @@ import org.eclipse.swt.widgets.Display;
 /**
  * Builder is responsible for building a caesar project.
  * Steps done are:
- * 1) setupModel
- * 2) collect project properties
- * 3) calling caesar compiler
- * 4) displaying errors
- * 5) refreshing the outlineview
+ * 1) collect project properties
+ * 2) calling caesar compiler
+ * 3) displaying errors
+ * 4) refreshing the outlineview
  * 
  * TODO [build] Incremental build? Is there support in caesarj compiler?
  * 
@@ -76,8 +71,6 @@ public class Builder extends IncrementalProjectBuilder {
         IProgressMonitor progressMonitor
     ) throws CoreException {
         try {
-            setupModel();
-            
 			lastBuiltProject = getProject();
             errors.clear();
             
@@ -127,20 +120,7 @@ public class Builder extends IncrementalProjectBuilder {
         IProject[] requiredResourceDeltasOnNextInvocation = null;
         return requiredResourceDeltasOnNextInvocation;
     }
-    
-    private void setupModel() {
-        String rootLabel = "<root>";
-        StructureModelManager.INSTANCE.getStructureModel().setRoot(
-            new ProgramElementNode(
-                rootLabel,
-                ProgramElementNode.Kind.FILE_JAVA,
-                new ArrayList()
-            )
-        );
-            
-        StructureModelManager.INSTANCE.getStructureModel().setFileMap(new HashMap());
-    }
-    
+        
     // TODO [optimize] make it efficient
     // TODO [feature] warnings are missing
     public void showErrors() {

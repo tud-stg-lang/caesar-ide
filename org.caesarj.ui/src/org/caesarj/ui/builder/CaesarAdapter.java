@@ -4,29 +4,16 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.apache.bcel.classfile.Attribute;
-import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.classfile.Unknown;
 import org.apache.log4j.Logger;
 import org.aspectj.asm.StructureModel;
 import org.aspectj.asm.StructureModelManager;
-import org.aspectj.weaver.AjAttribute;
-import org.aspectj.weaver.ResolvedMember;
-import org.aspectj.weaver.ResolvedPointcutDefinition;
-import org.aspectj.weaver.ShadowMunger;
-import org.aspectj.weaver.TypeX;
-import org.aspectj.weaver.WeaverStateKind;
 import org.aspectj.weaver.bcel.UnwovenClassFile;
-import org.aspectj.weaver.patterns.PerClause;
-import org.aspectj.weaver.patterns.Pointcut;
 import org.caesarj.compiler.Main;
 import org.caesarj.compiler.PositionedError;
 import org.caesarj.compiler.aspectj.CaesarBcelWorld;
 import org.caesarj.kjc.JCompilationUnit;
 import org.caesarj.kjc.KjcEnvironment;
-import org.caesarj.ui.model.SignatureResolver;
 import org.caesarj.ui.model.AsmBuilder;
-import org.caesarj.ui.model.NodeEliminator;
 import org.caesarj.ui.model.StructureModelDump;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -71,6 +58,11 @@ public final class CaesarAdapter extends Main {
         Collection errors,
         IProgressMonitor progressMonitor
     ) {		
+        
+        StructureModel model = StructureModelManager.INSTANCE.getStructureModel();
+        
+        AsmBuilder.preBuild(model);
+        
 		boolean success;
 		String args[] = new String[sourceFiles.size()+4];
 				
@@ -98,6 +90,10 @@ public final class CaesarAdapter extends Main {
         
 		success = run(args);
         
+        AsmBuilder.postBuild(model);        
+                
+        _dumpModel("final structure model", model);
+        
         return success;
 	}
     
@@ -122,43 +118,23 @@ public final class CaesarAdapter extends Main {
         progressMonitor.subTask("weaving classes...");
         
         StructureModel model = StructureModelManager.INSTANCE.getStructureModel();
+
+        AsmBuilder.preWeave(model);
         
-        // build model
-        /*
-        for(Iterator it=compilationUnits.iterator(); it.hasNext(); ) {        
-            AsmBuilder.build((JCompilationUnit)it.next(), model);
-        }
-        */
-        
+        _dumpModel("structure model before weave", model);
 
-        SignatureResolver adviceNameVisitor = new SignatureResolver();
-        adviceNameVisitor.visit(model.getRoot());
-
-        log.debug("--- structure model before weave ---");
-        StructureModelDump modelDumpBeforeWeave = new StructureModelDump(System.out);            
-        modelDumpBeforeWeave.print("", model.getRoot());
-                
-
-        // add model to the world        
+        // add model to world and WEAVE      
         CaesarBcelWorld world = CaesarBcelWorld.getInstance();
         world.setModel(model);
-
-        /*
-         * WEAVE
-         */
-		super.weaveClasses(classFiles);
-        
-        
-        NodeEliminator registryNodeEliminator = new NodeEliminator();
-        registryNodeEliminator.visit(model.getRoot());
-        registryNodeEliminator.eliminateNodes();
-        
-        
-        log.debug("--- structure model after weave ---");
-        StructureModelDump modelDumpAfterWeave = new StructureModelDump(System.out);
-        modelDumpAfterWeave.print("", model.getRoot());
-                
+		super.weaveClasses(classFiles);        
+                              
         progressMonitor.worked(1);
 	}
 
+
+    private void _dumpModel(String description, StructureModel model) {
+        log.debug("--- "+description+" ---");
+        StructureModelDump modelDumpBeforeWeave = new StructureModelDump(System.out);            
+        modelDumpBeforeWeave.print("", model.getRoot());
+    }
 }

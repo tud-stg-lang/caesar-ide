@@ -18,13 +18,8 @@ public class NodeEliminator extends AbstractAsmVisitor {
 
     public void visit(StructureNode node) {       
 
-        if(node instanceof AspectRegistryNode) {
-            nodes2del.add(node);
-        }
-        else if(node instanceof CaesarProgramElementNode) {
-            if(((CaesarProgramElementNode)node).isToRemove())
-                nodes2del.add(node);;
-        }
+        if(AsmBuilder.isToRemove(node))
+            nodes2del.add(node);       
 
         super.visit(node);
     }    
