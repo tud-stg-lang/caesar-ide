@@ -52,9 +52,6 @@ public class CaesarPluginImages {
 	private static final String IMG_CCLASS_PRO = NAME_PREFIX + "cclass_protected_obj.gif"; //$NON-NLS-1$
 	private static final String IMG_CCLASS = NAME_PREFIX + "cclass_default_obj.gif"; //$NON-NLS-1$
 	private static final String IMG_CCLASS_IMPLICID = NAME_PREFIX + "cclass_implicid_obj.gif"; //$NON-NLS-1$
-	private static String IMG_CCLASS_IMPLICID_DISABLED= NAME_PREFIX + "cclass_implicid_dis_obj.gif"; //$NON-NLS-1$
-	
-	//TODO IMAGE HIERACHY
 	private static final String IMG_HIER_MODE_SUPER = NAME_PREFIX + "super_hi.gif"; //$NON-NLS-1$
 	private static final String IMG_HIER_MODE_SUB = NAME_PREFIX + "sub_hi.gif"; //$NON-NLS-1$
 	
@@ -74,7 +71,6 @@ public class CaesarPluginImages {
 	public static final ImageDescriptor DESC_OBJS_INNER_CCLASS_PROTECTED = createManaged(IMG_CCLASS_PRO);
 	public static final ImageDescriptor DESC_OBJS_INNER_CCLASS_DEFAULT = createManaged(IMG_CCLASS);
 	public static final ImageDescriptor DESC_OBJS_INNER_CCLASS_IMPLICID = createManaged(IMG_CCLASS_IMPLICID);
-	public static final ImageDescriptor DESC_OBJS_INNER_CCLASS_IMPLICID_DISABLED= createManaged(IMG_CCLASS_IMPLICID_DISABLED);
 	public static final ImageDescriptor DESC_HIER_MODE_SUPER = createManaged(IMG_HIER_MODE_SUPER);
 	public static final ImageDescriptor DESC_HIER_MODE_SUB = createManaged(IMG_HIER_MODE_SUB);
 

@@ -57,7 +57,7 @@ public class CaesarOutlineView extends ContentOutlinePage {
 
 	Object imports;
 
-	public static final Point BIG_SIZE = new Point(22, 16);
+	protected static final Point BIG_SIZE = new Point(22, 16);
 
 	static {
 		categoryMap = new HashMap();
