@@ -112,10 +112,7 @@ implements      IExecutableExtension {
                 
         addClassPath(javaProject, caesarPlugin.getAspectJRuntimeClasspath());
         addClassPath(javaProject, caesarPlugin.getCaesarRuntimeClasspath());        
-        // TODO this dependencies should be removed (bcel too?)
-        addClassPath(javaProject, caesarPlugin.getCaesarCompilerClasspath());
-        addClassPath(javaProject, caesarPlugin.getBcelClasspath());
-
+        
         return true;
     }       
     
