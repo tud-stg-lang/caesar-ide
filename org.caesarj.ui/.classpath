@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="aspectjtools.jar"/>
-	<classpathentry exported="true" kind="lib" path="aspectjrt.jar"/>
-	<classpathentry exported="true" kind="lib" path="java-getopt-1.0.9.jar"/>
-	<classpathentry exported="true" kind="lib" path="log4j-1.2.8.jar"/>
-	<classpathentry exported="true" kind="lib" path="cjbuildtools.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry sourcepath="/Caesar/lib/aspectjtools-src.jar" kind="lib" path="aspectjtools.jar"/>
 	<classpathentry kind="lib" path="caesar-compiler.jar"/>
-	<classpathentry kind="lib" path="caesar-runtime.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
