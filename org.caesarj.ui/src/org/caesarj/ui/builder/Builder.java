@@ -105,6 +105,9 @@ public class Builder extends IncrementalProjectBuilder {
 		showErrors();
 		
 		try {
+			/* ensure that the generated class files are recognized */
+			lastBuiltProject.refreshLocal(IResource.DEPTH_INFINITE, null);
+			
 			// update has to be executed from Workbenchs Thread
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
