@@ -14,6 +14,7 @@ import org.aspectj.weaver.AjAttribute;
 import org.aspectj.weaver.ResolvedMember;
 import org.aspectj.weaver.ResolvedPointcutDefinition;
 import org.aspectj.weaver.ShadowMunger;
+import org.aspectj.weaver.TypeX;
 import org.aspectj.weaver.WeaverStateKind;
 import org.aspectj.weaver.bcel.UnwovenClassFile;
 import org.aspectj.weaver.patterns.PerClause;
@@ -23,7 +24,7 @@ import org.caesarj.compiler.PositionedError;
 import org.caesarj.compiler.aspectj.CaesarBcelWorld;
 import org.caesarj.kjc.JCompilationUnit;
 import org.caesarj.kjc.KjcEnvironment;
-import org.caesarj.ui.model.AdviceNameVisitor;
+import org.caesarj.ui.model.SignatureResolver;
 import org.caesarj.ui.model.AsmBuilder;
 import org.caesarj.ui.model.NodeEliminator;
 import org.caesarj.ui.model.StructureModelDump;
@@ -113,11 +114,6 @@ public final class CaesarAdapter extends Main {
 	}
 
     protected void weaveClasses(UnwovenClassFile[] classFiles) {
-        /*
-        // DEBUG inspect classes
-        for(int i=0; i<classFiles.length; i++)
-            inspectUnwovenClassFile(classFiles[i]);
-        */
         if(progressMonitor.isCanceled())
             return;
         
@@ -133,7 +129,7 @@ public final class CaesarAdapter extends Main {
         */
         
 
-        AdviceNameVisitor adviceNameVisitor = new AdviceNameVisitor();
+        SignatureResolver adviceNameVisitor = new SignatureResolver();
         adviceNameVisitor.visit(model.getRoot());
 
         log.debug("--- structure model before weave ---");
@@ -144,8 +140,7 @@ public final class CaesarAdapter extends Main {
         // add model to the world        
         CaesarBcelWorld world = CaesarBcelWorld.getInstance();
         world.setModel(model);
-                
-                
+
         /*
          * WEAVE
          */

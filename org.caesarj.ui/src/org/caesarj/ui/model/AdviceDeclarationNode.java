@@ -2,10 +2,11 @@ package org.caesarj.ui.model;
 
 import java.util.List;
 
-import org.aspectj.asm.ProgramElementNode;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.AdviceDeclaration;
+import org.caesarj.kjc.CType;
 import org.caesarj.kjc.JClassDeclaration;
+import org.caesarj.kjc.JFormalParameter;
 
 /**
  * ...
@@ -15,11 +16,13 @@ import org.caesarj.kjc.JClassDeclaration;
 public class AdviceDeclarationNode extends CaesarProgramElementNode {
 
     private AdviceDeclaration adviceDeclaration;
-    private JClassDeclaration classDeclaration;
+    //private JClassDeclaration classDeclaration;
+    private String classFullQualifiedName;
 
 	public AdviceDeclarationNode(
-        AdviceDeclaration adviceDeclaration,
-        JClassDeclaration classDeclaration,
+        AdviceDeclaration adviceDeclaration,        
+        //JClassDeclaration classDeclaration,
+        String classFullQualifiedName,
 		String signature,
 		Kind kind,
 		ISourceLocation sourceLocation,
@@ -37,15 +40,22 @@ public class AdviceDeclarationNode extends CaesarProgramElementNode {
         );
         
         this.adviceDeclaration = adviceDeclaration;
-        this.classDeclaration = classDeclaration;
+        //this.classDeclaration = classDeclaration;
+        this.classFullQualifiedName = classFullQualifiedName;
 	}
 
 	public AdviceDeclaration getAdviceDeclaration() {
 		return adviceDeclaration;
 	}
     
-	public JClassDeclaration getClassDeclaration() {
-		return classDeclaration;
-	}
+    public String getClassFullQualifiedName() {
+        return classFullQualifiedName;
+    }
+    
+    /*
+    public JClassDeclaration getClassDeclaration() {
+        return classDeclaration;
+    }
+    */
     
 }

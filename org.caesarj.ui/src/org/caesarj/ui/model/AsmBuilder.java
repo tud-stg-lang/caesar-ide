@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Stack;
 
-import org.aspectj.asm.ProgramElementNode;
 import org.aspectj.asm.StructureModel;
 import org.aspectj.asm.StructureNode;
 import org.aspectj.bridge.ISourceLocation;
@@ -15,6 +14,7 @@ import org.aspectj.bridge.SourceLocation;
 import org.caesarj.compiler.TokenReference;
 import org.caesarj.compiler.ast.AdviceDeclaration;
 import org.caesarj.compiler.ast.FjClassDeclaration;
+import org.caesarj.compiler.ast.FjMethodDeclaration;
 import org.caesarj.compiler.ast.PointcutDeclaration;
 import org.caesarj.compiler.util.CaesarVisitor;
 import org.caesarj.kjc.CModifier;
@@ -36,7 +36,6 @@ import org.caesarj.kjc.JPackageImport;
 import org.caesarj.kjc.JPackageName;
 import org.caesarj.kjc.JPhylum;
 import org.caesarj.kjc.JTypeDeclaration;
-import org.caesarj.util.InconsistencyException;
 
 /**
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
@@ -47,13 +46,12 @@ public class AsmBuilder extends CaesarVisitor {
 
     protected StructureModel structureModel = null;
     protected Stack asmStack = new Stack();
+    protected Stack classStack = new Stack();
     
-    protected JClassDeclaration currentClassDeclaration;
-
     public static void build(
         JCompilationUnit unit,
         StructureModel structureModel
-    ) {
+    ) { 
         new AsmBuilder().internalBuild(unit, structureModel);
     }
     
@@ -219,7 +217,7 @@ public class AsmBuilder extends CaesarVisitor {
 		JTypeDeclaration[] decls
     ) {	
         
-        currentClassDeclaration = self;
+        classStack.push(self);
         
         CaesarProgramElementNode.Kind kind = 
             CModifier.contains(modifiers, CModifier.ACC_CROSSCUTTING) ?
@@ -274,8 +272,9 @@ public class AsmBuilder extends CaesarVisitor {
                 pointcuts[i].accept(this);
             }
         }
-        
+                
         asmStack.pop();
+        classStack.pop();        
 	}
     
 
@@ -324,31 +323,14 @@ public class AsmBuilder extends CaesarVisitor {
 		CReferenceType[] exceptions,
 		JBlock body
     ) {
-                
         CaesarProgramElementNode peNode = null;
         
         if(self instanceof AdviceDeclaration) {
             AdviceDeclaration advice = (AdviceDeclaration)self;
-            
-            CaesarProgramElementNode registryNode =
-                findChildByName(getCurrentStructureNode().getChildren(), REGISTRY_CLASS_NAME);
-                
-            if(registryNode == null) {
-                registryNode = new AspectRegistryNode(
-                    "Registry",
-                    CaesarProgramElementNode.Kind.CLASS,
-                    makeLocation(self.getTokenReference()),
-                    modifiers,
-                    "",
-                    new ArrayList()
-                );
-                
-                getCurrentStructureNode().addChild(registryNode);
-            }
-            
+                        
             peNode = new AdviceDeclarationNode(
                 advice,
-                currentClassDeclaration,
+                ((JClassDeclaration)classStack.peek()).getCClass().getQualifiedName(),
                 advice.getKind().getName(),
                 CaesarProgramElementNode.Kind.ADVICE,
                 makeLocation(self.getTokenReference()),
@@ -357,13 +339,35 @@ public class AsmBuilder extends CaesarVisitor {
                 new ArrayList()
             );
             
-            setBytecodeSignature(peNode, ident, parameters, returnType);
-            registryNode.addChild(peNode);
+            if(CModifier.contains(((JClassDeclaration)classStack.peek()).getModifiers(), CModifier.ACC_DEPLOYED)) {
+                getCurrentStructureNode().addChild(peNode);
+            }
+            else {
+                CaesarProgramElementNode registryNode =
+                    findChildByName(getCurrentStructureNode().getChildren(), REGISTRY_CLASS_NAME);
+                    
+                if(registryNode == null) {
+                    registryNode = new AspectRegistryNode(
+                        "Registry",
+                        CaesarProgramElementNode.Kind.CLASS,
+                        makeLocation(self.getTokenReference()),
+                        modifiers,
+                        "",
+                        new ArrayList()
+                    );
+                    
+                    getCurrentStructureNode().addChild(registryNode);
+                }
+                
+                registryNode.addChild(peNode);
+            }            
         }
         else if(self instanceof PointcutDeclaration) {
             PointcutDeclaration pointcut = (PointcutDeclaration)self;
     
-            peNode = new CaesarProgramElementNode(
+            peNode = new MethodDeclarationNode(
+                pointcut,
+                ((JClassDeclaration)classStack.peek()),
                 ident,
                 CaesarProgramElementNode.Kind.POINTCUT,
                 makeLocation(self.getTokenReference()),
@@ -372,11 +376,12 @@ public class AsmBuilder extends CaesarVisitor {
                 new ArrayList()
             );
             
-            setBytecodeSignature(peNode, ident, parameters, returnType);
             getCurrentStructureNode().addChild(peNode);  
         }
         else {        
-            peNode = new CaesarProgramElementNode(
+            peNode = new MethodDeclarationNode(
+                (FjMethodDeclaration)self,
+                ((JClassDeclaration)classStack.peek()),
                 ident,
                 CaesarProgramElementNode.Kind.METHOD,
                 makeLocation(self.getTokenReference()),
@@ -389,7 +394,6 @@ public class AsmBuilder extends CaesarVisitor {
                peNode.setRunnable(true);
             }
             
-            setBytecodeSignature(peNode, ident, parameters, returnType);
             getCurrentStructureNode().addChild(peNode);  
         }   
 
@@ -412,7 +416,7 @@ public class AsmBuilder extends CaesarVisitor {
             modifiers,
             "",
             new ArrayList()
-        );   
+        );
 
         getCurrentStructureNode().addChild(peNode);
 	}
@@ -444,18 +448,11 @@ public class AsmBuilder extends CaesarVisitor {
         return structureModel;
     }
     
-    // TODO NOT WORKING
-    private String getFullQualifiedName(CType type) {
-        String res;
-        
-        if(type instanceof CReferenceType)
-            res = 'L'+((CReferenceType)type).getQualifiedName()+';'; 
-        else
-            res = type.getSignature();
-        
-        return res;
-    }
     
+    /*
+     * HELPER METHODS
+     */
+        
     private CaesarProgramElementNode findChildByName(Collection childrenList, String name) {
         for (Iterator it = childrenList.iterator(); it.hasNext();) {
 			CaesarProgramElementNode node = (CaesarProgramElementNode) it.next();
@@ -466,23 +463,5 @@ public class AsmBuilder extends CaesarVisitor {
         
         return null;
     }
-    
-    private void setBytecodeSignature(
-        CaesarProgramElementNode peNode,
-        String ident,
-        JFormalParameter[] parameters,
-        CType returnType
-    ) {
-        StringBuffer byteCodeSig = new StringBuffer();
-                        
-        byteCodeSig.append("(");
-        for(int i=0; i<parameters.length; i++) {
-            byteCodeSig.append(getFullQualifiedName(parameters[i].getType()));
-        }
-        byteCodeSig.append(")");
-        byteCodeSig.append(returnType.getSignature());
 
-        peNode.setBytecodeName(ident);
-        peNode.setBytecodeSignature(byteCodeSig.toString());
-    }
 }
