@@ -20,15 +20,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: AnnotationShortCut.java,v 1.7 2005-01-24 16:57:22 aracic Exp $
+ * $Id: AnnotationShortCut.java,v 1.8 2005-02-15 17:40:33 gasiunas Exp $
  */
 
 package org.caesarj.ui.actionsets;
 
 import org.apache.log4j.Logger;
+import org.caesarj.ui.CJDTConfigSettings;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -38,27 +41,39 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  *
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class AnnotationShortCut implements IWorkbenchWindowActionDelegate{
+public class AnnotationShortCut 
+	implements IWorkbenchWindowActionDelegate, IPropertyChangeListener {
 
 	private static Logger log = Logger.getLogger(AnnotationShortCut.class);
 	
 	private boolean status; 
 	
+	private IAction action = null;
+	
 	public void dispose() {
 	}
 
 	public void init(IWorkbenchWindow window) {
-		this.status = JavaPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS);
+		this.status = CJDTConfigSettings.isAnalyzeAnnotationsEnabled();
+		JavaPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);		
 	}
 
 	public void run(IAction action) {
-		log.debug("Annotation action was activated!"); //$NON-NLS-1$
-		JavaPlugin.getDefault().getPreferenceStore().setValue(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS, !this.status);
-		this.status = JavaPlugin.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS);
+		CJDTConfigSettings.setAnalyzeAnnotations(!this.status);
+		this.status = CJDTConfigSettings.isAnalyzeAnnotationsEnabled();
+		action.setChecked(this.status);
+		this.action = action;
 	}
-
 	
-	public void selectionChanged(IAction action, ISelection selection) {
+	public void selectionChanged(IAction action, ISelection selection) {		
 	}
-
+	
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty() == PreferenceConstants.EDITOR_EVALUTE_TEMPORARY_PROBLEMS) {
+			this.status = CJDTConfigSettings.isAnalyzeAnnotationsEnabled();
+			if (this.action != null) {
+				this.action.setChecked(this.status);
+			}
+		}
+	}
 }
