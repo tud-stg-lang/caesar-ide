@@ -118,9 +118,9 @@ implements      IExecutableExtension {
     
     private void addClassPath(IJavaProject javaProject, String classPath) {
         try {
-            IClasspathEntry[] originalCP = javaProject.getRawClasspath();
+            IClasspathEntry[] originalCP = javaProject.getRawClasspath();            
             IClasspathEntry classpathEntry =
-                JavaCore.newLibraryEntry(
+                JavaCore.newVariableEntry(
                     new Path(classPath), // library location
                     null,               // no source
                     null                // no source
