@@ -175,8 +175,9 @@
          name="AdviceMarker"
          point="org.eclipse.core.resources.markers">
       <super type="org.eclipse.core.resources.textmarker"/>
+      <super type="org.eclipse.core.resources.problemmarker"/>
       <persistent
-            value="true">
+            value="false">
       </persistent>
       <attribute
             name="org.caesarj.links">
@@ -185,29 +186,21 @@
             name="org.caesarj.adviceid">
       </attribute>
    </extension>
-   <extension
-         point="org.eclipse.ui.ide.markerImageProviders">
-      <imageprovider
-            markertype="org.caesarj.advicemarker"
-            icon="icons/joinPoint.gif"
-            id="org.eclipse.ui.adviceMarkerProvider">
-      </imageprovider>
+   <extension point="org.eclipse.ui.editors.annotationTypes">
+		<type name="org.caesarj.ui.adviceannotation" super="org.eclipse.ui.workbench.texteditor.task" markerType="org.caesarj.advicemarker" >
+      </type>
    </extension>
-   <extension
+   <extension point="org.eclipse.ui.editors.markerAnnotationSpecification">
+		<specification annotationType="org.caesarj.ui.adviceannotation"  icon="icons/joinPoint.gif" >
+	  </specification>
+	</extension>
+	<extension
          point="org.eclipse.ui.ide.markerResolution">
       <markerResolutionGenerator
             markerType="org.caesarj.advicemarker"
             class="org.caesarj.ui.marker.AdviceMarkerResolutionGenerator">
       </markerResolutionGenerator>
    </extension>
-	<!--extension point="org.eclipse.ui.markerHelp">
-		<markerHelp markerType="org.caesarj.advicemarker" helpContextId="org.caesarj.marker_example1_context">
-			<attribute name="org.caesarj.advicemarker" value="AdviceLink"/>
-		</markerHelp>
-		<markerHelp markerType="org.caesarj.advicemarker" helpContextId="org.caesarj.marker_example2_context">
-			<attribute name="org.caesarj.advicemarker" value="MethodeLink"/>
-		</markerHelp>
-	</extension-->
 	<extension
       point="org.eclipse.ui.perspectives">
    <perspective
