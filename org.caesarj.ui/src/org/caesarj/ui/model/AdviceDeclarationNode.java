@@ -12,7 +12,7 @@ import org.caesarj.kjc.JClassDeclaration;
  * 
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
-public class AdviceDeclarationNode extends ProgramElementNode {
+public class AdviceDeclarationNode extends CaesarProgramElementNode {
 
     private AdviceDeclaration adviceDeclaration;
     private JClassDeclaration classDeclaration;

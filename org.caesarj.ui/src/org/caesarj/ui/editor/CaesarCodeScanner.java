@@ -132,12 +132,17 @@ public final class CaesarCodeScanner extends AbstractJavaScanner {
         "privileged",
         "returning",
         "throwing",
+        "cflow",
+        "target",
+        "args",
+        "proceed",
         
         "provides",
         "collaboration",
         "provided",
         "expected",
         "wraps",
+        "binds",
         "wrappee"
     };
 

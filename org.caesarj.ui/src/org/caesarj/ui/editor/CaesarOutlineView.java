@@ -3,6 +3,7 @@ package org.caesarj.ui.editor;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 
 import org.aspectj.asm.LinkNode;
 import org.aspectj.asm.ProgramElementNode;
@@ -51,13 +52,21 @@ public class CaesarOutlineView extends ContentOutlinePage {
         }
         
         public Object[] getChildren(Object parentElement) {
+            Vector vec = new Vector();
+            
             if(parentElement instanceof ProgramElementNode) {
                 ProgramElementNode node = (ProgramElementNode)parentElement;
-                if(node.getRelations().size() > 0)
-                    return node.getRelations().toArray();
+                for(Iterator it=node.getRelations().iterator(); it.hasNext(); )
+                    vec.add(it.next());
             }
             
-            return ((StructureNode)parentElement).getChildren().toArray();                
+            {
+                StructureNode node = (StructureNode)parentElement;
+                for(Iterator it=node.getChildren().iterator(); it.hasNext(); ) 
+                    vec.add(it.next());
+            }
+                        
+            return vec.toArray();
         }
 
         public Object getParent(Object element) {

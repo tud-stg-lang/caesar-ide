@@ -25,7 +25,7 @@ import org.caesarj.kjc.JCompilationUnit;
 import org.caesarj.kjc.KjcEnvironment;
 import org.caesarj.ui.model.AdviceNameVisitor;
 import org.caesarj.ui.model.AsmBuilder;
-import org.caesarj.ui.model.RegistryNodeEliminator;
+import org.caesarj.ui.model.NodeEliminator;
 import org.caesarj.ui.model.StructureModelDump;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -152,7 +152,7 @@ public final class CaesarAdapter extends Main {
 		super.weaveClasses(classFiles);
         
         
-        RegistryNodeEliminator registryNodeEliminator = new RegistryNodeEliminator();
+        NodeEliminator registryNodeEliminator = new NodeEliminator();
         registryNodeEliminator.visit(model.getRoot());
         registryNodeEliminator.eliminateNodes();
         

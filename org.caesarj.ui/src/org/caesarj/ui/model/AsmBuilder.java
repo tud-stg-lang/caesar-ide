@@ -87,9 +87,9 @@ public class AsmBuilder extends CaesarVisitor {
         TokenReference ref = self.getTokenReference();        
         File file = new File(new String(ref.getFile()));
 
-        ProgramElementNode cuNode = new ProgramElementNode(
+        CaesarProgramElementNode cuNode = new CaesarProgramElementNode(
             new String(file.getName()),
-            ProgramElementNode.Kind.FILE_JAVA,
+            CaesarProgramElementNode.Kind.FILE_JAVA,
             makeLocation(ref),
             0,
             "",
@@ -103,26 +103,27 @@ public class AsmBuilder extends CaesarVisitor {
             pkgName = pkgName.replaceAll("/", ".");
             
             boolean found = false;
-            ProgramElementNode pkgNode = null;
+            CaesarProgramElementNode pkgNode = null;
             
             for (Iterator it = getStructureModel().getRoot().getChildren().iterator(); it.hasNext(); ) {
-                ProgramElementNode currNode = (ProgramElementNode)it.next();
+                CaesarProgramElementNode currNode = (CaesarProgramElementNode)it.next();
                 if (currNode.getName().equals(pkgName)) pkgNode = currNode;
             }
             
             if (pkgNode == null) {
-                pkgNode = new ProgramElementNode(
+                pkgNode = new CaesarProgramElementNode(
                     pkgName, 
-                    ProgramElementNode.Kind.PACKAGE, 
-                    new ArrayList());
+                    CaesarProgramElementNode.Kind.PACKAGE, 
+                    new ArrayList()
+                );
                 getStructureModel().getRoot().addChild(pkgNode);
             }   
             
             // if the node already exists remove before adding
-            ProgramElementNode duplicate = null;   
+            CaesarProgramElementNode duplicate = null;   
              
             for (Iterator itt = pkgNode.getChildren().iterator(); itt.hasNext(); ) {
-                ProgramElementNode child = (ProgramElementNode)itt.next();
+                CaesarProgramElementNode child = (CaesarProgramElementNode)itt.next();
                 if (child.getSourceLocation().getSourceFile().equals(file)) {
                     duplicate = child;
                 } 
@@ -135,10 +136,10 @@ public class AsmBuilder extends CaesarVisitor {
         }
         else {
             // if the node already exists remove before adding
-            ProgramElementNode duplicate = null;    
+            CaesarProgramElementNode duplicate = null;    
             
             for (Iterator itt = getStructureModel().getRoot().getChildren().iterator(); itt.hasNext(); ) {
-                ProgramElementNode child = (ProgramElementNode)itt.next();
+                CaesarProgramElementNode child = (CaesarProgramElementNode)itt.next();
                 if (child.getSourceLocation().getSourceFile().equals(file)) {
                     duplicate = child;
                 } 
@@ -185,9 +186,9 @@ public class AsmBuilder extends CaesarVisitor {
     	JPhylum[] body,
     	JMethodDeclaration[] methods
     ) {	
-        ProgramElementNode peNode = new ProgramElementNode(
+        CaesarProgramElementNode peNode = new CaesarProgramElementNode(
             ident,
-            ProgramElementNode.Kind.INTERFACE,
+            CaesarProgramElementNode.Kind.INTERFACE,
             makeLocation(self.getTokenReference()),
             modifiers,
             "",
@@ -220,12 +221,12 @@ public class AsmBuilder extends CaesarVisitor {
         
         currentClassDeclaration = self;
         
-        ProgramElementNode.Kind kind = 
+        CaesarProgramElementNode.Kind kind = 
             CModifier.contains(modifiers, CModifier.ACC_CROSSCUTTING) ?
-                ProgramElementNode.Kind.ASPECT
-                : ProgramElementNode.Kind.CLASS;
+                CaesarProgramElementNode.Kind.ASPECT
+                : CaesarProgramElementNode.Kind.CLASS;
 	
-        ProgramElementNode peNode = new ProgramElementNode(
+        CaesarProgramElementNode peNode = new CaesarProgramElementNode(
             ident,
             kind,
             makeLocation(self.getTokenReference()),
@@ -290,9 +291,9 @@ public class AsmBuilder extends CaesarVisitor {
 		CReferenceType[] exceptions,
 		JConstructorBlock body
     ) {
-        ProgramElementNode peNode = new ProgramElementNode(
+        CaesarProgramElementNode peNode = new CaesarProgramElementNode(
             ident,
-            ProgramElementNode.Kind.CONSTRUCTOR,    
+            CaesarProgramElementNode.Kind.CONSTRUCTOR,    
             makeLocation(self.getTokenReference()),
             modifiers,
             "",
@@ -324,18 +325,18 @@ public class AsmBuilder extends CaesarVisitor {
 		JBlock body
     ) {
                 
-        ProgramElementNode peNode = null;
+        CaesarProgramElementNode peNode = null;
         
         if(self instanceof AdviceDeclaration) {
             AdviceDeclaration advice = (AdviceDeclaration)self;
             
-            ProgramElementNode registryNode =
+            CaesarProgramElementNode registryNode =
                 findChildByName(getCurrentStructureNode().getChildren(), REGISTRY_CLASS_NAME);
                 
             if(registryNode == null) {
                 registryNode = new AspectRegistryNode(
                     "Registry",
-                    ProgramElementNode.Kind.CLASS,
+                    CaesarProgramElementNode.Kind.CLASS,
                     makeLocation(self.getTokenReference()),
                     modifiers,
                     "",
@@ -349,7 +350,7 @@ public class AsmBuilder extends CaesarVisitor {
                 advice,
                 currentClassDeclaration,
                 advice.getKind().getName(),
-                ProgramElementNode.Kind.ADVICE,
+                CaesarProgramElementNode.Kind.ADVICE,
                 makeLocation(self.getTokenReference()),
                 modifiers,
                 "",
@@ -362,9 +363,9 @@ public class AsmBuilder extends CaesarVisitor {
         else if(self instanceof PointcutDeclaration) {
             PointcutDeclaration pointcut = (PointcutDeclaration)self;
     
-            peNode = new ProgramElementNode(
+            peNode = new CaesarProgramElementNode(
                 ident,
-                ProgramElementNode.Kind.POINTCUT,
+                CaesarProgramElementNode.Kind.POINTCUT,
                 makeLocation(self.getTokenReference()),
                 modifiers,
                 "",
@@ -375,9 +376,9 @@ public class AsmBuilder extends CaesarVisitor {
             getCurrentStructureNode().addChild(peNode);  
         }
         else {        
-            peNode = new ProgramElementNode(
+            peNode = new CaesarProgramElementNode(
                 ident,
-                ProgramElementNode.Kind.METHOD,
+                CaesarProgramElementNode.Kind.METHOD,
                 makeLocation(self.getTokenReference()),
                 modifiers,
                 "",
@@ -404,9 +405,9 @@ public class AsmBuilder extends CaesarVisitor {
 		String ident,
 		JExpression expr
     ) {        
-        ProgramElementNode peNode = new ProgramElementNode(
+        CaesarProgramElementNode peNode = new CaesarProgramElementNode(
             ident,
-            ProgramElementNode.Kind.FIELD,    
+            CaesarProgramElementNode.Kind.FIELD,    
             makeLocation(self.getTokenReference()),
             modifiers,
             "",
@@ -455,9 +456,9 @@ public class AsmBuilder extends CaesarVisitor {
         return res;
     }
     
-    private ProgramElementNode findChildByName(Collection childrenList, String name) {
+    private CaesarProgramElementNode findChildByName(Collection childrenList, String name) {
         for (Iterator it = childrenList.iterator(); it.hasNext();) {
-			ProgramElementNode node = (ProgramElementNode) it.next();
+			CaesarProgramElementNode node = (CaesarProgramElementNode) it.next();
             
 			if(node.getName().equals(name))
                 return node;
@@ -467,7 +468,7 @@ public class AsmBuilder extends CaesarVisitor {
     }
     
     private void setBytecodeSignature(
-        ProgramElementNode peNode,
+        CaesarProgramElementNode peNode,
         String ident,
         JFormalParameter[] parameters,
         CType returnType

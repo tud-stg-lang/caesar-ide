@@ -74,8 +74,8 @@ public class Builder extends IncrementalProjectBuilder {
             
 			lastBuiltProject = getProject();
             errors.clear();
-			
-            log.debug("Ceaser Builder");
+            
+            log.debug("kind: "+kind);
             
             projectProperties =
                 new ProjectProperties(getProject());

@@ -3,6 +3,7 @@ package org.caesarj.ui.util;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.internal.resources.Container;
@@ -153,10 +154,18 @@ public class ProjectProperties {
 	}
     
     public String toString() {
-        return
-            "projectLocation = "+getProjectLocation()+
-            "\noutputPath    = "+getOutputPath()+
-            "\nclasspath     = "+getClassPath();
-    }
+        StringBuffer res = new StringBuffer();
+        res.append("projectLocation\n\t"+getProjectLocation());
+        res.append("\noutputPath\n\t"+getOutputPath());
+        res.append("\nclasspath\n\t"+getClassPath());
+        res.append("\nsource files:\n");
+        for(Iterator it=sourceFiles.iterator(); it.hasNext(); ) {
+            res.append('\t');
+            res.append(it.next());
+            res.append('\n');
+        }
 
+        return res.toString();
+    }
+    
 }

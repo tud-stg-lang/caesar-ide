@@ -12,7 +12,7 @@ import org.caesarj.kjc.JClassDeclaration;
  * 
  * @author ivica
  */
-public class AspectRegistryNode extends ProgramElementNode {
+public class AspectRegistryNode extends CaesarProgramElementNode {
 
   	public AspectRegistryNode(
     	String signature,

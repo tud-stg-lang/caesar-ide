@@ -22,7 +22,19 @@ public class CaesarModelTest {
         
         Collection sourceFiles = new LinkedList();
         
-        sourceFiles.add("src/test/Test.java");
+        sourceFiles.add("src/client/Client.java");
+        sourceFiles.add("src/pricing/DiscountPricing.java");
+        sourceFiles.add("src/pricing/Pricing.java");
+        sourceFiles.add("src/pricing/RegularPricing.java");
+        sourceFiles.add("src/stockinformationbroker/StockInfo.java");
+        sourceFiles.add("src/stockinformationbroker/StockInfoRequest.java");
+        sourceFiles.add("src/stockinformationbroker/StockInformationBroker.java");
+        sourceFiles.add("src/stockpricing/PerRequestBinding.java");
+        sourceFiles.add("src/stockpricing/PerRequestDiscountPricing.java");
+        sourceFiles.add("src/stockpricing/PerRequestRegularPricing.java");
+        sourceFiles.add("src/stockpricing/PerStockQuoteBinding.java");
+        sourceFiles.add("src/stockpricing/PerStockQuoteDiscountPricing.java");
+        sourceFiles.add("src/stockpricing/PricingDeployment.java");
         
         CaesarAdapter caesarAdapter = 
             new CaesarAdapter(
@@ -35,7 +47,7 @@ public class CaesarModelTest {
         boolean success =
             caesarAdapter.compile(                
                 sourceFiles,
-                "caesar-runtime.jar",
+                "caesar-runtime.jar;aspectjrt.jar",
                 "bin",
                 errors
             );
