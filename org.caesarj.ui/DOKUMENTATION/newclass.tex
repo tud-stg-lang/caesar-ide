@@ -15,15 +15,11 @@ Edit the text in the editor so that it looks like this:
 	\begin{lstlisting}[basicstyle=\small\it,caption=HelloWorld.java,label=lst:HelloWorld,name=listing:helloworld,frame=none]{}
 package myPackage;
 
-public class HelloWorld {
-
-	public static void main(String[] args) {
-		HelloWorld hello = new HelloWorld();
-		hello.sayHello("Hello");
-	}
-
-	public void sayHello(String arg) {
-		System.out.println(arg);
+public cclass HelloWorld {
+	private static HelloWorld instance = new HelloWorld();
+	
+	public void sayHelloTest(String message) {
+		System.out.println(message);
 	}
 }
 \end{lstlisting}

@@ -3,13 +3,29 @@ Create a new Class and name it \code{World}. Edit the buffer so it looks like li
 \begin{lstlisting}[basicstyle=\small\it,caption=An \caesarj -cclass including an aspect,label=lst:aspect,name=listing:aspect,frame=none]{}
 package myPackage;
 
-public cclass World { 	
-      after(HelloWorld c, String a) :
-      	(call(void sayHello(String)) && this(c) && args(a))
-		{
-            System.out.println("Hello to you too...");
-		}
-}\end{lstlisting}
+public deployed cclass World {
+	
+	pointcut p(HelloWorld c) : execution(void HelloWorld.sayHelloTest(String)) && this(c);
+   
+	after(HelloWorld d) : p(d)
+	{
+		System.out.println("After Hello World");
+	} 
+} 
+\end{lstlisting}
+
+Furthermore you will need a "'Main-Class"' to run the project. Just create one like this:
+
+\begin{lstlisting}[basicstyle=\small\it,caption=An \caesarj -java-class including an main method,label=lst:main,name=listing:main,frame=none]{}
+package myPackage;
+
+public class MAIN {
+	public static void main(String[] args) {
+		HelloWorld test = new HelloWorld();
+		test.sayHelloTest("Hello World");
+	}
+}
+\end{lstlisting}
 
 Make a clean Build of the project, and the outline view populates like in figure \ref{fig:aspect2}. Expand the \code{after()} node.
 
