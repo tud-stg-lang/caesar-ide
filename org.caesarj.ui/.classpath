@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
     <classpathentry kind="src" path="src"/>
-    <classpathentry kind="lib" path="caesar-compiler.jar"/>
-    <classpathentry kind="lib" path="caesar-runtime.jar"/>
-    <classpathentry kind="lib" path="aspectjtools.jar"/>
+    <classpathentry kind="lib" path="caesar-compiler.jar" sourcepath="/Caesar/src"/>
+    <classpathentry kind="lib" path="caesar-runtime.jar" sourcepath="/Caesar/src"/>
+    <classpathentry kind="lib" path="aspectjtools.jar" sourcepath="/org.caesarj.ui/AspectJSrc.jar"/>
     <classpathentry kind="lib" path="java-getopt-1.0.9.jar"/>
     <classpathentry exported="true" kind="var"
         path="ECLIPSE_HOME/plugins/org.eclipse.search_2.1.1/search.jar" sourcepath="ORG_ECLIPSE_PLATFORM_SOURCE_SRC/org.eclipse.search_2.1.1/searchsrc.zip"/>
