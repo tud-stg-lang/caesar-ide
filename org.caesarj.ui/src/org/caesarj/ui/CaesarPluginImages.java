@@ -50,11 +50,10 @@ public class CaesarPluginImages {
 	public static final String IMG_OUT_IMPORTS = NAME_PREFIX + "impc_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_IMPORTS = NAME_PREFIX + "imp_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_CODE = NAME_PREFIX + "code.gif"; //$NON-NLS-1$
-	//TODO DZ: Images einbauen
-	private static final String IMG_CCLASS_PUB = NAME_PREFIX + "error.gif"; //$NON-NLS-1$
-	private static final String IMG_CCLASS_PRI = NAME_PREFIX + "error.gif"; //$NON-NLS-1$
-	private static final String IMG_CCLASS_PRO = NAME_PREFIX + "error.gif"; //$NON-NLS-1$
-	private static final String IMG_CCLASS = NAME_PREFIX + "error.gif"; //$NON-NLS-1$
+	private static final String IMG_CCLASS_PUB = NAME_PREFIX + "cclass_public_obj.gif"; //$NON-NLS-1$
+	private static final String IMG_CCLASS_PRI = NAME_PREFIX + "cclass_private_obj.gif"; //$NON-NLS-1$
+	private static final String IMG_CCLASS_PRO = NAME_PREFIX + "cclass_protected_obj.gif"; //$NON-NLS-1$
+	private static final String IMG_CCLASS = NAME_PREFIX + "cclass_default_obj.gif"; //$NON-NLS-1$
 	
 	
 

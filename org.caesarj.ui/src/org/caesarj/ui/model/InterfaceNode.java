@@ -89,7 +89,7 @@ public class InterfaceNode extends CaesarProgramElementNode {
 	 * @see org.caesarj.ui.model.CaesarProgramElementNode#getText(java.lang.String)
 	 */
 	public String getText(String text) {
-		return text.substring(text.lastIndexOf("]") + 2); //$NON-NLS-1$
+		return text.substring(text.lastIndexOf("]") + 2).replaceFirst("_Impl","");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	protected void initImages() {

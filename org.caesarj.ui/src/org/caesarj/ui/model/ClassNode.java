@@ -90,7 +90,7 @@ public class ClassNode extends CaesarProgramElementNode {
 	}
 
 	public String getText(String text) {
-		return text.substring(text.lastIndexOf("]") + 2); //$NON-NLS-1$
+		return text.substring(text.lastIndexOf("]") + 2).replaceFirst("_Impl","");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 }

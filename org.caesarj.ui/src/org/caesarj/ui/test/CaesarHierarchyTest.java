@@ -15,8 +15,6 @@ import org.caesarj.compiler.export.CClass;
 import org.caesarj.compiler.types.KjcSignatureParser;
 import org.caesarj.compiler.types.KjcTypeFactory;
 import org.caesarj.compiler.types.TypeFactory;
-import org.caesarj.navigator.CaesarByteCodeNavigator;
-import org.caesarj.ui.views.CaesarHierarchyView;
 
 /**
  * @author Jochen

@@ -6,6 +6,8 @@
  */
 package org.caesarj.ui.views.hierarchymodel;
 
+import org.caesarj.runtime.AdditionalCaesarTypeInformation;
+
 /**
  * @author Jochen
  *
@@ -30,6 +32,12 @@ public class StandardNode extends RootNode {
 		this.setParent(parent);
 	}
 
+	public StandardNode (String kind, String name, HierarchyNode parent, AdditionalCaesarTypeInformation info)
+	{
+		this(kind, name, parent);
+		this.setTypeInforamtion(info);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.caesarj.ui.views.hierarchymodel.HierarchyNode#getParent()
 	 */

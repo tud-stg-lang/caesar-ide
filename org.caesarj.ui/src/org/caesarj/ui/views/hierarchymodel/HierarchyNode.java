@@ -7,6 +7,7 @@
 package org.caesarj.ui.views.hierarchymodel;
 
 import org.apache.log4j.Logger;
+import org.caesarj.runtime.AdditionalCaesarTypeInformation;
 import org.eclipse.core.internal.runtime.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -22,6 +23,9 @@ public class HierarchyNode implements ISelection {
 	{
 		kind = "no kind specified";
 		name = "no name specified";
+		additionalName = "no name specified";
+		additionalNameSet = false;
+		typeInforamtion = null;
 		ll = new ListenerList();
 	}
 	
@@ -36,7 +40,10 @@ public class HierarchyNode implements ISelection {
 	
 	private String kind;
 	private String name;
+	private String additionalName;
+	private boolean additionalNameSet;
 	private ListenerList ll;
+	private AdditionalCaesarTypeInformation typeInforamtion;
 	protected static Logger log = Logger.getLogger(HierarchyNode.class);
 	public static String CLASS = new String("class");
 	public static String PARENTS = new String("parents");
@@ -45,7 +52,13 @@ public class HierarchyNode implements ISelection {
 	public static String NESTEDPARENTS = new String("nestedparents");
 	public static String NESTEDSUPER = new String("nestedsuper");
 	public static String ROOT = new String("rootnode");
+	public static String INCREMENTCLASSES = new String("incrementclasses");
+	public static String LIST = new String("list");
 	
+	public boolean hasAdditionalName()
+	{
+		return additionalNameSet;
+	}
 	/**
 	 * @return Returns the kind.
 	 */
@@ -100,6 +113,7 @@ public class HierarchyNode implements ISelection {
 		{
 			log.debug("Unspecified proberty changed.");
 		}
+		/* Not necessary in this context
 		IHierarchyPropertyChangeListener listener;
 		Object[] listeners = ll.getListeners();
 		for (int i = 0; i<listeners.length; i++)
@@ -107,13 +121,27 @@ public class HierarchyNode implements ISelection {
 			listener=(IHierarchyPropertyChangeListener)listeners[i];
 			listener.propertyChange(event);
 		}
+		*/
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelection#isEmpty()
 	 */
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
 		return false;
+	}
+	public AdditionalCaesarTypeInformation getTypeInforamtion() {
+		return typeInforamtion;
+	}
+	public void setTypeInforamtion(
+			AdditionalCaesarTypeInformation typeInforamtion) {
+		this.typeInforamtion = typeInforamtion;
+	}
+	public String getAdditionalName() {
+		return additionalName;
+	}
+	public void setAdditionalName(String additionalName) {
+		this.additionalName = additionalName;
+		additionalNameSet = true;
 	}
 }

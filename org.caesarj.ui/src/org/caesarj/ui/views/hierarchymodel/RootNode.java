@@ -30,7 +30,7 @@ public class RootNode extends HierarchyNode {
 	 * @see org.caesarj.ui.views.hierarchymodel.HierarchyNode#getParent()
 	 */
 	public HierarchyNode getParent() {
-		return this;
+		return null;
 	}
 
 	/* (non-Javadoc)

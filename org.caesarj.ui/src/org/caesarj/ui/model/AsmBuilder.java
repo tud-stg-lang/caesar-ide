@@ -93,14 +93,14 @@ public class AsmBuilder {
 		if (node instanceof AspectRegistryNode) {
 			return true;
 		}
-
-		if (node instanceof CaesarProgramElementNode) {
-			String nodeName = node.getName();
-			return nodeName.equals("_getBinding") //$NON-NLS-1$
-				|| nodeName.equals("_getProviding") //$NON-NLS-1$
-				|| nodeName.equals("_getProvidingReference") //$NON-NLS-1$
-				|| nodeName.equals("_getWrappee"); //$NON-NLS-1$
-		}
+//
+//		if (node instanceof CaesarProgramElementNode) {
+//			String nodeName = node.getName();
+//			return nodeName.equals("_getBinding") //$NON-NLS-1$
+//				|| nodeName.equals("_getProviding") //$NON-NLS-1$
+//				|| nodeName.equals("_getProvidingReference") //$NON-NLS-1$
+//				|| nodeName.equals("_getWrappee"); //$NON-NLS-1$
+//		}
 
 		return false;
 	}

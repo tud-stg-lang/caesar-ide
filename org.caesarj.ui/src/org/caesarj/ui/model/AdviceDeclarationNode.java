@@ -43,7 +43,8 @@ public class AdviceDeclarationNode extends CaesarProgramElementNode {
 	}
 
 	public String getText(String text) {
-		return text.substring(text.lastIndexOf("]") + 2); //$NON-NLS-1$
+		return this.name;
+		//return text.substring(text.lastIndexOf("]") + 2); //$NON-NLS-1$
 	}
 
 	public Image getImage() {
