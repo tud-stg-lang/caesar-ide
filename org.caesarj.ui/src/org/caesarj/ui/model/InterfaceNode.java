@@ -114,6 +114,6 @@ public class InterfaceNode extends CaesarProgramElementNode {
 			default :
 				img = DEFAULT;
 		}
-		return new CaesarElementImageDescriptor(img, this, BIG_SIZE, true).createImage();
+		return new CaesarElementImageDescriptor(img, this, BIG_SIZE).createImage();
 	}
 }

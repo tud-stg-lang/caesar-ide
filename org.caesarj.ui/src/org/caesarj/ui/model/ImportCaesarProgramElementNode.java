@@ -91,15 +91,13 @@ public class ImportCaesarProgramElementNode extends CaesarProgramElementNode {
 			return new CaesarElementImageDescriptor(
 				CaesarPluginImages.DESC_OUT_IMPORTS,
 				this,
-				BIG_SIZE,
-				false)
+				BIG_SIZE)
 				.createImage();
 		else
 			return new CaesarElementImageDescriptor(
 				CaesarPluginImages.DESC_IMPORTS,
 				this,
-				BIG_SIZE,
-				false)
+				BIG_SIZE)
 				.createImage();
 	}
 	protected void initImages() {

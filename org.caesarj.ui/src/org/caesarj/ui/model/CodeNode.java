@@ -89,8 +89,7 @@ public class CodeNode extends CaesarProgramElementNode {
 		return new CaesarElementImageDescriptor(
 			CaesarPluginImages.DESC_CODE,
 			null,
-			BIG_SIZE,
-			false)
+			BIG_SIZE)
 			.createImage();
 	}
 

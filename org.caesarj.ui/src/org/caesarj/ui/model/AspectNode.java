@@ -85,8 +85,7 @@ public class AspectNode extends CaesarProgramElementNode {
 		return new CaesarElementImageDescriptor(
 			CaesarPluginImages.DESC_ASPECT,
 			null,
-			BIG_SIZE,
-			false)
+			BIG_SIZE)
 			.createImage();
 	}
 

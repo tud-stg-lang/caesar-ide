@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Point;
  * @since 2.0 
  */
 public class CaesarElementImageDescriptor extends CompositeImageDescriptor {
-
+//TOTDO Colaboration wird nicht erkannt????
 	/** Flag to render the abstract adornment */
 	public final static int ABSTRACT = 0x001;
 
@@ -36,7 +36,7 @@ public class CaesarElementImageDescriptor extends CompositeImageDescriptor {
 	/** Flag to render the runnable adornment */
 	public final static int RUNNABLE = 0x010;
 
-	/** Flag to render the waring adornment */
+	/** Flag to render the warning adornment */
 	public final static int WARNING = 0x020;
 
 	/** Flag to render the error adornment */
@@ -50,6 +50,8 @@ public class CaesarElementImageDescriptor extends CompositeImageDescriptor {
 
 	/** Flag to render the 'constructor' adornment */
 	public final static int CONSTRUCTOR = 0x200;
+	
+	public final static int STRICTFP = 0x300;
 
 	private int computeJavaAdornmentFlags(CaesarProgramElementNode node) {
 		int flags = 0;
@@ -73,10 +75,10 @@ public class CaesarElementImageDescriptor extends CompositeImageDescriptor {
 		//if((modif/64)%2==1) flags |= VOLATILE;
 		//if((modif/128)%2==1) flags |= TRANSIENT;
 		//if((modif/256)%2==1) flags |= NATIVE;
-		//if((modif/512)%2==1) flags |= INTERFACE;
+		if((modif/512)%2==1) this.interfaceFlag = true;
 		if ((modif / 1024) % 2 == 1)
 			flags |= ABSTRACT;
-		//if((modif/512)%2==1) flags |= STRICTFP;	
+		if((modif/2048)%2==1) flags |= STRICTFP;	
 		return flags;
 	}
 
@@ -88,10 +90,8 @@ private boolean interfaceFlag;
 public CaesarElementImageDescriptor(
 	ImageDescriptor baseImage,
 	CaesarProgramElementNode node,
-	Point size,
-	boolean interfaceFlag) {
+	Point size) {
 	fBaseImage = baseImage;
-	this.interfaceFlag = interfaceFlag;
 	Assert.isNotNull(fBaseImage);
 	fFlags = this.computeJavaAdornmentFlags(node);
 	Assert.isTrue(fFlags >= 0);
@@ -203,11 +203,8 @@ private void drawBottomLeft() {
 private void drawTopRight() {
 	int x = getSize().x;
 	ImageData data = null;
-	if ((fFlags & ABSTRACT) != 0) {
-		if (interfaceFlag)
-			data = CaesarPluginImages.DESC_COLLAB_CO.getImageData();
-		else
-			data = JavaPluginImages.DESC_OVR_ABSTRACT.getImageData();
+	if ((fFlags & ABSTRACT) != 0 &&!interfaceFlag) {
+		data = JavaPluginImages.DESC_OVR_ABSTRACT.getImageData();
 		x -= data.width;
 		drawImage(data, x, 0);
 	}

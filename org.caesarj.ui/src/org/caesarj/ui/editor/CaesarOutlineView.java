@@ -166,15 +166,13 @@ public class CaesarOutlineView extends ContentOutlinePage {
 					return new CaesarElementImageDescriptor(
 						CaesarPluginImages.DESC_JOINPOINT,
 						null,
-						BIG_SIZE,
-						false)
+						BIG_SIZE)
 						.createImage();
 				} else if (element instanceof RelationNode) {
 					return new CaesarElementImageDescriptor(
 						CaesarPluginImages.DESC_ADVICE,
 						null,
-						BIG_SIZE,
-						false)
+						BIG_SIZE)
 						.createImage();
 				} else if (element instanceof CaesarProgramElementNode) {
 					CaesarProgramElementNode cNode = (CaesarProgramElementNode) element;

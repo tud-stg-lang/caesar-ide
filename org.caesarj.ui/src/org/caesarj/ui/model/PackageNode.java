@@ -86,8 +86,7 @@ public class PackageNode extends CaesarProgramElementNode {
 		return new CaesarElementImageDescriptor(
 			CaesarPluginImages.DESC_OUT_PACKAGE,
 			null,
-			BIG_SIZE,
-			false)
+			BIG_SIZE)
 			.createImage();
 	}
 

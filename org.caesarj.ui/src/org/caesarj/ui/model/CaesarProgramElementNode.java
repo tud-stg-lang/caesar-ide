@@ -153,7 +153,7 @@ public abstract class CaesarProgramElementNode extends ProgramElementNode {
 			default :
 				img = DEFAULT;
 		}
-		return new CaesarElementImageDescriptor(img, this, BIG_SIZE, false).createImage();
+		return new CaesarElementImageDescriptor(img, this, BIG_SIZE).createImage();
 	}
 
 	public List getRelations() {

@@ -50,8 +50,7 @@ public class AdviceDeclarationNode extends CaesarProgramElementNode {
 		return new CaesarElementImageDescriptor(
 			CaesarPluginImages.DESC_JOINPOINT,
 			null,
-			BIG_SIZE,
-			false)
+			BIG_SIZE)
 			.createImage();
 	}
 
