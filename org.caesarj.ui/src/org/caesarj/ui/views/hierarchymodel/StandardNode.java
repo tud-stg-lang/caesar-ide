@@ -22,6 +22,13 @@ public class StandardNode extends RootNode {
 	public StandardNode() {
 		super();
 	}
+	
+	public StandardNode (String kind, String name, HierarchyNode parent) {
+		super();
+		this.setKind(kind);
+		this.setName(name);
+		this.setParent(parent);
+	}
 
 	/* (non-Javadoc)
 	 * @see org.caesarj.ui.views.hierarchymodel.HierarchyNode#getParent()
