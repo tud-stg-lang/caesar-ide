@@ -207,4 +207,12 @@
 			<attribute name="org.caesarj.advicemarker" value="MethodeLink"/>
 		</markerHelp>
 	</extension-->
+	<extension
+      point="org.eclipse.ui.perspectives">
+   <perspective
+         name="CaesarJDT Perspective"
+         class="org.caesarj.ui.perspective.CaesarPerspective"
+         id="org.caesarj.ui.perspective.CaesarPerspective">
+   </perspective>
+</extension>
 </plugin>
