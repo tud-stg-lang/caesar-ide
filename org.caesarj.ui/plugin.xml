@@ -163,8 +163,8 @@
    </extension>
    <!--extension point="org.eclipse.ui.actionSetPartAssociations">
    		<actionSetPartAssociation
-   		targetID="org.caesarj.ui.actionsets.Annotation">
-   		<part id="org.eclipse.jdt.ui.CompilationUnitEditor"/>
+   		targetID="org.caesarj.actionSet">
+   		<part id="org.caesarj.ui.editor.CaesarEditor"/>
    		</actionSetPartAssociation>
    </extension-->
  	<extension point="org.eclipse.ui.views">
