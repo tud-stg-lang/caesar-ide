@@ -1,8 +1,8 @@
 \subsection{Adding a New Aspect to Your Project}
-Create a new Class and name it \code{World}. Edit the buffer so it looks as follows and then save it:\\\\
-\begin{lstlisting}[basicstyle=\small\it,caption=Parser endElement Event,label=lst:endelement,name=listing:endelement,frame=none]{}
+Create a new Class and name it \code{World}. Edit the buffer so it looks like listing \ref{lst:aspect} and then save it:
+\begin{lstlisting}[basicstyle=\small\it,caption=An \caesarj -cclass including an aspect,label=lst:aspect,name=listing:aspect,frame=none]{}
 package myPackage;
-//TEST
+
 public cclass World { 	
       after(HelloWorld c, String a) :
       	(call(void sayHello(String)) && this(c) && args(a))
@@ -10,16 +10,26 @@ public cclass World {
             System.out.println("Hello to you too...");
 		}
 }\end{lstlisting}
-%\includegraphics[width=0.80\textwidth]{images/aspect.png}\\
 
-Make a clean Build of the project, and the outline view populates. Expand the \code{after()} node.\\\\
-\includegraphics[width=0.5\textwidth]{images/aspect2.png}\newpage
+Make a clean Build of the project, and the outline view populates like in figure \ref{fig:aspect2}. Expand the \code{after()} node.
 
-You can see that this advice is affecting the HelloWorld.sayHello() method. Clicking on the \code{HelloWorld.sayHello()} node in the outline takes you to the declaration of HelloWorld.sayHello().
+\begin{figure*}[htbp]
+	\centering
+		\includegraphics[width=0.25\textwidth]{images/aspect2.png}
+	\caption{Outline view with content}
+	\label{fig:aspect2}
+\end{figure*}
 
-Notice the \code{advice annotation} in the editor buffer (highlighted) and that the \code{sayHello} method in the outline view shows that it is advised by the World aspect.\\\\
-\includegraphics[width=0.95\textwidth]{images/aspect3.png}\\\\
+You can see that this advice is affecting the \code{HelloWorld.sayHello()} method. Clicking on the \code{HelloWorld.sayHello()} node in the outline takes you to the declaration of \code{HelloWorld.sayHello()}.\\
+Notice the \textit{advice annotation} in the editor buffer (highlighted) and that the \code{sayHello} method in the outline view shows that it is advised by the \textit{World aspect}. It should look like in figure \ref{fig:aspect3}.
+
+\begin{figure*}[htbp]
+	\centering
+		\includegraphics[width=0.80\textwidth]{images/aspect3.png}
+	\caption{Advice relationship}
+	\label{fig:aspect3}
+\end{figure*}
 
 Selecting the \code{World.after()} node in the outline view takes you back to the advice declaration. Right-clicking on the advice annotation brings up a context menu that also allows you to navigate to the advice.\\\\
-\textbf{TODO BILD FEHLT KONNTE ICH NICHT SCREENSHOOT MACHEN  Weil es nicht geht EDITOR mit ADVICE CONTEXT}
+\textbf{TODO hier fehlen noch die jeweiligen richtigen Bilder!!!}
 

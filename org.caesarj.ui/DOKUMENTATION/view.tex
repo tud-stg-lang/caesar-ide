@@ -1,15 +1,40 @@
-\section{Using the Visualiser}
-If this is the first time you have used the Visualiser, switch to the visualization perspective by selection Window -$>$ Open Perspective -$>$ Other... and then "CaesarJDT Perspective".\\\\
-\includegraphics[width=0.3\textwidth]{images/select_persp.png}
+\section{Using the Visualiser and views}
+If this is the first time you use the \cjdt, switch to the \caesarj ~perspective by selecting \markedtext{Window} $\rightarrow$ \markedtext{Open Perspective} $\rightarrow$ \markedtext{Other}. In the list pick \markedtext{CaesarJDT Perspective} (see figure \ref{fig:select_persp}).
 
-The visualization perspective opens:\\\\
-\includegraphics[width=0.7\textwidth]{images/openpersp.png}\\\\
+\begin{figure*}[htbp]
+	\centering
+		\includegraphics[width=0.30\textwidth]{images/select_persp.png}
+	\caption{Perspective selection}
+	\label{fig:select_persp}
+\end{figure*}
 
-You can switch between the Java and Caesar Visualization perspectives using the perspective icons in the top right of the menu bar.\newpage
+This perspective extends the Java perspective. Especially a new view is available. The \markedtext{\caesarj ~Hierarchy View}. See section \ref{hierarchyview} for detailed information.\\
+You can switch between the Java and Caesar Visualization perspectives using the perspective icons in the top right of the menu bar.\\
+\subsection{Outline view}
+The outline view showing structural members and crosscutting relationships. It extends the Java outline view by additional information (e.g advice declarations to the places it advises). A sample outline view bar is shown in figure \ref{fig:outline_view}. \textbf{TODO Bild noch nicht das richtige.}\\
 
-Outline view showing structural members and crosscutting relationships (e.g. from an advice declaration to the places it advises):\\\\
-\textbf{TODO BILD GEHT NICHT RICHTIG ASPECTE FEHLEN}\\
-\includegraphics[width=0.30\textwidth]{images/outline.png}\\\\
+\begin{figure*}[htbp]
+	\centering
+		\includegraphics[width=0.30\textwidth]{images/outline.png}
+	\caption{Outline View}
+	\label{fig:outline_view}
+\end{figure*}
 
-A Caesar Hierarchy view showing the Typhierachy and the Linearhierarchy of an Caesar-CClass:\\\\
-\includegraphics[width=0.30\textwidth]{images/hierarchy.png}
+\subsection{Hierarchy View\label{hierarchyview}}
+% It displays the hierarchical relationships of \caesarj ~cclasses.
+A \caesarj ~hierarchy view displays the hierarchical relationships of \caesarj ~cclasses. That means that for each cclass their super-classes are displayed under the \markedtext{Super} node (see figure \ref{fig:hierarchy_view}). If the class contains nested classes there are two displaying modes available for them:
+\begin{itemize}
+	\item[\textbf{Super:}] For each nested class their super classes are displayed.
+	\item[\textbf{Sub:}] For each nested class their sub classes are displayed. If a sub class has two super classes the linearized inheritance relation is displayed brakes after the class name.
+\end{itemize}
+
+\begin{figure*}[htbp]
+	\centering
+		\includegraphics[width=0.30\textwidth]{images/hierarchy.png}
+	\caption{\caesarj ~hierarchy view}
+	\label{fig:hierarchy_view}
+\end{figure*}
+
+The modes can be switched by pressing the control button in the upper-right of the view. The second part of the view, named "`Mixin view"', shows the mixin composition of the currently selected (nested-) cclass.\\
+Note: Because this view needs meta information from the compiler, the view refreshes when a project was built successfully.
+

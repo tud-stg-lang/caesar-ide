@@ -1,9 +1,19 @@
 \subsection{Debugging Caesar Programs}
-You can debug Caesar programs using the normal Java debugger. To set a breakpoint, right-click in the gutter of the editor and choose "Toggle Breakpoint", or simply double-click in the gutter.\\\\
-\includegraphics[width=0.90\textwidth]{images/brake_point.png}\\
+You can debug Caesar programs using the normal Java debugger. To set a breakpoint, right-click in the gutter of the editor and choose \markedtext{Toggle Breakpoint}(see figure \ref{fig:brake_point}). Another possibility is a simply double-click on the gutter.
+\begin{figure*}[htbp]
+	\centering
+		\includegraphics[width=0.80\textwidth]{images/brake_point.png}
+	\caption{Toggling a debugging breakpoint}
+	\label{fig:brake_point}
+\end{figure*}
 
-With one or more breakpoints set, you launch the Eclipse debugger in the normal way by clicking on the debug icon in the toolbar.\\\\
-\includegraphics[width=0.80\textwidth]{images/debug1.png}\newpage
+With one or more breakpoints set, you launch the Eclipse debugger in the normal way by clicking on the debug icon in the toolbar. The debugger perspective looks like figure \ref{fig:debuger}.
+\begin{figure*}[htbp]
+	\centering
+		\includegraphics[width=0.80\textwidth]{images/debug1.png}
+	\caption{Debugger perspective}
+	\label{fig:debuger}
+\end{figure*}
 
-You can use the Java Debug step filters (Window -$>$ Preferences -$>$ Java -$>$ Debug -$>$ Step Filtering) to make this process a little easier.
+You can use the Java Debug step filters (\markedtext{Window} $\rightarrow$ \markedtext{Preferences} $\rightarrow$ \markedtext{Java} $\rightarrow$ \markedtext{Debug} $\rightarrow$ \markedtext{Step Filtering}) to make this process a little easier.\\
 Note: A current limitation is that you cannot step into advices.

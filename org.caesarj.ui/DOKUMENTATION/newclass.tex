@@ -1,22 +1,41 @@
 \subsection{Adding a Class to Your Project}
-First, create a package for your class files. Select the project you created in the package explorer, right click, and select
-"New" -$>$ "Package" -$>$ "Other" from the context menu. You have to look for "Package" in the "Java" folder.\\\\
+First you have to create a package for your class files. Select the project you created in the section \ref{creating_project} in the package explorer. Right click on it and select \markedtext{New} $\rightarrow$ \markedtext{Other} from the context menu. You have to look for \markedtext{Package} in the \markedtext{Java} subsection like you can see in figure \ref{fig:package}.
+
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=0.70\textwidth]{images/package.png}
+		\includegraphics[width=0.60\textwidth]{images/package.png}
+	\caption{Creating a package}
 	\label{fig:package}
-\end{figure}\\\\
-Name the package "myPackage" then click finish.\\\\
-Select the package you just created, and from the context menu select "New" -$>$ "Class". Name the
-class "HelloWorld" and select the option to let Eclipse create a new main method for you. Click "Finish".\newpage
-Edit the text in the editor so that it looks something like this:\\\\
-\begin{center}
-	\includegraphics[width=0.80\textwidth]{images/code.png}
-\end{center}
-	
-Save the file.\\\\
+\end{figure}
 
-Notice that unlike in a Java project, there was no eager parsing of the buffer as you typed (the outline view didn't update). Your Eclipse workbench should be looking something like this:\\
-\begin{center}
-	\includegraphics[width=1.0\textwidth]{images/workspace_newclass.png}
-\end{center}
+Name the package \code{myPackage} then click \markedtext{Finish}.\\
+Right-click on the package you just created and select \markedtext{New} $\rightarrow$ \markedtext{Class} from the context menu. Name the class \code{HelloWorld} and activate the option to let Eclipse create a new main method for you. Click \markedtext{Finish}.
+Edit the text in the editor so that it looks something like this:
+%\begin{table*}[htbp]
+	\begin{lstlisting}[basicstyle=\small\it,caption=HelloWorld.java,label=lst:HelloWorld,name=listing:helloworld,frame=none]{}
+package myPackage;
+
+public class HelloWorld {
+
+	public static void main(String[] args) {
+		HelloWorld hello = new HelloWorld();
+		hello.sayHello("Hello");
+	}
+
+	public void sayHello(String arg) {
+		System.out.println(arg);
+	}
+}
+\end{lstlisting}
+%	\caption{HelloWorld.java}
+%	\label{lst:HelloWorldJava}
+%\end{table*}
+Save the file.\\
+Notice that unlike in a Java project, there was no eager parsing of the buffer as you typed. Also the outline view didn't update. Your Eclipse workbench should be looking something like in figure \ref{fig:workspace_newclass}.\\
+
+\begin{figure*}[htbp]
+	\centering
+		\includegraphics[width=0.95\textwidth]{images/workspace_newclass.png}
+	\caption{Workbench with HelloWorld.java}
+	\label{fig:workspace_newclass}
+\end{figure*}
