@@ -31,7 +31,7 @@ public class CaesarMetricsView
 	extends ViewPart
 	implements ISelectionListener, ICaesarJMetricsListener {
 	static final String NO_SELECTION_MESSAGE =
-		"No CaesarJ Information available for the current selection.";
+		"No inheritance information available for the current class. Need to compile";
 	Text message;
 	CaesarMetrics jm;
 	

@@ -249,12 +249,9 @@ public class CaesarMetrics implements IElementChangedListener {
 	 * Return a string representation suitable for display.
 	 */
 	public String summaryString() {
-		StringBuffer sb = new StringBuffer();
-		
+		StringBuffer sb = new StringBuffer();		
 		sb.append(cu.getElementName() + "\n\n");
-
-		sb.append("Noch nichts imlementiert.");
-
+		sb.append("Hier die Vererbungsinfos.");
 		return sb.toString();
 	}
 
