@@ -26,6 +26,8 @@ import org.caesarj.kjc.JClassImport;
 import org.caesarj.kjc.JCompilationUnit;
 import org.caesarj.kjc.JConstructorBlock;
 import org.caesarj.kjc.JConstructorDeclaration;
+import org.caesarj.kjc.JExpression;
+import org.caesarj.kjc.JFieldDeclaration;
 import org.caesarj.kjc.JFormalParameter;
 import org.caesarj.kjc.JInterfaceDeclaration;
 import org.caesarj.kjc.JMethodDeclaration;
@@ -33,6 +35,7 @@ import org.caesarj.kjc.JPackageImport;
 import org.caesarj.kjc.JPackageName;
 import org.caesarj.kjc.JPhylum;
 import org.caesarj.kjc.JTypeDeclaration;
+import org.caesarj.util.InconsistencyException;
 
 /**
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
@@ -221,10 +224,25 @@ public class AsmBuilder extends CaesarVisitor {
         getCurrentStructureNode().addChild(peNode);
         asmStack.push(peNode);
                 
+                
+        /*
 		super.visitClassDeclaration(
 			self, modifiers, ident, typeVariables, superClass,
 			interfaces, body, methods, decls
         );
+        */
+        // TODO super method ruft nicht die field visitors auf
+        for (int i = 0; i < decls.length; i++) {
+            decls[i].accept(this);
+        }   
+
+        for (int i = 0; i < methods.length; i++) {
+            methods[i].accept(this);
+        }   
+        
+        for (int i = 0; i < body.length; i++) {
+            body[i].accept(this);
+        }
         
         
         // get advices and pointcuts visit
@@ -293,7 +311,7 @@ public class AsmBuilder extends CaesarVisitor {
 		JBlock body
     ) {
                 
-        ProgramElementNode peNode;
+        ProgramElementNode peNode = null;
         
         if(self instanceof AdviceDeclaration) {
             AdviceDeclaration advice = (AdviceDeclaration)self;
@@ -327,12 +345,51 @@ public class AsmBuilder extends CaesarVisitor {
                 modifiers,
                 "",
                 new ArrayList()
-            );
-        }        
+            );            
+                                    
+            if (ident.equals("main")) {
+               peNode.setRunnable(true);
+            }            
+        }   
+               
+        StringBuffer byteCodeSig = new StringBuffer();
+                        
+        byteCodeSig.append("(");
+        for(int i=0; i<parameters.length; i++) {
+            byteCodeSig.append(getFullQualifiedName(parameters[i].getType()));
+        }
+        byteCodeSig.append(")");
+        byteCodeSig.append(returnType.getSignature());
+            
+        peNode.setBytecodeName(ident);
+        peNode.setBytecodeSignature(byteCodeSig.toString());
+            
 		
-        getCurrentStructureNode().addChild(peNode);
-        
+        getCurrentStructureNode().addChild(peNode);        
 	}
+    
+    /**
+	 * FIELD
+	 */
+	public void visitFieldDeclaration(
+		JFieldDeclaration self,
+		int modifiers,
+		CType type,
+		String ident,
+		JExpression expr
+    ) {
+        ProgramElementNode peNode = new ProgramElementNode(
+            ident,
+            ProgramElementNode.Kind.FIELD,    
+            makeLocation(self.getTokenReference()),
+            modifiers,
+            "",
+            new ArrayList()
+        );   
+
+        getCurrentStructureNode().addChild(peNode);
+	}
+
 
     
 
@@ -360,4 +417,16 @@ public class AsmBuilder extends CaesarVisitor {
         return structureModel;
     }
     
+    private String getFullQualifiedName(CType type) {
+        String res;
+        
+        try {
+            res = type.getCClass().getQualifiedName();
+        }
+        catch (InconsistencyException e) {
+			res = type.getSignature();
+		}
+        
+        return res;
+    }
 }

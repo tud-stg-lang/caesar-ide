@@ -19,6 +19,7 @@ import org.aspectj.weaver.patterns.PerClause;
 import org.aspectj.weaver.patterns.Pointcut;
 import org.caesarj.compiler.Main;
 import org.caesarj.compiler.PositionedError;
+import org.caesarj.compiler.aspectj.CaesarBcelWorld;
 import org.caesarj.kjc.JCompilationUnit;
 import org.caesarj.kjc.KjcEnvironment;
 import org.caesarj.ui.util.StructureModelDump;
@@ -84,13 +85,12 @@ public final class CaesarAdapter extends Main {
         progressMonitor.subTask("compiling "+file.getName());        
         res = super.parseFile(file, env);
         progressMonitor.worked(1);
+        
+        //AsmBuilder.build(res, StructureModelManager.INSTANCE.getStructureModel());
 
-                
-        // build aspectj structure model
-        AsmBuilder.build(res, StructureModelManager.INSTANCE.getStructureModel());
-                
         return res;
 	}
+
 
 	protected void weaveClasses(UnwovenClassFile[] classFiles) {
         /*
@@ -109,12 +109,16 @@ public final class CaesarAdapter extends Main {
         StructureModelDump modelDumpBeforeWeave = new StructureModelDump(model);            
         modelDumpBeforeWeave.print();
         
-        // add model to world
-        // TODO set structure model in CaesarBcelWorld
-        /*
+        // build model
+        for(Iterator it=compilationUnits.iterator(); it.hasNext(); ) {        
+            AsmBuilder.build((JCompilationUnit)it.next(), model);
+        }
+        
+
+        // add model to the world        
         CaesarBcelWorld world = CaesarBcelWorld.getInstance();
         world.setModel(model);
-        */        
+                
                 
 		super.weaveClasses(classFiles);
         
