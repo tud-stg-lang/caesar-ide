@@ -21,8 +21,7 @@ public class MethodDeclarationNode extends CaesarProgramElementNode {
 	private JTypeDeclaration classDeclaration;
 
 	public MethodDeclarationNode(JMethodDeclaration methodDeclarationArg,
-			JTypeDeclaration classDeclarationArg, 
-			String signature, Kind kind,
+			JTypeDeclaration classDeclarationArg, String signature, Kind kind,
 			ISourceLocation sourceLocationArg, int modifiers,
 			String formalComment, List childrenArg) {
 		super(signature, kind, sourceLocationArg, modifiers, formalComment,
@@ -73,7 +72,7 @@ public class MethodDeclarationNode extends CaesarProgramElementNode {
 		} else
 			label += type.toString().substring(
 					type.toString().lastIndexOf('.') + 1);
-		return label;
+		return label.replaceAll("_Impl", "");
 	}
 
 	public JTypeDeclaration getClassDeclaration() {

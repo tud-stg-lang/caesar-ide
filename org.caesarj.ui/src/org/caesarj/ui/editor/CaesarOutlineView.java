@@ -19,7 +19,6 @@ import org.caesarj.ui.CaesarPluginImages;
 import org.caesarj.ui.model.AdviceDeclarationNode;
 import org.caesarj.ui.model.CaesarProgramElementNode;
 import org.caesarj.ui.model.CodeNode;
-import org.caesarj.ui.model.ConstructorDeclarationNode;
 import org.caesarj.ui.model.FieldNode;
 import org.caesarj.ui.model.MethodDeclarationNode;
 import org.caesarj.ui.model.PackageNode;
@@ -57,7 +56,7 @@ public class CaesarOutlineView extends ContentOutlinePage {
 
 	Object imports;
 
-	protected static final Point BIG_SIZE = new Point(22, 16);
+	public static final Point BIG_SIZE = new Point(22, 16);
 
 	static {
 		categoryMap = new HashMap();
@@ -204,14 +203,15 @@ public class CaesarOutlineView extends ContentOutlinePage {
 			StructureNode node = (StructureNode) parentElement;
 			for (Iterator it = node.getChildren().iterator(); it.hasNext();) {
 				Object te = it.next();
-				if(te instanceof ConstructorDeclarationNode){
-					int i=0;
-					//TODO hier müssen die Constructoren gefiltert werden
+				if(te instanceof MethodDeclarationNode){
+					MethodDeclarationNode no = (MethodDeclarationNode) te;
+					if(no.getName().equals("aspectOf"))
+						continue;
 				}
 				if (te instanceof MethodDeclarationNode
 						|| te instanceof FieldNode) {
 					CaesarProgramElementNode elem = (CaesarProgramElementNode) te;
-					if (elem.getName().charAt(0) == '$') {
+					if (elem.getName().indexOf('$') != -1) {
 						continue;
 					}
 				}
