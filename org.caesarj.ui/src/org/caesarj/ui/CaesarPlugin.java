@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /** 
@@ -27,13 +28,14 @@ public class CaesarPlugin extends AbstractUIPlugin {
 	
     public static final String RUNTIME_LIB = "caesar-runtime.jar";
     
-    public static final String VERSION = "0.1.1";
-    public static final String PLUGIN_ID = "org.caesarj.ui";
+    public static final String VERSION    = "0.1.1";
+    public static final String PLUGIN_ID  = "org.caesarj.ui";
+    public static final String ID_EDITOR  = PLUGIN_ID + ".editor.caesareditor";
     public static final String ID_BUILDER = PLUGIN_ID + ".builder.builder";
     public static final String ID_OUTLINE = PLUGIN_ID + ".caesaroutlineview";
-    public static final String ID_NATURE = PLUGIN_ID + ".caesarprojectnature";
+    public static final String ID_NATURE  = PLUGIN_ID + ".caesarprojectnature";
         
-    
+    private Display display = Display.getCurrent();
     private ResourceBundle  resourceBundle  = null;
     private CaesarTextTools caesarTextTools = null;
     private String aspectjrtPath = null;    
@@ -81,6 +83,9 @@ public class CaesarPlugin extends AbstractUIPlugin {
 		}
 	}
 
+    public Display getDisplay() {
+        return display;
+    }
 
 	/**
 	 * Returns the plugin's resource bundle,

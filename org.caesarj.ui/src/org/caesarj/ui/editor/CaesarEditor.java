@@ -1,5 +1,6 @@
 package org.caesarj.ui.editor;
 
+import org.aspectj.asm.StructureModelManager;
 import org.caesarj.ui.CaesarPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
@@ -20,7 +21,6 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 public class CaesarEditor extends CompilationUnitEditor {
     
-    
     public CaesarEditor() {
         super();
         
@@ -34,9 +34,11 @@ public class CaesarEditor extends CompilationUnitEditor {
     }
     
     public Object getAdapter(Class key) {
-        if ( key.equals( IContentOutlinePage.class ) ) {            
-            return new OutlinePage();
-        } 
+        
+        if ( key.equals( IContentOutlinePage.class ) ) {                        
+            CaesarOutlineView.instance().setInput(this, StructureModelManager.INSTANCE.getStructureModel().getRoot());
+            return CaesarOutlineView.instance();
+        }
 
         return super.getAdapter( key );
     }
@@ -49,5 +51,15 @@ public class CaesarEditor extends CompilationUnitEditor {
         }
         super.setFocus();
     }
+
+	public void gotoLine(int line) {
+        try {       
+            int offs = getDocumentProvider().getDocument(getEditorInput()).getLineOffset(line-1);
+            setHighlightRange(offs, 1, true);
+        }
+        catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
     
 }

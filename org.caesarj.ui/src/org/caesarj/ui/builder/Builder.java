@@ -11,6 +11,8 @@ import org.aspectj.asm.ProgramElementNode;
 import org.aspectj.asm.StructureModelManager;
 import org.caesarj.compiler.PositionedError;
 import org.caesarj.compiler.TokenReference;
+import org.caesarj.ui.CaesarPlugin;
+import org.caesarj.ui.editor.CaesarOutlineView;
 import org.caesarj.ui.util.ProjectProperties;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -18,6 +20,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Builder
@@ -93,6 +96,19 @@ public class Builder extends IncrementalProjectBuilder {
 			        
             // update markers, show errors
             showErrors();
+            
+            // update outline view         
+            Display display = Display.getDefault();
+            System.out.println("Display = "+display);
+            
+            // update has to be executed from Workbenchs Thread
+            CaesarPlugin.getDefault().getDisplay().asyncExec(
+                new Runnable() {
+                    public void run() {
+                        CaesarOutlineView.instance().update();
+					}
+                }
+            );
         }
         catch (Throwable t) {           	
         	t.printStackTrace();                     
