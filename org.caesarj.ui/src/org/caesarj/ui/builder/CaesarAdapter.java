@@ -5,17 +5,15 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
-import org.aspectj.asm.AsmManager;
-import org.aspectj.asm.IHierarchy;
-import org.aspectj.asm.IProgramElement;
-import org.aspectj.weaver.bcel.UnwovenClassFile;
+import org.aspectj.asm.StructureModel;
+import org.aspectj.asm.StructureModelManager;
+import org.caesarj.compiler.KjcEnvironment;
 import org.caesarj.compiler.Main;
-import org.caesarj.compiler.PositionedError;
 import org.caesarj.compiler.aspectj.CaesarBcelWorld;
-import org.caesarj.kjc.JCompilationUnit;
-import org.caesarj.kjc.KjcEnvironment;
+import org.caesarj.compiler.ast.JCompilationUnit;
 import org.caesarj.ui.model.AsmBuilder;
 import org.caesarj.ui.model.StructureModelDump;
+import org.caesarj.util.PositionedError;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -60,7 +58,7 @@ public final class CaesarAdapter extends Main {
         IProgressMonitor progressMonitor
     ) {		
         
-        IHierarchy model = AsmManager.getDefault().getHierarchy();
+        StructureModel model = StructureModelManager.INSTANCE.getStructureModel();
         
         AsmBuilder.preBuild(model);
         
@@ -93,7 +91,7 @@ public final class CaesarAdapter extends Main {
         
         AsmBuilder.postBuild(model);        
                 
-        _dumpModel("final structure model");
+        _dumpModel("final structure model", model);
         
         return success;
 	}
@@ -107,8 +105,7 @@ public final class CaesarAdapter extends Main {
         res = super.parseFile(file, env);
         progressMonitor.worked(1);
         
-        IHierarchy model = AsmManager.getDefault().getHierarchy();
-        AsmBuilder.build(res, model);
+        AsmBuilder.build(res, StructureModelManager.INSTANCE.getStructureModel());
 
         return res;
 	}
@@ -119,11 +116,11 @@ public final class CaesarAdapter extends Main {
         
         progressMonitor.subTask("weaving classes...");
         
-        IHierarchy model = AsmManager.getDefault().getHierarchy();
+        StructureModel model = StructureModelManager.INSTANCE.getStructureModel();
 
         AsmBuilder.preWeave(model);
         
-        _dumpModel("structure model before weave");
+        _dumpModel("structure model before weave", model);
 
         // add model to world and WEAVE      
         CaesarBcelWorld world = CaesarBcelWorld.getInstance();
@@ -134,12 +131,9 @@ public final class CaesarAdapter extends Main {
 	}
 
 
-    private void _dumpModel(String description) {
+    private void _dumpModel(String description, StructureModel model) {
         log.debug("--- "+description+" ---");
-        IProgramElement root = 
-            AsmManager.getDefault().getHierarchy().getRoot();
-        
-        StructureModelDump modelDumpBeforeWeave = new StructureModelDump(AsmManager.getDefault(), System.out);
-        modelDumpBeforeWeave.run();            
+        StructureModelDump modelDumpBeforeWeave = new StructureModelDump(System.out);            
+        modelDumpBeforeWeave.print("", model.getRoot());
     }
 }

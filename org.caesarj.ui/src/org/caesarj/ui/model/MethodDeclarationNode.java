@@ -3,11 +3,8 @@ package org.caesarj.ui.model;
 import java.util.List;
 
 import org.aspectj.bridge.ISourceLocation;
-import org.caesarj.compiler.ast.AdviceDeclaration;
 import org.caesarj.compiler.ast.FjMethodDeclaration;
-import org.caesarj.kjc.CType;
-import org.caesarj.kjc.JClassDeclaration;
-import org.caesarj.kjc.JFormalParameter;
+import org.caesarj.compiler.ast.JClassDeclaration;
 
 /**
  * ASM Node marking a method declaration.

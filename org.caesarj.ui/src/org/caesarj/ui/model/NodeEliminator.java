@@ -4,8 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.aspectj.asm.HierarchyWalker;
-import org.aspectj.asm.IProgramElement;
+import org.aspectj.asm.StructureNode;
 
 /**
  * Collects nodes for elimination.
@@ -13,22 +12,21 @@ import org.aspectj.asm.IProgramElement;
  * 
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
-public class NodeEliminator extends HierarchyWalker {
+public class NodeEliminator extends AbstractAsmVisitor {
 
     List nodes2del = new LinkedList();
-    
-    public NodeEliminator() {
-        super();
-    }
 
-    public void preProcess(IProgramElement node) {       
+    public void visit(StructureNode node) {       
+
         if(AsmBuilder.isToRemove(node))
             nodes2del.add(node);       
+
+        super.visit(node);
     }    
     
     public void eliminateNodes() {
         for(Iterator it=nodes2del.iterator(); it.hasNext(); ) {
-            IProgramElement node2del = (IProgramElement)it.next();
+            StructureNode node2del = (StructureNode)it.next();
     
             List parentChildren = node2del.getParent().getChildren();
     

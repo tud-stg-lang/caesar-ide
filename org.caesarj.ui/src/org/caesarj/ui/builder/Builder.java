@@ -6,11 +6,11 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.caesarj.compiler.PositionedError;
-import org.caesarj.compiler.TokenReference;
 import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.editor.CaesarOutlineView;
 import org.caesarj.ui.util.ProjectProperties;
+import org.caesarj.util.PositionedError;
+import org.caesarj.util.TokenReference;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;

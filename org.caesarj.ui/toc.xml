@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="CaesarJ for Eclipse Help" topic="html/toc.html">
+   <topic label="Getting Started" href="html/gettingstarted.html"/>
+   <topic label="Examples" href="html/examples.html"/>
+</toc>

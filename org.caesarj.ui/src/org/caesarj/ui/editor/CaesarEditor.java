@@ -52,6 +52,7 @@ public class CaesarEditor extends CompilationUnitEditor {
     
     public void doSetInput(IEditorInput input) throws CoreException {
         super.doSetInput(input);
+        this.
         outlineView.setEnabled(true);
     }
     

@@ -4,9 +4,6 @@ import java.util.List;
 
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.ast.AdviceDeclaration;
-import org.caesarj.kjc.CType;
-import org.caesarj.kjc.JClassDeclaration;
-import org.caesarj.kjc.JFormalParameter;
 
 /**
  * Adds additional methods for AdviceDeclarations.

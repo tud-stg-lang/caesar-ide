@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.internal.resources.Container;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -93,52 +92,17 @@ public class ProjectProperties {
         }
     }
     
-    /*
-     * TODO [bug] error searching source code resources lying directly in the project dir
-     */
     public static IResource findResource(String fullPath, IProject p) {    
-        // full path contains absolute file system paths, we need to undo the
-        // effects of any "symbolic linking" in the workspace to ensure that we
-        // return the correct IResource.
-        String toMatch = fullPath.replace('\\','/');
-        try {
-            IJavaProject jp = JavaCore.create(p);
-            IClasspathEntry[] cpes = jp.getRawClasspath();
-            for (int i =0; i < cpes.length; i++) {
-                IClasspathEntry e = cpes[i];
-                if (e.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
-                    IPath pe = e.getPath();
-                    if ( pe.segment(0).equals(p.getName()) ) {
-                        IResource ires = p.findMember(pe.removeFirstSegments(1));
-                        // Check before casting... ires might be an IProject...
-                        if (ires instanceof IFolder) {
-                          IFolder f = (IFolder) ires;
-                          if (toMatch.startsWith(f.getLocation().toString())) {
-                            // this is what it was all about!
-                            // we have a possible symbolic link within our project to the file
-                            String postfix = toMatch.substring(f.getLocation().toString().length());
-                            IPath postfixPath = new Path(postfix);
-                            if ( f.exists(postfixPath)) {
-                                return f.findMember(postfixPath);
-                            }
-                          }  
-                        }
-                    }
-                }
-            }
-        }
-        catch( JavaModelException ex) {            
-            ex.printStackTrace();
-        }
-    
-        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();        
         IPath rootPath = root.getLocation();
         IPath path = new Path(fullPath);
-        if ( rootPath.isPrefixOf(path)) {
-            path = path.removeFirstSegments( rootPath.segmentCount());          
+        if(rootPath.isPrefixOf(path)) {
+            // remove project location and project name segment
+            path = path.removeFirstSegments( rootPath.segmentCount()+1 );
         }
+        // find resource relative to project
         IResource ret = p.findMember(path);
-        return ret;
+        return ret;        
     }
 
 

@@ -117,7 +117,7 @@ public final class CaesarCodeScanner extends AbstractJavaScanner {
 
     // Caesar keywords
     private static String[] caesarKeywords = {
-    	"call",         
+		"call",         
         "virtual",
         "override",
         "clean",

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<welcomePage title="CaesarJ For Eclipse">
+	<intro>
+	CaesarJ has been successfully installed.
+	</intro>
+	<item><b>Learn more</b>
+	To learn more you can browse the <topic id="/org.caesarj/toc.xml">CaesarJ for Eclipse Help</topic>.
+	</item>
+</welcomePage>

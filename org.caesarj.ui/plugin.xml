@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin
-   id="org.caesarj.ui"
+   id="org.caesarj"
    name="Caesar Plug-in"
-   version="0.1.1"
+   version="0.1.3"
    provider-name="TU Darmstadt"
    class="org.caesarj.ui.CaesarPlugin">
 
    <runtime>
       <library name="caesar.jar"/>
       <library name="caesar-compiler.jar"/>
-      <library name="caesar-runtime.jar"/>      
-      <library name="aspectjtools.jar"/>      
-      <library name="aspectjrt.jar"/>      
+      <library name="caesar-runtime.jar"/>
+      <library name="aspectjtools.jar"/>
+      <library name="aspectjrt.jar"/>
       <library name="bcel.jar"/>
-      <library name="java-getopt-1.0.9.jar"/>      
+      <library name="java-getopt-1.0.9.jar"/>
       <library name="log4j-1.2.8.jar"/>
    </runtime>
    <requires>
@@ -85,5 +85,12 @@
             id="CompilationUnitEditor">
       </editor>
    </extension>
-   
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            file="toc.xml"
+            primary="true">
+      </toc>
+   </extension>
+
 </plugin>

@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import org.aspectj.asm.ProgramElementNode;
+import org.aspectj.asm.StructureModelManager;
 import org.caesarj.ui.builder.CaesarAdapter;
 
 /**
@@ -52,7 +54,6 @@ public class CaesarModelTest {
 	}
     
     private static void setupModel() {
-        /*
         String rootLabel = "<root>";
         StructureModelManager.INSTANCE.getStructureModel().setRoot(
             new ProgramElementNode(
@@ -63,6 +64,5 @@ public class CaesarModelTest {
         );
         
         StructureModelManager.INSTANCE.getStructureModel().setFileMap(new HashMap());
-        */
     }
 }
