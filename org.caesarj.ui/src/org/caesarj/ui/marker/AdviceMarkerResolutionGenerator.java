@@ -39,7 +39,7 @@ public class AdviceMarkerResolutionGenerator implements
 					.getAttribute(AdviceMarker.LINKS);
 			IMarkerResolution res[] = new AdviceMarkerResolution[advices.length];
 			for (int i = 0; i < advices.length; i++)
-				res[i] = new AdviceMarkerResolution(advices[1], marker);
+				res[i] = new AdviceMarkerResolution(advices[i], marker);
 			return res;
 		} catch (CoreException e) {
 			logger.error("Fehler beim auslesen der LINKS aus AdviceMarker", e);
