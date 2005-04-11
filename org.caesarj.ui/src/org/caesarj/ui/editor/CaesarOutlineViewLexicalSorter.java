@@ -20,15 +20,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarOutlineViewLexicalSorter.java,v 1.3 2005-03-24 12:31:55 meffert Exp $
+ * $Id: CaesarOutlineViewLexicalSorter.java,v 1.4 2005-04-11 09:04:00 thiago Exp $
  */
 
 package org.caesarj.ui.editor;
 
 import java.util.HashMap;
 
-import org.aspectj.asm.ProgramElementNode;
-import org.caesarj.compiler.asm.CaesarProgramElementNode;
+import org.aspectj.asm.internal.ProgramElement;
+import org.caesarj.compiler.asm.CaesarProgramElement;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 /**
@@ -38,31 +38,31 @@ public class CaesarOutlineViewLexicalSorter extends ViewerSorter {
 	protected static HashMap categoryMap;
 	static {
 		categoryMap = new HashMap();
-		categoryMap.put(CaesarProgramElementNode.Kind.PACKAGE, new Integer(0));
-		categoryMap.put(CaesarProgramElementNode.Kind.IMPORTS, new Integer(1));
-		categoryMap.put(CaesarProgramElementNode.Kind.ASPECT, new Integer(5));
-		categoryMap.put(CaesarProgramElementNode.Kind.INTERFACE, new Integer(6));
-		categoryMap.put(CaesarProgramElementNode.Kind.CLASS, new Integer(7));
-		categoryMap.put(CaesarProgramElementNode.Kind.VIRTUAL_CLASS, new Integer(8));
-		categoryMap.put(CaesarProgramElementNode.Kind.FIELD, new Integer(10));
-		categoryMap.put(CaesarProgramElementNode.Kind.CONSTRUCTOR, new Integer(11));
-		categoryMap.put(CaesarProgramElementNode.Kind.METHOD, new Integer(12));
-		categoryMap.put(CaesarProgramElementNode.Kind.ADVICE, new Integer(13));
-		categoryMap.put(ProgramElementNode.Kind.CODE, new Integer(14));
+		categoryMap.put(CaesarProgramElement.Kind.PACKAGE, new Integer(0));
+		categoryMap.put(CaesarProgramElement.Kind.IMPORTS, new Integer(1));
+		categoryMap.put(CaesarProgramElement.Kind.ASPECT, new Integer(5));
+		categoryMap.put(CaesarProgramElement.Kind.INTERFACE, new Integer(6));
+		categoryMap.put(CaesarProgramElement.Kind.CLASS, new Integer(7));
+		categoryMap.put(CaesarProgramElement.Kind.VIRTUAL_CLASS, new Integer(8));
+		categoryMap.put(CaesarProgramElement.Kind.FIELD, new Integer(10));
+		categoryMap.put(CaesarProgramElement.Kind.CONSTRUCTOR, new Integer(11));
+		categoryMap.put(CaesarProgramElement.Kind.METHOD, new Integer(12));
+		categoryMap.put(CaesarProgramElement.Kind.ADVICE, new Integer(13));
+		categoryMap.put(ProgramElement.Kind.CODE, new Integer(14));
 	}
 	
 	public int category(Object element) {
 		try {
 			Integer categoryInteger;
-			if(element instanceof CaesarProgramElementNode){
-				CaesarProgramElementNode.Kind kind = ((CaesarProgramElementNode) element).getCaesarKind();
+			if(element instanceof CaesarProgramElement){
+				CaesarProgramElement.Kind kind = ((CaesarProgramElement) element).getCaesarKind();
 				categoryInteger = (Integer) categoryMap.get(kind);
 				if(categoryInteger != null) {
 					//return ((Integer) categoryMap.get(((CaesarProgramElementNode) element).getCaesarKind())).intValue();
 					return categoryInteger.intValue();
 				}
-			}else if(element instanceof ProgramElementNode){
-				ProgramElementNode.Kind pKind = ((ProgramElementNode) element).getProgramElementKind();
+			}else if(element instanceof ProgramElement){
+				ProgramElement.Kind pKind = ((ProgramElement) element).getKind();
 				categoryInteger = (Integer) categoryMap.get(pKind);
 				if(categoryInteger != null) {
 					//return ((Integer) categoryMap.get(((ProgramElementNode) element).getProgramElementKind())).intValue();

@@ -28,9 +28,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.aspectj.asm.StructureModel;
-import org.aspectj.asm.StructureNode;
-import org.caesarj.compiler.asm.CaesarProgramElementNode;
+import org.aspectj.asm.IHierarchy;
+import org.aspectj.asm.IProgramElement;
+import org.caesarj.compiler.asm.CaesarProgramElement;
 import org.caesarj.compiler.export.CClass;
 import org.caesarj.runtime.AdditionalCaesarTypeInformation;
 import org.caesarj.ui.resources.CaesarJPluginResources;
@@ -52,7 +52,7 @@ public class HierarchyModelFactory {
 	 */
 	public static final String IMPL_EXTENSION = "_Impl";
 	
-	protected StructureModel structureModel = null;
+	protected IHierarchy structureModel = null;
 	
 	protected String filename = null;
 	
@@ -85,7 +85,7 @@ public class HierarchyModelFactory {
 	 * @param implicitFilter
 	 * @param isSuperView
 	 */
-	protected HierarchyModelFactory(StructureModel structureModel, String filename, String outputdir, boolean implicitFilter, boolean isSuperView) {
+	protected HierarchyModelFactory(IHierarchy structureModel, String filename, String outputdir, boolean implicitFilter, boolean isSuperView) {
 		this.structureModel = structureModel;
 		this.filename = filename;
 		this.outputdir = outputdir;
@@ -121,7 +121,7 @@ public class HierarchyModelFactory {
 	 * @param superView
 	 * @return
 	 */
-	public static RootNode createHierarchyTreeModel(StructureModel structureModel, String filename, String outputdir, boolean implicitFilter, boolean isSuperView) {
+	public static RootNode createHierarchyTreeModel(IHierarchy structureModel, String filename, String outputdir, boolean implicitFilter, boolean isSuperView) {
 		HierarchyModelFactory instance = new HierarchyModelFactory(structureModel, filename, outputdir, implicitFilter, isSuperView);
 		try {
 			return instance.buildHierarchyTreeModel();
@@ -345,7 +345,7 @@ public class HierarchyModelFactory {
 		Vector srcs = new Vector();
 
 		// Gets the root structure node for the input
-		StructureNode javaRootNode = findNode(structureModel.getRoot(), filename);
+		IProgramElement javaRootNode = findNode(structureModel.getRoot(), filename);
 		
 		// If the root could not be found, return an empty list
 		if (javaRootNode != null) {
@@ -356,11 +356,12 @@ public class HierarchyModelFactory {
 			while(i.hasNext()) {
 				Object next = i.next();
 				// Check that the element is a caesar node
-				if (next instanceof CaesarProgramElementNode) {
+				if (next instanceof CaesarProgramElement) {
 					// Check if the element is a virtual class or aspect
-					CaesarProgramElementNode node = (CaesarProgramElementNode) next;
-					if (node.getCaesarKind() == CaesarProgramElementNode.Kind.VIRTUAL_CLASS ||
-						node.getCaesarKind() == CaesarProgramElementNode.Kind.ASPECT) {
+					CaesarProgramElement node = (CaesarProgramElement) next;
+					
+					if (node.getCaesarKind() == CaesarProgramElement.Kind.VIRTUAL_CLASS ||
+						node.getCaesarKind() == CaesarProgramElement.Kind.ASPECT) {
 						// Get the classname from the node
 						String classname = node.getName();
 						// Strip the implementation termination if needed
@@ -382,7 +383,7 @@ public class HierarchyModelFactory {
 	 * 
 	 * Used when getting sources (getSources)
 	 */
-	protected StructureNode findNode(StructureNode node, String name) {
+	protected IProgramElement findNode(IProgramElement node, String name) {
 		
 		if (node == null || name == null) {
 			return null;
@@ -394,7 +395,7 @@ public class HierarchyModelFactory {
 		// Try to find between the children
 		Iterator i = node.getChildren().iterator();
 		while (i.hasNext()) {
-			StructureNode rec = findNode((StructureNode) i.next(), name);
+		    IProgramElement rec = findNode((IProgramElement) i.next(), name);
 			if (rec != null)
 				return rec;
 		}

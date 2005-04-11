@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarJContentOutlinePage.java,v 1.2 2005-03-04 09:28:19 thiago Exp $
+ * $Id: CaesarJContentOutlinePage.java,v 1.3 2005-04-11 09:04:00 thiago Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -32,11 +32,10 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
-import org.aspectj.asm.LinkNode;
-import org.aspectj.asm.ProgramElementNode;
-import org.aspectj.asm.StructureNode;
+import org.aspectj.asm.IProgramElement;
+import org.aspectj.asm.internal.ProgramElement;
 import org.aspectj.bridge.ISourceLocation;
-import org.caesarj.compiler.asm.CaesarProgramElementNode;
+import org.caesarj.compiler.asm.CaesarProgramElement;
 import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.util.ProjectProperties;
 import org.eclipse.core.resources.IMarker;
@@ -82,16 +81,16 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 	 * Loads the node categories
 	 */
 	static {
-		categoryMap.put(ProgramElementNode.Kind.PACKAGE, new Integer(0));
-		categoryMap.put(ProgramElementNode.Kind.FILE_JAVA, new Integer(1));
-		categoryMap.put(ProgramElementNode.Kind.ASPECT, new Integer(5));
-		categoryMap.put(ProgramElementNode.Kind.INTERFACE, new Integer(6));
-		categoryMap.put(ProgramElementNode.Kind.CLASS, new Integer(7));
-		categoryMap.put(ProgramElementNode.Kind.FIELD, new Integer(10));
-		categoryMap.put(ProgramElementNode.Kind.CONSTRUCTOR, new Integer(11));
-		categoryMap.put(ProgramElementNode.Kind.METHOD, new Integer(12));
-		categoryMap.put(ProgramElementNode.Kind.ADVICE, new Integer(13));
-		categoryMap.put(ProgramElementNode.Kind.CODE, new Integer(14));
+		categoryMap.put(ProgramElement.Kind.PACKAGE, new Integer(0));
+		categoryMap.put(ProgramElement.Kind.FILE_JAVA, new Integer(1));
+		categoryMap.put(ProgramElement.Kind.ASPECT, new Integer(5));
+		categoryMap.put(ProgramElement.Kind.INTERFACE, new Integer(6));
+		categoryMap.put(ProgramElement.Kind.CLASS, new Integer(7));
+		categoryMap.put(ProgramElement.Kind.FIELD, new Integer(10));
+		categoryMap.put(ProgramElement.Kind.CONSTRUCTOR, new Integer(11));
+		categoryMap.put(ProgramElement.Kind.METHOD, new Integer(12));
+		categoryMap.put(ProgramElement.Kind.ADVICE, new Integer(13));
+		categoryMap.put(ProgramElement.Kind.CODE, new Integer(14));
 	}
 	
 	/**
@@ -121,8 +120,7 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 		public int category(Object element) {
 			try {
 				return ((Integer) categoryMap
-						.get(((ProgramElementNode) element)
-								.getProgramElementKind())).intValue();
+						.get(((ProgramElement) element).getKind())).intValue();
 			} catch (Exception e) {
 				return 999;
 			}
@@ -197,11 +195,13 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 		} else {
 			Object item = ((IStructuredSelection) selection).getFirstElement();
 
+			/*
+			 * TODO - LINKNODES!
 			if (item instanceof LinkNode) {
 				item = ((LinkNode) item).getProgramElementNode();
 			}
-
-			StructureNode selectedNode = (StructureNode) item;
+*/
+			IProgramElement selectedNode = (IProgramElement) item;
 			ISourceLocation sourceLocation = selectedNode.getSourceLocation();
 
 			if (sourceLocation != null) {
@@ -237,18 +237,18 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 
 	// Iterates through StructureModel until a Node with name equal to
 	// Editor-Input-Name (should be the filename) is found.
-	protected StructureNode getInput(StructureNode node) {
+	protected IProgramElement getInput(IProgramElement node) {
 		if (node == null) {
 			return null;
 		}
-		StructureNode r = null;
+		IProgramElement r = null;
 		if (node.getName().equals(this.caesarEditor.getEditorInput().getName())) {
 			r = node;
 		} else {
-			StructureNode res = null;
+		    IProgramElement res = null;
 			for (Iterator it = node.getChildren().iterator(); it.hasNext()
 					&& res == null;) {
-				res = getInput((StructureNode) it.next());
+				res = getInput((IProgramElement) it.next());
 			}
 			r = res;
 		}
@@ -260,7 +260,7 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 	 */
 	public void update(ProjectProperties properties) {
 
-		StructureNode input = getInput(properties.getStructureModel().getRoot());
+	    IProgramElement input = getInput(properties.getStructureModel().getRoot());
 		
 		TreeViewer viewer = getTreeViewer();
 		if (viewer != null && input != null) {
@@ -269,15 +269,15 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 				control.setRedraw(false);
 				viewer.setInput(input);
 				viewer.expandAll();
-				if (input instanceof CaesarProgramElementNode) {
+				if (input instanceof CaesarProgramElement) {
 					// find and collapses the import node:
-					Iterator it = ((CaesarProgramElementNode) input)
+					Iterator it = ((CaesarProgramElement) input)
 							.getChildren().iterator();
 					while (it.hasNext()) {
 						Object next = it.next();
-						if (next instanceof CaesarProgramElementNode) {
-							if (((CaesarProgramElementNode) next)
-									.getCaesarKind() == CaesarProgramElementNode.Kind.IMPORTS) {
+						if (next instanceof CaesarProgramElement) {
+							if (((CaesarProgramElement) next)
+									.getCaesarKind() == CaesarProgramElement.Kind.IMPORTS) {
 								viewer.collapseToLevel(next,
 										AbstractTreeViewer.ALL_LEVELS);
 							}

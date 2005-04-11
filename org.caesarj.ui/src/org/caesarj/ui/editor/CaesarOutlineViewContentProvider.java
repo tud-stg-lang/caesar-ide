@@ -20,30 +20,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarOutlineViewContentProvider.java,v 1.3 2005-02-21 13:47:11 gasiunas Exp $
+ * $Id: CaesarOutlineViewContentProvider.java,v 1.4 2005-04-11 09:04:00 thiago Exp $
  */
 
 package org.caesarj.ui.editor;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
-import org.aspectj.asm.LinkNode;
-import org.aspectj.asm.ProgramElementNode;
-import org.aspectj.asm.RelationNode;
-import org.aspectj.asm.StructureNode;
-import org.caesarj.compiler.asm.CaesarProgramElementNode;
-import org.caesarj.ui.marker.AdviceMarker;
-import org.caesarj.ui.util.ProjectProperties;
-import org.eclipse.core.resources.IMarker;
+import org.aspectj.asm.IProgramElement;
+import org.aspectj.asm.IRelationship;
+import org.aspectj.asm.internal.ProgramElement;
+import org.caesarj.compiler.asm.CaesarProgramElement;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.texteditor.MarkerUtilities;
 
 /**
  * @author meffert
@@ -68,9 +60,9 @@ public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
 	public Object[] getElements(Object inputElement) {
 		Vector elements = new Vector();
 		
-		if (inputElement instanceof CaesarProgramElementNode){
+		if (inputElement instanceof CaesarProgramElement){
 			// add children
-			elements.addAll(((CaesarProgramElementNode) inputElement).getChildren());
+			elements.addAll(((CaesarProgramElement) inputElement).getChildren());
 		}
 		else{
 			if(inputElement != null){
@@ -85,16 +77,16 @@ public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
 	public Object[] getChildren(Object parentElement) {
 		//Logger.getLogger(this.getClass()).info("getChildren()" + parentElement);
 		Vector elements = new Vector();
-		if(parentElement instanceof CaesarProgramElementNode){
+		if(parentElement instanceof CaesarProgramElement){
 			//Logger.getLogger(this.getClass()).info("getChildren() called with instanceof CaesarProgramElementNode."  + parentElement.getClass().getName());
 			// if parentElement is of kind PACKAGE dont add children!
-			if(CaesarProgramElementNode.Kind.PACKAGE == ((CaesarProgramElementNode)parentElement).getCaesarKind()){
+			if(CaesarProgramElement.Kind.PACKAGE == ((CaesarProgramElement)parentElement).getCaesarKind()){
 				
-			}else if(CaesarProgramElementNode.Kind.IMPORTS == ((CaesarProgramElementNode)parentElement).getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.IMPORTS == ((CaesarProgramElement)parentElement).getCaesarKind()){
 				// remove the import java/lang
-				Iterator it = ((CaesarProgramElementNode)parentElement).getChildren().iterator();
+				Iterator it = ((CaesarProgramElement)parentElement).getChildren().iterator();
 				while(it.hasNext()){
-					CaesarProgramElementNode child = (CaesarProgramElementNode)it.next();
+					CaesarProgramElement child = (CaesarProgramElement)it.next();
 					if(child.getName().compareTo("java/lang") != 0){
 						elements.add(child);
 					}
@@ -102,24 +94,24 @@ public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
 			}else{
 				// add children
 				// add all children except if child is of Kind ADVICE_REGISTRY, then add childs children to node
-				Iterator it = ((CaesarProgramElementNode)parentElement).getChildren().iterator();
+				Iterator it = ((CaesarProgramElement)parentElement).getChildren().iterator();
 				while(it.hasNext()){
 					Object child = it.next();
-					if(child instanceof CaesarProgramElementNode){
-						if(CaesarProgramElementNode.Kind.ADVICE_REGISTRY == ((CaesarProgramElementNode)child).getCaesarKind()){
-							elements.addAll(((CaesarProgramElementNode)child).getChildren());
+					if(child instanceof CaesarProgramElement){
+						if(CaesarProgramElement.Kind.ADVICE_REGISTRY == ((CaesarProgramElement)child).getCaesarKind()){
+							elements.addAll(((CaesarProgramElement)child).getChildren());
 						}else{
 							boolean addAsChild = true;
-							if (CaesarProgramElementNode.Kind.METHOD == ((CaesarProgramElementNode)child).getCaesarKind()){
-								if (((CaesarProgramElementNode)child).getName().equals("aspectOf")
-										|| ((CaesarProgramElementNode)child).getName().indexOf('$') != -1)
+							if (CaesarProgramElement.Kind.METHOD == ((CaesarProgramElement)child).getCaesarKind()){
+								if (((CaesarProgramElement)child).getName().equals("aspectOf")
+										|| ((CaesarProgramElement)child).getName().indexOf('$') != -1)
 								{
 									// do not add child!
 									addAsChild = false;
 								}
 							}
-							if (CaesarProgramElementNode.Kind.FIELD == ((CaesarProgramElementNode)child).getCaesarKind()) {
-								if (((CaesarProgramElementNode)child).getName().indexOf('$') != -1) {
+							if (CaesarProgramElement.Kind.FIELD == ((CaesarProgramElement)child).getCaesarKind()) {
+								if (((CaesarProgramElement)child).getName().indexOf('$') != -1) {
 									// do not add child
 									addAsChild = false;
 								}
@@ -133,36 +125,37 @@ public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
 				//elements.addAll(((CaesarProgramElementNode)parentElement).getChildren());
 				
 				// add relations
-				elements.addAll(((CaesarProgramElementNode)parentElement).getRelations());
+				elements.addAll(((CaesarProgramElement)parentElement).getRelations());
 				
 				// Iterate through relations and set markers for all RelationNodes.
-				it = ((CaesarProgramElementNode)parentElement).getRelations().iterator();
+				it = ((CaesarProgramElement)parentElement).getRelations().iterator();
 				while(it.hasNext()){
 					Object next = it.next();
-					if(next instanceof RelationNode){
-						setMarkers((CaesarProgramElementNode)parentElement, (RelationNode)next);
+					if(next instanceof IRelationship){
+						setMarkers((CaesarProgramElement)parentElement, (IRelationship)next);
 					}
 				}
 			}
-		}else if(parentElement instanceof ProgramElementNode){
-			Logger.getLogger(this.getClass()).info("getChildren() called with instanceof ProgramElementNode." + ((ProgramElementNode)parentElement).getProgramElementKind().toString());
+		}else if(parentElement instanceof ProgramElement){
+			Logger.getLogger(this.getClass()).info("getChildren() called with instanceof ProgramElementNode." + 
+			        ((ProgramElement)parentElement).getKind().toString());
 			// add children
-			elements.addAll(((ProgramElementNode)parentElement).getChildren());
+			elements.addAll(((ProgramElement)parentElement).getChildren());
 			// add relations
-			elements.addAll(((ProgramElementNode)parentElement).getRelations());
+			elements.addAll(((ProgramElement)parentElement).getRelations());
 			
 			// Iterate through relations and set markers for all RelationNodes.
-			Iterator it = ((ProgramElementNode)parentElement).getRelations().iterator();
+			Iterator it = ((ProgramElement)parentElement).getRelations().iterator();
 			while(it.hasNext()){
 				Object next = it.next();
-				if(next instanceof RelationNode){
-					setMarkers((ProgramElementNode)parentElement, (RelationNode)next);
+				if(next instanceof IRelationship){
+					setMarkers((ProgramElement)parentElement, (IRelationship)next);
 				}
 			}
-		}else if(parentElement instanceof StructureNode){
+		}else if(parentElement instanceof IProgramElement){
 			Logger.getLogger(this.getClass()).info("getChildren() called with instanceof StructureNode." + parentElement.getClass().getName());
 			// add children
-			elements.addAll(((StructureNode)parentElement).getChildren());
+			elements.addAll(((IProgramElement)parentElement).getChildren());
 		}else{
 			if(parentElement != null){
 				Logger.getLogger(this.getClass()).info("getChildren() called with instanceof " + parentElement.getClass().getName());
@@ -175,34 +168,34 @@ public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
 
 	public Object getParent(Object element) {
 		Logger.getLogger(this.getClass()).info("getParent()" + element);
-		if(element instanceof StructureNode){
-			return ((StructureNode) element).getParent();
+		if(element instanceof IProgramElement){
+			return ((IProgramElement) element).getParent();
 		}
 		return null;
 	}
 
 	public boolean hasChildren(Object element) {
-		if(element instanceof CaesarProgramElementNode){
-			//Logger.getLogger(this.getClass()).info("hasChildren() called with instanceof CaesarProgramElementNode. " + element.getClass().getName());
-			if(CaesarProgramElementNode.Kind.PACKAGE == ((CaesarProgramElementNode)element).getCaesarKind()){
+		if(element instanceof CaesarProgramElement){
+			//Logger.getLogger(this.getClass()).info("hasChildren() called with instanceof CaesarProgramElement. " + element.getClass().getName());
+			if(CaesarProgramElement.Kind.PACKAGE == ((CaesarProgramElement)element).getCaesarKind()){
 				return false;
-			}else if(CaesarProgramElementNode.Kind.IMPORTS == ((CaesarProgramElementNode)element).getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.IMPORTS == ((CaesarProgramElement)element).getCaesarKind()){
 				// the import java/lang always exists => do not display it.
-				return ((CaesarProgramElementNode)element).getChildren().size() > 1;
+				return ((CaesarProgramElement)element).getChildren().size() > 1;
 			}
-			System.out.println(((CaesarProgramElementNode)element).getCaesarKind().toString() + " - Relations: " + ((CaesarProgramElementNode)element).getRelations().size());
+			System.out.println(((CaesarProgramElement)element).getCaesarKind().toString() + " - Relations: " + ((CaesarProgramElement)element).getRelations().size());
 			// return children + relations > 0
-			return ((CaesarProgramElementNode)element).getChildren().size() > 0
-						|| ((CaesarProgramElementNode)element).getRelations().size() > 0;
-		}else if(element instanceof ProgramElementNode){
+			return ((CaesarProgramElement)element).getChildren().size() > 0
+						|| ((CaesarProgramElement)element).getRelations().size() > 0;
+		}else if(element instanceof ProgramElement){
 			// if element is instanceof ProgramElementNode (Kind == CODE?) 
 			// return sizeof children + sizeof Relations
-			return ((ProgramElementNode)element).getChildren().size() > 0 
-						|| ((ProgramElementNode)element).getRelations().size() > 0;
-		}else if(element instanceof StructureNode){
+			return ((ProgramElement)element).getChildren().size() > 0 
+						|| ((ProgramElement)element).getRelations().size() > 0;
+		}else if(element instanceof IProgramElement){
 			// if element is instanceof ProgramElementNode (Kind == CODE?) 
 			// return sizeof children + sizeof Relations
-			return ((StructureNode)element).getChildren().size() > 0;
+			return ((IProgramElement)element).getChildren().size() > 0;
 		}else{
 			System.out.println("hasChildren(): Not a ProgramElementNode");
 		}
@@ -211,14 +204,15 @@ public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
 	
 	/**
 	 * Used to add Markers to the editor.
-	 * @param node - CaesarProgramElementNode representing the Position where to add the Marker
+	 * @param node - CaesarProgramElement representing the Position where to add the Marker
 	 * @param relation - defines the Marker
 	 */
-	private void setMarkers(ProgramElementNode node, RelationNode relation){
+	private void setMarkers(ProgramElement node, IRelationship relation){
 		Logger.getLogger(this.getClass()).info("setMarkers() for relation node");
 		
-		//copied from ui.CaesarProgramElementNode
-		
+		//copied from ui.CaesarProgramElement
+		/*
+		 * TODO LINKNODES
 		Object[] nodes = relation.getChildren().toArray();
 		HashMap args = new HashMap();
 		String messageLocal = relation.getName().toUpperCase()
@@ -259,5 +253,6 @@ public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
 		} catch (CoreException e) {
 			Logger.getLogger(this.getClass()).error("FEHLER BEIM MARKER ERZEUGEN", e); //$NON-NLS-1$
 		}
+		*/
 	}
 }

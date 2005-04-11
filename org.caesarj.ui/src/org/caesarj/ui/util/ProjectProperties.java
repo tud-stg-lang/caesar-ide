@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: ProjectProperties.java,v 1.10 2005-03-03 09:23:56 gasiunas Exp $
+ * $Id: ProjectProperties.java,v 1.11 2005-04-11 09:03:28 thiago Exp $
  */
 
 package org.caesarj.ui.util;
@@ -32,7 +32,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
-import org.aspectj.asm.StructureModel;
+import org.aspectj.asm.IHierarchy;
 import org.eclipse.core.internal.resources.Container;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -66,7 +66,7 @@ public class ProjectProperties {
     private String projectLocation = null;
     private StringBuffer classPath = null;
     private List sourceFiles = null;
-    private StructureModel model = null;
+    private IHierarchy model = null;
     
     /**
      * Creates a new not initialized ProjectProperties object.
@@ -232,11 +232,11 @@ public class ProjectProperties {
 	public IJavaProject getJavaProject() {
 		return javaProject;
 	}	
-	public StructureModel getStructureModel() {
+	public IHierarchy getStructureModel() {
 		return this.model;
 	}
 	
-	public void setStructureModel(StructureModel model) {
+	public void setStructureModel(IHierarchy model) {
 		this.model = model;
 	}
 	

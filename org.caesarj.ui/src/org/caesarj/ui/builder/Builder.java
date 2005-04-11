@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: Builder.java,v 1.28 2005-03-10 10:01:39 gasiunas Exp $
+ * $Id: Builder.java,v 1.29 2005-04-11 09:03:28 thiago Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -112,7 +112,7 @@ public class Builder extends IncrementalProjectBuilder {
 					progressMonitor);
 			
 			// Set the project's structure model
-			this.projectProperties.setStructureModel(caesarAdapter.getModel());
+			this.projectProperties.setStructureModel(caesarAdapter.getHierarchy());
 		} 
 		catch (Throwable t) {
 			t.printStackTrace();

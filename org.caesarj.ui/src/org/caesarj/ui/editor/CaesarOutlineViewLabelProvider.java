@@ -20,18 +20,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarOutlineViewLabelProvider.java,v 1.2 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CaesarOutlineViewLabelProvider.java,v 1.3 2005-04-11 09:04:00 thiago Exp $
  */
 
 package org.caesarj.ui.editor;
 
 import java.util.Iterator;
 
-import org.aspectj.asm.LinkNode;
-import org.aspectj.asm.ProgramElementNode;
-import org.aspectj.asm.RelationNode;
-import org.aspectj.asm.StructureNode;
-import org.caesarj.compiler.asm.CaesarProgramElementNode;
+import org.aspectj.asm.IProgramElement;
+import org.aspectj.asm.IRelationship;
+import org.aspectj.asm.internal.ProgramElement;
+import org.caesarj.compiler.asm.CaesarProgramElement;
 import org.caesarj.ui.CaesarPluginImages;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -45,31 +44,35 @@ import org.eclipse.swt.graphics.Image;
 public class CaesarOutlineViewLabelProvider extends LabelProvider {
 
 	public String getText(Object element) {
-		if(element instanceof CaesarProgramElementNode){
-			return TextFactory.getText((CaesarProgramElementNode)element);
-		}else if(element instanceof StructureNode){
-			return TextFactory.getText((StructureNode)element);
+		if(element instanceof CaesarProgramElement){
+			return TextFactory.getText((CaesarProgramElement)element);
+		}else if(element instanceof IRelationship){
+		    // TODO CHECK IT.. it was Structure
+			//return TextFactory.getText((IRelationship)element);
 			//return ((StructureNode)element).getName() + " (Class:" + element.getClass().getName() + ")";
 		}
 		return "Not a StructureNode";
 	}
 	
 	public Image getImage(Object element) {
-		if(element instanceof CaesarProgramElementNode){
-			return ImageFactory.getImage((CaesarProgramElementNode)element);
-		}else if(element instanceof StructureNode){
-			return ImageFactory.getImage(((StructureNode)element));
+		if(element instanceof CaesarProgramElement){
+			return ImageFactory.getImage((CaesarProgramElement)element);
+		}else if(element instanceof ProgramElement){
+			return ImageFactory.getImage(((ProgramElement)element));
 		}
 		return null;
 	}
 	
 	public static class TextFactory {
-		public static String getText(StructureNode node){
+		public static String getText(IProgramElement node){
 			String text = node.getName();
-			if(node instanceof ProgramElementNode){
-				if(ProgramElementNode.Kind.CODE != ((ProgramElementNode)node).getProgramElementKind()){
-					text += "(" + ((ProgramElementNode)node).getProgramElementKind().toString() + ")";
+			if(node instanceof ProgramElement){
+				if(ProgramElement.Kind.CODE != ((ProgramElement)node).getKind()){
+					text += "(" + ((ProgramElement)node).getKind().toString() + ")";
 				}
+			}
+				/*
+				 * TODO CHECK LINKNODE!
 			}else if(node instanceof LinkNode){
 				String classname = node.toString(); 
 				// node.toString() is of form: "[aspect] PricingDeployment_Impl: around"
@@ -86,39 +89,40 @@ public class CaesarOutlineViewLabelProvider extends LabelProvider {
 					classname += "()";
 				}
 				text += ": " + classname;
-			}
+			}*/
+				
 			return text;
 		}
-		public static String getText(CaesarProgramElementNode node){
+		public static String getText(CaesarProgramElement node){
 			String text = node.getName();
-			if(CaesarProgramElementNode.Kind.PACKAGE == node.getCaesarKind()){
+			if(CaesarProgramElement.Kind.PACKAGE == node.getCaesarKind()){
 				// PACKAGE node
 				
-			}else if(CaesarProgramElementNode.Kind.IMPORTS == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.IMPORTS == node.getCaesarKind()){
 				// IMPORTS Node
 				
-			}else if(CaesarProgramElementNode.Kind.PACKAGE_IMPORT == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.PACKAGE_IMPORT == node.getCaesarKind()){
 				// PACKAGE IMPORT Node
 				text = text.replace('/', '.') + ".*";
-			}else if(CaesarProgramElementNode.Kind.CLASS_IMPORT == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.CLASS_IMPORT == node.getCaesarKind()){
 				// CLASS IMPORT Node
 				text = text.replace('/', '.');
-			}else if(CaesarProgramElementNode.Kind.CLASS == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.CLASS == node.getCaesarKind()){
 				// CLASS Node
 				if(text.lastIndexOf("_Impl") > -1)
 					text = text.substring(0, text.lastIndexOf("_Impl"));
-			}else if(CaesarProgramElementNode.Kind.VIRTUAL_CLASS == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.VIRTUAL_CLASS == node.getCaesarKind()){
 				// VIRTUAL CLASS Node
 				if(text.lastIndexOf("_Impl") > -1)
 					text = text.substring(0, text.lastIndexOf("_Impl"));
-			}else if(CaesarProgramElementNode.Kind.ASPECT == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.ASPECT == node.getCaesarKind()){
 				// ASPECT Node
 				if(text.lastIndexOf("_Impl") > -1)
 					text = text.substring(0, text.lastIndexOf("_Impl"));
-			}else if(CaesarProgramElementNode.Kind.INTERFACE == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.INTERFACE == node.getCaesarKind()){
 				// INTERFACE node
 				
-			}else if(CaesarProgramElementNode.Kind.CONSTRUCTOR == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.CONSTRUCTOR == node.getCaesarKind()){
 				// CONSTRUCTOR Node
 				if(text.lastIndexOf("_Impl") > -1)
 					text = text.substring(0, text.lastIndexOf("_Impl"));
@@ -127,14 +131,14 @@ public class CaesarOutlineViewLabelProvider extends LabelProvider {
 				// iterate through parameters to extract parameter informations
 				Iterator it = node.getParameters().iterator();
 				while(it.hasNext()){
-					CaesarProgramElementNode child = (CaesarProgramElementNode)it.next();
+					CaesarProgramElement child = (CaesarProgramElement)it.next();
 					if(! child.getName().equals("_$outer")){
 						text += extractClassName(child.getType()) /*+ " " + child.getName()*/;
 						if(it.hasNext()) text += ", ";
 					}
 				}
 				text += ")";
-			}else if(CaesarProgramElementNode.Kind.METHOD == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.METHOD == node.getCaesarKind()){
 				// METHOD Node
 				// TODO [question]: are there any generated _Impl methods?
 				if(text.lastIndexOf("_Impl") > -1)
@@ -144,7 +148,7 @@ public class CaesarOutlineViewLabelProvider extends LabelProvider {
 				// iterate through parameters to extract parameter informations
 				Iterator it = node.getParameters().iterator();
 				while(it.hasNext()){
-					CaesarProgramElementNode child = (CaesarProgramElementNode)it.next();
+					CaesarProgramElement child = (CaesarProgramElement)it.next();
 					text += extractClassName(child.getType()) /*+ " " + child.getName()*/;
 					if(it.hasNext()) text += ", ";
 				}
@@ -156,10 +160,10 @@ public class CaesarOutlineViewLabelProvider extends LabelProvider {
 					returnType = "void";
 				}
 				text += ": " + returnType;
-			}else if(CaesarProgramElementNode.Kind.FIELD == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.FIELD == node.getCaesarKind()){
 				// FIELD node
 				text += ": " + extractClassName(node.getType());
-			}else if(CaesarProgramElementNode.Kind.ADVICE == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.ADVICE == node.getCaesarKind()){
 				// ADVICE node
 				
 			}else{
@@ -170,13 +174,13 @@ public class CaesarOutlineViewLabelProvider extends LabelProvider {
 		}
 		
 		/**
-		 * Extracts the classname of a string returned by CaesarProgramElementNode.getType().
+		 * Extracts the classname of a string returned by CaesarProgramElement.getType().
 		 * Removes the path/package information and the semikolon at the end.
-		 * @param input - string returned by CaesarProgramElementNode.getType()
+		 * @param input - string returned by CaesarProgramElement.getType()
 		 * @return
 		 */
 		protected static String extractClassName(String input){
-			// TODO [refactoring]: should this be moved to CaesarProgramElementNode or AsmBuilder?
+			// TODO [refactoring]: should this be moved to CaesarProgramElement or AsmBuilder?
 			String className = input;
 			if(input.lastIndexOf('/') > -1){
 				className = input.substring(input.lastIndexOf('/') + 1, input.length() - 1);
@@ -188,143 +192,144 @@ public class CaesarOutlineViewLabelProvider extends LabelProvider {
 	}
 	
 	public static class ImageFactory {
-		public static Image getImage(StructureNode node){
+		public static Image getImage(IProgramElement node){
 			Image image = null;
-			if(node instanceof ProgramElementNode){
+			if(node instanceof ProgramElement){
 				// only return image if kind is CODE
-				if(ProgramElementNode.Kind.CODE == ((ProgramElementNode)node).getProgramElementKind()){
-					image = new CaesarImageDescriptor((ProgramElementNode)node, CaesarPluginImages.DESC_CODE).createImage();
+				if(ProgramElement.Kind.CODE == ((ProgramElement)node).getKind()){
+					image = new CaesarImageDescriptor((ProgramElement)node, CaesarPluginImages.DESC_CODE).createImage();
 				}
+			}
+			/*
+			 * TODO CHECK LINKNODE!!
+			 
 			}else if(node instanceof LinkNode){
-				ProgramElementNode pNode = ((LinkNode) node).getProgramElementNode();
-				if (pNode instanceof CaesarProgramElementNode && ((CaesarProgramElementNode)pNode).getCaesarKind() == CaesarProgramElementNode.Kind.ADVICE) {
-			/*return new CaesarElementImageDescriptor(
-					CaesarPluginImages.DESC_JOINPOINT_BACK, null,
-					BIG_SIZE).createImage();*/
+				ProgramElement pNode = ((LinkNode) node).getProgramElement();
+				if (pNode instanceof CaesarProgramElement && ((CaesarProgramElement)pNode).getCaesarKind() == CaesarProgramElement.Kind.ADVICE) {
+
 					image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_JOINPOINT_BACK).createImage();
 				} else {
-			/*return new CaesarElementImageDescriptor(
-					CaesarPluginImages.DESC_JOINPOINT_FORWARD,
-					null, BIG_SIZE).createImage();*/
 					image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_JOINPOINT_FORWARD).createImage();
 				}
-			}else if(node instanceof RelationNode){
-				/*return new CaesarElementImageDescriptor(
-						CaesarPluginImages.DESC_ADVICE, null, BIG_SIZE)
-						.createImage();*/
+				/*
+				 * TODO CHECK IT.. it was instanceof RelationNode
+			}else if(node instanceof IRelationship){
+				//return new CaesarElementImageDescriptor(
+				//		CaesarPluginImages.DESC_ADVICE, null, BIG_SIZE)
+				//		.createImage();
 				image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_ADVICE).createImage();
-			}
+			}*/
 			return image;
 		}
-		public static Image getImage(CaesarProgramElementNode node) {
+		public static Image getImage(CaesarProgramElement node) {
 			Image image = null;
 			
-			if(CaesarProgramElementNode.Kind.PACKAGE == node.getCaesarKind()){
+			if(CaesarProgramElement.Kind.PACKAGE == node.getCaesarKind()){
 				// PACKAGE node
 				image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_OUT_PACKAGE).createImage();
-			}else if(CaesarProgramElementNode.Kind.IMPORTS == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.IMPORTS == node.getCaesarKind()){
 				// IMPORTS node
 				image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_OUT_IMPORTS).createImage();
-			}else if(CaesarProgramElementNode.Kind.PACKAGE_IMPORT == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.PACKAGE_IMPORT == node.getCaesarKind()){
 				// PACKAGE IMPORT node
 				image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_IMPORTS).createImage();
-			}else if(CaesarProgramElementNode.Kind.CLASS_IMPORT == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.CLASS_IMPORT == node.getCaesarKind()){
 				// CLASS IMPORT node
 				image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_IMPORTS).createImage();
-			}else if(CaesarProgramElementNode.Kind.CLASS == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.CLASS == node.getCaesarKind()){
 				// CLASS Node
-				if(CaesarProgramElementNode.Accessibility.PUBLIC == node.getAccessibility()){
+				if(CaesarProgramElement.Accessibility.PUBLIC == node.getAccessibility()){
 					// PUBLIC CLASS
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_OBJS_INNER_CLASS_PUBLIC).createImage();
-				}else if(CaesarProgramElementNode.Accessibility.PROTECTED == node.getAccessibility()){
+				}else if(CaesarProgramElement.Accessibility.PROTECTED == node.getAccessibility()){
 					// PROTECTED CLASS
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_OBJS_INNER_CLASS_PROTECTED).createImage();
-				}else if(CaesarProgramElementNode.Accessibility.PRIVATE == node.getAccessibility()){
+				}else if(CaesarProgramElement.Accessibility.PRIVATE == node.getAccessibility()){
 					// PRIVATE CLASS
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_OBJS_INNER_CLASS_PRIVATE).createImage();
 				}else{
 					// DEFAULT image
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_OBJS_INNER_CLASS_DEFAULT).createImage();
 				}
-			}else if(CaesarProgramElementNode.Kind.VIRTUAL_CLASS == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.VIRTUAL_CLASS == node.getCaesarKind()){
 				// VIRTUAL CLASS Node
-				if(CaesarProgramElementNode.Accessibility.PUBLIC == node.getAccessibility()){
+				if(CaesarProgramElement.Accessibility.PUBLIC == node.getAccessibility()){
 					// PUBLIC CLASS
 					image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PUBLIC).createImage();
-				}else if(CaesarProgramElementNode.Accessibility.PROTECTED == node.getAccessibility()){
+				}else if(CaesarProgramElement.Accessibility.PROTECTED == node.getAccessibility()){
 					// PROTECTED CLASS
 					image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PROTECTED).createImage();
-				}else if(CaesarProgramElementNode.Accessibility.PRIVATE == node.getAccessibility()){
+				}else if(CaesarProgramElement.Accessibility.PRIVATE == node.getAccessibility()){
 					// PRIVATE CLASS
 					image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_OBJS_INNER_CCLASS_PRIVATE).createImage();
 				}else{
 					// DEFAULT image
 					image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_OBJS_INNER_CCLASS_DEFAULT).createImage();
 				}
-			}else if(CaesarProgramElementNode.Kind.ASPECT == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.ASPECT == node.getCaesarKind()){
 				// ASPECT Node
 				image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_ASPECT).createImage();
-			}else if(CaesarProgramElementNode.Kind.INTERFACE == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.INTERFACE == node.getCaesarKind()){
 				// INTERFACE node
-				if(CaesarProgramElementNode.Accessibility.PUBLIC == node.getAccessibility()){
+				if(CaesarProgramElement.Accessibility.PUBLIC == node.getAccessibility()){
 					// PUBLIC INTERFACE
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_OBJS_INNER_INTERFACE_PUBLIC).createImage();
-				}else if(CaesarProgramElementNode.Accessibility.PROTECTED == node.getAccessibility()){
+				}else if(CaesarProgramElement.Accessibility.PROTECTED == node.getAccessibility()){
 					// PROTECTED INTERFACE
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_OBJS_INNER_INTERFACE_PROTECTED).createImage();
-				}else if(CaesarProgramElementNode.Accessibility.PRIVATE == node.getAccessibility()){
+				}else if(CaesarProgramElement.Accessibility.PRIVATE == node.getAccessibility()){
 					// PRIVATE INTERFACE
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_OBJS_INNER_INTERFACE_PRIVATE).createImage();
 				}else{
 					// DEFAULT image
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_OBJS_INNER_INTERFACE_DEFAULT).createImage();
 				}
-			}else if(CaesarProgramElementNode.Kind.CONSTRUCTOR == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.CONSTRUCTOR == node.getCaesarKind()){
 				// CONSTRUCTOR Node
-				if(CaesarProgramElementNode.Accessibility.PUBLIC == node.getAccessibility()){
+				if(CaesarProgramElement.Accessibility.PUBLIC == node.getAccessibility()){
 					// PUBLIC CONSTRUCTOR
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_MISC_PUBLIC).createImage();
-				}else if(CaesarProgramElementNode.Accessibility.PROTECTED == node.getAccessibility()){
+				}else if(CaesarProgramElement.Accessibility.PROTECTED == node.getAccessibility()){
 					// PROTECTED CONSTRUCTOR
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_MISC_PROTECTED).createImage();
-				}else if(CaesarProgramElementNode.Accessibility.PRIVATE == node.getAccessibility()){
+				}else if(CaesarProgramElement.Accessibility.PRIVATE == node.getAccessibility()){
 					// PRIVATE CONSTRUCTOR
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_MISC_PRIVATE).createImage();
 				}else{
 					// DEFAULT image
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_MISC_DEFAULT).createImage();
 				}
-			}else if(CaesarProgramElementNode.Kind.METHOD == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.METHOD == node.getCaesarKind()){
 				// METHOD Node
-				if(CaesarProgramElementNode.Accessibility.PUBLIC == node.getAccessibility()){
+				if(CaesarProgramElement.Accessibility.PUBLIC == node.getAccessibility()){
 					// PUBLIC METHOD
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_MISC_PUBLIC).createImage();
-				}else if(CaesarProgramElementNode.Accessibility.PROTECTED == node.getAccessibility()){
+				}else if(CaesarProgramElement.Accessibility.PROTECTED == node.getAccessibility()){
 					// PROTECTED METHOD
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_MISC_PROTECTED).createImage();
-				}else if(CaesarProgramElementNode.Accessibility.PRIVATE == node.getAccessibility()){
+				}else if(CaesarProgramElement.Accessibility.PRIVATE == node.getAccessibility()){
 					// PRIVATE METHOD
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_MISC_PRIVATE).createImage();
 				}else{
 					// DEFAULT image
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_MISC_DEFAULT).createImage();
 				}
-			}else if(CaesarProgramElementNode.Kind.FIELD == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.FIELD == node.getCaesarKind()){
 				// FIELD node
-				if(CaesarProgramElementNode.Accessibility.PUBLIC == node.getAccessibility()){
+				if(CaesarProgramElement.Accessibility.PUBLIC == node.getAccessibility()){
 					// PUBLIC FIELD
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_FIELD_PUBLIC).createImage();
-				}else if(CaesarProgramElementNode.Accessibility.PROTECTED == node.getAccessibility()){
+				}else if(CaesarProgramElement.Accessibility.PROTECTED == node.getAccessibility()){
 					// PROTECTED FIELD
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_FIELD_PROTECTED).createImage();
-				}else if(CaesarProgramElementNode.Accessibility.PRIVATE == node.getAccessibility()){
+				}else if(CaesarProgramElement.Accessibility.PRIVATE == node.getAccessibility()){
 					// PRIVATE FIELD
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_FIELD_PRIVATE).createImage();
 				}else{
 					// DEFAULT image
 					image = new CaesarImageDescriptor(node, JavaPluginImages.DESC_FIELD_DEFAULT).createImage();
 				}
-			}else if(CaesarProgramElementNode.Kind.ADVICE == node.getCaesarKind()){
+			}else if(CaesarProgramElement.Kind.ADVICE == node.getCaesarKind()){
 				// ADVICE node
 				image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_ADVICE_NODE, false).createImage();
 			}

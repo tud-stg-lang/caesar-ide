@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarModelTest.java,v 1.7 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CaesarModelTest.java,v 1.8 2005-04-11 09:03:28 thiago Exp $
  */
 
 package org.caesarj.ui.test;
@@ -30,9 +30,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import org.aspectj.asm.ProgramElementNode;
-import org.aspectj.asm.StructureModelManager;
+import org.aspectj.asm.IHierarchy;
+
+import org.caesarj.compiler.asm.CaesarJElementHierarchy;
 import org.caesarj.ui.builder.CaesarAdapter;
+import org.aspectj.asm.internal.AspectJElementHierarchy;
+import org.aspectj.asm.IProgramElement;
+import org.aspectj.asm.internal.ProgramElement;
 
 /**
  * Test for ASM.
@@ -40,7 +44,9 @@ import org.caesarj.ui.builder.CaesarAdapter;
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
 public class CaesarModelTest {
-
+	
+    protected static IHierarchy hierarchy = new CaesarJElementHierarchy();
+	
 	public static void main(String[] args) {        
         
         Collection errors = new LinkedList();
@@ -80,15 +86,13 @@ public class CaesarModelTest {
     
     private static void setupModel() {
     	System.out.println("CaesarTest.setupModel() called!");
-        String rootLabel = "<root>";
-        StructureModelManager.INSTANCE.getStructureModel().setRoot(
-            new ProgramElementNode(
-                rootLabel,
-                ProgramElementNode.Kind.FILE_JAVA,
-                new ArrayList()
-            )
-        );
-        
-        StructureModelManager.INSTANCE.getStructureModel().setFileMap(new HashMap());
+		String rootLabel = "<root>"; //$NON-NLS-1$
+		
+		hierarchy.setRoot(
+		        new ProgramElement(
+		                rootLabel, 
+		                IProgramElement.Kind.FILE_JAVA,
+		                new ArrayList()));
+		hierarchy.setFileMap(new HashMap());
     }
 }

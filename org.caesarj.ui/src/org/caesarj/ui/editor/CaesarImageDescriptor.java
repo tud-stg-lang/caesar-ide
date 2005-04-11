@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarImageDescriptor.java,v 1.2 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CaesarImageDescriptor.java,v 1.3 2005-04-11 09:04:00 thiago Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -28,9 +28,9 @@ package org.caesarj.ui.editor;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.aspectj.asm.ProgramElementNode;
-import org.aspectj.asm.StructureNode;
-import org.caesarj.compiler.asm.CaesarProgramElementNode;
+import org.aspectj.asm.IProgramElement;
+import org.aspectj.asm.internal.ProgramElement;
+import org.caesarj.compiler.asm.CaesarProgramElement;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -51,7 +51,7 @@ public class CaesarImageDescriptor extends CompositeImageDescriptor {
 	protected static final int LOWER_RIGHT = 4;
 	
 	protected ImageDescriptor baseImage;
-	protected StructureNode node;
+	protected IProgramElement node;
 	
 	private Point upper_left;
 	private Point upper_right;
@@ -66,7 +66,7 @@ public class CaesarImageDescriptor extends CompositeImageDescriptor {
 	 * @param node
 	 * @param baseImage
 	 */
-	public CaesarImageDescriptor(StructureNode node, ImageDescriptor baseImage){
+	public CaesarImageDescriptor(IProgramElement node, ImageDescriptor baseImage){
 		this.node = node;
 		this.baseImage = baseImage;
 	}
@@ -78,7 +78,7 @@ public class CaesarImageDescriptor extends CompositeImageDescriptor {
 	 * @param baseImage
 	 * @param decorate
 	 */
-	public CaesarImageDescriptor(StructureNode node, ImageDescriptor baseImage, boolean decorate){
+	public CaesarImageDescriptor(IProgramElement node, ImageDescriptor baseImage, boolean decorate){
 		this.decorate = decorate;
 		this.node = node;
 		this.baseImage = baseImage;
@@ -105,8 +105,8 @@ public class CaesarImageDescriptor extends CompositeImageDescriptor {
 		// Only decorate image if decorate-flag is set to true.
 		if(this.decorate){
 			// draw adornments, depends on node
-			if(CaesarProgramElementNode.Kind.CONSTRUCTOR == getKind()
-					|| ProgramElementNode.Kind.CONSTRUCTOR == getKind()){
+			if(CaesarProgramElement.Kind.CONSTRUCTOR == getKind()
+					|| IProgramElement.Kind.CONSTRUCTOR == getKind()){
 				// CONSTRUCTOR
 				draw(JavaPluginImages.DESC_OVR_CONSTRUCTOR.getImageData(), UPPER_RIGHT);
 			}
@@ -124,23 +124,23 @@ public class CaesarImageDescriptor extends CompositeImageDescriptor {
 			}
 			
 			List modifiers = getModifiers();
-			if(modifiers.contains(CaesarProgramElementNode.Modifiers.ABSTRACT)
-					|| modifiers.contains(ProgramElementNode.Modifiers.ABSTRACT)){
+			if(modifiers.contains(CaesarProgramElement.Modifiers.ABSTRACT)
+					|| modifiers.contains(IProgramElement.Modifiers.ABSTRACT)){
 				// ABSTRACT
 				draw(JavaPluginImages.DESC_OVR_ABSTRACT.getImageData(), UPPER_RIGHT);
 			}
-			if(modifiers.contains(CaesarProgramElementNode.Modifiers.STATIC)
-					|| modifiers.contains(ProgramElementNode.Modifiers.STATIC)){
+			if(modifiers.contains(CaesarProgramElement.Modifiers.STATIC)
+					|| modifiers.contains(IProgramElement.Modifiers.STATIC)){
 				// STATIC
 				draw(JavaPluginImages.DESC_OVR_STATIC.getImageData(), UPPER_RIGHT);
 			}
-			if(modifiers.contains(CaesarProgramElementNode.Modifiers.FINAL)
-					|| modifiers.contains(ProgramElementNode.Modifiers.FINAL)){
+			if(modifiers.contains(CaesarProgramElement.Modifiers.FINAL)
+					|| modifiers.contains(IProgramElement.Modifiers.FINAL)){
 				// FINAL
 				draw(JavaPluginImages.DESC_OVR_FINAL.getImageData(), UPPER_RIGHT);
 			}
-			if(modifiers.contains(CaesarProgramElementNode.Modifiers.SYNCHRONIZED)
-					|| modifiers.contains(ProgramElementNode.Modifiers.SYNCHRONIZED)){
+			if(modifiers.contains(CaesarProgramElement.Modifiers.SYNCHRONIZED)
+					|| modifiers.contains(IProgramElement.Modifiers.SYNCHRONIZED)){
 				// SYNCHRONIZED
 				draw(JavaPluginImages.DESC_OVR_SYNCH.getImageData(), LOWER_RIGHT);
 			}
@@ -178,38 +178,38 @@ public class CaesarImageDescriptor extends CompositeImageDescriptor {
 	}
 	
 	protected Object getKind(){
-		if(node instanceof CaesarProgramElementNode){
-			return ((CaesarProgramElementNode)node).getCaesarKind();
-		}else if(node instanceof ProgramElementNode){
-			return ((ProgramElementNode)node).getProgramElementKind();
+		if(node instanceof CaesarProgramElement){
+			return ((CaesarProgramElement)node).getCaesarKind();
+		}else if(node instanceof ProgramElement){
+			return ((ProgramElement)node).getKind();
 		}else{
 			return null;
 		}
 	}
 	protected List getModifiers(){
-		if(node instanceof ProgramElementNode){
-			return ((ProgramElementNode)node).getModifiers();
+		if(node instanceof ProgramElement){
+			return ((ProgramElement)node).getModifiers();
 		}else{
 			return new ArrayList();
 		}
 	}
 	protected boolean isImplementor(){
-		if(node instanceof ProgramElementNode){
-			return ((ProgramElementNode)node).isImplementor();
+		if(node instanceof ProgramElement){
+			return ((ProgramElement)node).isImplementor();
 		}else{
 			return false;
 		}
 	}
 	protected boolean isOverrider(){
-		if(node instanceof ProgramElementNode){
-			return ((ProgramElementNode)node).isOverrider();
+		if(node instanceof ProgramElement){
+			return ((ProgramElement)node).isOverrider();
 		}else{
 			return false;
 		}
 	}
 	protected boolean isRunnable(){
-		if(node instanceof ProgramElementNode){
-			return ((ProgramElementNode)node).isRunnable();
+		if(node instanceof ProgramElement){
+			return ((ProgramElement)node).isRunnable();
 		}else{
 			return false;
 		}

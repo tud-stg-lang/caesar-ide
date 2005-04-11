@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarAdapter.java,v 1.27 2005-03-03 09:23:56 gasiunas Exp $
+ * $Id: CaesarAdapter.java,v 1.28 2005-04-11 09:03:28 thiago Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -29,10 +29,11 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.aspectj.asm.IHierarchy;
 import org.apache.log4j.Logger;
-import org.aspectj.asm.StructureModel;
 import org.caesarj.compiler.KjcEnvironment;
 import org.caesarj.compiler.Main;
+import org.caesarj.compiler.asm.CaesarAsmBuilder;
 import org.caesarj.compiler.ast.phylum.JCompilationUnit;
 import org.caesarj.util.CWarning;
 import org.caesarj.util.PositionedError;
@@ -99,7 +100,7 @@ public final class CaesarAdapter extends Main {
 		// The singleton is not used anymore, because the plugin can have more than
 		// one project and each project must have a structure model
 		//this.model = StructureModelManager.INSTANCE.getStructureModel();
-		this.model = new StructureModel();
+		this.model = CaesarAsmBuilder.createHierarchy();
 		
 		boolean success = false;
 		String args[] = new String[sourceFiles.size() + 4];
@@ -167,9 +168,9 @@ public final class CaesarAdapter extends Main {
 		this.progressMonitor.worked(1);
 	}
 	/**
-	 * @return Returns the model.
+	 * @return Returns the hierarchy.
 	 */
-	public StructureModel getModel() {
+	public IHierarchy getHierarchy() {
 		return model;
 	}
 
