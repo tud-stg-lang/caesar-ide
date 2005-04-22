@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarHierarchyView.java,v 1.38 2005-03-10 09:51:09 gasiunas Exp $
+ * $Id: CaesarHierarchyView.java,v 1.39 2005-04-22 07:48:32 thiago Exp $
  */
 
 package org.caesarj.ui.views;
@@ -417,8 +417,8 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		toolButton.setEnabled(true);
 		
 		// Check if we already have an ASM for the project. If we don't have,
-		// Just call the update method with empty nodes (to show a message) and return
-		if (properties == null || properties.getStructureModel() == null) {
+		// just call the update method with empty nodes (to show a message) and return
+		if (properties == null || properties.getAsmManager() == null) {
 			treeViewer.setInput(new RootNode(HierarchyNode.EMPTY));
 			listViewer.setInput(new LinearNode(HierarchyNode.EMPTY));
 			// Disable the buttons, since we don't have input
@@ -446,7 +446,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 			
 			// Create the input nodes with the factory
 			RootNode rootNode = HierarchyModelFactory.createHierarchyTreeModel(
-					properties.getStructureModel(), 
+					properties.getAsmManager().getHierarchy(), 
 					filename, 
 					outputdir, 
 					implicitFilter, 
@@ -495,7 +495,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 	protected void refreshTree(String nodeName) {
 		treeViewer.setInput(
 				HierarchyModelFactory.createHierarchyTreeModel(
-						activeProjectProperties.getStructureModel(), 
+						activeProjectProperties.getAsmManager().getHierarchy(), 
 						nodeName, 
 						activeProjectProperties.getProjectLocation() + activeProjectProperties.getOutputPath(), 
 						implicitFilter, 

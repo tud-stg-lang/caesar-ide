@@ -20,14 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: AdviceMarkerResolutionGenerator.java,v 1.13 2005-01-24 16:57:22 aracic Exp $
+ * $Id: AdviceMarkerResolutionGenerator.java,v 1.14 2005-04-22 07:48:47 thiago Exp $
  */
 
 package org.caesarj.ui.marker;
 
 import org.apache.log4j.Logger;
-import org.aspectj.asm.LinkNode;
 import org.caesarj.ui.editor.CaesarEditor;
+import org.caesarj.ui.editor.model.LinkNode;
 import org.caesarj.ui.util.ProjectProperties;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -50,16 +50,14 @@ import org.eclipse.ui.ide.IDE;
  * ändern: Fenster&gt;Benutzervorgaben&gt;Java&gt;Codegenerierung&gt;Code und
  * Kommentare
  */
-public class AdviceMarkerResolutionGenerator implements
-		IMarkerResolutionGenerator, IMarkerResolutionGenerator2 {
+public class AdviceMarkerResolutionGenerator implements	IMarkerResolutionGenerator, IMarkerResolutionGenerator2 {
 
 	static Logger logger = Logger
 			.getLogger(AdviceMarkerResolutionGenerator.class);
 
 	public IMarkerResolution[] getResolutions(IMarker marker) {
 		try {
-			LinkNode advices[] = (LinkNode[]) marker
-					.getAttribute(AdviceMarker.LINKS);
+			LinkNode advices[] = (LinkNode[]) marker.getAttribute(AdviceMarker.LINKS);
 			IMarkerResolution res[] = new AdviceMarkerResolution[advices.length];
 			IMarkerResolution temp = null;
 			for (int i = 0; i < advices.length; i++) {
@@ -114,7 +112,8 @@ public class AdviceMarkerResolutionGenerator implements
 		}
 
 		private IFile getLinkLocation(IProject activeProject) {
-			String fullPath = this.link.getProgramElementNode()
+		    
+			String fullPath = this.link.getTargetElement()
 					.getSourceLocation().getSourceFile().getAbsolutePath();
 			return (IFile) ProjectProperties.findResource(fullPath,
 					activeProject);

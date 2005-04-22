@@ -20,20 +20,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarOutlineViewContentProvider.java,v 1.4 2005-04-11 09:04:00 thiago Exp $
+ * $Id: CaesarOutlineViewContentProvider.java,v 1.5 2005-04-22 07:48:32 thiago Exp $
  */
 
 package org.caesarj.ui.editor;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Vector;
+import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.aspectj.asm.IHierarchy;
 import org.aspectj.asm.IProgramElement;
 import org.aspectj.asm.IRelationship;
+import org.aspectj.asm.IRelationshipMap;
 import org.aspectj.asm.internal.ProgramElement;
+import org.aspectj.asm.internal.RelationshipMap;
+import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.asm.CaesarProgramElement;
-import org.eclipse.core.resources.IProject;
+import org.caesarj.compiler.asm.CaesarProgramElement.Kind;
+import org.caesarj.ui.editor.model.LinkNode;
+import org.caesarj.ui.util.ProjectProperties;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -44,137 +51,266 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
 
-	private IProject project = null;
+	private ProjectProperties projectProperties = null;
 	
-	public CaesarOutlineViewContentProvider(IProject project) {
-		this.project = project;
+	public CaesarOutlineViewContentProvider() {
 	}
 	
+	/**
+	 * Sets the project properties
+	 * 
+	 * @param projectProperties
+	 */
+	public void setProjectProperties(ProjectProperties projectProperties) {
+	    this.projectProperties = projectProperties;
+	}
+	
+	/**
+	 * Implementation for the ITreeContentProvider interface
+	 * Called before the class is disposed
+	 */
 	public void dispose() {
 	}
 
+	/**
+	 * Called when the provider has a new input to show.
+	 * 
+	 * @param viewer the element using this provider. Probably a ListViewer
+	 * @param oldInput the input object that was the previous input for this provider
+	 * @param newInput the new input object.
+	 *  
+	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		
 	}
 
-	public Object[] getElements(Object inputElement) {
-		Vector elements = new Vector();
-		
-		if (inputElement instanceof CaesarProgramElement){
-			// add children
-			elements.addAll(((CaesarProgramElement) inputElement).getChildren());
-		}
-		else{
-			if(inputElement != null){
-				Logger.getLogger(this.getClass()).info("getElements() called with instanceof " + inputElement.getClass().getName());
-			}else{
-				Logger.getLogger(this.getClass()).info("getElements() called with NULL.");
-			}
-		}
-		return elements.toArray();
-	}
-
-	public Object[] getChildren(Object parentElement) {
-		//Logger.getLogger(this.getClass()).info("getChildren()" + parentElement);
-		Vector elements = new Vector();
-		if(parentElement instanceof CaesarProgramElement){
-			//Logger.getLogger(this.getClass()).info("getChildren() called with instanceof CaesarProgramElementNode."  + parentElement.getClass().getName());
-			// if parentElement is of kind PACKAGE dont add children!
-			if(CaesarProgramElement.Kind.PACKAGE == ((CaesarProgramElement)parentElement).getCaesarKind()){
-				
-			}else if(CaesarProgramElement.Kind.IMPORTS == ((CaesarProgramElement)parentElement).getCaesarKind()){
-				// remove the import java/lang
-				Iterator it = ((CaesarProgramElement)parentElement).getChildren().iterator();
-				while(it.hasNext()){
-					CaesarProgramElement child = (CaesarProgramElement)it.next();
-					if(child.getName().compareTo("java/lang") != 0){
-						elements.add(child);
-					}
-				}
-			}else{
-				// add children
-				// add all children except if child is of Kind ADVICE_REGISTRY, then add childs children to node
-				Iterator it = ((CaesarProgramElement)parentElement).getChildren().iterator();
-				while(it.hasNext()){
-					Object child = it.next();
-					if(child instanceof CaesarProgramElement){
-						if(CaesarProgramElement.Kind.ADVICE_REGISTRY == ((CaesarProgramElement)child).getCaesarKind()){
-							elements.addAll(((CaesarProgramElement)child).getChildren());
-						}else{
-							boolean addAsChild = true;
-							if (CaesarProgramElement.Kind.METHOD == ((CaesarProgramElement)child).getCaesarKind()){
-								if (((CaesarProgramElement)child).getName().equals("aspectOf")
-										|| ((CaesarProgramElement)child).getName().indexOf('$') != -1)
-								{
-									// do not add child!
-									addAsChild = false;
-								}
-							}
-							if (CaesarProgramElement.Kind.FIELD == ((CaesarProgramElement)child).getCaesarKind()) {
-								if (((CaesarProgramElement)child).getName().indexOf('$') != -1) {
-									// do not add child
-									addAsChild = false;
-								}
-							}
-							if(addAsChild) elements.add(child);
-						}
-					}else{
-						elements.add(child);
-					}
-				}
-				//elements.addAll(((CaesarProgramElementNode)parentElement).getChildren());
-				
-				// add relations
-				elements.addAll(((CaesarProgramElement)parentElement).getRelations());
-				
-				// Iterate through relations and set markers for all RelationNodes.
-				it = ((CaesarProgramElement)parentElement).getRelations().iterator();
-				while(it.hasNext()){
-					Object next = it.next();
-					if(next instanceof IRelationship){
-						setMarkers((CaesarProgramElement)parentElement, (IRelationship)next);
-					}
-				}
-			}
-		}else if(parentElement instanceof ProgramElement){
-			Logger.getLogger(this.getClass()).info("getChildren() called with instanceof ProgramElementNode." + 
-			        ((ProgramElement)parentElement).getKind().toString());
-			// add children
-			elements.addAll(((ProgramElement)parentElement).getChildren());
-			// add relations
-			elements.addAll(((ProgramElement)parentElement).getRelations());
-			
-			// Iterate through relations and set markers for all RelationNodes.
-			Iterator it = ((ProgramElement)parentElement).getRelations().iterator();
-			while(it.hasNext()){
-				Object next = it.next();
-				if(next instanceof IRelationship){
-					setMarkers((ProgramElement)parentElement, (IRelationship)next);
-				}
-			}
-		}else if(parentElement instanceof IProgramElement){
-			Logger.getLogger(this.getClass()).info("getChildren() called with instanceof StructureNode." + parentElement.getClass().getName());
-			// add children
-			elements.addAll(((IProgramElement)parentElement).getChildren());
+	/**
+	 * This method is called when we have a new input. It returns all the elements that will
+	 * appear in the tree. If the input is a IProgramElement, it returns the children. Else,
+	 * return an empty array.
+	 */
+	public Object[] getElements(Object input) {
+	    
+	    if (input instanceof IProgramElement) {
+	        return ((IProgramElement) input).getChildren().toArray();
+	    }
+	    
+	    // Log some error
+	    if(input != null){
+	        Logger.getLogger(this.getClass()).info("getElements() called with instanceof " + input.getClass().getName());
 		}else{
-			if(parentElement != null){
-				Logger.getLogger(this.getClass()).info("getChildren() called with instanceof " + parentElement.getClass().getName());
-			}else{
-				Logger.getLogger(this.getClass()).info("getChildren() called with NULL.");
-			}
+			Logger.getLogger(this.getClass()).info("getElements() called with NULL.");
 		}
-		return elements.toArray();
+	    return new Object[0];
 	}
 
+	/**
+	 * Returns the children from the element.
+	 * 
+	 */
+	public Object[] getChildren(Object parent) {
+	    
+	    if (parent instanceof LinkNode) {
+	        return getChildren((LinkNode) parent);
+	    }
+	    if (parent instanceof CaesarProgramElement) {
+	        return getChildren((CaesarProgramElement) parent);
+	    }
+	    if (parent instanceof ProgramElement) {
+	        return getChildren((ProgramElement) parent);
+	    }
+	    if (parent instanceof IProgramElement) {
+	        return getChildren((IProgramElement) parent);
+	    }
+	    
+	    // Log error
+        if (parent != null) {
+            Logger.getLogger(this.getClass()).info("getChildren() called with instanceof " + parent.getClass().getName());
+        } else {
+            Logger.getLogger(this.getClass()).info("getChildren() called with NULL.");
+        }
+	    return new Object[0];
+	}
+	
+	/**
+	 * 
+	 * @param parent
+	 * @return
+	 */
+	protected Object[] getChildren(IProgramElement parent) {
+	    return parent.getChildren().toArray();
+	}
+	
+	/**
+	 * 
+	 * @param parent
+	 * @return
+	 */
+	protected Object[] getChildren(LinkNode parent) {
+	    return parent.getChildren().toArray();
+	}
+	
+	/**
+	 * 
+	 * @param parent
+	 * @return
+	 */
+	protected Object[] getChildren(ProgramElement parent) {
+	    
+	    ArrayList elements = new ArrayList();
+	    
+        // add children
+        elements.addAll(parent.getChildren());
+        // add relations
+        elements.addAll(parent.getRelations());
+
+        // Iterate through relations and set markers for all RelationNodes.
+        Iterator it = parent.getRelations().iterator();
+        while (it.hasNext()) {
+            Object next = it.next();
+            if (next instanceof IRelationship) {
+                setMarkers(parent, (IRelationship) next);
+            }
+        }
+        
+        return elements.toArray();
+	}
+	
+	/**
+	 * 
+	 * @param parent
+	 * @return
+	 */
+	protected Object[] getChildren(CaesarProgramElement parent) {
+	    
+	    // Get the parent's kind
+	    Kind kind = parent.getCaesarKind();
+	    
+	    // Do not get children from packages
+	    if (CaesarProgramElement.Kind.PACKAGE == kind) {
+	        return new Object[0];
+	    }
+	    
+	    ArrayList elements = new ArrayList();
+	    
+	    // If the element is an import declaration list, get the children, removing java/lang
+	    if (CaesarProgramElement.Kind.IMPORTS == kind) {
+	        
+	        Iterator i = parent.getChildren().iterator();
+	        while(i.hasNext()) {
+                CaesarProgramElement child = (CaesarProgramElement) i.next();
+                if (child.getName().compareTo("java.lang") != 0) {
+                    elements.add(child);
+                }	            
+	        }
+	        return elements.toArray();
+	    }
+	    
+        // add children
+        // add all children except if child is of Kind ADVICE_REGISTRY,
+        // then add childs children to node
+	    Iterator i = parent.getChildren().iterator();
+	    while(i.hasNext()) {
+	        IProgramElement childElement = (IProgramElement) i.next();
+	        // If it is an aspectj node, add all children
+	        if (! (childElement instanceof CaesarProgramElement)) {
+	            elements.add(childElement.getChildren());
+	        } else {
+	            // Transform to caesar types
+	            CaesarProgramElement child = (CaesarProgramElement) childElement;
+	            Kind childKind = ((CaesarProgramElement) child).getCaesarKind();
+	            
+	            // If it is an ADVICE_REGISTRY, add all its children, but not itself
+	            if (CaesarProgramElement.Kind.ADVICE_REGISTRY == childKind) {
+                    elements.addAll(child.getChildren());
+                } else {
+                    
+                    // We must avoid adding some elements, like support methods and fields
+                    boolean addAsChild = true;
+                    // Avoid support methods
+                    if (CaesarProgramElement.Kind.METHOD == childKind &&
+                       (child.getName().equals("aspectOf") || child.getName().indexOf('$') != -1)) {
+                            addAsChild = false;
+                    }
+                    if (CaesarProgramElement.Kind.FIELD == childKind &&
+                        child.getName().indexOf('$') != -1 ) {
+                            addAsChild = false;
+                    }
+                    if (addAsChild)
+                        elements.add(child);
+                }
+	        }
+	    }
+
+	    
+	    IRelationshipMap map = projectProperties.getAsmManager().getRelationshipMap();
+		IHierarchy hierarchy = projectProperties.getAsmManager().getHierarchy();
+		((RelationshipMap) map).setHierarchy(hierarchy);
+
+		
+		List relationships = map.get(parent.getHandleIdentifier());
+		if (relationships != null) {
+			Iterator j = relationships.iterator();
+			while(j.hasNext()) {
+			    IRelationship relationship = (IRelationship) j.next();
+			    //System.out.println("Relationship " + relationship.getName() + " has " + relationship.getTargets().size() + " targets ");
+				
+			    LinkNode relationNode = new LinkNode(relationship);
+			    parent.addChild(relationNode);
+			    elements.add(relationNode);
+			    
+			    Iterator k = relationship.getTargets().iterator();
+				while(k.hasNext()) {
+				    IProgramElement element = hierarchy.findElementForHandle((String) k.next());
+				    ISourceLocation src = element.getSourceLocation();
+				   
+				    //System.out.println("  -> " + element.getKind() + " " + element.getName() + " on " +
+				    //        src.getSourceFile() + " line " + src.getLine() + " to " + src.getEndLine());
+				    
+				    
+				    LinkNode link = new LinkNode(relationship, element);
+				    relationNode.addChild(link);
+				    
+				} 
+			}	  
+		}
+	
+		/*
+	    // add relations
+        elements.addAll(parent.getRelations());
+
+        // Iterate through relations and set markers for all
+        // RelationNodes.
+        i = parent.getRelations().iterator();
+        while (i.hasNext()) {
+            Object next = i.next();
+            if (next instanceof IRelationship) {
+                setMarkers(parent, (IRelationship) next);
+            }
+        }
+        */
+		
+        return elements.toArray();
+    }
+
+	/**
+     * Implementation for the ITreeContentProvider interface
+     * 
+     * Returns the parent if it is an IProgramElement or null
+     */
 	public Object getParent(Object element) {
-		Logger.getLogger(this.getClass()).info("getParent()" + element);
 		if(element instanceof IProgramElement){
 			return ((IProgramElement) element).getParent();
 		}
 		return null;
 	}
 
+	/**
+	 * Returns true if the element has children, false otherwise
+	 */
 	public boolean hasChildren(Object element) {
+	    if (element instanceof LinkNode) {
+	        return false;
+	    }
 		if(element instanceof CaesarProgramElement){
 			//Logger.getLogger(this.getClass()).info("hasChildren() called with instanceof CaesarProgramElement. " + element.getClass().getName());
 			if(CaesarProgramElement.Kind.PACKAGE == ((CaesarProgramElement)element).getCaesarKind()){
@@ -255,4 +391,5 @@ public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
 		}
 		*/
 	}
+	
 }

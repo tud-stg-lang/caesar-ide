@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarModelTest.java,v 1.8 2005-04-11 09:03:28 thiago Exp $
+ * $Id: CaesarModelTest.java,v 1.9 2005-04-22 07:48:32 thiago Exp $
  */
 
 package org.caesarj.ui.test;
@@ -31,12 +31,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import org.aspectj.asm.IHierarchy;
-
-import org.caesarj.compiler.asm.CaesarJElementHierarchy;
-import org.caesarj.ui.builder.CaesarAdapter;
-import org.aspectj.asm.internal.AspectJElementHierarchy;
 import org.aspectj.asm.IProgramElement;
+import org.aspectj.asm.internal.AspectJElementHierarchy;
 import org.aspectj.asm.internal.ProgramElement;
+import org.caesarj.ui.builder.CaesarAdapter;
 
 /**
  * Test for ASM.
@@ -45,7 +43,7 @@ import org.aspectj.asm.internal.ProgramElement;
  */
 public class CaesarModelTest {
 	
-    protected static IHierarchy hierarchy = new CaesarJElementHierarchy();
+    protected static IHierarchy hierarchy = new AspectJElementHierarchy();
 	
 	public static void main(String[] args) {        
         

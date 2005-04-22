@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarOutlineViewLabelProvider.java,v 1.3 2005-04-11 09:04:00 thiago Exp $
+ * $Id: CaesarOutlineViewLabelProvider.java,v 1.4 2005-04-22 07:48:32 thiago Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -28,10 +28,10 @@ package org.caesarj.ui.editor;
 import java.util.Iterator;
 
 import org.aspectj.asm.IProgramElement;
-import org.aspectj.asm.IRelationship;
 import org.aspectj.asm.internal.ProgramElement;
 import org.caesarj.compiler.asm.CaesarProgramElement;
 import org.caesarj.ui.CaesarPluginImages;
+import org.caesarj.ui.editor.model.LinkNode;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -43,34 +43,73 @@ import org.eclipse.swt.graphics.Image;
  */
 public class CaesarOutlineViewLabelProvider extends LabelProvider {
 
+    /**
+     * 
+     */
 	public String getText(Object element) {
-		if(element instanceof CaesarProgramElement){
+		if(element instanceof CaesarProgramElement) {
 			return TextFactory.getText((CaesarProgramElement)element);
-		}else if(element instanceof IRelationship){
-		    // TODO CHECK IT.. it was Structure
-			//return TextFactory.getText((IRelationship)element);
-			//return ((StructureNode)element).getName() + " (Class:" + element.getClass().getName() + ")";
+		} else if (element instanceof LinkNode) {
+		    return TextFactory.getText((LinkNode) element);
+		} else if (element instanceof IProgramElement) {
+		    return TextFactory.getText((IProgramElement) element);
 		}
-		return "Not a StructureNode";
+		return "Unknown Node";
 	}
 	
+	/**
+	 * 
+	 */
 	public Image getImage(Object element) {
 		if(element instanceof CaesarProgramElement){
 			return ImageFactory.getImage((CaesarProgramElement)element);
-		}else if(element instanceof ProgramElement){
-			return ImageFactory.getImage(((ProgramElement)element));
+		} else if (element instanceof LinkNode) {
+		    return ImageFactory.getImage((LinkNode) element);
+		} else if (element instanceof IProgramElement) {
+		    return ImageFactory.getImage((IProgramElement) element);
 		}
 		return null;
 	}
 	
+	
+	/**
+	 * 
+	 * TODO - Comments
+	 *
+	 *
+	 */
 	public static class TextFactory {
+	    
 		public static String getText(IProgramElement node){
 			String text = node.getName();
-			if(node instanceof ProgramElement){
-				if(ProgramElement.Kind.CODE != ((ProgramElement)node).getKind()){
-					text += "(" + ((ProgramElement)node).getKind().toString() + ")";
-				}
+			if(ProgramElement.Kind.CODE != ((ProgramElement)node).getKind()){
+			    text += "(" + ((ProgramElement)node).getKind().toString() + ")";
 			}
+			return text;
+		}
+		
+		public static String getText(LinkNode node) {
+		    
+		    if (node.getType() == LinkNode.LINK_NODE_RELATIONSHIP) {
+		        return node.getRelationship().getName();
+		    } else {
+		        IProgramElement targ = node.getTargetElement();
+		    
+			    String className = targ.getParent().getName();
+			    int end = className.lastIndexOf("_Impl");
+			    if (end < 0) {
+			        end = className.lastIndexOf(".java");
+			    }
+			    if (end > -1) {
+			        className = className.substring(0, end);
+			    }
+			    String text = className + " : " + targ.getName();
+			    // Add the method sign
+			    if (targ.getKind() == IProgramElement.Kind.METHOD) {
+			        text += "()";
+			    }
+		    	return text;
+		    }
 				/*
 				 * TODO CHECK LINKNODE!
 			}else if(node instanceof LinkNode){
@@ -91,7 +130,7 @@ public class CaesarOutlineViewLabelProvider extends LabelProvider {
 				text += ": " + classname;
 			}*/
 				
-			return text;
+			//return text;
 		}
 		public static String getText(CaesarProgramElement node){
 			String text = node.getName();
@@ -165,7 +204,10 @@ public class CaesarOutlineViewLabelProvider extends LabelProvider {
 				text += ": " + extractClassName(node.getType());
 			}else if(CaesarProgramElement.Kind.ADVICE == node.getCaesarKind()){
 				// ADVICE node
-				
+
+			} else if (CaesarProgramElement.Kind.POINTCUT == node.getCaesarKind()) {
+			    // POINTCUT node
+			    text += ": Pointcut";
 			}else{
 				// mark not yet processed elements.
 				text += " (!)" + node.getCaesarKind().toString();
@@ -191,15 +233,25 @@ public class CaesarOutlineViewLabelProvider extends LabelProvider {
 		}
 	}
 	
+	/**
+	 * 
+	 * TODO - Comments
+	 *
+	 *
+	 */
 	public static class ImageFactory {
-		public static Image getImage(IProgramElement node){
+		public static Image getImage(IProgramElement node) {
 			Image image = null;
-			if(node instanceof ProgramElement){
-				// only return image if kind is CODE
-				if(ProgramElement.Kind.CODE == ((ProgramElement)node).getKind()){
-					image = new CaesarImageDescriptor((ProgramElement)node, CaesarPluginImages.DESC_CODE).createImage();
-				}
+			
+			// only return image if kind is CODE
+			if(ProgramElement.Kind.CODE == node.getKind()) {
+				image = new CaesarImageDescriptor((ProgramElement)node, CaesarPluginImages.DESC_CODE).createImage();
 			}
+			return image;
+		}
+	
+		public static Image getImage(LinkNode node) {
+		    
 			/*
 			 * TODO CHECK LINKNODE!!
 			 
@@ -219,7 +271,15 @@ public class CaesarOutlineViewLabelProvider extends LabelProvider {
 				//		.createImage();
 				image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_ADVICE).createImage();
 			}*/
-			return image;
+		    if (node.getType() == LinkNode.LINK_NODE_RELATIONSHIP) {
+		        return new CaesarImageDescriptor(node, CaesarPluginImages.DESC_ADVICE).createImage();
+		    } else {
+		        if (node.getRelationship().getName().equals("advises")) {
+		            return new CaesarImageDescriptor(node, CaesarPluginImages.DESC_JOINPOINT_FORWARD).createImage();
+		        } else {
+		            return new CaesarImageDescriptor(node, CaesarPluginImages.DESC_JOINPOINT_BACK).createImage();
+		        }
+		    }
 		}
 		public static Image getImage(CaesarProgramElement node) {
 			Image image = null;

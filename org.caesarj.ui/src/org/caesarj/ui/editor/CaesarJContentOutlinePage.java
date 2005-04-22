@@ -20,11 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarJContentOutlinePage.java,v 1.3 2005-04-11 09:04:00 thiago Exp $
+ * $Id: CaesarJContentOutlinePage.java,v 1.4 2005-04-22 07:48:32 thiago Exp $
  */
 
 package org.caesarj.ui.editor;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -37,6 +39,7 @@ import org.aspectj.asm.internal.ProgramElement;
 import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.asm.CaesarProgramElement;
 import org.caesarj.ui.CaesarPlugin;
+import org.caesarj.ui.editor.model.LinkNode;
 import org.caesarj.ui.util.ProjectProperties;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -50,6 +53,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -106,26 +110,6 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 	 * are updated.
 	 */
 	private static Hashtable instances = new Hashtable();
-	
-	/**
-	 * TODO REMOVE THIS CLASS, BECAUSE IT IS NOT BEING USED!
-	 */
-	private class LexicalSorter extends ViewerSorter {
-		/**
-		 * Return a category code for the element. This is used to sort
-		 * alphabetically within categories. Categories are: pointcuts, advice,
-		 * introductions, declarations, other. i.e. all pointcuts will be sorted
-		 * together rather than interleaved with advice.
-		 */
-		public int category(Object element) {
-			try {
-				return ((Integer) categoryMap
-						.get(((ProgramElement) element).getKind())).intValue();
-			} catch (Exception e) {
-				return 999;
-			}
-		}
-	};
 
 	/**
 	 * The CaesarEditor related to this outline page
@@ -136,6 +120,11 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 	 * The project object related to the page the editor is using
 	 */
 	protected IProject project;
+	
+	/**
+	 * The content provider for the tree
+	 */
+	protected CaesarOutlineViewContentProvider contentProvider;
 	
 	/**
 	 * Creates a new ContentOutlinePage using the given caesarEditor. Puts this
@@ -164,20 +153,21 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		
+		contentProvider = new CaesarOutlineViewContentProvider();
+		
 		// Creates the helper classes and associates them to the tree viewer
 		TreeViewer viewer = getTreeViewer();
-		viewer.setSorter(new CaesarOutlineViewLexicalSorter());
-		viewer.setContentProvider(new CaesarOutlineViewContentProvider(project));
+		//viewer.setSorter(new CaesarOutlineViewLexicalSorter());
+		viewer.setSorter(new CaesarOutlineViewLineSorter());
+		viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(new CaesarOutlineViewLabelProvider());
 		viewer.addSelectionChangedListener(this);
 
 		// Call update to create the initial state
 		ProjectProperties properties = ProjectProperties.create(project);
-		if (properties.getStructureModel() != null) {
+		if (properties.getAsmManager() != null) {
 			update(ProjectProperties.create(project));
 		}
-		
-
 	}
 
 	/**
@@ -195,12 +185,13 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 		} else {
 			Object item = ((IStructuredSelection) selection).getFirstElement();
 
-			/*
-			 * TODO - LINKNODES!
 			if (item instanceof LinkNode) {
-				item = ((LinkNode) item).getProgramElementNode();
+			    if (((LinkNode) item).getType() == LinkNode.LINK_NODE_RELATIONSHIP) {
+			        return;
+			    }
+				item = ((LinkNode) item).getTargetElement();
 			}
-*/
+
 			IProgramElement selectedNode = (IProgramElement) item;
 			ISourceLocation sourceLocation = selectedNode.getSourceLocation();
 
@@ -259,8 +250,9 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 	 * Updates the outline page.
 	 */
 	public void update(ProjectProperties properties) {
-
-	    IProgramElement input = getInput(properties.getStructureModel().getRoot());
+	    
+	    contentProvider.setProjectProperties(properties);
+	    IProgramElement input = getInput(properties.getAsmManager().getHierarchy().getRoot());
 		
 		TreeViewer viewer = getTreeViewer();
 		if (viewer != null && input != null) {
@@ -324,4 +316,54 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 		return false;
 	}
 	
+	/**
+	 * 
+	 * The sorter for the tree view.
+	 * 
+	 * This class sorts the nodes according to the line they appear in the 
+	 * code. 
+	 *
+	 * @author Thiago Tonelli Bartolomei <bart@macacos.org>
+	 *
+	 */
+	public class CaesarOutlineViewLineSorter extends ViewerSorter {
+	    
+	    /**
+	     * The comparator used to sort
+	     */
+	    private Comparator comparator;
+	    
+	    /**
+	     * Constructor, creates a comparator
+	     */
+	    public CaesarOutlineViewLineSorter() { 
+	        
+	    	comparator = new Comparator() {
+			    public int compare(Object o1, Object o2) {
+			        if (o1 instanceof IProgramElement && o2 instanceof IProgramElement) {
+			            int l1 = ((IProgramElement) o1).getSourceLocation().getLine();
+			        	int l2 = ((IProgramElement) o2).getSourceLocation().getLine();
+			        	return l1 - l2;
+			        }
+			        if (o1 instanceof IProgramElement) {
+			        	return 1;
+			        }
+			        if (o2 instanceof IProgramElement) {
+			            return -1;
+			        }
+			        return 0;
+			    }
+	    	};
+		}
+		
+	    /**
+	     * Uses the comparator to sort the elements
+	     */
+		public void sort(final Viewer viewer, Object[] elements) {
+		    if (elements.length <= 1) {
+		        return;
+		    }
+			Arrays.sort(elements, comparator); 
+		}
+	}
 }
