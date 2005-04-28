@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarJContentOutlinePage.java,v 1.4 2005-04-22 07:48:32 thiago Exp $
+ * $Id: CaesarJContentOutlinePage.java,v 1.5 2005-04-28 12:40:52 meffert Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -58,6 +58,8 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
@@ -226,14 +228,24 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 
 
 
-	// Iterates through StructureModel until a Node with name equal to
-	// Editor-Input-Name (should be the filename) is found.
+	//Iterates through the StructureModel and return the sourcefile node for 
+	// the active editor input.
 	protected IProgramElement getInput(IProgramElement node) {
+		String filename = null;
+		IEditorInput editorInput = this.caesarEditor.getEditorInput();
+		if(editorInput instanceof IPathEditorInput){
+			filename = ((IPathEditorInput)editorInput).getPath().toFile().getAbsolutePath();
+		}
 		if (node == null) {
 			return null;
 		}
+		if(filename == null){
+			return null;
+		}
 		IProgramElement r = null;
-		if (node.getName().equals(this.caesarEditor.getEditorInput().getName())) {
+		//if (node.getName().equals(this.caesarEditor.getEditorInput().getName())) {
+		if (node.getKind().isSourceFile()
+				&& node.getSourceLocation().getSourceFile().getAbsolutePath().equals(filename)) {
 			r = node;
 		} else {
 		    IProgramElement res = null;
