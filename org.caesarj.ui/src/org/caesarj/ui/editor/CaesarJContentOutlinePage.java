@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarJContentOutlinePage.java,v 1.5 2005-04-28 12:40:52 meffert Exp $
+ * $Id: CaesarJContentOutlinePage.java,v 1.6 2005-04-29 09:22:42 meffert Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -244,7 +244,7 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 		}
 		IProgramElement r = null;
 		//if (node.getName().equals(this.caesarEditor.getEditorInput().getName())) {
-		if (node.getKind().isSourceFile()
+		if (node.getKind() != null && node.getKind().isSourceFile()
 				&& node.getSourceLocation().getSourceFile().getAbsolutePath().equals(filename)) {
 			r = node;
 		} else {
