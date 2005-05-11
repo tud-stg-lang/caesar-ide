@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarOutlineViewLabelProvider.java,v 1.4 2005-04-22 07:48:32 thiago Exp $
+ * $Id: CaesarOutlineViewLabelProvider.java,v 1.5 2005-05-11 13:51:29 thiago Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -110,28 +110,8 @@ public class CaesarOutlineViewLabelProvider extends LabelProvider {
 			    }
 		    	return text;
 		    }
-				/*
-				 * TODO CHECK LINKNODE!
-			}else if(node instanceof LinkNode){
-				String classname = node.toString(); 
-				// node.toString() is of form: "[aspect] PricingDeployment_Impl: around"
-				classname = classname.substring(classname.lastIndexOf(']') + 2);
-				if(classname.lastIndexOf(':') > -1){
-					classname = classname.substring(0, classname.lastIndexOf(':'));
-					if(classname.lastIndexOf("_Impl") > -1){
-						classname = classname.substring(0, classname.lastIndexOf("_Impl"));
-					}
-				}else{
-					if(classname.lastIndexOf("_Impl") > -1){
-						classname = classname.substring(0, classname.lastIndexOf("_Impl"));
-					}
-					classname += "()";
-				}
-				text += ": " + classname;
-			}*/
-				
-			//return text;
 		}
+		
 		public static String getText(CaesarProgramElement node){
 			String text = node.getName();
 			if(CaesarProgramElement.Kind.PACKAGE == node.getCaesarKind()){
@@ -152,6 +132,10 @@ public class CaesarOutlineViewLabelProvider extends LabelProvider {
 					text = text.substring(0, text.lastIndexOf("_Impl"));
 			}else if(CaesarProgramElement.Kind.VIRTUAL_CLASS == node.getCaesarKind()){
 				// VIRTUAL CLASS Node
+				if(text.lastIndexOf("_Impl") > -1)
+					text = text.substring(0, text.lastIndexOf("_Impl"));
+			}else if(CaesarProgramElement.Kind.EXTERNAL_COLLABORATION == node.getCaesarKind()){
+				// EXTERNAL VIRTUAL CLASS Node
 				if(text.lastIndexOf("_Impl") > -1)
 					text = text.substring(0, text.lastIndexOf("_Impl"));
 			}else if(CaesarProgramElement.Kind.ASPECT == node.getCaesarKind()){
@@ -252,25 +236,6 @@ public class CaesarOutlineViewLabelProvider extends LabelProvider {
 	
 		public static Image getImage(LinkNode node) {
 		    
-			/*
-			 * TODO CHECK LINKNODE!!
-			 
-			}else if(node instanceof LinkNode){
-				ProgramElement pNode = ((LinkNode) node).getProgramElement();
-				if (pNode instanceof CaesarProgramElement && ((CaesarProgramElement)pNode).getCaesarKind() == CaesarProgramElement.Kind.ADVICE) {
-
-					image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_JOINPOINT_BACK).createImage();
-				} else {
-					image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_JOINPOINT_FORWARD).createImage();
-				}
-				/*
-				 * TODO CHECK IT.. it was instanceof RelationNode
-			}else if(node instanceof IRelationship){
-				//return new CaesarElementImageDescriptor(
-				//		CaesarPluginImages.DESC_ADVICE, null, BIG_SIZE)
-				//		.createImage();
-				image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_ADVICE).createImage();
-			}*/
 		    if (node.getType() == LinkNode.LINK_NODE_RELATIONSHIP) {
 		        return new CaesarImageDescriptor(node, CaesarPluginImages.DESC_ADVICE).createImage();
 		    } else {
@@ -326,6 +291,10 @@ public class CaesarOutlineViewLabelProvider extends LabelProvider {
 					// DEFAULT image
 					image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_OBJS_INNER_CCLASS_DEFAULT).createImage();
 				}
+			}else if(CaesarProgramElement.Kind.EXTERNAL_COLLABORATION == node.getCaesarKind()){
+				// EXTERNAL VIRTUAL CLASS Node
+				image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_OBJS_INNER_CCLASS_IMPLICID).createImage();
+				
 			}else if(CaesarProgramElement.Kind.ASPECT == node.getCaesarKind()){
 				// ASPECT Node
 				image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_ASPECT).createImage();

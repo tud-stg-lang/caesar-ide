@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarJContentOutlinePage.java,v 1.6 2005-04-29 09:22:42 meffert Exp $
+ * $Id: CaesarJContentOutlinePage.java,v 1.7 2005-05-11 13:51:29 thiago Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -332,9 +332,12 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 	 * 
 	 * The sorter for the tree view.
 	 * 
-	 * This class sorts the nodes according to the line they appear in the 
-	 * code. 
-	 *
+	 * This class sorts the nodes in the following order:
+	 * 
+	 * 	- packages;
+	 *  - imports;
+	 *  - from here, sort using the line number;
+	 * 
 	 * @author Thiago Tonelli Bartolomei <bart@macacos.org>
 	 *
 	 */
@@ -349,10 +352,29 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 	     * Constructor, creates a comparator
 	     */
 	    public CaesarOutlineViewLineSorter() { 
-	        
+
 	    	comparator = new Comparator() {
 			    public int compare(Object o1, Object o2) {
 			        if (o1 instanceof IProgramElement && o2 instanceof IProgramElement) {
+			            // Make PACKAGE -> IMPORTS -> rest defined by line
+			            IProgramElement.Kind k1 = ((IProgramElement) o1).getKind();
+			            IProgramElement.Kind k2 = ((IProgramElement) o2).getKind();
+			            
+			            // There's only one package, so, return if one is package
+			            if (IProgramElement.Kind.PACKAGE == k1)
+			                return -1;
+			            if (IProgramElement.Kind.PACKAGE == k2)
+			                return 1;
+			            
+			            // There's only one imports, so, return if one is imports
+			            // Remember that we have an ERROR node that represents the
+			            // list of imports
+		                if (IProgramElement.Kind.ERROR == k1)
+			                return -1;
+			            if (IProgramElement.Kind.ERROR == k2)
+			                return 1;
+			            			               
+			            // If we got here, return first the one which appears first
 			            int l1 = ((IProgramElement) o1).getSourceLocation().getLine();
 			        	int l2 = ((IProgramElement) o2).getSourceLocation().getLine();
 			        	return l1 - l2;
@@ -366,7 +388,7 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 			        return 0;
 			    }
 	    	};
-		}
+	    }
 		
 	    /**
 	     * Uses the comparator to sort the elements
