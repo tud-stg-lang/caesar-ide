@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: HierarchyNode.java,v 1.9 2005-03-09 00:05:13 thiago Exp $
+ * $Id: HierarchyNode.java,v 1.10 2005-05-12 08:41:35 thiago Exp $
  */
 
 package org.caesarj.ui.views.hierarchymodel;
@@ -104,6 +104,7 @@ public class HierarchyNode implements ISelection {
 		this.name = name;
 	}
 	
+	/*
 	public synchronized void addPropertyChangeListener (String name, IHierarchyPropertyChangeListener listener)
 	{
 		ll.add(listener);
@@ -113,7 +114,7 @@ public class HierarchyNode implements ISelection {
 	{
 		ll.remove(listener);
 	}
-	
+	*/
 	public void firePropertyChange(PropertyChangeEvent event)
 	{
 		
