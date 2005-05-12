@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: ProjectProperties.java,v 1.12 2005-04-22 07:48:32 thiago Exp $
+ * $Id: ProjectProperties.java,v 1.13 2005-05-12 10:41:56 meffert Exp $
  */
 
 package org.caesarj.ui.util;
@@ -32,6 +32,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
+import org.caesarj.compiler.KjcEnvironment;
 import org.caesarj.compiler.asm.CaesarJAsmManager;
 import org.eclipse.core.internal.resources.Container;
 import org.eclipse.core.resources.IProject;
@@ -67,6 +68,8 @@ public class ProjectProperties {
     private StringBuffer classPath = null;
     private List sourceFiles = null;
     private CaesarJAsmManager asmManager = null;
+    
+    private KjcEnvironment kjcEnv = null;
     
     /**
      * Creates a new not initialized ProjectProperties object.
@@ -256,4 +259,16 @@ public class ProjectProperties {
         return res.toString();
     }
     
+	/**
+	 * @return Returns the kjcEnv.
+	 */
+	public KjcEnvironment getKjcEnvironment() {
+		return kjcEnv;
+	}
+	/**
+	 * @param kjcEnv The kjcEnv to set.
+	 */
+	public void setKjcEnvironment(KjcEnvironment kjcEnv) {
+		this.kjcEnv = kjcEnv;
+	}
 }

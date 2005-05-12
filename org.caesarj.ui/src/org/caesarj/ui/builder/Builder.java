@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: Builder.java,v 1.30 2005-04-22 07:48:32 thiago Exp $
+ * $Id: Builder.java,v 1.31 2005-05-12 10:41:56 meffert Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -113,6 +113,9 @@ public class Builder extends IncrementalProjectBuilder {
 			
 			// Set the project's structure model
 			this.projectProperties.setAsmManager(caesarAdapter.getAsmManager());
+			
+			// Set the project's kjcEnvironment
+			this.projectProperties.setKjcEnvironment(caesarAdapter.getKjcEnvironment());
 		} 
 		catch (Throwable t) {
 			t.printStackTrace();

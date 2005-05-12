@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarEditor.java,v 1.25 2005-02-21 13:42:24 gasiunas Exp $
+ * $Id: CaesarEditor.java,v 1.26 2005-05-12 10:41:56 meffert Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -64,6 +64,8 @@ public class CaesarEditor extends CompilationUnitEditor {
 
 	public CaesarEditor() {
 		super();
+		// set ruler context menu id so that the caesar-ruler actions are used.
+		setRulerContextMenuId("#CJCompilationUnitRulerContext");
 		/* initialize auto annotation on/off switching */
 		CaesarPlugin.getDefault().initPluginUI();
 	}

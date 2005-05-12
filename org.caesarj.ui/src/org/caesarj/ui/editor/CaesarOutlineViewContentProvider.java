@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarOutlineViewContentProvider.java,v 1.5 2005-04-22 07:48:32 thiago Exp $
+ * $Id: CaesarOutlineViewContentProvider.java,v 1.6 2005-05-12 10:41:56 meffert Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -319,7 +319,7 @@ public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
 				// the import java/lang always exists => do not display it.
 				return ((CaesarProgramElement)element).getChildren().size() > 1;
 			}
-			System.out.println(((CaesarProgramElement)element).getCaesarKind().toString() + " - Relations: " + ((CaesarProgramElement)element).getRelations().size());
+			//System.out.println(((CaesarProgramElement)element).getCaesarKind().toString() + " - Relations: " + ((CaesarProgramElement)element).getRelations().size());
 			// return children + relations > 0
 			return ((CaesarProgramElement)element).getChildren().size() > 0
 						|| ((CaesarProgramElement)element).getRelations().size() > 0;

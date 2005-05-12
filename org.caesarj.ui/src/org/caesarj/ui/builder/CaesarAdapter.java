@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarAdapter.java,v 1.29 2005-04-22 07:48:32 thiago Exp $
+ * $Id: CaesarAdapter.java,v 1.30 2005-05-12 10:41:56 meffert Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -31,6 +31,7 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.caesarj.compiler.KjcEnvironment;
+import org.caesarj.compiler.KjcOptions;
 import org.caesarj.compiler.Main;
 import org.caesarj.compiler.asm.CaesarJAsmManager;
 import org.caesarj.compiler.ast.phylum.JCompilationUnit;
@@ -101,7 +102,7 @@ public final class CaesarAdapter extends Main {
 		//this.model = StructureModelManager.INSTANCE.getStructureModel();
 		
 		boolean success = false;
-		String args[] = new String[sourceFiles.size() + 4];
+		String args[] = new String[sourceFiles.size() + 6];
 
 		int i = 0;
 
@@ -110,6 +111,9 @@ public final class CaesarAdapter extends Main {
 
 		args[i++] = "-classpath"; //$NON-NLS-1$
 		args[i++] = classPath;
+		
+		args[i++] = "-O"; // [mef] test compilation without optimization
+		args[i++] = "9";
 
 		for (Iterator it = sourceFiles.iterator(); it.hasNext();) {
 			args[i++] = it.next().toString();
@@ -165,6 +169,7 @@ public final class CaesarAdapter extends Main {
 
 		this.progressMonitor.worked(1);
 	}
+	
 	/**
 	 * @return Returns the CaesarJAsmManager used on the compilation.
 	 */
@@ -172,4 +177,30 @@ public final class CaesarAdapter extends Main {
 		return this.asmManager;
 	}
 
+	/**
+	 * Builds the abstract syntax tree for the given file and environment.
+	 * 
+	 * @param file
+	 * @param env
+	 * @return the root of the AST
+	 */
+	public JCompilationUnit buildAST(File file, KjcEnvironment env){
+		return super.parseFile(file, env);
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.caesarj.compiler.MainSuper#createEnvironment(org.caesarj.compiler.KjcOptions)
+	 */
+	protected KjcEnvironment createEnvironment(KjcOptions options) {
+		KjcEnvironment env = super.createEnvironment(options);
+		this.env = env;
+        return env;
+    }
+	
+	private KjcEnvironment env = null;
+	
+	public KjcEnvironment getKjcEnvironment(){
+		return this.env;
+	}
 }
