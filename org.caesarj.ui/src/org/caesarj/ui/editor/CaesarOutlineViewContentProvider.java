@@ -20,26 +20,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarOutlineViewContentProvider.java,v 1.6 2005-05-12 10:41:56 meffert Exp $
+ * $Id: CaesarOutlineViewContentProvider.java,v 1.7 2005-05-13 14:47:37 thiago Exp $
  */
 
 package org.caesarj.ui.editor;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.aspectj.asm.IHierarchy;
 import org.aspectj.asm.IProgramElement;
 import org.aspectj.asm.IRelationship;
-import org.aspectj.asm.IRelationshipMap;
 import org.aspectj.asm.internal.ProgramElement;
-import org.aspectj.asm.internal.RelationshipMap;
-import org.aspectj.bridge.ISourceLocation;
 import org.caesarj.compiler.asm.CaesarProgramElement;
+import org.caesarj.compiler.asm.LinkNode;
 import org.caesarj.compiler.asm.CaesarProgramElement.Kind;
-import org.caesarj.ui.editor.model.LinkNode;
 import org.caesarj.ui.util.ProjectProperties;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -210,10 +205,14 @@ public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
         // then add childs children to node
 	    Iterator i = parent.getChildren().iterator();
 	    while(i.hasNext()) {
+	        
 	        IProgramElement childElement = (IProgramElement) i.next();
-	        // If it is an aspectj node, add all children
-	        if (! (childElement instanceof CaesarProgramElement)) {
-	            elements.add(childElement.getChildren());
+	        if (childElement instanceof LinkNode) {
+	            // Add if it is a link node
+	            elements.add(childElement);
+	        } else if (! (childElement instanceof CaesarProgramElement)) {
+	            // If it is an aspectj node, add all children
+	            elements.addAll(childElement.getChildren());
 	        } else {
 	            // Transform to caesar types
 	            CaesarProgramElement child = (CaesarProgramElement) childElement;
@@ -240,54 +239,6 @@ public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
                 }
 	        }
 	    }
-
-	    
-	    IRelationshipMap map = projectProperties.getAsmManager().getRelationshipMap();
-		IHierarchy hierarchy = projectProperties.getAsmManager().getHierarchy();
-		((RelationshipMap) map).setHierarchy(hierarchy);
-
-		
-		List relationships = map.get(parent.getHandleIdentifier());
-		if (relationships != null) {
-			Iterator j = relationships.iterator();
-			while(j.hasNext()) {
-			    IRelationship relationship = (IRelationship) j.next();
-			    //System.out.println("Relationship " + relationship.getName() + " has " + relationship.getTargets().size() + " targets ");
-				
-			    LinkNode relationNode = new LinkNode(relationship);
-			    parent.addChild(relationNode);
-			    elements.add(relationNode);
-			    
-			    Iterator k = relationship.getTargets().iterator();
-				while(k.hasNext()) {
-				    IProgramElement element = hierarchy.findElementForHandle((String) k.next());
-				    ISourceLocation src = element.getSourceLocation();
-				   
-				    //System.out.println("  -> " + element.getKind() + " " + element.getName() + " on " +
-				    //        src.getSourceFile() + " line " + src.getLine() + " to " + src.getEndLine());
-				    
-				    
-				    LinkNode link = new LinkNode(relationship, element);
-				    relationNode.addChild(link);
-				    
-				} 
-			}	  
-		}
-	
-		/*
-	    // add relations
-        elements.addAll(parent.getRelations());
-
-        // Iterate through relations and set markers for all
-        // RelationNodes.
-        i = parent.getRelations().iterator();
-        while (i.hasNext()) {
-            Object next = i.next();
-            if (next instanceof IRelationship) {
-                setMarkers(parent, (IRelationship) next);
-            }
-        }
-        */
 		
         return elements.toArray();
     }
@@ -309,7 +260,7 @@ public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
 	 */
 	public boolean hasChildren(Object element) {
 	    if (element instanceof LinkNode) {
-	        return false;
+	        return ((LinkNode) element).getChildren().size() > 0;
 	    }
 		if(element instanceof CaesarProgramElement){
 			//Logger.getLogger(this.getClass()).info("hasChildren() called with instanceof CaesarProgramElement. " + element.getClass().getName());

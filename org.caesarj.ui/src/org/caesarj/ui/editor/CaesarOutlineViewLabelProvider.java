@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarOutlineViewLabelProvider.java,v 1.5 2005-05-11 13:51:29 thiago Exp $
+ * $Id: CaesarOutlineViewLabelProvider.java,v 1.6 2005-05-13 14:47:37 thiago Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -30,8 +30,8 @@ import java.util.Iterator;
 import org.aspectj.asm.IProgramElement;
 import org.aspectj.asm.internal.ProgramElement;
 import org.caesarj.compiler.asm.CaesarProgramElement;
+import org.caesarj.compiler.asm.LinkNode;
 import org.caesarj.ui.CaesarPluginImages;
-import org.caesarj.ui.editor.model.LinkNode;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -95,7 +95,12 @@ public class CaesarOutlineViewLabelProvider extends LabelProvider {
 		    } else {
 		        IProgramElement targ = node.getTargetElement();
 		    
-			    String className = targ.getParent().getName();
+		        String className;
+		        if (targ.getParent() == null) {
+		            className = targ.getName();
+		        } else {
+		            className = targ.getParent().getName();
+		        }
 			    int end = className.lastIndexOf("_Impl");
 			    if (end < 0) {
 			        end = className.lastIndexOf(".java");
@@ -224,6 +229,7 @@ public class CaesarOutlineViewLabelProvider extends LabelProvider {
 	 *
 	 */
 	public static class ImageFactory {
+	    
 		public static Image getImage(IProgramElement node) {
 			Image image = null;
 			
@@ -239,7 +245,7 @@ public class CaesarOutlineViewLabelProvider extends LabelProvider {
 		    if (node.getType() == LinkNode.LINK_NODE_RELATIONSHIP) {
 		        return new CaesarImageDescriptor(node, CaesarPluginImages.DESC_ADVICE).createImage();
 		    } else {
-		        if (node.getRelationship().getName().equals("advises")) {
+		        if (node.getType() == LinkNode.LINK_NODE_ADVISES) {
 		            return new CaesarImageDescriptor(node, CaesarPluginImages.DESC_JOINPOINT_FORWARD).createImage();
 		        } else {
 		            return new CaesarImageDescriptor(node, CaesarPluginImages.DESC_JOINPOINT_BACK).createImage();
@@ -361,6 +367,9 @@ public class CaesarOutlineViewLabelProvider extends LabelProvider {
 			}else if(CaesarProgramElement.Kind.ADVICE == node.getCaesarKind()){
 				// ADVICE node
 				image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_ADVICE_NODE, false).createImage();
+			} else if(CaesarProgramElement.Kind.POINTCUT == node.getCaesarKind()){
+				// POINTCUT node
+				image = new CaesarImageDescriptor(node, CaesarPluginImages.DESC_POINTCUT).createImage();
 			}
 			return image;
 		}
