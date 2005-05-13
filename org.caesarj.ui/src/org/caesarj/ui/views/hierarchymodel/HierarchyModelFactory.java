@@ -369,7 +369,7 @@ public class HierarchyModelFactory {
 							classname = classname.substring(0, classname.indexOf(IMPL_EXTENSION));
 						}
 						// Add to the source list
-						srcs.add(node.getPackageName()	+ File.separator + classname);
+						srcs.add(node.getPackageName().replaceAll("\\.", "/")	+ File.separator + classname);
 					}
 				}
 			}
