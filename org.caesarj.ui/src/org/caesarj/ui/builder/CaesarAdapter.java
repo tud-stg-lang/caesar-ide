@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarAdapter.java,v 1.30 2005-05-12 10:41:56 meffert Exp $
+ * $Id: CaesarAdapter.java,v 1.31 2005-05-18 11:08:13 meffert Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -113,7 +113,7 @@ public final class CaesarAdapter extends Main {
 		args[i++] = classPath;
 		
 		args[i++] = "-O"; // [mef] test compilation without optimization
-		args[i++] = "9";
+		args[i++] = "0";
 
 		for (Iterator it = sourceFiles.iterator(); it.hasNext();) {
 			args[i++] = it.next().toString();
