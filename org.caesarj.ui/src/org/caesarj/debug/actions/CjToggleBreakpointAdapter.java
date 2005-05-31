@@ -36,11 +36,7 @@ import org.caesarj.compiler.KjcEnvironment;
 import org.caesarj.compiler.KjcOptions;
 import org.caesarj.compiler.ast.phylum.JCompilationUnit;
 import org.caesarj.compiler.ast.phylum.JPackageName;
-import org.caesarj.compiler.ast.phylum.JPhylum;
 import org.caesarj.compiler.ast.phylum.declaration.JTypeDeclaration;
-import org.caesarj.compiler.ast.phylum.expression.JExpression;
-import org.caesarj.compiler.ast.phylum.statement.JStatement;
-import org.caesarj.compiler.ast.phylum.statement.JSwitchGroup;
 import org.caesarj.compiler.types.KjcSignatureParser;
 import org.caesarj.compiler.types.KjcTypeFactory;
 import org.caesarj.compiler.typesys.graph.CaesarTypeNode;
@@ -80,7 +76,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 
 /** 
- * Supports the creation/deletion of breakpoints in the caesar classes.
+ * Supports the creation/deletion of breakpoints in caesar classes.
  * Based on the equivalent adapter of the ajdt.
  * @see org.eclipse.ajdt.internal.debug.ui.actions.ToggleBreakpointAdapter
  * 
@@ -160,17 +156,8 @@ public class CjToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 					// 2) verify the breakpoint position
 					boolean isValidBreakpoint = false;
 					if(editorInput instanceof IPathEditorInput){
-						// iterate through ast and find elements for the given linenumber
-						Vector elementsAtLine = new ASTUtil().getASTElements(ast, lineNumber);
-						
-						Iterator it = elementsAtLine.iterator();
-						Object temp = null;
-						while(it.hasNext() && !isValidBreakpoint){
-							temp = it.next();
-							if(temp instanceof JPhylum){
-								isValidBreakpoint = isValidBreakpointASTElement((JPhylum)temp);
-							}
-						}
+						Vector elementsAtLine = ASTUtil.getBreakpointableElements(ast, lineNumber);
+						isValidBreakpoint = !elementsAtLine.isEmpty();
 					}
 					
 					// 3) set breakpoint
@@ -278,23 +265,6 @@ public class CjToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 		}
 		
 		return ast;
-	}
-	
-	/**
-	 * Tests if at the given AST-element a linebreakpoint can be set.
-	 *  
-	 * @param element
-	 * @return
-	 */
-	protected boolean isValidBreakpointASTElement(JPhylum element){
-		// TODO: identify the correct AST elements! 
-		// At the moment invalid breakpoints can be set. 
-		// For example at method declaration-lines.
-		boolean valid = (element instanceof JExpression
-				|| element instanceof JStatement
-				|| element instanceof JSwitchGroup);
-		//System.out.println("Valid BPPosition: " + valid + " - Classname: " + element.getClass().getName());
-		return valid;
 	}
 	
 	/* (non-Javadoc)

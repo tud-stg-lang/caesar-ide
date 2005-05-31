@@ -26,36 +26,22 @@ package org.caesarj.debug.actions;
 import java.util.Vector;
 
 import org.caesarj.compiler.ast.phylum.JCompilationUnit;
-import org.caesarj.compiler.ast.phylum.JPhylum;
 import org.caesarj.compiler.ast.visitor.VisitorSupport;
 
 /**
- * A visitor for the abstract symtax tree. 
+ * A utility class for the abstract syntax tree.
+ *  
  * @author meffert
  */
 public class ASTUtil {
 	
-	private int lineNumber;
-	private Vector elements;
-	
 	/**
-	 * Traverses the abstract sysntax tree and return the elements at the given 
-	 * source-linenumber.
-	 * @param astRoot the root of the ast
 	 * @param lineNumber
-	 * @return
+	 * @return the ast elements for the given line, which are breakpointable
 	 */
-	public Vector getASTElements(JCompilationUnit astRoot, int lineNumber){
-		this.lineNumber = lineNumber;
-		this.elements = new Vector();
-		astRoot.accept(new VisitorSupport(this));
-		return elements;
+	static public Vector getBreakpointableElements(JCompilationUnit astRoot, int lineNumber){
+		BreakpointAstVisitor visitor = new BreakpointAstVisitor(lineNumber);
+		astRoot.accept(new VisitorSupport(visitor));
+		return visitor.getBreakpointableElements();
 	}
-	
-	public boolean visit(JPhylum self) {
-		if(self.getTokenReference().getLine() == lineNumber){
-    		elements.add(self);
-    	}
-    	return true;
-    }
 }
