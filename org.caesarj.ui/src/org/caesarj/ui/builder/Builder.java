@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: Builder.java,v 1.31 2005-05-12 10:41:56 meffert Exp $
+ * $Id: Builder.java,v 1.32 2005-07-28 15:03:27 gasiunas Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -185,28 +185,28 @@ public class Builder extends IncrementalProjectBuilder {
 					PositionedError error = (PositionedError)err;
 					TokenReference token = error.getTokenReference();
 	
-					if (token.getLine() > 0) {
-						log.debug("file: " + token.getFile() + ", " + "line: " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-								+ token.getLine() + ", " + "path: " //$NON-NLS-1$//$NON-NLS-2$
-								+ token.getPath());
-	
-						IResource resource = ProjectProperties.findResource(token
-								.getPath().getAbsolutePath(), currentProject);
-						
-						IMarker marker = null;
-						if (resource != null) {
-							marker = resource.createMarker(IMarker.PROBLEM);
+				    log.debug("file: " + token.getFile() + ", " + "line: " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							+ token.getLine() + ", " + "path: " //$NON-NLS-1$//$NON-NLS-2$
+							+ token.getPath());
+
+					IResource resource = ProjectProperties.findResource(token
+							.getPath().getAbsolutePath(), currentProject);
+					
+					IMarker marker = null;
+					if (resource != null) {
+						marker = resource.createMarker(IMarker.PROBLEM);
+						if (token.getLine() > 0) {
 							marker.setAttribute(IMarker.LINE_NUMBER, token.getLine());
 						}
-						else {
-							// for the cases, when error refers to a generated piece of code
-							marker = currentProject.createMarker(IMarker.PROBLEM);
-						}
-						marker.setAttribute(IMarker.MESSAGE, error
-								.getFormattedMessage().getMessage());
-						marker.setAttribute(IMarker.SEVERITY, new Integer(
-								IMarker.SEVERITY_ERROR));
 					}
+					else {
+						// for the cases, when error refers to a generated piece of code
+						marker = currentProject.createMarker(IMarker.PROBLEM);
+					}
+					marker.setAttribute(IMarker.MESSAGE, error
+							.getFormattedMessage().getMessage());
+					marker.setAttribute(IMarker.SEVERITY, new Integer(
+							IMarker.SEVERITY_ERROR));
 				}
 				else { /* create unpositioned error at the scope of the project */					
 					String msg;
@@ -256,7 +256,7 @@ public class Builder extends IncrementalProjectBuilder {
 					cleanFolder(f.listFiles());
 				}
 				// Remove the file if it is a class file
-				if (f.getName().indexOf(".class") >= 0)
+				if (f.getName().endsWith(".class"))
 					f.delete();
 			}
 		}
