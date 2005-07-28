@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarOutlineViewContentProvider.java,v 1.7 2005-05-13 14:47:37 thiago Exp $
+ * $Id: CaesarOutlineViewContentProvider.java,v 1.8 2005-07-28 15:06:06 gasiunas Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -222,20 +222,7 @@ public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
 	            if (CaesarProgramElement.Kind.ADVICE_REGISTRY == childKind) {
                     elements.addAll(child.getChildren());
                 } else {
-                    
-                    // We must avoid adding some elements, like support methods and fields
-                    boolean addAsChild = true;
-                    // Avoid support methods
-                    if (CaesarProgramElement.Kind.METHOD == childKind &&
-                       (child.getName().equals("aspectOf") || child.getName().indexOf('$') != -1)) {
-                            addAsChild = false;
-                    }
-                    if (CaesarProgramElement.Kind.FIELD == childKind &&
-                        child.getName().indexOf('$') != -1 ) {
-                            addAsChild = false;
-                    }
-                    if (addAsChild)
-                        elements.add(child);
+                    elements.add(child);
                 }
 	        }
 	    }
