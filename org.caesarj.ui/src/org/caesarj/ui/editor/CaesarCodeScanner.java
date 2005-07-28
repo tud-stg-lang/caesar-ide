@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarCodeScanner.java,v 1.10 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CaesarCodeScanner.java,v 1.11 2005-07-28 15:03:47 gasiunas Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -170,7 +170,7 @@ public final class CaesarCodeScanner extends AbstractJavaScanner {
 
 	// Caesar keywords
 	private static String[] caesarKeywords = { "cclass", "wraps", "wrappee",  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-			"deploy", "deployed" }; //$NON-NLS-1$ //$NON-NLS-2$
+			"deploy", "deployed", "undeploy" }; //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static String[] fgNewKeywords = { "assert" }; //$NON-NLS-1$
 
