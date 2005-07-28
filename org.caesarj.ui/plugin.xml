@@ -3,7 +3,7 @@
 <plugin
    id="org.caesarj"
    name="Caesar Plug-in"
-   version="0.6.3"
+   version="0.7.0"
    provider-name="TU Darmstadt"
    class="org.caesarj.ui.CaesarPlugin">
 
