@@ -212,10 +212,15 @@ public class CjToggleBreakpointAdapter implements IToggleBreakpointsTarget {
 					}
 				}
 			} catch (CoreException e) {
-				JDIDebugUIPlugin
-						.errorDialog(
-								ActionMessages
-										.getString("ManageBreakpointRulerAction.error.adding.message1"), e); //$NON-NLS-1$
+                /*
+                JDIDebugUIPlugin
+                        .errorDialog(
+                                ActionMessages
+                                        .getString("ManageBreakpointRulerAction.error.adding.message1"), e); //$NON-NLS-1$
+                                        */
+
+                JDIDebugUIPlugin.errorDialog(ActionMessages.ManageBreakpointRulerAction_error_adding_message1, e);
+                    
 			}
 		}
 	}

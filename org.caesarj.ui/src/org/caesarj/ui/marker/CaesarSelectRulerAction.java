@@ -20,12 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarSelectRulerAction.java,v 1.2 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CaesarSelectRulerAction.java,v 1.3 2005-08-10 16:09:33 thiago Exp $
  */
 
 package org.caesarj.ui.marker;
 
-import org.eclipse.jdt.internal.ui.javaeditor.JavaEditorMessages;
+import java.util.ResourceBundle;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.ui.texteditor.AbstractRulerActionDelegate;
@@ -39,10 +40,20 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class CaesarSelectRulerAction extends AbstractRulerActionDelegate {
 
+    private static final String BUNDLE_FOR_CONSTRUCTED_KEYS= "org.eclipse.jdt.internal.ui.javaeditor.ConstructedJavaEditorMessages";//$NON-NLS-1$
+    private static ResourceBundle fgBundleForConstructedKeys = ResourceBundle.getBundle(BUNDLE_FOR_CONSTRUCTED_KEYS);
+    
 	protected IAction createAction(ITextEditor editor,
 			IVerticalRulerInfo rulerInfo) {
-		return new CaesarSelectMarkerRulerAction(JavaEditorMessages
-				.getResourceBundle(), "JavaSelectMarkerRulerAction.", editor,
+        
+        // JavaEditorMessages was made package protected in eclipse 3.1
+        // The code to get the bundle was just copied here. Maybe it will
+        // be slow, maybe even not work, but we can compile.
+		return new CaesarSelectMarkerRulerAction(
+                fgBundleForConstructedKeys,
+                //JavaEditorMessages.getResourceBundle(),
+                "JavaSelectMarkerRulerAction.",
+                editor,
 				rulerInfo);
 	}
 }

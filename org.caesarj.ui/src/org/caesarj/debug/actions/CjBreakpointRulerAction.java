@@ -73,7 +73,9 @@ public class CjBreakpointRulerAction extends Action {
 	public CjBreakpointRulerAction(IVerticalRulerInfo ruler,
 			ITextEditor editor, IEditorPart editorPart) {
 		
-		super(ActionMessages.getString("ManageBreakpointRulerAction.label"));
+		//super(ActionMessages.getString("ManageBreakpointRulerAction.label") );
+        super(ActionMessages.ManageBreakpointRulerAction_label);
+        
 		fRuler = ruler;
 		fTextEditor = editor;
 		fStatusLine = (IEditorStatusLine) editorPart.getAdapter(IEditorStatusLine.class);
@@ -255,7 +257,8 @@ public class CjBreakpointRulerAction extends Action {
 				}
 			}
 		} catch (CoreException e) {
-			JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpointRulerAction.error.adding.message1"), e); //$NON-NLS-1$
+			//JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpointRulerAction.error.adding.message1"), e); //$NON-NLS-1$
+            JDIDebugUIPlugin.errorDialog(ActionMessages.ManageBreakpointRulerAction_error_adding_message1, e);
 		}	
 	}
 	

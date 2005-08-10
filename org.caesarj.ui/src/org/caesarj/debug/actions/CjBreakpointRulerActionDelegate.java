@@ -24,7 +24,7 @@
 package org.caesarj.debug.actions;
 
 import org.caesarj.ui.editor.CaesarEditor;
-import org.eclipse.jdt.internal.debug.ui.actions.ManageBreakpointRulerAction;
+import org.eclipse.debug.ui.actions.ToggleBreakpointAction;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.ui.IEditorActionDelegate;
@@ -46,12 +46,14 @@ public class CjBreakpointRulerActionDelegate extends AbstractRulerActionDelegate
 	 * @see org.eclipse.ui.texteditor.AbstractRulerActionDelegate#createAction(org.eclipse.ui.texteditor.ITextEditor, org.eclipse.jface.text.source.IVerticalRulerInfo)
 	 */
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
+             
 		// if editor is a caesarj-editor return the caesar breakpoint action,
 		// otherwise return the jdt action.
 		if(editor instanceof CaesarEditor){
 			return new CjBreakpointRulerAction(rulerInfo, editor, fEditorPart);
 		}else{
-			return new ManageBreakpointRulerAction(rulerInfo, editor);
+			//return new ManageBreakpointRulerAction(rulerInfo, editor);
+            return new ToggleBreakpointAction(editor, null, rulerInfo);
 		}
 	}
 
