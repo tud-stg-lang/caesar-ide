@@ -2,9 +2,8 @@
 <feature
       id="org.caesarj.feature"
       label="org.caesarj.feature"
-      version="0.7.0"
-      provider-name="TU-Darmstadt"
-      primary="true">
+      version="0.7.1"
+      provider-name="TU-Darmstadt">
 
    <description>
       CaesarJ Plugin for Eclipse Platform.
@@ -403,6 +402,6 @@ Public License instead of this License.
          id="org.caesarj"
          download-size="0"
          install-size="0"
-         version="0.7.0"/>
+         version="0.0.0"/>
 
 </feature>
