@@ -26,6 +26,9 @@ package org.caesarj.debug.actions;
 import java.util.Vector;
 
 import org.caesarj.compiler.ast.phylum.JCompilationUnit;
+import org.caesarj.compiler.ast.phylum.declaration.JFieldDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.JMethodDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.JTypeDeclaration;
 import org.caesarj.compiler.ast.visitor.VisitorSupport;
 
 /**
@@ -34,14 +37,61 @@ import org.caesarj.compiler.ast.visitor.VisitorSupport;
  * @author meffert
  */
 public class ASTUtil {
+
+	BreakpointAstVisitor visitor;
+	
+	public ASTUtil(JCompilationUnit astRoot, int lineNumber){
+		visitor = new BreakpointAstVisitor(lineNumber);
+		astRoot.accept(new VisitorSupport(visitor));
+	}
+	
+	public boolean canSetLineBreakpoint(){
+		return getBreakpointableElements().size() > 0;
+	}
+	
+	public boolean canSetMethodBreakpoint(){
+		return getMethodDeclaration() != null;
+	}
+	
+	public boolean canSetWatchpoint(){
+		return getFieldDeclaration() != null;
+	}
 	
 	/**
-	 * @param lineNumber
 	 * @return the ast elements for the given line, which are breakpointable
 	 */
-	static public Vector getBreakpointableElements(JCompilationUnit astRoot, int lineNumber){
-		BreakpointAstVisitor visitor = new BreakpointAstVisitor(lineNumber);
-		astRoot.accept(new VisitorSupport(visitor));
+	public Vector getBreakpointableElements(){
 		return visitor.getBreakpointableElements();
+	}
+	
+	/**
+	 * @return the JMethodDeclaration for the given line or null
+	 */
+	public JMethodDeclaration getMethodDeclaration(){
+		return visitor.getMethodDeclaration();
+	}
+	
+	/**
+	 * @return the field declaration for the line number
+	 */
+	public JFieldDeclaration getFieldDeclaration(){
+		return visitor.getFieldDeclaration();
+	}
+	
+	/**
+	 * @return the type declaration for the field or method
+	 */
+	public JTypeDeclaration getTypeDeclaration(){
+		return visitor.getTypeDeclaration();
+	}
+	
+	/**
+	 * This method is necessary for generating the fully qualified typename 
+	 * for externalized cclasses.
+	 * 
+	 * @return the type name for the type declaration
+	 */
+	public String getTypeName(){
+		return visitor.getTypeName();
 	}
 }

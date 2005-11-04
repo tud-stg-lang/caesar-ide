@@ -240,7 +240,8 @@ public class CjBreakpointRulerAction extends Action {
 				try {
 					IRegion line= document.getLineInformation(lineNumber);
 					ITextSelection selection = new TextSelection(document, line.getOffset(), line.getLength());
-					fBreakpointAdapter.toggleLineBreakpoints(fTextEditor, selection);
+					//fBreakpointAdapter.toggleLineBreakpoints(fTextEditor, selection);
+					fBreakpointAdapter.toggleBreakpoints(fTextEditor, selection);
 				} catch (BadLocationException e) {
 					//likely document is folded so you cannot get the line information of the folded line
 				}

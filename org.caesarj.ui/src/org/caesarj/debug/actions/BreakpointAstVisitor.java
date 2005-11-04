@@ -23,9 +23,15 @@
  */
 package org.caesarj.debug.actions;
 
+import java.util.Iterator;
+import java.util.Stack;
 import java.util.Vector;
 
 import org.caesarj.compiler.ast.phylum.JPhylum;
+import org.caesarj.compiler.ast.phylum.declaration.CjAdviceDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.JFieldDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.JMethodDeclaration;
+import org.caesarj.compiler.ast.phylum.declaration.JTypeDeclaration;
 import org.caesarj.compiler.ast.phylum.expression.JExpression;
 import org.caesarj.compiler.ast.phylum.statement.CjDeployStatement;
 import org.caesarj.compiler.ast.phylum.statement.JBreakStatement;
@@ -46,6 +52,13 @@ public class BreakpointAstVisitor {
 
 	private int lineNumber;
 	private Vector elements;
+	private JMethodDeclaration methDec;
+	private JFieldDeclaration fieldDec;
+	private JTypeDeclaration typeDec;
+	
+	private Stack typeStack = new Stack();
+	
+	private String typeName;
 	
 	/**
 	 * @param line 		the sourcecode-linenumber 
@@ -53,13 +66,66 @@ public class BreakpointAstVisitor {
 	public BreakpointAstVisitor(int line){
 		this.lineNumber = line;
 		this.elements = new Vector();
+		this.methDec = null;
+		this.fieldDec = null;
+		this.typeDec = null;
+		this.typeName = null;
 	}
 	
 	/**
-	 * @return		the elements of the ast that allow breakpoints
+	 * @return		the elements of the ast that allow line-breakpoints
 	 */
 	public Vector getBreakpointableElements(){
 		return this.elements;
+	}
+	
+	/**
+	 * @return		the method declaration for the sourcecode line
+	 */
+	public JMethodDeclaration getMethodDeclaration(){
+		return this.methDec;
+	}
+	
+	/**
+	 * @return		the field declaration for the sourcecode line
+	 */
+	public JFieldDeclaration getFieldDeclaration(){
+		return this.fieldDec;
+	}
+	
+	/**
+	 * @return		the type declaration which contains the field-dec. or method-dec.
+	 */
+	public JTypeDeclaration getTypeDeclaration(){
+		return this.typeDec;
+	}
+	
+	/**
+	 * This method is necessary for generating the fully qualified typename for 
+	 * externalized cclasses.
+	 * 
+	 * @return		the typename for the type declaration
+	 */
+	public String getTypeName(){
+		return this.typeName;
+	}
+	
+	/**
+	 * Set the qualified typename for the typedeclaration.
+	 */
+	private void setTypeName(){
+		String qName = "";
+		Iterator it = typeStack.iterator();
+		JTypeDeclaration dec = null;
+		while(it.hasNext()){
+			dec = (JTypeDeclaration) it.next();
+			if(!qName.equals("")){
+				qName += "$" + dec.getIdent();
+			}else{
+				qName = dec.getIdent();
+			}
+		}
+		this.typeName = qName;
 	}
 	
 	
@@ -124,6 +190,37 @@ public class BreakpointAstVisitor {
 		if(self.getTokenReference().getLine() == lineNumber){
     		elements.add(self);
     	}
+		return true;
+	}
+	
+	public boolean visit(JMethodDeclaration self){
+		if(self.getTokenReference().getLine() == lineNumber){
+			methDec = self;
+			typeDec = (JTypeDeclaration) typeStack.peek();
+			setTypeName();
+    	}
+		return true;
+	}
+	public boolean visit(CjAdviceDeclaration self){
+		// method-breakpoints are not supported by advice-declarations
+		return true;
+	}
+	
+	public boolean visit(JFieldDeclaration self){
+		if(self.getTokenReference().getLine() == lineNumber){
+			fieldDec = self;
+			typeDec = (JTypeDeclaration) typeStack.peek();
+			setTypeName();
+		}
+		return true;
+	}
+	
+	public boolean visit(JTypeDeclaration self){
+		typeStack.push(self);
+		return true;
+	}
+	public boolean endVisit(JTypeDeclaration self){
+		typeStack.pop();
 		return true;
 	}
 }
