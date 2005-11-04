@@ -56,6 +56,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -77,6 +81,7 @@ import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 
@@ -89,57 +94,16 @@ import org.eclipse.ui.texteditor.ITextEditor;
  */
 public class CjToggleBreakpointAdapter implements IToggleBreakpointsTargetExtension {
 	
+	protected static final int LINE_BREAKPOINT = 1;
+	protected static final int METHOD_BREAKPOINT = 2;
+	protected static final int WATCH_POINT = 3;
+	protected static final int ANY_BREAKPOINT = 4;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleLineBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void toggleLineBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
-		if(selection instanceof ITextSelection && part instanceof CaesarEditor) {
-			CaesarEditor editor = (CaesarEditor)part;
-			IEditorInput editorInput = editor.getEditorInput();
-			int lineNumber = ((ITextSelection)selection).getStartLine() + 1;
-			
-			
-			IStatusLineManager statusLine = editor.getEditorSite().getActionBars().getStatusLineManager();
-			// clear statusline (remove possible error-message)
-			report(null, statusLine); 
-
-			try {
-				// delete breakpoints at the given line
-				boolean createNewBP = ! deleteBreakpoints(editor, lineNumber);
-				if (createNewBP) {
-					// No breakpoints found for this line.
-					// Create new breakpoint!
-					
-					// Create AST
-					JCompilationUnit ast = null;
-					if(editorInput instanceof IPathEditorInput) {
-						File file = ((IPathEditorInput)editorInput).getPath().toFile();
-						ast = buildAST(file);
-					} else {
-						// can't build AST, do nothing
-						return;
-					}
-					
-					 
-					
-					// 1) verify the breakpoint position
-					ASTUtil astUtil = new ASTUtil(ast, lineNumber);
-					if(astUtil.canSetLineBreakpoint()){
-						//toggleLineBreakpoints(part, selection);
-						// 2) extract type information
-						JavaQualifiedName jqTypeName = getTypeName(ast);
-						createLineBreakpoint(editor, jqTypeName, lineNumber);
-						
-					}else{
-						report(CaesarJPluginResources.getResourceString("Debugging.statusline.breakpointCanNotBeSet"), statusLine);
-					}
-					
-				}
-			} catch (CoreException e) {
-                JDIDebugUIPlugin.errorDialog(ActionMessages.ManageBreakpointRulerAction_error_adding_message1, e);
-			}
-		}
+		toggleBreakpointsImpl(part, selection, CjToggleBreakpointAdapter.LINE_BREAKPOINT);
 	}
 	
 	/**
@@ -241,7 +205,6 @@ public class CjToggleBreakpointAdapter implements IToggleBreakpointsTargetExtens
 		JPackageName jpkgName = ast.getPackageName();
 		boolean isExternalizedClass = jpkgName.isCollaboration();
 		
-//		String pkgName = jpkgName.getName();
 		if(isExternalizedClass){
 			publicType = types[0];
 		}else{
@@ -254,15 +217,6 @@ public class CjToggleBreakpointAdapter implements IToggleBreakpointsTargetExtens
 			}
 		}
 		if(publicType != null){
-//			if(!pkgName.equals("")){
-//				if(isExternalizedClass){
-//					jqTypeName = new JavaQualifiedName(pkgName + "/" + publicType.getIdent().substring(0, publicType.getIdent().lastIndexOf("_Impl"))).convertToExternalizedClassName();
-//				}else{
-//					jqTypeName = new JavaQualifiedName(pkgName + "/" + publicType.getIdent());
-//				}
-//			}else{
-//				jqTypeName = new JavaQualifiedName(publicType.getIdent());
-//			}
 			jqTypeName = getTypeName(jpkgName, publicType);
 		}
 		return jqTypeName;
@@ -302,62 +256,7 @@ public class CjToggleBreakpointAdapter implements IToggleBreakpointsTargetExtens
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void toggleMethodBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
-		if(selection instanceof ITextSelection && part instanceof CaesarEditor) {
-			CaesarEditor editor = (CaesarEditor)part;
-			IEditorInput editorInput = editor.getEditorInput();
-			int lineNumber = ((ITextSelection)selection).getStartLine() + 1;
-			
-			
-			IStatusLineManager statusLine = editor.getEditorSite().getActionBars().getStatusLineManager();
-			// clear statusline (remove possible error-message)
-			report(null, statusLine); 
-
-			try {
-				// delete breakpoints at the given line
-				boolean createNewBP = ! deleteBreakpoints(editor, lineNumber);
-				if (createNewBP) {
-					// No breakpoints found for this line.
-					// Create new breakpoint!
-					
-					// Create AST
-					JCompilationUnit ast = null;
-					if(editorInput instanceof IPathEditorInput) {
-						File file = ((IPathEditorInput)editorInput).getPath().toFile();
-						ast = buildAST(file);
-					} else {
-						// can't build AST, do nothing
-						return;
-					}
-					
-					 
-					
-					// 1) verify the breakpoint position
-					ASTUtil astUtil = new ASTUtil(ast, lineNumber);
-					if(astUtil.canSetMethodBreakpoint()){
-						//toggleMethodBreakpoints(part, selection);
-						JMethodDeclaration methDec = astUtil.getMethodDeclaration();
-						// 2) extract type information
-						JavaQualifiedName jqTypeName = null;
-						if(ast.getPackageName().isCollaboration()){
-							// create java type name for an externalized class
-							String extClassPrefix = new JavaQualifiedName(ast.getPackageName().getName()).convertToExternalizedClassName().toString();
-							jqTypeName = new JavaQualifiedName(extClassPrefix + "$" + astUtil.getTypeName());
-						}else{
-							jqTypeName = getTypeName(ast.getPackageName(), astUtil.getTypeDeclaration());
-						}
-						if(methDec != null){
-							createMethodBreakpoint(editor, jqTypeName, methDec.getIdent(), getMethodSignature(methDec), lineNumber);
-						}
-
-					}else{
-						report(CaesarJPluginResources.getResourceString("Debugging.statusline.breakpointCanNotBeSet"), statusLine);
-					}
-					
-				}
-			} catch (CoreException e) {
-                JDIDebugUIPlugin.errorDialog(ActionMessages.ManageBreakpointRulerAction_error_adding_message1, e);
-			}
-		}
+		toggleBreakpointsImpl(part, selection, CjToggleBreakpointAdapter.METHOD_BREAKPOINT);
 	}
 	
 	/**
@@ -424,62 +323,7 @@ public class CjToggleBreakpointAdapter implements IToggleBreakpointsTargetExtens
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#toggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void toggleWatchpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
-		if(selection instanceof ITextSelection && part instanceof CaesarEditor) {
-			CaesarEditor editor = (CaesarEditor)part;
-			IEditorInput editorInput = editor.getEditorInput();
-			int lineNumber = ((ITextSelection)selection).getStartLine() + 1;
-			
-			
-			IStatusLineManager statusLine = editor.getEditorSite().getActionBars().getStatusLineManager();
-			// clear statusline (remove possible error-message)
-			report(null, statusLine); 
-
-			try {
-				// delete breakpoints at the given line
-				boolean createNewBP = ! deleteBreakpoints(editor, lineNumber);
-				if (createNewBP) {
-					// No breakpoints found for this line.
-					// Create new breakpoint!
-					
-					// Create AST
-					JCompilationUnit ast = null;
-					if(editorInput instanceof IPathEditorInput) {
-						File file = ((IPathEditorInput)editorInput).getPath().toFile();
-						ast = buildAST(file);
-					} else {
-						// can't build AST, do nothing
-						return;
-					}
-					
-					 
-					
-					// 1) verify the breakpoint position
-					ASTUtil astUtil = new ASTUtil(ast, lineNumber);
-					if(astUtil.canSetWatchpoint()){
-						//toggleWatchpoints(part, selection);
-						JFieldDeclaration fieldDec = astUtil.getFieldDeclaration();
-						// 2) extract type information
-						JavaQualifiedName jqTypeName = null;
-						if(ast.getPackageName().isCollaboration()){
-							// create java type name for an externalized class
-							String extClassPrefix = new JavaQualifiedName(ast.getPackageName().getName()).convertToExternalizedClassName().toString();
-							jqTypeName = new JavaQualifiedName(extClassPrefix + "$" + astUtil.getTypeName());
-						}else{
-							jqTypeName = getTypeName(ast.getPackageName(), astUtil.getTypeDeclaration());
-						}
-						if(fieldDec != null){
-							createWatchpoint(editor, jqTypeName, fieldDec.getVariable().getIdent(), lineNumber);
-						}
-						
-					}else{
-						report(CaesarJPluginResources.getResourceString("Debugging.statusline.breakpointCanNotBeSet"), statusLine);
-					}
-					
-				}
-			} catch (CoreException e) {
-                JDIDebugUIPlugin.errorDialog(ActionMessages.ManageBreakpointRulerAction_error_adding_message1, e);
-			}
-		}
+		toggleBreakpointsImpl(part, selection, CjToggleBreakpointAdapter.WATCH_POINT);
 	}
 	
 	/**
@@ -639,98 +483,130 @@ public class CjToggleBreakpointAdapter implements IToggleBreakpointsTargetExtens
 		return false;
 	}
 	
-	protected void report(String message, IStatusLineManager statusLine) {
-		if (statusLine != null) {
-			if (message != null) {
-				statusLine.setErrorMessage(message);
-			} else {
-				statusLine.setErrorMessage(null);
-			}
-		}		
-	}
+	/**
+	 * Displays message on the status line. If message is null the status line will be cleared.
+	 * @param message
+	 * @param part
+	 */
+	protected void report(final String message, final IWorkbenchPart part) {
+        JDIDebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+            public void run() {
+                IEditorStatusLine statusLine = (IEditorStatusLine) part.getAdapter(IEditorStatusLine.class);
+                if (statusLine != null) {
+                    if (message != null) {
+                        statusLine.setMessage(true, message, null);
+                    } else {
+                        statusLine.setMessage(true, null, null);
+                    }
+                }
+                if (message != null && JDIDebugUIPlugin.getActiveWorkbenchShell() != null) {
+                    JDIDebugUIPlugin.getActiveWorkbenchShell().getDisplay().beep();
+                }
+            }
+        });
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension#toggleBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void toggleBreakpoints(IWorkbenchPart part, ISelection selection) throws CoreException {
-		if(selection instanceof ITextSelection && part instanceof CaesarEditor) {
-			CaesarEditor editor = (CaesarEditor)part;
-			IEditorInput editorInput = editor.getEditorInput();
-			int lineNumber = ((ITextSelection)selection).getStartLine() + 1;
-			
-			
-			IStatusLineManager statusLine = editor.getEditorSite().getActionBars().getStatusLineManager();
-			// clear statusline (remove possible error-message)
-			report(null, statusLine); 
-
-			try {
-				// delete breakpoints at the given line
-				boolean createNewBP = ! deleteBreakpoints(editor, lineNumber);
-				if (createNewBP) {
-					// No breakpoints found for this line.
-					// Create new breakpoint!
+		toggleBreakpointsImpl(part, selection, CjToggleBreakpointAdapter.ANY_BREAKPOINT);
+	}	
+		
+	/**
+	 * @param part
+	 * @param selection
+	 * @param bpType 		which type of breakpoint should be toggled (ANY_BREAKPOINT, LINE_BREAKPOINT, METHOD_BREAKPOINT, WATCH_POINT)
+	 * @throws CoreException
+	 */
+	protected void toggleBreakpointsImpl(final IWorkbenchPart part, final ISelection selection, final int bpType) throws CoreException {
+		Job job = new Job("Toggle Breakpoint") { //$NON-NLS-1$
+            protected IStatus run(IProgressMonitor monitor) {
+            	if(selection instanceof ITextSelection && part instanceof CaesarEditor) {
+            		if (monitor.isCanceled()) {
+                        return Status.CANCEL_STATUS;
+                    }
+					CaesarEditor editor = (CaesarEditor)part;
+					IEditorInput editorInput = editor.getEditorInput();
+					int lineNumber = ((ITextSelection)selection).getStartLine() + 1;
 					
-					// Create AST
-					JCompilationUnit ast = null;
-					if(editorInput instanceof IPathEditorInput) {
-						File file = ((IPathEditorInput)editorInput).getPath().toFile();
-						ast = buildAST(file);
-					} else {
-						// can't build AST, do nothing
-						return;
+					
+					// clear statusline (remove possible error-message)
+					report(null, part);
+		
+					try {
+						// delete breakpoints at the given line
+						boolean createNewBP = ! deleteBreakpoints(editor, lineNumber);
+						if (createNewBP) {
+							// No breakpoints found for this line.
+							// Create new breakpoint!
+							
+							// Create AST
+							JCompilationUnit ast = null;
+							if(editorInput instanceof IPathEditorInput) {
+								File file = ((IPathEditorInput)editorInput).getPath().toFile();
+								ast = buildAST(file);
+							} else {
+								// can't build AST, do nothing
+								return Status.CANCEL_STATUS;
+							}
+							
+							 
+							
+							// 1) verify the breakpoint position
+							ASTUtil astUtil = new ASTUtil(ast, lineNumber);
+							if(astUtil.canSetWatchpoint() && (bpType == CjToggleBreakpointAdapter.ANY_BREAKPOINT || bpType == CjToggleBreakpointAdapter.WATCH_POINT)){
+								//toggleWatchpoints(part, selection);
+								JFieldDeclaration fieldDec = astUtil.getFieldDeclaration();
+								// 2) extract type information
+								JavaQualifiedName jqTypeName = null;
+								if(ast.getPackageName().isCollaboration()){
+									// create java type name for an externalized class
+									String extClassPrefix = new JavaQualifiedName(ast.getPackageName().getName()).convertToExternalizedClassName().toString();
+									jqTypeName = new JavaQualifiedName(extClassPrefix + "$" + astUtil.getTypeName());
+								}else{
+									jqTypeName = getTypeName(ast.getPackageName(), astUtil.getTypeDeclaration());
+								}
+								if(fieldDec != null){
+									createWatchpoint(editor, jqTypeName, fieldDec.getVariable().getIdent(), lineNumber);
+								}
+								
+							}else if(astUtil.canSetMethodBreakpoint() && (bpType == CjToggleBreakpointAdapter.ANY_BREAKPOINT || bpType == CjToggleBreakpointAdapter.METHOD_BREAKPOINT)){
+								//toggleMethodBreakpoints(part, selection);
+								JMethodDeclaration methDec = astUtil.getMethodDeclaration();
+								// 2) extract type information
+								JavaQualifiedName jqTypeName = null;
+								if(ast.getPackageName().isCollaboration()){
+									// create java type name for an externalized class
+									String extClassPrefix = new JavaQualifiedName(ast.getPackageName().getName()).convertToExternalizedClassName().toString();
+									jqTypeName = new JavaQualifiedName(extClassPrefix + "$" + astUtil.getTypeName());
+								}else{
+									jqTypeName = getTypeName(ast.getPackageName(), astUtil.getTypeDeclaration());
+								}
+								if(methDec != null){
+									createMethodBreakpoint(editor, jqTypeName, methDec.getIdent(), getMethodSignature(methDec), lineNumber);
+								}
+		
+							}else if(astUtil.canSetLineBreakpoint() && (bpType == CjToggleBreakpointAdapter.ANY_BREAKPOINT || bpType == CjToggleBreakpointAdapter.LINE_BREAKPOINT)){
+								//toggleLineBreakpoints(part, selection);
+								// 2) extract type information
+								JavaQualifiedName jqTypeName = getTypeName(ast);
+								createLineBreakpoint(editor, jqTypeName, lineNumber);
+								
+							}else{
+								report(CaesarJPluginResources.getResourceString("Debugging.statusline.breakpointCanNotBeSet"), part);
+							}
+							
+						}
+					} catch (CoreException ce) {
+						return ce.getStatus();
 					}
-					
-					 
-					
-					// 1) verify the breakpoint position
-					ASTUtil astUtil = new ASTUtil(ast, lineNumber);
-					if(astUtil.canSetWatchpoint()){
-						//toggleWatchpoints(part, selection);
-						JFieldDeclaration fieldDec = astUtil.getFieldDeclaration();
-						// 2) extract type information
-						JavaQualifiedName jqTypeName = null;
-						if(ast.getPackageName().isCollaboration()){
-							// create java type name for an externalized class
-							String extClassPrefix = new JavaQualifiedName(ast.getPackageName().getName()).convertToExternalizedClassName().toString();
-							jqTypeName = new JavaQualifiedName(extClassPrefix + "$" + astUtil.getTypeName());
-						}else{
-							jqTypeName = getTypeName(ast.getPackageName(), astUtil.getTypeDeclaration());
-						}
-						if(fieldDec != null){
-							createWatchpoint(editor, jqTypeName, fieldDec.getVariable().getIdent(), lineNumber);
-						}
-						
-					}else if(astUtil.canSetMethodBreakpoint()){
-						//toggleMethodBreakpoints(part, selection);
-						JMethodDeclaration methDec = astUtil.getMethodDeclaration();
-						// 2) extract type information
-						JavaQualifiedName jqTypeName = null;
-						if(ast.getPackageName().isCollaboration()){
-							// create java type name for an externalized class
-							String extClassPrefix = new JavaQualifiedName(ast.getPackageName().getName()).convertToExternalizedClassName().toString();
-							jqTypeName = new JavaQualifiedName(extClassPrefix + "$" + astUtil.getTypeName());
-						}else{
-							jqTypeName = getTypeName(ast.getPackageName(), astUtil.getTypeDeclaration());
-						}
-						if(methDec != null){
-							createMethodBreakpoint(editor, jqTypeName, methDec.getIdent(), getMethodSignature(methDec), lineNumber);
-						}
-
-					}else if(astUtil.canSetLineBreakpoint()){
-						//toggleLineBreakpoints(part, selection);
-						// 2) extract type information
-						JavaQualifiedName jqTypeName = getTypeName(ast);
-						createLineBreakpoint(editor, jqTypeName, lineNumber);
-						
-					}else{
-						report(CaesarJPluginResources.getResourceString("Debugging.statusline.breakpointCanNotBeSet"), statusLine);
-					}
-					
 				}
-			} catch (CoreException e) {
-                JDIDebugUIPlugin.errorDialog(ActionMessages.ManageBreakpointRulerAction_error_adding_message1, e);
-			}
-		}
+                return Status.OK_STATUS;
+            }
+        };
+        job.setSystem(true);
+        job.schedule();
 	}
 
 	/* (non-Javadoc)
