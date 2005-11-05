@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarPlugin.java,v 1.23 2005-03-03 09:23:56 gasiunas Exp $
+ * $Id: CaesarPlugin.java,v 1.24 2005-11-05 17:22:49 gasiunas Exp $
  */
 
 package org.caesarj.ui;
@@ -71,11 +71,7 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 
 	private String caesarRuntimePath = null;
 
-	private String caesarCompilerPath = null;
-	
 	private ResourceBundle resourceBundle = null;
-
-	private String bcelPath = null;
 
 	private static boolean selectionListener = true;
 

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: AdviceMarkerResolutionGenerator.java,v 1.15 2005-05-13 14:47:37 thiago Exp $
+ * $Id: AdviceMarkerResolutionGenerator.java,v 1.16 2005-11-05 17:22:49 gasiunas Exp $
  */
 
 package org.caesarj.ui.marker;
@@ -59,7 +59,6 @@ public class AdviceMarkerResolutionGenerator implements	IMarkerResolutionGenerat
 		try {
 			LinkNode advices[] = (LinkNode[]) marker.getAttribute(AdviceMarker.LINKS);
 			IMarkerResolution res[] = new AdviceMarkerResolution[advices.length];
-			IMarkerResolution temp = null;
 			for (int i = 0; i < advices.length; i++) {
 				res[i] = new AdviceMarkerResolution(advices[i], marker);
 			}

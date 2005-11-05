@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: ProjectProperties.java,v 1.13 2005-05-12 10:41:56 meffert Exp $
+ * $Id: ProjectProperties.java,v 1.14 2005-11-05 17:22:49 gasiunas Exp $
  */
 
 package org.caesarj.ui.util;
@@ -91,7 +91,6 @@ public class ProjectProperties {
      */
     public static ProjectProperties create(IProject project) {
     	Object properties = projects.get(project);
-    	Hashtable t = projects;
     	if (properties == null) {
     		properties = new ProjectProperties(project);
     		projects.put(project, properties);
