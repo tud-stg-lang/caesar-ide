@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarPlugin.java,v 1.24 2005-11-05 17:22:49 gasiunas Exp $
+ * $Id: CaesarPlugin.java,v 1.25 2005-11-08 10:38:17 meffert Exp $
  */
 
 package org.caesarj.ui;
@@ -31,6 +31,8 @@ import java.util.ResourceBundle;
 import org.caesarj.ui.editor.CaesarTextTools;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
+import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
@@ -112,6 +114,8 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 		} catch (MissingResourceException x) {
 			this.resourceBundle = null;
 		}
+		
+		setStepFilter();
 	}
 	
 	public void initPluginUI() {
@@ -182,5 +186,42 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 				CJDTConfigSettings.setAnalyzeAnnotations(true);
 			}
 		}*/
+	}
+	
+	protected final static String[] ACTIVE_FILTER = {};
+	protected final static String[] INACTIVE_FILTER = {"org.caesarj.*", "org.aspectj.*"};
+	
+	protected void setStepFilter(){
+		IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
+		String afd = store.getDefaultString(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST);
+		String af = store.getString(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST);
+		int i;
+		if(ACTIVE_FILTER.length > 0){
+			for(i = 0; i < ACTIVE_FILTER.length; i++){
+				if(afd.indexOf(ACTIVE_FILTER[i]) == -1){
+					afd += "," + ACTIVE_FILTER[i];
+				}
+				if(af.indexOf(ACTIVE_FILTER[i]) == -1){
+					af += "," + ACTIVE_FILTER[i];
+				}
+			}
+			store.setDefault(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, afd);
+			store.setValue(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST, af);
+		}
+		String iafd = store.getDefaultString(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST);
+		String iaf = store.getString(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST);
+		if(INACTIVE_FILTER.length > 0){
+			for(i = 0; i < INACTIVE_FILTER.length; i++){
+				if(iafd.indexOf(INACTIVE_FILTER[i]) == -1){
+					iafd += "," + INACTIVE_FILTER[i];
+				}
+				if(iaf.indexOf(INACTIVE_FILTER[i]) == -1){
+					iaf += "," + INACTIVE_FILTER[i];
+				}
+			}
+			store.setDefault(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, iafd);
+			store.setValue(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, iaf);
+		}
+				
 	}
 }
