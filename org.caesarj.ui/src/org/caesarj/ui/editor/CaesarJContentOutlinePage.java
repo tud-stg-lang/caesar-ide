@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarJContentOutlinePage.java,v 1.8 2005-05-13 14:47:37 thiago Exp $
+ * $Id: CaesarJContentOutlinePage.java,v 1.9 2005-11-14 13:02:48 gasiunas Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -59,6 +59,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
@@ -129,6 +130,11 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 	protected CaesarOutlineViewContentProvider contentProvider;
 	
 	/**
+	 * Flag to ignore first selection setting message
+	 */
+	protected boolean bFirstSelection = true;
+	
+	/**
 	 * Creates a new ContentOutlinePage using the given caesarEditor. Puts this
 	 * new page in the list of instances
 	 * 
@@ -181,6 +187,13 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 	public void selectionChanged(SelectionChangedEvent event) {
 
 		super.selectionChanged(event);
+		
+		/* ignore the first selection message that comes from initialization */
+		/* necessary for navigation by crosscutting links */
+		if (bFirstSelection) {
+			bFirstSelection = false;
+			return;
+		}
 
 		ISelection selection = event.getSelection();
 		if (selection.isEmpty()) {
@@ -216,7 +229,7 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 								.getColumn());
 						IDE.openEditor(CaesarPlugin.getDefault().getWorkbench()
 								.getActiveWorkbenchWindow().getActivePage(),
-								marker);
+								marker);						
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
