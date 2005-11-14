@@ -29,7 +29,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import org.caesarj.compiler.KjcClassReader;
 import org.caesarj.compiler.KjcEnvironment;
@@ -40,7 +39,6 @@ import org.caesarj.compiler.ast.phylum.declaration.JFieldDeclaration;
 import org.caesarj.compiler.ast.phylum.declaration.JMethodDeclaration;
 import org.caesarj.compiler.ast.phylum.declaration.JTypeDeclaration;
 import org.caesarj.compiler.ast.phylum.variable.JFormalParameter;
-import org.caesarj.compiler.types.CType;
 import org.caesarj.compiler.types.KjcSignatureParser;
 import org.caesarj.compiler.types.KjcTypeFactory;
 import org.caesarj.compiler.typesys.graph.CaesarTypeNode;
@@ -63,12 +61,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.ui.actions.IToggleBreakpointsTarget;
 import org.eclipse.debug.ui.actions.IToggleBreakpointsTargetExtension;
 import org.eclipse.jdt.debug.core.JDIDebugModel;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.debug.ui.actions.ActionMessages;
-import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
@@ -316,7 +311,8 @@ public class CjToggleBreakpointAdapter implements IToggleBreakpointsTargetExtens
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleMethodBreakpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public boolean canToggleMethodBreakpoints(IWorkbenchPart part, ISelection selection) {
-		return selection instanceof ITextSelection;
+		//return selection instanceof ITextSelection;
+		return false;
 	}
 	
 	/* (non-Javadoc)
@@ -374,7 +370,8 @@ public class CjToggleBreakpointAdapter implements IToggleBreakpointsTargetExtens
 	 * @see org.eclipse.debug.ui.actions.IToggleBreakpointsTarget#canToggleWatchpoints(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public boolean canToggleWatchpoints(IWorkbenchPart part, ISelection selection) {
-		return selection instanceof ITextSelection;
+		//return selection instanceof ITextSelection;
+		return false;
 	}
 
 	private IResource getResource(ITextEditor editor) {
@@ -555,7 +552,7 @@ public class CjToggleBreakpointAdapter implements IToggleBreakpointsTargetExtens
 							
 							// 1) verify the breakpoint position
 							ASTUtil astUtil = new ASTUtil(ast, lineNumber);
-							if(astUtil.canSetWatchpoint() && (bpType == CjToggleBreakpointAdapter.ANY_BREAKPOINT || bpType == CjToggleBreakpointAdapter.WATCH_POINT)){
+							/*if(astUtil.canSetWatchpoint() && (bpType == CjToggleBreakpointAdapter.ANY_BREAKPOINT || bpType == CjToggleBreakpointAdapter.WATCH_POINT)){
 								//toggleWatchpoints(part, selection);
 								JFieldDeclaration fieldDec = astUtil.getFieldDeclaration();
 								// 2) extract type information
@@ -587,7 +584,7 @@ public class CjToggleBreakpointAdapter implements IToggleBreakpointsTargetExtens
 									createMethodBreakpoint(editor, jqTypeName, methDec.getIdent(), getMethodSignature(methDec), lineNumber);
 								}
 		
-							}else if(astUtil.canSetLineBreakpoint() && (bpType == CjToggleBreakpointAdapter.ANY_BREAKPOINT || bpType == CjToggleBreakpointAdapter.LINE_BREAKPOINT)){
+							}else*/ if(astUtil.canSetLineBreakpoint() && (bpType == CjToggleBreakpointAdapter.ANY_BREAKPOINT || bpType == CjToggleBreakpointAdapter.LINE_BREAKPOINT)){
 								//toggleLineBreakpoints(part, selection);
 								// 2) extract type information
 								JavaQualifiedName jqTypeName = getTypeName(ast);
