@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarEditor.java,v 1.26 2005-05-12 10:41:56 meffert Exp $
+ * $Id: CaesarEditor.java,v 1.27 2005-11-17 16:58:23 gasiunas Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -33,6 +33,8 @@ import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
@@ -70,14 +72,9 @@ public class CaesarEditor extends CompilationUnitEditor {
 		CaesarPlugin.getDefault().initPluginUI();
 	}
 	
-	public IJavaElement getInputJavaElement() {
-		return super.getInputJavaElement();
-	}
-
-	protected void initializeEditor() {
-		super.initializeEditor();
-
-		log.debug("Initializing CaesarJ Editor."); //$NON-NLS-1$
+    public void init(IEditorSite site, IEditorInput input)  throws PartInitException {
+    	super.init(site, input);
+    	log.debug("Initializing CaesarJ Editor."); //$NON-NLS-1$
 		try {
 			IPreferenceStore store = this.getPreferenceStore();
 			CaesarTextTools textTools = new CaesarTextTools(store);
@@ -88,18 +85,12 @@ public class CaesarEditor extends CompilationUnitEditor {
 		} catch (Exception e) {
 			log.error("Initalizing CaesarJ Editor.", e); //$NON-NLS-1$
 		}
-	}
-
-	/* overriden to create correct source viewer configuration */
-	protected void setPreferenceStore(IPreferenceStore store) {
-		super.setPreferenceStore(store);
-
-		CaesarTextTools textTools = new CaesarTextTools(store);
-		JavaSourceViewerConfiguration svConfig = new CaesarSourceViewerConfiguration(
-				textTools, this, store);
-		setSourceViewerConfiguration(svConfig);
-	}
+    }
 	
+	public IJavaElement getInputJavaElement() {
+		return super.getInputJavaElement();
+	}
+
 	public Object getAdapter(Class key) {
 		if (key.equals(IContentOutlinePage.class)) {
 			if (this.outlineView == null) {
