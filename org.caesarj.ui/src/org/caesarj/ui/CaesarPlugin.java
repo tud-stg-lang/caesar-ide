@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarPlugin.java,v 1.25 2005-11-08 10:38:17 meffert Exp $
+ * $Id: CaesarPlugin.java,v 1.26 2005-11-17 16:58:07 gasiunas Exp $
  */
 
 package org.caesarj.ui;
@@ -28,12 +28,10 @@ package org.caesarj.ui;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.caesarj.ui.editor.CaesarTextTools;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Display;
@@ -67,8 +65,6 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 
 	public static final String CAESAR_HOME = "CAESAR_HOME";
 	
-	private CaesarTextTools caesarTextTools = null;
-
 	private String aspectjRuntimePath = null;
 
 	private String caesarRuntimePath = null;
@@ -110,7 +106,7 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 		
 		try {
 			this.resourceBundle = ResourceBundle
-					.getBundle("caesar.CaesarPluginResources"); //$NON-NLS-1$
+					.getBundle("caesar.CaesarPluginResources"); //$NON-NLS-1$			
 		} catch (MissingResourceException x) {
 			this.resourceBundle = null;
 		}
@@ -144,20 +140,6 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 		return Display.getCurrent();
 	}
 	
-	/**
-	 * Returns Caesar text tools containing Caesar code scanner
-	 */
-	public CaesarTextTools getCaesarTextTools() {
-		IPreferenceStore textToolPreferences;
-
-		if (this.caesarTextTools == null) {
-			textToolPreferences = JavaPlugin.getDefault().getPreferenceStore();
-			this.caesarTextTools = new CaesarTextTools(textToolPreferences);
-		}
-
-		return this.caesarTextTools;
-	}
-
 	public String getCaesarRuntimeClasspath() {
 		if (this.caesarRuntimePath == null)
 			this.caesarRuntimePath = getPathFor(CAESAR_RUNTIME_LIB);
