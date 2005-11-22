@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarPluginImages.java,v 1.16 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CaesarPluginImages.java,v 1.17 2005-11-22 12:50:19 meffert Exp $
  */
 
 package org.caesarj.ui;
@@ -77,7 +77,7 @@ public class CaesarPluginImages {
 	private static final String IMG_CCLASS_PUB = NAME_PREFIX + "cclass_public_obj.gif"; //$NON-NLS-1$	
 	private static final String IMG_CCLASS_PRI = NAME_PREFIX + "cclass_private_obj.gif"; //$NON-NLS-1$
 	private static final String IMG_CCLASS_PRO = NAME_PREFIX + "cclass_protected_obj.gif"; //$NON-NLS-1$
-	private static final String IMG_CCLASS = NAME_PREFIX + "cclass_default_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_CCLASS = NAME_PREFIX + "cclass_default_obj.gif"; //$NON-NLS-1$
 	private static final String IMG_CCLASS_IMPLICID = NAME_PREFIX + "cclass_implicid_obj.gif"; //$NON-NLS-1$
 	private static final String IMG_CCLASS_IMPLICID_DISABLED= NAME_PREFIX + "cclass_implicid_dis_obj.gif"; //$NON-NLS-1$
 	private static final String IMG_ADVICE_NODE = NAME_PREFIX + "advice_node.gif";

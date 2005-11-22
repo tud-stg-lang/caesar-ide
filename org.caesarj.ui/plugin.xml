@@ -55,6 +55,8 @@
       <import plugin="org.eclipse.ui.workbench.texteditor"/>
       <import plugin="org.eclipse.jdt.debug.ui"/>
       <import plugin="org.eclipse.jdt.debug"/>
+      <import plugin="org.eclipse.jdt.launching"/>
+      <import plugin="org.eclipse.core.variables"/>
    </requires>
 
 
@@ -343,4 +345,26 @@
          </action>
       </viewerContribution>    
    </extension>
+   
+   
+  <extension point="org.eclipse.debug.core.launchConfigurationTypes">
+  	<launchConfigurationType name="Caesar Application" delegate="org.caesarj.launching.CaesarLaunchConfigurationDelegate" modes="run, debug" id="org.caesarj.launching.localJavaApplication" sourceLocatorId="org.caesarj.launching.caesarSourceLookupDirector" sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer" /> 
+  </extension>
+  <extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+    <launchConfigurationTypeImage
+        icon="icons/sample.gif"
+        configTypeID="org.caesarj.launching.localJavaApplication"
+        id="org.caesarj.launching.launchConfigurationTypeImage.cj_app">
+    </launchConfigurationTypeImage>
+  </extension>
+  <extension point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+  	<launchConfigurationTabGroup type="org.caesarj.launching.localJavaApplication" helpContextId="org.eclipse.jdt.debug.ui.launchConfigHelpContext.local_java_application" class="org.caesarj.launching.LocalCaesarApplicationTabGroup" id="org.caesarj.launchConfigurationTabGroup.localCaesarApplication">
+ 		<launchMode mode="debug" perspective="org.eclipse.debug.ui.DebugPerspective" description="Local Caesar Application (debug)" /> 
+  		<launchMode mode="run" description="Local Caesar Application (run)" /> 
+  	</launchConfigurationTabGroup>
+  </extension>
+  <extension point="org.eclipse.debug.core.sourceLocators">
+  	<sourceLocator name="Caesar Source Lookup Director" class="org.caesarj.launching.CaesarSourceLookupDirector" id="org.caesarj.launching.caesarSourceLookupDirector" /> 
+  </extension>
+     
 </plugin>

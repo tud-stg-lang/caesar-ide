@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarPlugin.java,v 1.26 2005-11-17 16:58:07 gasiunas Exp $
+ * $Id: CaesarPlugin.java,v 1.27 2005-11-22 12:50:19 meffert Exp $
  */
 
 package org.caesarj.ui;
@@ -28,8 +28,10 @@ package org.caesarj.ui;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.caesarj.launching.CjStepFilterOptionManager;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -38,6 +40,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -172,7 +175,13 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 	
 	protected final static String[] ACTIVE_FILTER = {};
 	protected final static String[] INACTIVE_FILTER = {"org.caesarj.*", "org.aspectj.*"};
-	
+	public final static String[] FILTER = {"org.caesarj.*", "org.aspectj.*"
+		//,"com.ibm.*","com.sun.*","java.*","javax.*","org.omg.*","sun.*","sunw.*","java.lang.ClassLoader"
+	};
+
+	/**
+	 * Adds step filter.
+	 */
 	protected void setStepFilter(){
 		IPreferenceStore store = JDIDebugUIPlugin.getDefault().getPreferenceStore();
 		String afd = store.getDefaultString(IJDIPreferencesConstants.PREF_ACTIVE_FILTERS_LIST);
@@ -206,4 +215,13 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 		}
 				
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
+	public void stop(BundleContext context) throws Exception {
+		// Remove property-listener 
+		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(CjStepFilterOptionManager.getDefault());
+        super.stop(context);
+    }
 }
