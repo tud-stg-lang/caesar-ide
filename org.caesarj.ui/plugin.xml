@@ -348,23 +348,52 @@
    
    
   <extension point="org.eclipse.debug.core.launchConfigurationTypes">
-  	<launchConfigurationType name="Caesar Application" delegate="org.caesarj.launching.CaesarLaunchConfigurationDelegate" modes="run, debug" id="org.caesarj.launching.localJavaApplication" sourceLocatorId="org.caesarj.launching.caesarSourceLookupDirector" sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer" /> 
+  	<launchConfigurationType name="Caesar Application" delegate="org.caesarj.launching.CaesarLaunchConfigurationDelegate" modes="run, debug" id="org.caesarj.launching.localCaesarApplication" sourceLocatorId="org.caesarj.launching.caesarSourceLookupDirector" sourcePathComputerId="org.eclipse.jdt.launching.sourceLookup.javaSourcePathComputer" /> 
   </extension>
   <extension point="org.eclipse.debug.ui.launchConfigurationTypeImages">
     <launchConfigurationTypeImage
         icon="icons/sample.gif"
-        configTypeID="org.caesarj.launching.localJavaApplication"
+        configTypeID="org.caesarj.launching.localCaesarApplication"
         id="org.caesarj.launching.launchConfigurationTypeImage.cj_app">
     </launchConfigurationTypeImage>
   </extension>
   <extension point="org.eclipse.debug.ui.launchConfigurationTabGroups">
-  	<launchConfigurationTabGroup type="org.caesarj.launching.localJavaApplication" helpContextId="org.eclipse.jdt.debug.ui.launchConfigHelpContext.local_java_application" class="org.caesarj.launching.LocalCaesarApplicationTabGroup" id="org.caesarj.launchConfigurationTabGroup.localCaesarApplication">
+  	<launchConfigurationTabGroup type="org.caesarj.launching.localCaesarApplication" helpContextId="org.eclipse.jdt.debug.ui.launchConfigHelpContext.local_java_application" class="org.caesarj.launching.LocalCaesarApplicationTabGroup" id="org.caesarj.launchConfigurationTabGroup.localCaesarApplication">
  		<launchMode mode="debug" perspective="org.eclipse.debug.ui.DebugPerspective" description="Local Caesar Application (debug)" /> 
   		<launchMode mode="run" description="Local Caesar Application (run)" /> 
   	</launchConfigurationTabGroup>
   </extension>
   <extension point="org.eclipse.debug.core.sourceLocators">
   	<sourceLocator name="Caesar Source Lookup Director" class="org.caesarj.launching.CaesarSourceLookupDirector" id="org.caesarj.launching.caesarSourceLookupDirector" /> 
+  </extension>
+  <extension point="org.eclipse.debug.ui.launchShortcuts">
+    <shortcut
+        id="org.caesarj.launching.caesarShortcut"
+        class="org.caesarj.launching.CaesarLaunchShortcut"
+        label="Caesar Application"
+        icon="icons/sample.gif"
+        modes="run,debug">
+            <perspective id="org.eclipse.jdt.ui.JavaPerspective"/>
+            <perspective id="org.caesarj.ui.perspective.CaesarPerspective"/>
+            <perspective id="org.eclipse.jdt.ui.JavaHierarchyPerspective"/>
+            <perspective id="org.eclipse.jdt.ui.JavaBrowsingPerspective"/>
+            <perspective id="org.eclipse.debug.ui.DebugPerspective"/>
+         <contextualLaunch>
+           <enablement>
+             <with variable="selection">
+               <count value="1"/>
+               <iterate>
+                 <or>
+                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.java"/>
+                   <test property="org.eclipse.debug.ui.matchesPattern" value="*.class"/>
+                   <instanceof value="org.eclipse.jdt.core.IJavaElement"/>
+                 </or>
+               </iterate>
+             </with>
+           </enablement>
+  		 </contextualLaunch>
+            
+    </shortcut>
   </extension>
      
 </plugin>
