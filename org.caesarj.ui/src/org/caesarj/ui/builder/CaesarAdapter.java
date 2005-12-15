@@ -2,7 +2,7 @@
  * This source file is part of CaesarJ 
  * For the latest info, see http://caesarj.org/
  * 
- * Copyright © 2003-2005 
+ * Copyright ï¿½ 2003-2005 
  * Darmstadt University of Technology, Software Technology Group
  * Also see acknowledgements in readme.txt
  * 
@@ -20,21 +20,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarAdapter.java,v 1.32 2005-05-31 09:08:10 meffert Exp $
+ * $Id: CaesarAdapter.java,v 1.33 2005-12-15 19:55:47 thiago Exp $
  */
 
 package org.caesarj.ui.builder;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
+import org.aspectj.weaver.IWeaveRequestor;
+import org.aspectj.weaver.bcel.UnwovenClassFile;
 import org.caesarj.compiler.KjcEnvironment;
 import org.caesarj.compiler.KjcOptions;
 import org.caesarj.compiler.Main;
 import org.caesarj.compiler.asm.CaesarJAsmManager;
+import org.caesarj.compiler.aspectj.CaesarBcelWorld;
 import org.caesarj.compiler.ast.phylum.JCompilationUnit;
+import org.caesarj.compiler.types.TypeFactory;
 import org.caesarj.util.CWarning;
 import org.caesarj.util.PositionedError;
 import org.caesarj.util.UnpositionedError;
@@ -47,7 +52,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @author Ivica Aracic <ivica.aracic@bytelords.de>
  */
-public final class CaesarAdapter extends Main {
+public final class CaesarAdapter extends Main implements IWeaveRequestor {
 	
 	//protected final static boolean buildAsm = true;
     //protected final static boolean printAsm = true;
@@ -65,7 +70,7 @@ public final class CaesarAdapter extends Main {
 	public CaesarAdapter(String projectLocation) {
 		super(projectLocation, null);
 		CaesarAdapter.buildAsm = true;
-		CaesarAdapter.printAsm = true;
+		CaesarAdapter.printAsm = false;
 	}
 
 	public void reportTrouble(PositionedError error) {
@@ -123,51 +128,72 @@ public final class CaesarAdapter extends Main {
 		this.progressMonitor = progressMonitorArg != null ? progressMonitorArg
 				: NULL_PROGRESS_MONITOR;
 
-		this.progressMonitor.beginTask("compiling source files", sourceFiles //$NON-NLS-1$
-				.size() + 1);
-
+		this.progressMonitor.beginTask(
+				"Compiling source files", //$NON-NLS-1$ 
+				sourceFiles.size() * 3); // Approximately ( 1 for parsing, 2 for weaving)
+		
 		try {
 			success = run(args);
-		} 
+		}
 		catch (RuntimeException e) {
 			e.printStackTrace();
-			errors.add("internal compiler error: " + e.toString());	
+			errors.add("Internal compiler error: " + e.toString());	
 		}
+		
+		this.progressMonitor.done();
 		
 		return success;
 	}
 	
-	protected JCompilationUnit parseFile(File file, KjcEnvironment env) {
-		if (this.progressMonitor.isCanceled()) {
-			return null;
+    protected JCompilationUnit[] parseFiles(KjcEnvironment environment) {
+    	if (this.progressMonitor.isCanceled()) {
+			// TODO - check how to stop compilation
+    		//return null;
 		}
 
-		JCompilationUnit res;
-		this.progressMonitor.subTask("compiling " + file.getName()); //$NON-NLS-1$
-		System.out.println("compiling " + file.getName());
-		res = super.parseFile(file, env);
+    	JCompilationUnit[] res = super.parseFiles(environment);
+    	
+		this.progressMonitor.subTask("Compiling..."); //$NON-NLS-1$
 		this.progressMonitor.worked(1);
 		
-		//AsmBuilder.build(res, this.model);
-		System.out.println("parseFile completed: " + file.getName());
+		return res;
+    }
+    
+	protected JCompilationUnit parseFile(File file, KjcEnvironment env) {
+		if (this.progressMonitor.isCanceled()) {
+			// TODO - check how to stop compilation
+    		//return null;
+		}
+
+		this.progressMonitor.subTask("Parsing " + file.getName()); //$NON-NLS-1$
+
+		JCompilationUnit res = super.parseFile(file, env);
+		
+		this.progressMonitor.worked(1);
+		
 		return res;
 	}
-	
-	protected void preWeaveProcessing(JCompilationUnit[] cu) {
-		super.preWeaveProcessing(cu);
-    }
-	
 
-	protected void weaveClasses(KjcEnvironment env) {
+	public void genCode(TypeFactory factory, JCompilationUnit cus[]) {
 		if (this.progressMonitor.isCanceled()) {
 			return;
 		}
+		
+		this.progressMonitor.subTask("Generating code..."); //$NON-NLS-1$
+		
+		super.genCode(factory, cus);
+	}
+	
+	protected void performWeaving(CaesarBcelWorld bcelWorld) 
+		throws UnpositionedError, IOException, PositionedError {
+		
+		if (this.progressMonitor.isCanceled()) {
+			return;
+		}
+		
+		this.progressMonitor.subTask("Weaving classes..."); //$NON-NLS-1$
 
-		this.progressMonitor.subTask("weaving classes..."); //$NON-NLS-1$
-
-		super.weaveClasses(env);
-
-		this.progressMonitor.worked(1);
+		weaver.performWeaving(bcelWorld, this);
 	}
 	
 	/**
@@ -202,5 +228,34 @@ public final class CaesarAdapter extends Main {
 	
 	public KjcEnvironment getKjcEnvironment(){
 		return this.env;
+	}
+	
+	// Implementation for IWeaveRequestor
+	
+	public void acceptResult(UnwovenClassFile result) {
+		if (result != null) {
+			this.progressMonitor.subTask("Weaving completed for " + result.getClassName()); //$NON-NLS-1$
+		}
+		this.progressMonitor.worked(1);
+	}
+	public void processingReweavableState() {
+		this.progressMonitor.subTask("Processing reweavable state..."); //$NON-NLS-1$
+		this.progressMonitor.worked(1);
+	}
+	public void addingTypeMungers() {
+		this.progressMonitor.subTask("Adding type mungers..."); //$NON-NLS-1$
+		this.progressMonitor.worked(1);
+	}
+	public void weavingAspects() {
+		this.progressMonitor.subTask("Weaving aspects..."); //$NON-NLS-1$
+		this.progressMonitor.worked(1);
+	}
+	public void weavingClasses() {
+		this.progressMonitor.subTask("Weaving classes..."); //$NON-NLS-1$
+		this.progressMonitor.worked(1);
+	}
+	public void weaveCompleted() {
+		this.progressMonitor.subTask("Weaving completed!"); //$NON-NLS-1$
+		this.progressMonitor.worked(1);
 	}
 }

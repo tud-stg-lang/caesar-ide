@@ -2,7 +2,7 @@
  * This source file is part of CaesarJ 
  * For the latest info, see http://caesarj.org/
  * 
- * Copyright © 2003-2005 
+ * Copyright ï¿½ 2003-2005 
  * Darmstadt University of Technology, Software Technology Group
  * Also see acknowledgements in readme.txt
  * 
@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: ProjectProperties.java,v 1.14 2005-11-05 17:22:49 gasiunas Exp $
+ * $Id: ProjectProperties.java,v 1.15 2005-12-15 19:55:47 thiago Exp $
  */
 
 package org.caesarj.ui.util;
@@ -64,6 +64,7 @@ public class ProjectProperties {
 	private IProject project = null;
 	private IJavaProject javaProject = null;
     private String outputPath = null;
+    private List<String> sourcePaths = null;
     private String projectLocation = null;
     private StringBuffer classPath = null;
     private List sourceFiles = null;
@@ -118,7 +119,8 @@ public class ProjectProperties {
          */
         this.projectLocation = project.getLocation().removeLastSegments(1).toOSString();
         this.outputPath = javaProject.getOutputLocation().toOSString();
-
+        this.sourcePaths = new ArrayList<String>();
+        
         /*
          * get source files
          */
@@ -134,6 +136,9 @@ public class ProjectProperties {
                     ),
                     this.sourceFiles
                 );
+                if (! this.sourcePaths.contains(classPathEntries[i].getPath().toOSString())) {
+                	this.sourcePaths.add(classPathEntries[i].getPath().toOSString());
+                }
             }               
             else if(classPathEntries[i].getEntryKind() == IClasspathEntry.CPE_LIBRARY) {
         
@@ -208,6 +213,16 @@ public class ProjectProperties {
         return this.outputPath;
     }
 
+    /**
+     * Return a list of strings representing the paths were we
+     * can get sources for the project.
+     * All paths are relative to the project location.
+     * @return
+     */
+    public String[] getSourcePaths() {
+    	return this.sourcePaths.toArray(new String[0]);
+    }
+    
     /**
      * A colon separated list of java resources, used as classpath for
      * the compiler

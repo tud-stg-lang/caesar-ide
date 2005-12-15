@@ -2,7 +2,7 @@
  * This source file is part of CaesarJ 
  * For the latest info, see http://caesarj.org/
  * 
- * Copyright © 2003-2005 
+ * Copyright ï¿½ 2003-2005 
  * Darmstadt University of Technology, Software Technology Group
  * Also see acknowledgements in readme.txt
  * 
@@ -20,15 +20,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: Builder.java,v 1.32 2005-07-28 15:03:27 gasiunas Exp $
+ * $Id: Builder.java,v 1.33 2005-12-15 19:55:47 thiago Exp $
  */
 
 package org.caesarj.ui.builder;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -67,7 +70,7 @@ public class Builder extends IncrementalProjectBuilder {
 
 	private IProject currentProject = null;
 	
-	private Collection errors = new LinkedList();
+	private Collection errors = new ArrayList();
 
 
 	/**
@@ -78,12 +81,12 @@ public class Builder extends IncrementalProjectBuilder {
 	protected IProject[] build(int kind, Map args, IProgressMonitor progressMonitor) {
 		try {
 		    JavaCore.getClasspathVariable(CaesarPlugin.CAESAR_HOME);
-		   
+		    
+		    // Get the current project
+			this.currentProject = getProject();
+
 			this.errors.clear();
 
-			// Get the current project
-			this.currentProject = getProject();
-			
 			// Get this project's properties
 			this.projectProperties = ProjectProperties.create(currentProject);
 
@@ -97,19 +100,29 @@ public class Builder extends IncrementalProjectBuilder {
 			log.debug("----\n" + this.projectProperties.toString() + "----\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
 			// Clean the destination directory always, since there is no incremental building
-			cleanOutputFolder(
-					projectProperties.getProjectLocation() +
+			cleanOutputFolder(projectProperties.getProjectLocation() +
 					File.separator +
 					projectProperties.getOutputPath());
 			
 			// Create a caesar adapter to compile the project
 			CaesarAdapter caesarAdapter = new CaesarAdapter(this.projectProperties.getProjectLocation());
 
+			long begin = System.currentTimeMillis();
+			
 			// Compile the Project
 			caesarAdapter.compile(this.projectProperties.getSourceFiles(),
 					this.projectProperties.getClassPath(),
 					this.projectProperties.getOutputPath().substring(1), this.errors,
 					progressMonitor);
+			
+			long end = System.currentTimeMillis();
+			
+			System.out.println("Project compiled in " + (end - begin) + " miliseconds");
+			
+			// Copy non-java resources
+			copyResources(projectProperties.getProjectLocation(), 
+					projectProperties.getSourcePaths(), 
+					projectProperties.getOutputPath());
 			
 			// Set the project's structure model
 			this.projectProperties.setAsmManager(caesarAdapter.getAsmManager());
@@ -260,5 +273,69 @@ public class Builder extends IncrementalProjectBuilder {
 					f.delete();
 			}
 		}
+	}
+	
+	
+	private void copyResources(String base, String[] sources, String output) {
+		
+		if (sources != null) {
+			// Iterate the sources
+			for (String source : sources) {
+				copyResources(base, source, output);
+			}
+		}
+	}
+	
+	private void copyResources(String base, String source, String output) {
+		
+		File sourceDir = new File(base + File.separator + source);
+		File outputDir = new File(base + File.separator + output);
+		
+		if (sourceDir.isDirectory()) {
+			
+			for(File f : sourceDir.listFiles()) {
+
+				String name = f.getName();
+				
+				if (f.isDirectory()) {
+					// If it is a directory, copy its contents recursivelly
+					copyResources(
+							base, 
+							source + File.separator + name, 
+							output + File.separator + name);
+				} else {
+					// If it is not a directory, check if it is a resource
+					if (isResource(name)) {
+						File dest = new File(outputDir, File.separator + name);
+						if (outputDir.exists() || outputDir.mkdirs()) {
+							copy(f, dest);
+						}
+					}	
+				}
+			}
+		}
+	}
+	
+	protected boolean copy(File src, File dest) {
+		FileChannel source, destination;
+
+		try {
+			source = new FileInputStream(src).getChannel();
+			destination = new FileOutputStream(dest).getChannel();
+			source.transferTo(0, source.size(), destination);
+			source.close();
+			destination.close();
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	protected boolean isResource(String name) {
+		return 
+			! name.endsWith(".class") && 
+			! name.endsWith(".cj") && 
+			! name.endsWith(".java") &&
+			! name.endsWith("CVS");
 	}
 }
