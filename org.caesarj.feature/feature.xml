@@ -2,7 +2,7 @@
 <feature
       id="org.caesarj.feature"
       label="org.caesarj.feature"
-      version="0.8.3"
+      version="0.8.4"
       provider-name="TU-Darmstadt">
 
    <description>
