@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarAdapter.java,v 1.33 2005-12-15 19:55:47 thiago Exp $
+ * $Id: CaesarAdapter.java,v 1.34 2006-02-27 00:28:16 thiago Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -65,12 +65,19 @@ public final class CaesarAdapter extends Main implements IWeaveRequestor {
 
 	private IProgressMonitor progressMonitor;
 
+	private int worked;
+	
 	static Logger logger = Logger.getLogger(CaesarAdapter.class);
 
 	public CaesarAdapter(String projectLocation) {
+		this(projectLocation, 0);
+	}
+	
+	public CaesarAdapter(String projectLocation, int worked) {
 		super(projectLocation, null);
 		CaesarAdapter.buildAsm = true;
 		CaesarAdapter.printAsm = false;
+		this.worked = worked;
 	}
 
 	public void reportTrouble(PositionedError error) {
@@ -128,9 +135,14 @@ public final class CaesarAdapter extends Main implements IWeaveRequestor {
 		this.progressMonitor = progressMonitorArg != null ? progressMonitorArg
 				: NULL_PROGRESS_MONITOR;
 
+		if (worked == 0) {
+			worked = sourceFiles.size() * 3; // Approximately ( 1 for parsing, 2 for weaving)
+		}
+		
 		this.progressMonitor.beginTask(
 				"Compiling source files", //$NON-NLS-1$ 
-				sourceFiles.size() * 3); // Approximately ( 1 for parsing, 2 for weaving)
+				worked);
+		worked = 0;
 		
 		try {
 			success = run(args);
@@ -141,8 +153,12 @@ public final class CaesarAdapter extends Main implements IWeaveRequestor {
 		}
 		
 		this.progressMonitor.done();
-		
 		return success;
+	}
+	
+	protected void notifyWork(int inc) {
+		this.worked += inc;
+		this.progressMonitor.worked(inc);
 	}
 	
     protected JCompilationUnit[] parseFiles(KjcEnvironment environment) {
@@ -154,7 +170,7 @@ public final class CaesarAdapter extends Main implements IWeaveRequestor {
     	JCompilationUnit[] res = super.parseFiles(environment);
     	
 		this.progressMonitor.subTask("Compiling..."); //$NON-NLS-1$
-		this.progressMonitor.worked(1);
+		this.notifyWork(1);
 		
 		return res;
     }
@@ -169,7 +185,7 @@ public final class CaesarAdapter extends Main implements IWeaveRequestor {
 
 		JCompilationUnit res = super.parseFile(file, env);
 		
-		this.progressMonitor.worked(1);
+		this.notifyWork(1);
 		
 		return res;
 	}
@@ -236,26 +252,34 @@ public final class CaesarAdapter extends Main implements IWeaveRequestor {
 		if (result != null) {
 			this.progressMonitor.subTask("Weaving completed for " + result.getClassName()); //$NON-NLS-1$
 		}
-		this.progressMonitor.worked(1);
+		this.notifyWork(1);
 	}
 	public void processingReweavableState() {
 		this.progressMonitor.subTask("Processing reweavable state..."); //$NON-NLS-1$
-		this.progressMonitor.worked(1);
+		this.notifyWork(1);
 	}
 	public void addingTypeMungers() {
 		this.progressMonitor.subTask("Adding type mungers..."); //$NON-NLS-1$
-		this.progressMonitor.worked(1);
+		this.notifyWork(1);
 	}
 	public void weavingAspects() {
 		this.progressMonitor.subTask("Weaving aspects..."); //$NON-NLS-1$
-		this.progressMonitor.worked(1);
+		this.notifyWork(1);
 	}
 	public void weavingClasses() {
 		this.progressMonitor.subTask("Weaving classes..."); //$NON-NLS-1$
-		this.progressMonitor.worked(1);
+		this.notifyWork(1);
 	}
 	public void weaveCompleted() {
 		this.progressMonitor.subTask("Weaving completed!"); //$NON-NLS-1$
-		this.progressMonitor.worked(1);
+		this.notifyWork(1);
+	}
+
+	public int getWorked() {
+		return worked;
+	}
+
+	public void setWorked(int worked) {
+		this.worked = worked;
 	}
 }

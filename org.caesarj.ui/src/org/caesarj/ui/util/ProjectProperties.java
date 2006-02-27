@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: ProjectProperties.java,v 1.15 2005-12-15 19:55:47 thiago Exp $
+ * $Id: ProjectProperties.java,v 1.16 2006-02-27 00:28:15 thiago Exp $
  */
 
 package org.caesarj.ui.util;
@@ -69,6 +69,7 @@ public class ProjectProperties {
     private StringBuffer classPath = null;
     private List sourceFiles = null;
     private CaesarJAsmManager asmManager = null;
+    private int worked = 0;
     
     private KjcEnvironment kjcEnv = null;
     
@@ -284,5 +285,13 @@ public class ProjectProperties {
 	 */
 	public void setKjcEnvironment(KjcEnvironment kjcEnv) {
 		this.kjcEnv = kjcEnv;
+	}
+
+	public int getWorked() {
+		return worked;
+	}
+
+	public void setWorked(int worked) {
+		this.worked = worked;
 	}
 }

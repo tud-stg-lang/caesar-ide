@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: Builder.java,v 1.33 2005-12-15 19:55:47 thiago Exp $
+ * $Id: Builder.java,v 1.34 2006-02-27 00:28:16 thiago Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -105,7 +105,9 @@ public class Builder extends IncrementalProjectBuilder {
 					projectProperties.getOutputPath());
 			
 			// Create a caesar adapter to compile the project
-			CaesarAdapter caesarAdapter = new CaesarAdapter(this.projectProperties.getProjectLocation());
+			CaesarAdapter caesarAdapter = new CaesarAdapter(
+					this.projectProperties.getProjectLocation(),
+					this.projectProperties.getWorked());
 
 			long begin = System.currentTimeMillis();
 			
@@ -129,6 +131,9 @@ public class Builder extends IncrementalProjectBuilder {
 			
 			// Set the project's kjcEnvironment
 			this.projectProperties.setKjcEnvironment(caesarAdapter.getKjcEnvironment());
+			
+			// Remember how much it worked for the next time
+			this.projectProperties.setWorked(caesarAdapter.getWorked());
 		} 
 		catch (Throwable t) {
 			t.printStackTrace();
@@ -174,11 +179,13 @@ public class Builder extends IncrementalProjectBuilder {
 
 				IResource resource = ProjectProperties.findResource(sourcePath,
 						this.projectProperties.getProject());
-
-				resource.deleteMarkers(IMarker.PROBLEM, true,
-						IResource.DEPTH_INFINITE);
-				resource.deleteMarkers(AdviceMarker.ADVICEMARKER, true,
-						IResource.DEPTH_INFINITE);
+				
+				if (resource != null) {
+					resource.deleteMarkers(IMarker.PROBLEM, true,
+							IResource.DEPTH_INFINITE);
+					resource.deleteMarkers(AdviceMarker.ADVICEMARKER, true,
+							IResource.DEPTH_INFINITE);
+				}
 			}
 		} 
 		catch (Exception e) {
