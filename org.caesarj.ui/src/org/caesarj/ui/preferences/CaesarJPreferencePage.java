@@ -95,6 +95,12 @@ public class CaesarJPreferencePage extends FieldEditorPreferencePage implements 
 				CaesarJPreferences.CAESAR_PREF_CONFIG_DONE, 
 				CaesarJPluginResources.getResourceString("Preferences.configDone"), 	//$NON-NLS-1$
 				parent));
+		
+		addField(
+				new BooleanFieldEditor(
+					CaesarJPreferences.CAESAR_RUN_WEAVER, 
+					CaesarJPluginResources.getResourceString("Preferences.runWeaver"), 	//$NON-NLS-1$
+					parent));
 	}
 	
 	/**

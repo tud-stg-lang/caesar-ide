@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarAdapter.java,v 1.34 2006-02-27 00:28:16 thiago Exp $
+ * $Id: CaesarAdapter.java,v 1.35 2006-09-08 13:37:01 thiago Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -40,6 +40,7 @@ import org.caesarj.compiler.asm.CaesarJAsmManager;
 import org.caesarj.compiler.aspectj.CaesarBcelWorld;
 import org.caesarj.compiler.ast.phylum.JCompilationUnit;
 import org.caesarj.compiler.types.TypeFactory;
+import org.caesarj.ui.preferences.CaesarJPreferences;
 import org.caesarj.util.CWarning;
 import org.caesarj.util.PositionedError;
 import org.caesarj.util.UnpositionedError;
@@ -67,16 +68,19 @@ public final class CaesarAdapter extends Main implements IWeaveRequestor {
 
 	private int worked;
 	
+	private boolean weave = true;
+	
 	static Logger logger = Logger.getLogger(CaesarAdapter.class);
 
 	public CaesarAdapter(String projectLocation) {
-		this(projectLocation, 0);
+		this(projectLocation, 0, true);
 	}
 	
-	public CaesarAdapter(String projectLocation, int worked) {
+	public CaesarAdapter(String projectLocation, int worked, boolean weave) {
 		super(projectLocation, null);
 		CaesarAdapter.buildAsm = true;
 		CaesarAdapter.printAsm = false;
+		this.weave = weave;
 		this.worked = worked;
 	}
 
@@ -134,15 +138,10 @@ public final class CaesarAdapter extends Main implements IWeaveRequestor {
 		this.errors = errorsArg;
 		this.progressMonitor = progressMonitorArg != null ? progressMonitorArg
 				: NULL_PROGRESS_MONITOR;
-
-		if (worked == 0) {
-			worked = sourceFiles.size() * 3; // Approximately ( 1 for parsing, 2 for weaving)
-		}
 		
 		this.progressMonitor.beginTask(
 				"Compiling source files", //$NON-NLS-1$ 
-				worked);
-		worked = 0;
+				sourceFiles.size() * 3); // Approximately ( 1 for parsing, 2 for weaving)
 		
 		try {
 			success = run(args);
@@ -245,6 +244,10 @@ public final class CaesarAdapter extends Main implements IWeaveRequestor {
 	public KjcEnvironment getKjcEnvironment(){
 		return this.env;
 	}
+	
+	public boolean noWeaveMode() {
+		return ! this.weave;
+    }
 	
 	// Implementation for IWeaveRequestor
 	

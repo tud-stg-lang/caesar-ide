@@ -179,6 +179,15 @@
         		style="toggle"
         		state="false"
         		id="org.caesarj.ui.actionsets.Annotation"/>
+     <action
+           class="org.caesarj.ui.actionsets.WeaveShortCut"
+           icon="icons/advice.gif"
+           id="org.caesarj.ui.actionsets.RunWeaver"
+           label="CaesarJRunWeaver"
+           retarget="false"
+           style="toggle"
+           toolbarPath="Normal/additions"
+           tooltip="CaesarJ: Enables/Disables weaver"/>
 		</actionSet>
 	</extension>
 	

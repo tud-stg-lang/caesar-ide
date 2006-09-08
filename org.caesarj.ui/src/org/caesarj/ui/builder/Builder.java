@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: Builder.java,v 1.34 2006-02-27 00:28:16 thiago Exp $
+ * $Id: Builder.java,v 1.35 2006-09-08 13:37:01 thiago Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -38,6 +38,7 @@ import org.apache.log4j.Logger;
 import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.editor.CaesarJContentOutlinePage;
 import org.caesarj.ui.marker.AdviceMarker;
+import org.caesarj.ui.preferences.CaesarJPreferences;
 import org.caesarj.ui.util.ProjectProperties;
 import org.caesarj.ui.views.CaesarHierarchyView;
 import org.caesarj.util.PositionedError;
@@ -107,8 +108,9 @@ public class Builder extends IncrementalProjectBuilder {
 			// Create a caesar adapter to compile the project
 			CaesarAdapter caesarAdapter = new CaesarAdapter(
 					this.projectProperties.getProjectLocation(),
-					this.projectProperties.getWorked());
-
+					this.projectProperties.getWorked(),
+					CaesarJPreferences.isRunWeaver());
+			
 			long begin = System.currentTimeMillis();
 			
 			// Compile the Project

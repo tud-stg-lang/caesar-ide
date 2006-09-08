@@ -2,7 +2,7 @@
  * This source file is part of CaesarJ 
  * For the latest info, see http://caesarj.org/
  * 
- * Copyright © 2003-2005 
+ * Copyright ï¿½ 2003-2005 
  * Darmstadt University of Technology, Software Technology Group
  * Also see acknowledgements in readme.txt
  * 
@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarJPreferences.java,v 1.6 2005-02-15 17:39:12 gasiunas Exp $
+ * $Id: CaesarJPreferences.java,v 1.7 2006-09-08 13:37:01 thiago Exp $
  */
 
 package org.caesarj.ui.preferences;
@@ -38,6 +38,8 @@ public class CaesarJPreferences {
 	public static final String CAESAR_IS_DEFAULT_EDITOR = "org.caesarj.ui.preferences.isDefaultEditor";
 	
 	public static final String CAESAR_ANALIZE_ANNOTATIONS = "org.caesarj.ui.preferences.analizeAnnotations";
+	
+	public static final String CAESAR_RUN_WEAVER = "org.caesarj.ui.preferences.runWeaver";
 	
 	public static boolean isAutoSwitch() {
 		return getCjPrefStore().getBoolean(CAESAR_AUTO_SWITCH);
@@ -69,6 +71,14 @@ public class CaesarJPreferences {
 	
 	public static void setPrefConfigDone(boolean done) {
 		getCjPrefStore().setValue(CAESAR_PREF_CONFIG_DONE, done);
+	}
+	
+	public static boolean isRunWeaver() {
+		return getCjPrefStore().getBoolean(CAESAR_RUN_WEAVER);
+	}
+	
+	public static void setRunWeaver(boolean done) {
+		getCjPrefStore().setValue(CAESAR_RUN_WEAVER, done);
 	}
 	
 	private static IPreferenceStore getCjPrefStore() {
