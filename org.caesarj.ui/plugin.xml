@@ -266,16 +266,16 @@
 	         <action
 	               label="%JavaBreakpointProperties.label"
 	               helpContextId="breakpoint_properties_action_context"
-	               class="org.eclipse.jdt.internal.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate"
+	               class="org.eclipse.jdt.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate"
 	               menubarPath="debug"
 	               id="org.eclipse.jdt.debug.ui.actions.JavaBreakpointPropertiesRulerActionDelegate">
 	         </action>
 	         <action
 	               label="%EnableBreakpoint.label"
 	               helpContextId="enable_disable_breakpoint_action_context"
-	               class="org.eclipse.jdt.internal.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate"
+	               class="org.eclipse.debug.ui.actions.RulerEnableDisableBreakpointActionDelegate"
 	               menubarPath="debug"
-	               id="org.eclipse.jdt.debug.ui.actions.EnableDisableBreakpointRulerActionDelegate">
+	               id="org.eclipse.debug.ui.actions.RulerEnableDisableBreakpointActionDelegate">
 	         </action>
 	         <action
 	               helpContextId="manage_breakpoint_action_context"
@@ -326,7 +326,7 @@
          <action
                label="%Dummy.label"
                tooltip="%Dummy.label"
-               class="org.eclipse.jdt.internal.ui.actions.FoldingExpandAllRulerAction"
+               class="org.eclipse.jdt.ui.actions.FoldingExpandAllRulerAction"
                menubarPath="projection/additions"
                definitionId="org.eclipse.ui.edit.text.folding.expand_all"
                id="org.eclipse.jdt.ui.folding.expandAll">
@@ -403,6 +403,10 @@
   		 </contextualLaunch>
             
     </shortcut>
+  </extension>
+  <extension
+        point="org.eclipse.core.runtime.preferences">
+     <initializer class="org.caesarj.ui.preferences.CaesarPreferenceInitializerr"/>
   </extension>
      
 </plugin>

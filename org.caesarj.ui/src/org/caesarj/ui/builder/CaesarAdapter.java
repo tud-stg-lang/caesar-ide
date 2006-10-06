@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarAdapter.java,v 1.35 2006-09-08 13:37:01 thiago Exp $
+ * $Id: CaesarAdapter.java,v 1.36 2006-10-06 17:05:47 gasiunas Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -40,7 +40,6 @@ import org.caesarj.compiler.asm.CaesarJAsmManager;
 import org.caesarj.compiler.aspectj.CaesarBcelWorld;
 import org.caesarj.compiler.ast.phylum.JCompilationUnit;
 import org.caesarj.compiler.types.TypeFactory;
-import org.caesarj.ui.preferences.CaesarJPreferences;
 import org.caesarj.util.CWarning;
 import org.caesarj.util.PositionedError;
 import org.caesarj.util.UnpositionedError;
@@ -58,9 +57,7 @@ public final class CaesarAdapter extends Main implements IWeaveRequestor {
 	//protected final static boolean buildAsm = true;
     //protected final static boolean printAsm = true;
     
-    private static Logger log = Logger.getLogger(CaesarAdapter.class);
-
-	public static IProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
+    public static IProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
 
 	private Collection errors;
 

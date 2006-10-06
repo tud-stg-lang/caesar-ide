@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarHomeInitializer.java,v 1.3 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CaesarHomeInitializer.java,v 1.4 2006-10-06 17:05:12 gasiunas Exp $
  */
 
 package org.caesarj.ui;
@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.ClasspathVariableInitializer;
@@ -55,7 +56,7 @@ public class CaesarHomeInitializer extends ClasspathVariableInitializer {
 		URL installLocation= bundle.getEntry("/"); //$NON-NLS-1$
 		URL local= null;
 		try {
-			local= Platform.asLocalURL(installLocation);
+			local= FileLocator.toFileURL(installLocation);
 		} catch (IOException e) {
 			JavaCore.removeClasspathVariable(CaesarPlugin.CAESAR_HOME, null);
 			return;

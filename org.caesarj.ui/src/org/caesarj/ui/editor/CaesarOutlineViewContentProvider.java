@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarOutlineViewContentProvider.java,v 1.8 2005-07-28 15:06:06 gasiunas Exp $
+ * $Id: CaesarOutlineViewContentProvider.java,v 1.9 2006-10-06 17:05:47 gasiunas Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -35,7 +35,6 @@ import org.aspectj.asm.internal.ProgramElement;
 import org.caesarj.compiler.asm.CaesarProgramElement;
 import org.caesarj.compiler.asm.LinkNode;
 import org.caesarj.compiler.asm.CaesarProgramElement.Kind;
-import org.caesarj.ui.util.ProjectProperties;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -46,18 +45,7 @@ import org.eclipse.jface.viewers.Viewer;
  */
 public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
 
-	private ProjectProperties projectProperties = null;
-	
 	public CaesarOutlineViewContentProvider() {
-	}
-	
-	/**
-	 * Sets the project properties
-	 * 
-	 * @param projectProperties
-	 */
-	public void setProjectProperties(ProjectProperties projectProperties) {
-	    this.projectProperties = projectProperties;
 	}
 	
 	/**

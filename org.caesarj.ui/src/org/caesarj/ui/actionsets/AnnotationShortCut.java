@@ -20,12 +20,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: AnnotationShortCut.java,v 1.9 2005-02-16 10:30:02 gasiunas Exp $
+ * $Id: AnnotationShortCut.java,v 1.10 2006-10-06 17:05:47 gasiunas Exp $
  */
 
 package org.caesarj.ui.actionsets;
 
-import org.apache.log4j.Logger;
 import org.caesarj.ui.CJDTConfigSettings;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.ui.PreferenceConstants;
@@ -44,8 +43,6 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 public class AnnotationShortCut 
 	implements IWorkbenchWindowActionDelegate, IPropertyChangeListener {
 
-	private static Logger log = Logger.getLogger(AnnotationShortCut.class);
-	
 	private boolean status; 
 	
 	private IAction action = null;

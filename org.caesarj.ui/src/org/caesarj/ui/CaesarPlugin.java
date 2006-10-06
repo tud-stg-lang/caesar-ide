@@ -20,13 +20,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarPlugin.java,v 1.27 2005-11-22 12:50:19 meffert Exp $
+ * $Id: CaesarPlugin.java,v 1.28 2006-10-06 17:05:12 gasiunas Exp $
  */
 
 package org.caesarj.ui;
-
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import org.caesarj.launching.CjStepFilterOptionManager;
 import org.eclipse.core.resources.IWorkspace;
@@ -72,8 +69,6 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 
 	private String caesarRuntimePath = null;
 
-	private ResourceBundle resourceBundle = null;
-
 	private static boolean selectionListener = true;
 
 	/*
@@ -106,13 +101,6 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 	 */
 	public CaesarPlugin() {
 		plugin = this;
-		
-		try {
-			this.resourceBundle = ResourceBundle
-					.getBundle("caesar.CaesarPluginResources"); //$NON-NLS-1$			
-		} catch (MissingResourceException x) {
-			this.resourceBundle = null;
-		}
 		
 		setStepFilter();
 	}

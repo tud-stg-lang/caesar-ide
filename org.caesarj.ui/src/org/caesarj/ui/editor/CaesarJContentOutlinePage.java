@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarJContentOutlinePage.java,v 1.9 2005-11-14 13:02:48 gasiunas Exp $
+ * $Id: CaesarJContentOutlinePage.java,v 1.10 2006-10-06 17:05:47 gasiunas Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -59,7 +59,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
@@ -82,7 +81,7 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 	/**
 	 * Contains the node categories that are diplayed in the outline 
 	 */
-	protected static HashMap categoryMap = categoryMap = new HashMap();
+	protected static HashMap categoryMap = new HashMap();
 	
 	/**
 	 * Loads the node categories
@@ -276,7 +275,6 @@ public class CaesarJContentOutlinePage extends ContentOutlinePage {
 	 */
 	public void update(ProjectProperties properties) {
 	    
-	    contentProvider.setProjectProperties(properties);
 	    IProgramElement input = getInput(properties.getAsmManager().getHierarchy().getRoot());
 		
 		TreeViewer viewer = getTreeViewer();

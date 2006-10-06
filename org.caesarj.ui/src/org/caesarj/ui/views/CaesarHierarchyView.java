@@ -20,14 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarHierarchyView.java,v 1.39 2005-04-22 07:48:32 thiago Exp $
+ * $Id: CaesarHierarchyView.java,v 1.40 2006-10-06 17:05:47 gasiunas Exp $
  */
 
 package org.caesarj.ui.views;
 
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
 import org.caesarj.ui.CaesarPluginImages;
 import org.caesarj.ui.editor.CaesarEditor;
 import org.caesarj.ui.resources.CaesarJPluginResources;
@@ -98,11 +97,6 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 	 */
 	private static ListViewer listViewer = null;
 
-	/**
-	 * The logger object
-	 */
-	private static Logger log = Logger.getLogger(CaesarHierarchyView.class);
-	
 	/**
 	 * Flags if the Hierarchy View is enabled or disabled
 	 * 

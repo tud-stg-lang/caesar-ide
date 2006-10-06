@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarSelectMarkerRulerAction.java,v 1.4 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CaesarSelectMarkerRulerAction.java,v 1.5 2006-10-06 17:05:47 gasiunas Exp $
  */
 
 package org.caesarj.ui.marker;
@@ -32,11 +32,11 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
@@ -64,7 +64,7 @@ public class CaesarSelectMarkerRulerAction extends SelectMarkerRulerAction {
 		if (fPosition != null) {
 			ITextOperationTarget operation = (ITextOperationTarget) fTextEditor
 					.getAdapter(ITextOperationTarget.class);
-			final int opCode = CompilationUnitEditor.CORRECTIONASSIST_PROPOSALS;
+			final int opCode = ISourceViewer.CONTENTASSIST_PROPOSALS;
 			if (operation != null && operation.canDoOperation(opCode)) {
 				fTextEditor.selectAndReveal(fPosition.getOffset(), fPosition
 						.getLength());
