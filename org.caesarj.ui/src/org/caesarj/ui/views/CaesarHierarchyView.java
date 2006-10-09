@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarHierarchyView.java,v 1.40 2006-10-06 17:05:47 gasiunas Exp $
+ * $Id: CaesarHierarchyView.java,v 1.41 2006-10-09 13:43:54 gasiunas Exp $
  */
 
 package org.caesarj.ui.views;
@@ -187,7 +187,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		ToolBar toolbar = new ToolBar(top, SWT.FLAT);
 		toolbar.setLayoutData(gridData);
 		// Insert a vertical separator
-		ToolItem seperator = new ToolItem(toolbar, SWT.SEPARATOR);
+		new ToolItem(toolbar, SWT.SEPARATOR);
 		
 		// Create the filter button as a check button (for toggle)
 		filterButton = new ToolItem(toolbar, SWT.CHECK);
@@ -197,7 +197,7 @@ public class CaesarHierarchyView extends ViewPart implements ISelectionListener 
 		filterButton.setEnabled(false);
 
 		// Insert another vertical separator in the toolbar
-		ToolItem seperator2 = new ToolItem(toolbar, SWT.SEPARATOR);
+		new ToolItem(toolbar, SWT.SEPARATOR);
 
 		// Create the tool button, which selects the super or subtype hierarchy
 		toolButton = new ToolItem(toolbar, SWT.FLAT);

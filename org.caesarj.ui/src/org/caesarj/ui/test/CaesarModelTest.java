@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarModelTest.java,v 1.9 2005-04-22 07:48:32 thiago Exp $
+ * $Id: CaesarModelTest.java,v 1.10 2006-10-09 13:43:54 gasiunas Exp $
  */
 
 package org.caesarj.ui.test;
@@ -73,8 +73,7 @@ public class CaesarModelTest {
         setupModel();
         
         // build            
-        boolean success =
-            caesarAdapter.compile(                
+        caesarAdapter.compile(                
                 sourceFiles,
                 "caesar-runtime.jar;aspectjrt.jar",
                 "bin",
