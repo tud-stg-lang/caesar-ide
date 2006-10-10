@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: NewCaesarProjectWizard.java,v 1.10 2006-10-06 17:04:38 gasiunas Exp $
+ * $Id: NewCaesarProjectWizard.java,v 1.11 2006-10-10 22:04:35 gasiunas Exp $
  */
 
 package org.caesarj.ui.wizard;
@@ -28,26 +28,18 @@ package org.caesarj.ui.wizard;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.log4j.Logger;
-import org.caesarj.ui.CaesarPlugin;
+import org.caesarj.ui.CaesarPluginImages;
+import org.caesarj.ui.util.CaesarJNatureChange;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.internal.ui.JavaPluginImages;
-import org.eclipse.jdt.internal.ui.packageview.PackageExplorerPart;
 import org.eclipse.jdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.jdt.internal.ui.wizards.JavaProjectWizardFirstPage;
 import org.eclipse.jdt.internal.ui.wizards.JavaProjectWizardSecondPage;
@@ -56,8 +48,6 @@ import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 /**
@@ -77,7 +67,7 @@ public class NewCaesarProjectWizard extends NewElementWizard implements IExecuta
      * Create a new wizard
      */
     public NewCaesarProjectWizard() {
-    	setDefaultPageImageDescriptor(JavaPluginImages.DESC_WIZBAN_NEWJPRJ);
+    	setDefaultPageImageDescriptor(CaesarPluginImages.DESC_WIZBAN_NEWCJPROJ);
 		//setDialogSettings(AspectJUIPlugin.getDefault().getDialogSettings());
 		setWindowTitle("New CaesarJ Project Creation Wizard");
     }
@@ -171,7 +161,7 @@ public class NewCaesarProjectWizard extends NewElementWizard implements IExecuta
 			// INatureProject.configure() which will replace the normal javabuilder
 			// with the caesarj builder.
 			if(!alreadyExists) {
-				addCaesarJNature(javaProject,true);
+				CaesarJNatureChange.addCaesarJNature(javaProject,true);
 			}
 			
 			else {
@@ -206,113 +196,4 @@ public class NewCaesarProjectWizard extends NewElementWizard implements IExecuta
 		selectAndReveal(project);
 		return true;
 	}
-	
-	/**
-	 * Adds the CaesarJ Nature to the project
-	 * 
-	 * @param project
-	 * @param prompt whether to prompt the user, or go with the defaults
-	 * @throws CoreException
-	 */
-	private static void addCaesarJNature(final IJavaProject project, final boolean prompt)
-			throws CoreException {
-		// wrap up the operation so that an autobuild is not triggered in the
-		// middle of the conversion
-		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-			protected void execute(IProgressMonitor monitor)
-					throws CoreException {
-				internal_addCaesarJNature(project, prompt);
-			}
-		};
-		try {
-			op.run(null);
-		} catch (InvocationTargetException ex) {
-		} catch (InterruptedException e) {
-		}
-	}
-	
-	private static void internal_addCaesarJNature(IJavaProject javaProject, boolean prompt) throws CoreException {
-		//checkOutputFoldersForAJFiles(project);
-		
-		IProject project = javaProject.getProject();
-		
-		// add the CaesarJ Nature
-		IProjectDescription description = project.getDescription();
-		String[] prevNatures = description.getNatureIds();
-		String[] newNatures = new String[prevNatures.length + 1];
-		System.arraycopy(prevNatures, 0, newNatures, 1, prevNatures.length);
-		newNatures[0] = CaesarPlugin.ID_NATURE;
-		description.setNatureIds(newNatures);
-		project.setDescription(description, null);
-
-		// add runtime libraries to the build path.
-		CaesarPlugin caesarPlugin = CaesarPlugin.getDefault();
-		
-		addClassPath(javaProject, caesarPlugin.getAspectJRuntimeClasspath());
-        addClassPath(javaProject, caesarPlugin.getCaesarRuntimeClasspath());			
-	
-		refreshPackageExplorer();
-	}
-	
-	private static Job refreshJob;
-
-	private static int previousExecutionTime;
-	
-	public static void refreshPackageExplorer() {
-		int delay = 5*previousExecutionTime;
-		if (delay < 250) {
-			delay = 250;
-		} else if (delay > 5000) {
-			delay = 5000;
-		}
-		getRefreshPackageExplorerJob().schedule(delay);
-	}
-
-	// reuse the same Job to avoid excessive updates
-	private static Job getRefreshPackageExplorerJob() {
-		if (refreshJob == null) {
-			refreshJob = new RefreshPackageExplorerJob();
-		}
-		return refreshJob;
-	}
-
-	private static class RefreshPackageExplorerJob extends UIJob {
-		RefreshPackageExplorerJob() {
-			super("Refresh package explorer");
-		}
-
-		public IStatus runInUIThread(IProgressMonitor monitor) {
-			long start = System.currentTimeMillis();
-			PackageExplorerPart pep = PackageExplorerPart
-					.getFromActivePerspective();
-			if (pep != null) {
-				pep.getTreeViewer().refresh();
-			}
-			previousExecutionTime = (int)(System.currentTimeMillis() - start);
-			//System.out.println("refresh explorer: elapsed="+previousExecutionTime);
-			return Status.OK_STATUS;
-		}
-	}
-    
-    private static void addClassPath(IJavaProject javaProject, String classPath) {
-        try {
-            IClasspathEntry[] originalCP = javaProject.getRawClasspath();            
-            IClasspathEntry classpathEntry =
-                JavaCore.newVariableEntry(
-                    new Path(classPath), // library location
-                    null,               // no source
-                    null                // no source
-                    );
-            // Update the raw classpath with the new ajrtCP entry.
-            int originalCPLength = originalCP.length;
-            IClasspathEntry[] newClasspath =
-                new IClasspathEntry[originalCPLength + 1];
-            System.arraycopy(originalCP, 0, newClasspath, 0, originalCPLength);
-            newClasspath[originalCPLength] = classpathEntry;
-            javaProject.setRawClasspath(newClasspath, new NullProgressMonitor());
-        }
-        catch(Throwable e) {
-            e.printStackTrace();
-        }
-    }
 }
