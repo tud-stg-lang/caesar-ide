@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: AdviceMarkerResolutionGenerator.java,v 1.17 2006-10-10 17:00:37 gasiunas Exp $
+ * $Id: AdviceMarkerResolutionGenerator.java,v 1.18 2006-10-10 22:05:17 gasiunas Exp $
  */
 
 package org.caesarj.ui.marker;
@@ -88,10 +88,17 @@ public class AdviceMarkerResolutionGenerator implements	IMarkerResolutionGenerat
 		}
 
 		public String getLabel() {
-			String parentName = link.getParent().getName();
-        	parentName = parentName.replaceAll("_Impl.*", "");
+			String linkName = "";
+			if (link.getParent() != null) {
+				String parentName = link.getParent().getName();
+				parentName = parentName.replaceAll("_Impl.*", "");
+				linkName = parentName + "." + this.link.getName();
+			}
+			else {
+				linkName = this.link.getName();
+			}
         	String action = this.toAdvice ? "Open Advice: "  : "Open Method: "; 
-        	return action + parentName + "." + this.link.getName();
+        	return action + linkName;
 		}
 
 		public void run(IMarker marker) {

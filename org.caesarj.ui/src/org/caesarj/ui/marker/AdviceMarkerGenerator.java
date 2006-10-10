@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: AdviceMarkerGenerator.java,v 1.1 2006-10-10 17:00:37 gasiunas Exp $
+ * $Id: AdviceMarkerGenerator.java,v 1.2 2006-10-10 22:05:17 gasiunas Exp $
  */
 
 package org.caesarj.ui.marker;
@@ -76,9 +76,7 @@ public class AdviceMarkerGenerator extends HierarchyWalker {
 	 */
 	public void preProcess(IProgramElement node) {
 	    // Print the node
-	    if (node instanceof CaesarProgramElement){
-		    setMarkers((CaesarProgramElement)node);
-		} 
+	    setMarkers(node);
 	}
 	
 	/**
@@ -86,7 +84,7 @@ public class AdviceMarkerGenerator extends HierarchyWalker {
 	 * @param node - CaesarProgramElement representing the Position where to add the Marker
 	 * @param relation - defines the Marker
 	 */
-	private void setMarkers(CaesarProgramElement parent){
+	private void setMarkers(IProgramElement parent){
 		Logger.getLogger(this.getClass()).info("setMarkers() for relation node");
 		
 		String messageLocal = "";
@@ -109,7 +107,7 @@ public class AdviceMarkerGenerator extends HierarchyWalker {
 	    	            // Add if it is a link node
 	    	        	IProgramElement target = ((LinkNode)elem2).getTargetElement();
 	    	        	
-	    	        	if (!lElems.contains(target)) {
+	    	        	//if (!lElems.contains(target)) {
 		    	        	if (target.getKind().equals(IProgramElement.Kind.ADVICE)) {
 		    	        		args.put(AdviceMarker.ID, "AdviceLink");
 		    	        	}
@@ -121,12 +119,16 @@ public class AdviceMarkerGenerator extends HierarchyWalker {
 		    	        		messageLocal += ", ";
 		    	        	}
 		    	        	
-		    	        	String parentName = target.getParent().getName();
-		    	        	parentName = parentName.replaceAll("_Impl.*", "");
-		    	        	
-		    	        	messageLocal += parentName + "." + target.getName();
+		    	        	if (target.getParent() != null) {
+		    	        		String parentName = target.getParent().getName();
+		    	        		parentName = parentName.replaceAll("_Impl.*", "");
+		    	        		messageLocal += parentName + "." + target.getName();
+		    	        	}
+		    	        	else {
+		    	        		messageLocal += target.getName();
+		    	        	}
 		    	        	lElems.add(target);
-	    	        	}
+	    	        	//}
 	    	        } 
 	    		}
 	        }
