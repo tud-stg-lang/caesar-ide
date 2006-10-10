@@ -20,13 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: AdviceMarkerResolutionGenerator.java,v 1.16 2005-11-05 17:22:49 gasiunas Exp $
+ * $Id: AdviceMarkerResolutionGenerator.java,v 1.17 2006-10-10 17:00:37 gasiunas Exp $
  */
 
 package org.caesarj.ui.marker;
 
 import org.apache.log4j.Logger;
-import org.caesarj.compiler.asm.LinkNode;
+import org.aspectj.asm.IProgramElement;
 import org.caesarj.ui.editor.CaesarEditor;
 import org.caesarj.ui.util.ProjectProperties;
 import org.eclipse.core.resources.IFile;
@@ -35,7 +35,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IMarkerResolution;
-import org.eclipse.ui.IMarkerResolutionGenerator;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -50,14 +49,14 @@ import org.eclipse.ui.ide.IDE;
  * ändern: Fenster&gt;Benutzervorgaben&gt;Java&gt;Codegenerierung&gt;Code und
  * Kommentare
  */
-public class AdviceMarkerResolutionGenerator implements	IMarkerResolutionGenerator, IMarkerResolutionGenerator2 {
+public class AdviceMarkerResolutionGenerator implements	IMarkerResolutionGenerator2 {
 
 	static Logger logger = Logger
 			.getLogger(AdviceMarkerResolutionGenerator.class);
 
 	public IMarkerResolution[] getResolutions(IMarker marker) {
 		try {
-			LinkNode advices[] = (LinkNode[]) marker.getAttribute(AdviceMarker.LINKS);
+			IProgramElement advices[] = (IProgramElement[]) marker.getAttribute(AdviceMarker.LINKS);
 			IMarkerResolution res[] = new AdviceMarkerResolution[advices.length];
 			for (int i = 0; i < advices.length; i++) {
 				res[i] = new AdviceMarkerResolution(advices[i], marker);
@@ -74,11 +73,11 @@ public class AdviceMarkerResolutionGenerator implements	IMarkerResolutionGenerat
 	}
 
 	public class AdviceMarkerResolution implements IMarkerResolution {
-		private LinkNode link;
+		private IProgramElement link;
 
 		boolean toAdvice = false;
 
-		public AdviceMarkerResolution(LinkNode linkArg, IMarker marker) {
+		public AdviceMarkerResolution(IProgramElement linkArg, IMarker marker) {
 			super();
 			this.link = linkArg;
 			try {
@@ -89,7 +88,10 @@ public class AdviceMarkerResolutionGenerator implements	IMarkerResolutionGenerat
 		}
 
 		public String getLabel() {
-			return this.toAdvice ? "Open Advice: " + this.link.getName() : "Open Method: " + this.link.getName(); //$NON-NLS-1$ //$NON-NLS-2$
+			String parentName = link.getParent().getName();
+        	parentName = parentName.replaceAll("_Impl.*", "");
+        	String action = this.toAdvice ? "Open Advice: "  : "Open Method: "; 
+        	return action + parentName + "." + this.link.getName();
 		}
 
 		public void run(IMarker marker) {
@@ -112,8 +114,7 @@ public class AdviceMarkerResolutionGenerator implements	IMarkerResolutionGenerat
 
 		private IFile getLinkLocation(IProject activeProject) {
 		    
-			String fullPath = this.link.getTargetElement()
-					.getSourceLocation().getSourceFile().getAbsolutePath();
+			String fullPath = this.link.getSourceLocation().getSourceFile().getAbsolutePath();
 			return (IFile) ProjectProperties.findResource(fullPath,
 					activeProject);
 		}

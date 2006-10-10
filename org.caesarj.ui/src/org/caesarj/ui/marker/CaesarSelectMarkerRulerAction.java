@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarSelectMarkerRulerAction.java,v 1.5 2006-10-06 17:05:47 gasiunas Exp $
+ * $Id: CaesarSelectMarkerRulerAction.java,v 1.6 2006-10-10 17:00:37 gasiunas Exp $
  */
 
 package org.caesarj.ui.marker;
@@ -64,7 +64,7 @@ public class CaesarSelectMarkerRulerAction extends SelectMarkerRulerAction {
 		if (fPosition != null) {
 			ITextOperationTarget operation = (ITextOperationTarget) fTextEditor
 					.getAdapter(ITextOperationTarget.class);
-			final int opCode = ISourceViewer.CONTENTASSIST_PROPOSALS;
+			final int opCode = ISourceViewer.QUICK_ASSIST;
 			if (operation != null && operation.canDoOperation(opCode)) {
 				fTextEditor.selectAndReveal(fPosition.getOffset(), fPosition
 						.getLength());

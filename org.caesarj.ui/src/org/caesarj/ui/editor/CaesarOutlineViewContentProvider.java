@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarOutlineViewContentProvider.java,v 1.9 2006-10-06 17:05:47 gasiunas Exp $
+ * $Id: CaesarOutlineViewContentProvider.java,v 1.10 2006-10-10 17:00:37 gasiunas Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -30,8 +30,6 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 import org.aspectj.asm.IProgramElement;
-import org.aspectj.asm.IRelationship;
-import org.aspectj.asm.internal.ProgramElement;
 import org.caesarj.compiler.asm.CaesarProgramElement;
 import org.caesarj.compiler.asm.LinkNode;
 import org.caesarj.compiler.asm.CaesarProgramElement.Kind;
@@ -97,10 +95,7 @@ public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
 	    }
 	    if (parent instanceof CaesarProgramElement) {
 	        return getChildren((CaesarProgramElement) parent);
-	    }
-	    if (parent instanceof ProgramElement) {
-	        return getChildren((ProgramElement) parent);
-	    }
+	    }	   
 	    if (parent instanceof IProgramElement) {
 	        return getChildren((IProgramElement) parent);
 	    }
@@ -130,32 +125,6 @@ public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
 	 */
 	protected Object[] getChildren(LinkNode parent) {
 	    return parent.getChildren().toArray();
-	}
-	
-	/**
-	 * 
-	 * @param parent
-	 * @return
-	 */
-	protected Object[] getChildren(ProgramElement parent) {
-	    
-	    ArrayList elements = new ArrayList();
-	    
-        // add children
-        elements.addAll(parent.getChildren());
-        // add relations
-        elements.addAll(parent.getRelations());
-
-        // Iterate through relations and set markers for all RelationNodes.
-        Iterator it = parent.getRelations().iterator();
-        while (it.hasNext()) {
-            Object next = it.next();
-            if (next instanceof IRelationship) {
-                setMarkers(parent, (IRelationship) next);
-            }
-        }
-        
-        return elements.toArray();
 	}
 	
 	/**
@@ -214,7 +183,7 @@ public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
                 }
 	        }
 	    }
-		
+	   
         return elements.toArray();
     }
 
@@ -249,11 +218,6 @@ public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
 			// return children + relations > 0
 			return ((CaesarProgramElement)element).getChildren().size() > 0
 						|| ((CaesarProgramElement)element).getRelations().size() > 0;
-		}else if(element instanceof ProgramElement){
-			// if element is instanceof ProgramElementNode (Kind == CODE?) 
-			// return sizeof children + sizeof Relations
-			return ((ProgramElement)element).getChildren().size() > 0 
-						|| ((ProgramElement)element).getRelations().size() > 0;
 		}else if(element instanceof IProgramElement){
 			// if element is instanceof ProgramElementNode (Kind == CODE?) 
 			// return sizeof children + sizeof Relations
@@ -263,59 +227,4 @@ public class CaesarOutlineViewContentProvider implements ITreeContentProvider {
 		}
 		return false;
 	}
-	
-	/**
-	 * Used to add Markers to the editor.
-	 * @param node - CaesarProgramElement representing the Position where to add the Marker
-	 * @param relation - defines the Marker
-	 */
-	private void setMarkers(ProgramElement node, IRelationship relation){
-		Logger.getLogger(this.getClass()).info("setMarkers() for relation node");
-		
-		//copied from ui.CaesarProgramElement
-		/*
-		 * TODO LINKNODES
-		Object[] nodes = relation.getChildren().toArray();
-		HashMap args = new HashMap();
-		String messageLocal = relation.getName().toUpperCase()
-				+ ": "; //$NON-NLS-1$
-		LinkNode lNode[] = new LinkNode[nodes.length];
-		String tempString, className, adviceName;
-		for (int i = 0; i < nodes.length; i++) {
-			lNode[i] = (LinkNode) nodes[i];
-			try {
-				tempString = lNode[i].toLongString();
-			} catch (Exception e) {
-				continue;
-			}
-			tempString = tempString.substring(tempString.lastIndexOf(']') + 1);
-			try {
-				className = tempString
-						.substring(0, tempString.lastIndexOf(':'));
-				adviceName = tempString.substring(
-						tempString.lastIndexOf(':') + 2,
-						tempString.length() - 1);
-				messageLocal += "!" + adviceName + ":" + className + "!  "; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				args.put(AdviceMarker.ID, "AdviceLink"); //$NON-NLS-1$
-			} catch (Exception e) {
-				messageLocal += "!" + tempString.substring(1, tempString.length() - 1) + "()!  "; //$NON-NLS-1$//$NON-NLS-2$
-				args.put(AdviceMarker.ID, "MethodeLink"); //$NON-NLS-1$
-			}
-		}
-
-		IResource resource = ProjectProperties.findResource(node.getSourceLocation()
-				.getSourceFile().getAbsolutePath(), project);
-		args.put(IMarker.LINE_NUMBER,
-				new Integer(node.getSourceLocation().getLine()));
-		args.put(IMarker.MESSAGE, messageLocal);
-		args.put(AdviceMarker.LINKS, lNode);
-		try {
-			MarkerUtilities.createMarker(resource, args,
-					AdviceMarker.ADVICEMARKER);
-		} catch (CoreException e) {
-			Logger.getLogger(this.getClass()).error("FEHLER BEIM MARKER ERZEUGEN", e); //$NON-NLS-1$
-		}
-		*/
-	}
-	
 }

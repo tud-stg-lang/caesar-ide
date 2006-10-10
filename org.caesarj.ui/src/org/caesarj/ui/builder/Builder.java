@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: Builder.java,v 1.35 2006-09-08 13:37:01 thiago Exp $
+ * $Id: Builder.java,v 1.36 2006-10-10 17:01:28 gasiunas Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -38,6 +38,7 @@ import org.apache.log4j.Logger;
 import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.editor.CaesarJContentOutlinePage;
 import org.caesarj.ui.marker.AdviceMarker;
+import org.caesarj.ui.marker.AdviceMarkerGenerator;
 import org.caesarj.ui.preferences.CaesarJPreferences;
 import org.caesarj.ui.util.ProjectProperties;
 import org.caesarj.ui.views.CaesarHierarchyView;
@@ -145,6 +146,17 @@ public class Builder extends IncrementalProjectBuilder {
 		// update markers, show errors
 		deleteOldErrors();
 		showErrors();
+		
+		try {
+			if (this.projectProperties.getAsmManager() != null) {
+				new AdviceMarkerGenerator().generateMarkers(
+						this.currentProject,
+						this.projectProperties.getAsmManager().getHierarchy());
+			}
+		} 
+		catch (Throwable t) {
+			t.printStackTrace();
+		}
 		
 		try {
 			/* ensure that the generated class files are recognized */
