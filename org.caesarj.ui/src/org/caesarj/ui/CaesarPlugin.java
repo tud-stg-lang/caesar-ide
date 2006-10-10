@@ -20,12 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarPlugin.java,v 1.28 2006-10-06 17:05:12 gasiunas Exp $
+ * $Id: CaesarPlugin.java,v 1.29 2006-10-10 16:58:59 gasiunas Exp $
  */
 
 package org.caesarj.ui;
 
 import org.caesarj.launching.CjStepFilterOptionManager;
+import org.caesarj.ui.preferences.CaesarJPreferences;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -166,6 +167,19 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 	public final static String[] FILTER = {"org.caesarj.*", "org.aspectj.*"
 		//,"com.ibm.*","com.sun.*","java.*","javax.*","org.omg.*","sun.*","sunw.*","java.lang.ClassLoader"
 	};
+	
+	/**
+	 * Initializes the preferences for this plugin if necessary.
+	 */
+	protected void initializeDefaultPluginPreferences() {
+		IPreferenceStore store = getPreferenceStore();
+		
+		store.setDefault(CaesarJPreferences.CAESAR_AUTO_SWITCH, false);
+		store.setDefault(CaesarJPreferences.CAESAR_PREF_CONFIG_DONE, false);
+		store.setDefault(CaesarJPreferences.CAESAR_ANALIZE_ANNOTATIONS, false);
+		store.setDefault(CaesarJPreferences.CAESAR_IS_DEFAULT_EDITOR, true);
+		store.setDefault(CaesarJPreferences.CAESAR_RUN_WEAVER, true);
+	}
 
 	/**
 	 * Adds step filter.
@@ -200,8 +214,7 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 			}
 			store.setDefault(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, iafd);
 			store.setValue(IJDIPreferencesConstants.PREF_INACTIVE_FILTERS_LIST, iaf);
-		}
-				
+		}				
 	}
 	
 	/* (non-Javadoc)
