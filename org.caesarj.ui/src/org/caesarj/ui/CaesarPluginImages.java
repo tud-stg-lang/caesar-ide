@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarPluginImages.java,v 1.18 2006-10-10 16:59:10 gasiunas Exp $
+ * $Id: CaesarPluginImages.java,v 1.19 2006-10-10 22:06:19 gasiunas Exp $
  */
 
 package org.caesarj.ui;
@@ -84,9 +84,9 @@ public class CaesarPluginImages {
 	//TODO IMAGE HIERACHY
 	private static final String IMG_HIER_MODE_SUPER = NAME_PREFIX + "super_hi.gif"; //$NON-NLS-1$
 	private static final String IMG_HIER_MODE_SUB = NAME_PREFIX + "sub_hi.gif"; //$NON-NLS-1$
-	private static final String IMG_CAESAR_EDITOR = NAME_PREFIX + "sample.gif";
-	
-	
+	private static final String IMG_CAESAR_EDITOR = NAME_PREFIX + "cjcu_obj.gif";
+	private static final String IMG_WIZBAN_NEWCJPROJ = NAME_PREFIX + "wizban_newcjprj.gif";
+
 
 	public static final ImageDescriptor DESC_ERROR = createManaged(IMG_ERROR);
 	public static final ImageDescriptor DESC_ADVICE = createManaged(IMG_ADVICE);
@@ -109,6 +109,7 @@ public class CaesarPluginImages {
 	public static final ImageDescriptor DESC_HIER_MODE_SUB = createManaged(IMG_HIER_MODE_SUB);
 	public static final ImageDescriptor DESC_ADVICE_NODE =  createManaged(IMG_ADVICE_NODE);
 	public static final ImageDescriptor DESC_CAESAR_EDITOR =  createManaged(IMG_CAESAR_EDITOR);
+	public static final ImageDescriptor DESC_WIZBAN_NEWCJPROJ =  createManaged(IMG_WIZBAN_NEWCJPROJ);
 	
 	/**
 	 * Returns the image managed under the given key in this registry.
