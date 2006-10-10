@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarPerspective.java,v 1.19 2005-02-15 17:39:47 gasiunas Exp $
+ * $Id: CaesarPerspective.java,v 1.20 2006-10-10 22:04:54 gasiunas Exp $
  */
 
 package org.caesarj.ui.perspective;
@@ -129,6 +129,7 @@ public class CaesarPerspective implements IPerspectiveFactory {
 		layout.addActionSet(IDebugUIConstants.LAUNCH_ACTION_SET);
 		layout.addActionSet(JavaUI.ID_ACTION_SET);
 		layout.addActionSet(JavaUI.ID_ELEMENT_CREATION_ACTION_SET);	
+		layout.addActionSet("org.caesarj.actionSet");
 				
 		// new actions - Java project creation wizard
 		layout.addNewWizardShortcut("org.caesarj.newprojectwizard");
@@ -140,7 +141,6 @@ public class CaesarPerspective implements IPerspectiveFactory {
 		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.folder");//$NON-NLS-1$
 		layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.file");//$NON-NLS-1$
 		
-		layout.addPerspectiveShortcut("org.caesarj.ui.actionsets.AnnotationShortCut"); //$NON-NLS-1$
 		layout.setEditorAreaVisible(true);	
 		
 		//Show Preferences
