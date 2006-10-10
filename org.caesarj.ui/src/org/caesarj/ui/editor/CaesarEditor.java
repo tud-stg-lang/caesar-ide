@@ -20,21 +20,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarEditor.java,v 1.27 2005-11-17 16:58:23 gasiunas Exp $
+ * $Id: CaesarEditor.java,v 1.28 2006-10-10 17:00:56 gasiunas Exp $
  */
 
 package org.caesarj.ui.editor;
 
 import org.apache.log4j.Logger;
 import org.caesarj.ui.CaesarPlugin;
+import org.caesarj.ui.CaesarPluginImages;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
+import org.eclipse.jdt.internal.ui.viewsupport.ImageDescriptorRegistry;
+import org.eclipse.jdt.ui.ProblemsLabelDecorator;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
@@ -61,6 +70,8 @@ public class CaesarEditor extends CompilationUnitEditor {
 	private static Logger log = Logger.getLogger(CaesarEditor.class);
 
 	private CaesarJContentOutlinePage outlineView;
+	
+	private CaesarJEditorTitleImageUpdater aspectJEditorErrorTickUpdater;
 
 	//private CompositeRuler caesarVerticalRuler;
 
@@ -70,6 +81,7 @@ public class CaesarEditor extends CompilationUnitEditor {
 		setRulerContextMenuId("#CJCompilationUnitRulerContext");
 		/* initialize auto annotation on/off switching */
 		CaesarPlugin.getDefault().initPluginUI();
+		aspectJEditorErrorTickUpdater = new CaesarJEditorTitleImageUpdater();
 	}
 	
     public void init(IEditorSite site, IEditorInput input)  throws PartInitException {
@@ -119,5 +131,79 @@ public class CaesarEditor extends CompilationUnitEditor {
 			//this.outlineView.setEnabled(false);
 			CaesarJContentOutlinePage.removeInstance(this.outlineView);
 		}
+		if (aspectJEditorErrorTickUpdater != null) {
+			aspectJEditorErrorTickUpdater.dispose();
+			aspectJEditorErrorTickUpdater = null;
+		}
+	}
+	
+	/**
+	 * Update the title image
+	 */
+	
+	public synchronized void updatedTitleImage(Image image) {
+		// only let us update the image 
+	}
+
+	public synchronized void customUpdatedTitleImage(Image image) {
+		// only let us update the image 
+		super.updatedTitleImage(image);
+	}
+	
+	public  void resetTitleImage() {
+		refreshJob.setElement(getInputJavaElement());
+		refreshJob.schedule();
+	}
+	
+	private UpdateTitleImageJob refreshJob = new UpdateTitleImageJob();
+	
+	private class UpdateTitleImageJob extends UIJob {
+		private IJavaElement elem;
+		
+		UpdateTitleImageJob() {
+			super("CaesarJ editor title update job");
+			setSystem(true);
+		}
+
+		public void setElement(IJavaElement element) {
+			elem = element;
+		}
+		
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+			if (elem != null) {
+				aspectJEditorErrorTickUpdater.updateEditorImage(elem);
+			}
+			return Status.OK_STATUS;
+		}
+	}
+	
+	protected class CaesarJEditorTitleImageUpdater {
+
+		private ImageDescriptorRegistry registry = JavaPlugin.getImageDescriptorRegistry();
+		private final Image baseImage = registry.get(CaesarPluginImages.DESC_CAESAR_EDITOR);
+		private final ProblemsLabelDecorator problemsDecorator;
+		
+		public CaesarJEditorTitleImageUpdater() {		
+			problemsDecorator = new ProblemsLabelDecorator(registry);
+		}
+				
+		public boolean updateEditorImage(IJavaElement jelement) {
+			Image titleImage= getTitleImage();
+			if (titleImage == null) {
+				return false;
+			}
+			Image newImage = problemsDecorator.decorateImage(baseImage, jelement);
+			if (titleImage != newImage) {
+				customUpdatedTitleImage(newImage);
+				return true;
+			}
+			return false;
+		}
+
+		
+		public void dispose() {
+			problemsDecorator.dispose();
+		}
+
 	}
 }
