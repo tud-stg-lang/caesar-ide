@@ -68,36 +68,6 @@
 			class="org.caesarj.ui.CaesarHomeInitializer">
 		</classpathVariableInitializer>
 	</extension>
-
-   <extension
-         point="org.eclipse.ui.newWizards">
-      <category
-            name="Caesar"
-            id="Caesar">
-      </category>
-      <wizard
-            name="Caesar Project"
-            icon="icons/sample.gif"
-            category="Caesar"
-            class="org.caesarj.ui.wizard.NewCaesarProjectWizard"
-            project="true"
-            finalPerspective="org.caesarj.ui.perspective.CaesarPerspective"
-            id="org.caesarj.newprojectwizard">
-         <description>
-            Create a Caesar Project
-         </description>
-      </wizard>
-   </extension>
-   <extension
-         id="caesarprojectnature"
-         name="caesarNature"
-         point="org.eclipse.core.resources.natures">
-      <runtime>
-         <run
-               class="org.caesarj.ui.CaesarProjectNature">
-         </run>
-      </runtime>
-   </extension>
    <extension
          id="builder.builder"
          name="Caesar Builder"
@@ -113,7 +83,7 @@
          point="org.eclipse.ui.editors">
       <editor
             class="org.caesarj.ui.editor.CaesarEditor"
-            icon="icons/sample.gif"
+            icon="icons/cjcu_obj.gif"
             default="true"
             contributorClass="org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditorActionContributor"
             name="CaesarEditor"
@@ -125,7 +95,7 @@
             contributorClass="org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditorActionContributor"
             default="true"
             extensions="cj"
-            icon="icons/sample.gif"
+            icon="icons/cjcu_obj.gif"
             id="org.caesarj.ui.editor.CaesarEditor"
             name="CaesarEditor">
          <contentTypeBinding contentTypeId="org.caesarj.cjSource"/>
@@ -176,10 +146,24 @@
          name="CaesarJ"
          id="org.caesarj.ui.perspective.CaesarPerspective">
    </perspective>
-   </extension>	
+   </extension>
+ <extension
+       point="org.eclipse.ui.perspectiveExtensions">
+    <perspectiveExtension targetID="org.caesarj.ui.perspective.CaesarPerspective">
+       <perspectiveShortcut id="org.eclipse.jdt.ui.JavaPerspective"/>
+       <perspectiveShortcut id="org.caesarj.ui.perspectiveShortcut2"/>
+       <perspectiveShortcut id="org.eclipse.ui.resourcePerspective"/>
+    </perspectiveExtension>
+    <perspectiveExtension targetID="org.eclipse.jdt.ui.JavaPerspective">
+       <perspectiveShortcut id="org.caesarj.ui.perspective.CaesarPerspective"/>
+    </perspectiveExtension>
+    <perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+       <perspectiveShortcut id="org.caesarj.ui.perspective.CaesarPerspective"/>
+    </perspectiveExtension>
+ </extension>	
    
 	<extension point="org.eclipse.ui.actionSets">
-		<actionSet label="CaesarJ" visible="true" id="org.caesarj.actionSet">
+		<actionSet label="CaesarJ" visible="false" id="org.caesarj.actionSet">
   			<action
         		retarget="false"
         		toolbarPath="Normal/additions"
@@ -380,6 +364,36 @@
             
     </shortcut>
   </extension>
+
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="Caesar"
+            id="Caesar">
+      </category>
+      <wizard
+            name="Caesar Project"
+            icon="icons/newcjprj_wiz.gif"
+            category="Caesar"
+            class="org.caesarj.ui.wizard.NewCaesarProjectWizard"
+            project="true"
+            finalPerspective="org.caesarj.ui.perspective.CaesarPerspective"
+            id="org.caesarj.newprojectwizard">
+         <description>
+            Create a Caesar Project
+         </description>
+      </wizard>
+   </extension>
+   <extension
+         id="caesarprojectnature"
+         name="caesarNature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.caesarj.ui.CaesarProjectNature">
+         </run>
+      </runtime>
+   </extension>
   <extension
         point="org.eclipse.ui.ide.projectNatureImages">
      <image
@@ -401,5 +415,56 @@
            extension="cj"
            type="text"/>
   </extension>
-     
+  
+  <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="iprojectcontributions">
+         <menu
+               label="CaesarJ Project Tools"
+               id="org.caesarj.ui.project.tools">
+            <separator
+               name="group0">
+            </separator>
+         </menu>     
+         <visibility>
+         	<and>
+	         	<objectState name="nature" value="org.eclipse.jdt.core.javanature"/>
+	         	<not>
+		         	<objectState name="nature" value="org.caesarj.caesarprojectnature"/>
+		        </not>
+		        <objectState name="open" value="true"/>
+		    </and>
+         </visibility>
+         <action
+               id="addcjnatureaction"
+               label="Convert to CaesarJ Project"           
+               class="org.caesarj.ui.actions.AddCJNatureAction"
+               menubarPath="org.caesarj.ui.project.tools/group0">
+         </action>
+      </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IProject"
+            adaptable="true"
+            id="iprojectcontributions">
+         <menu
+               label="CaesarJ Project Tools"
+               id="org.caesarj.ui.project.tools">
+            <separator
+               name="group0">
+            </separator>
+         </menu>   
+         <visibility>
+         	<objectState name="nature" value="org.caesarj.caesarprojectnature"/>
+         </visibility>
+         <action
+               id="removecjnatureaction"
+               label="Remove CaesarJ Nature"
+               class="org.caesarj.ui.actions.RemoveCJNatureAction"
+               menubarPath="org.caesarj.ui.project.tools/group0">
+         </action>
+      </objectContribution>
+   </extension>  
 </plugin>
