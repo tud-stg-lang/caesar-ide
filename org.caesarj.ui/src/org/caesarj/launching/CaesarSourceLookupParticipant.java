@@ -33,9 +33,10 @@ public class CaesarSourceLookupParticipant extends JavaSourceLookupParticipant {
 					// Create filename for externalized classes
 					String sourceName = null;
 					sourceName = frame.getDeclaringTypeName();
+					sourceName = sourceName.replaceAll("_Impl.*\\$", "\\$"); // may remove to many "_Impl"
+					sourceName = sourceName.replaceAll("_Impl.*$", ""); // may remove to many "_Impl"
 					sourceName = sourceName.replace('.', File.separatorChar);
-					sourceName = sourceName.replace('$', File.separatorChar);
-					sourceName = sourceName.replaceAll("_Impl", ""); // may remove to many "_Impl"
+					sourceName = sourceName.replace('$', File.separatorChar);				
 					
 					if (sourceName.length() == 0) {
 						// likely a proxy class (see bug 40815)
