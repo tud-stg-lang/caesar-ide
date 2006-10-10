@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarPluginImages.java,v 1.17 2005-11-22 12:50:19 meffert Exp $
+ * $Id: CaesarPluginImages.java,v 1.18 2006-10-10 16:59:10 gasiunas Exp $
  */
 
 package org.caesarj.ui;
@@ -84,6 +84,7 @@ public class CaesarPluginImages {
 	//TODO IMAGE HIERACHY
 	private static final String IMG_HIER_MODE_SUPER = NAME_PREFIX + "super_hi.gif"; //$NON-NLS-1$
 	private static final String IMG_HIER_MODE_SUB = NAME_PREFIX + "sub_hi.gif"; //$NON-NLS-1$
+	private static final String IMG_CAESAR_EDITOR = NAME_PREFIX + "sample.gif";
 	
 	
 
@@ -107,6 +108,7 @@ public class CaesarPluginImages {
 	public static final ImageDescriptor DESC_HIER_MODE_SUPER = createManaged(IMG_HIER_MODE_SUPER);
 	public static final ImageDescriptor DESC_HIER_MODE_SUB = createManaged(IMG_HIER_MODE_SUB);
 	public static final ImageDescriptor DESC_ADVICE_NODE =  createManaged(IMG_ADVICE_NODE);
+	public static final ImageDescriptor DESC_CAESAR_EDITOR =  createManaged(IMG_CAESAR_EDITOR);
 	
 	/**
 	 * Returns the image managed under the given key in this registry.
@@ -137,9 +139,8 @@ public class CaesarPluginImages {
 
 	/*
 	 * Helper method to access the image registry from the JavaPlugin class.
-	 */
-	/* package */
-	static ImageRegistry getImageRegistry() {
+	 */	
+	public static ImageRegistry getImageRegistry() {
 		if (fgImageRegistry == null) {
 			fgImageRegistry = new ImageRegistry();
 			for (Iterator iter = fgAvoidSWTErrorMap.keySet().iterator(); iter.hasNext();) {
