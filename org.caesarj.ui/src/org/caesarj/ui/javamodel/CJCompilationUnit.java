@@ -2,12 +2,10 @@ package org.caesarj.ui.javamodel;
 
 import org.caesarj.ui.javamodel.bridge.CompilationUnitExt;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.WorkingCopyOwner;
 import org.eclipse.jdt.core.compiler.CharOperation;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.internal.core.BufferManager;
 import org.eclipse.jdt.internal.core.DefaultWorkingCopyOwner;
 import org.eclipse.jdt.internal.core.PackageFragment;
@@ -81,28 +79,5 @@ public class CJCompilationUnit extends CompilationUnitExt {
 		}
 
 		return javaCompBuffer;
-	}
-	
-//	 copied from super, but changed to use an AJReconcileWorkingCopyOperation
-	public org.eclipse.jdt.core.dom.CompilationUnit reconcile(int astLevel,
-			boolean forceProblemDetection,
-			boolean enableStatementsRecovery,
-			WorkingCopyOwner workingCopyOwner,
-			IProgressMonitor monitor) throws JavaModelException {
-		if (!isWorkingCopy()) return null; // Reconciling is not supported on non working copies
-		if (workingCopyOwner == null) workingCopyOwner = DefaultWorkingCopyOwner.PRIMARY;
-		
-		boolean createAST = false;
-		if (astLevel == AST.JLS3) {
-			// client asking for level 3 ASTs; these are supported
-			createAST = true;
-		} else {
-			// client asking for no AST (0) or unknown ast level
-			// either way, request denied
-			createAST = false;
-		}
-		AJReconcileWorkingCopyOperation op = new AJReconcileWorkingCopyOperation(this, createAST, astLevel, workingCopyOwner);
-		op.runOperation(monitor);
-		return op.ast;
 	}
 }
