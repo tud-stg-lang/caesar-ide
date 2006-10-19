@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarEditor.java,v 1.29 2006-10-19 06:33:53 gasiunas Exp $
+ * $Id: CaesarEditor.java,v 1.30 2006-10-19 09:11:30 gasiunas Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -140,15 +140,7 @@ public class CaesarEditor extends CompilationUnitEditor {
 				JavaModelManager.getJavaModelManager().discardPerWorkingCopyInfo((CompilationUnit)unit);
 				unit.becomeWorkingCopy((IProblemRequestor) annotationModel, null);
 				((IWorkingCopyManagerExtension)JavaUI.getWorkingCopyManager()).setWorkingCopy(input, unit);
-			}					
-			/*
-			IDocument document = getDocumentProvider().getDocument(fInput);
-			AspectJTextTools textTools = AspectJUIPlugin.getDefault()
-					.getAspectJTextTools(); 
-
-			textTools.setupJavaDocumentPartitioner(document,
-					IJavaPartitions.JAVA_PARTITIONING);
-			*/
+			}
 		}
 	}
 
