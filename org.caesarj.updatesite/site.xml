@@ -3,7 +3,7 @@
    <description url="index.html">
       CaesarJ Update Site
    </description>
-   <feature url="features/org.caesarj.feature_0.8.6.jar" id="org.caesarj.feature" version="0.8.6">
+   <feature url="features/org.caesarj.feature_0.8.7.jar" id="org.caesarj.feature" version="0.8.7">
       <category name="CaesarJ"/>
    </feature>
    <category-def name="CaesarJ" label="CaesarJ"/>
