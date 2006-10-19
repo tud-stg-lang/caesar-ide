@@ -1,4 +1,4 @@
-package org.caesarj.ui.util;
+package org.caesarj.ui.project;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -6,7 +6,11 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.caesarj.ui.CaesarPlugin;
+import org.caesarj.ui.javamodel.CJCompilationUnitManager;
+import org.caesarj.ui.javamodel.CJCompilationUnitTools;
 import org.caesarj.ui.marker.AdviceMarker;
+import org.caesarj.ui.util.ProjectProperties;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -27,7 +31,8 @@ import org.eclipse.jdt.internal.ui.packageview.PackageExplorerPart;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.progress.UIJob;
 
-public class CaesarJNatureChange {
+public class CaesarJProjectTools {
+	
 	/**
 	 * Adds the CaesarJ Nature to the project
 	 * 
@@ -70,7 +75,9 @@ public class CaesarJNatureChange {
 		CaesarPlugin caesarPlugin = CaesarPlugin.getDefault();
 		
 		addClassPath(javaProject, caesarPlugin.getAspectJRuntimeClasspath());
-        addClassPath(javaProject, caesarPlugin.getCaesarRuntimeClasspath());			
+        addClassPath(javaProject, caesarPlugin.getCaesarRuntimeClasspath());	
+        
+        CJCompilationUnitManager.INSTANCE.initCompilationUnits(project); 
 	
 		refreshPackageExplorer();
 	}
@@ -170,17 +177,19 @@ public class CaesarJNatureChange {
 	}
     
     /**
-	 * Removes the AspectJ Nature from an existing AspectJ project.
+	 * Removes the CaesarJ Nature from an existing CaesarJ project.
 	 * 
 	 * @param project
 	 * @throws CoreException
 	 */
-	public static void removeAspectJNature(IJavaProject javaProject)
+	public static void removeCaesarJNature(IJavaProject javaProject)
 			throws CoreException {
 		
 		IProject project = javaProject.getProject();
 
 		deleteAllMarkers(project);
+		
+		CJCompilationUnitTools.removeCUsfromJavaModelAndCloseEditors(project);
 		
 		// remove the AspectJ Nature
 		IProjectDescription description = project.getDescription();
@@ -242,5 +251,33 @@ public class CaesarJNatureChange {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Returns true if the given project has the CaesarJ nature. Returns
+	 * false otherwise, or if the nature could not be determined (e.g. the
+	 * project is closed).
+	 * @param project
+	 * @return
+	 */
+	public static boolean isCJProject(IProject project) {
+		if(project.isOpen()) {			
+			try {
+				if ((project!=null) && project.hasNature(CaesarPlugin.ID_NATURE)) {
+					return true;
+				}
+			} catch (CoreException e) {	}
+		}
+		return false;
+	}
+	
+	public static boolean isCJSourceName(String fileName) {
+		return (fileName.endsWith(".java") || fileName.endsWith(".cj"));
+	}
+	
+	public static boolean isCJSource(IFile file) {
+		if (file == null)
+			return false;
+		return isCJSourceName(file.getName()) && isCJProject(file.getProject());
 	}
 }

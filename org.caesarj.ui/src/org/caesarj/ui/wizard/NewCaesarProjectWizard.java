@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: NewCaesarProjectWizard.java,v 1.11 2006-10-10 22:04:35 gasiunas Exp $
+ * $Id: NewCaesarProjectWizard.java,v 1.12 2006-10-19 06:33:53 gasiunas Exp $
  */
 
 package org.caesarj.ui.wizard;
@@ -29,7 +29,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.log4j.Logger;
 import org.caesarj.ui.CaesarPluginImages;
-import org.caesarj.ui.util.CaesarJNatureChange;
+import org.caesarj.ui.project.CaesarJProjectTools;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
@@ -161,7 +161,7 @@ public class NewCaesarProjectWizard extends NewElementWizard implements IExecuta
 			// INatureProject.configure() which will replace the normal javabuilder
 			// with the caesarj builder.
 			if(!alreadyExists) {
-				CaesarJNatureChange.addCaesarJNature(javaProject,true);
+				CaesarJProjectTools.addCaesarJNature(javaProject,true);
 			}
 			
 			else {

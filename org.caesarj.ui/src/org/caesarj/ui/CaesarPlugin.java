@@ -20,16 +20,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarPlugin.java,v 1.29 2006-10-10 16:58:59 gasiunas Exp $
+ * $Id: CaesarPlugin.java,v 1.30 2006-10-19 06:33:53 gasiunas Exp $
  */
 
 package org.caesarj.ui;
 
 import org.caesarj.launching.CjStepFilterOptionManager;
+import org.caesarj.ui.editor.CJIndexManager;
+import org.caesarj.ui.javamodel.CJCompilationUnitManager;
+import org.caesarj.ui.javamodel.ResourceChangeListener;
 import org.caesarj.ui.preferences.CaesarJPreferences;
+import org.caesarj.ui.project.CaesarJProjectTools;
+import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.jdt.internal.core.JavaModelManager;
+import org.eclipse.jdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -102,8 +109,25 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 	 */
 	public CaesarPlugin() {
 		plugin = this;
-		
+	}
+	
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 		setStepFilter();
+		
+		CaesarPlugin.getWorkspace().addResourceChangeListener(
+				new ResourceChangeListener(),
+				IResourceChangeEvent.PRE_CLOSE
+						| IResourceChangeEvent.PRE_DELETE
+						| IResourceChangeEvent.POST_CHANGE
+						| IResourceChangeEvent.PRE_BUILD);
+		
+		IndexManager  indexManager = new CJIndexManager();
+		JavaModelManager.getJavaModelManager().indexManager = indexManager;
+		indexManager.reset();
+		
+		CJCompilationUnitManager.INSTANCE.initCompilationUnits(CaesarPlugin.getWorkspace());
+		CaesarJProjectTools.refreshPackageExplorer();
 	}
 	
 	public void initPluginUI() {

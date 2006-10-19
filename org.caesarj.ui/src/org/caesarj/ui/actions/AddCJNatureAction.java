@@ -3,7 +3,7 @@ package org.caesarj.ui.actions;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.caesarj.ui.util.CaesarJNatureChange;
+import org.caesarj.ui.project.CaesarJProjectTools;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -32,7 +32,7 @@ public class AddCJNatureAction implements IObjectActionDelegate {
 				IJavaProject jp = JavaCore.create(project);
 				// Add the CaesarJ nature to the project and update the
 				// build classpath with the aspectjrt.jar	
-				CaesarJNatureChange.addCaesarJNature(jp,true);
+				CaesarJProjectTools.addCaesarJNature(jp,true);
 			} catch (CoreException e) {
 			}
 		}

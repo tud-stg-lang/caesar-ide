@@ -20,12 +20,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarProjectNature.java,v 1.6 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CaesarProjectNature.java,v 1.1 2006-10-19 06:33:53 gasiunas Exp $
  */
 
-package org.caesarj.ui;
+package org.caesarj.ui.project;
 
 import org.apache.log4j.Logger;
+import org.caesarj.ui.CaesarPlugin;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;

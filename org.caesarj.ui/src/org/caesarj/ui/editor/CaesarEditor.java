@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarEditor.java,v 1.28 2006-10-10 17:00:56 gasiunas Exp $
+ * $Id: CaesarEditor.java,v 1.29 2006-10-19 06:33:53 gasiunas Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -28,20 +28,29 @@ package org.caesarj.ui.editor;
 import org.apache.log4j.Logger;
 import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.CaesarPluginImages;
+import org.caesarj.ui.javamodel.CJCompilationUnitManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IProblemRequestor;
+import org.eclipse.jdt.internal.core.CompilationUnit;
+import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.internal.ui.viewsupport.ImageDescriptorRegistry;
+import org.eclipse.jdt.ui.IWorkingCopyManagerExtension;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.ProblemsLabelDecorator;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -117,6 +126,30 @@ public class CaesarEditor extends CompilationUnitEditor {
 
 	public void doSetInput(IEditorInput input) throws CoreException {
 		super.doSetInput(input);
+		
+		if (input instanceof IFileEditorInput) {
+			IFileEditorInput fInput = (IFileEditorInput) input;
+			ICompilationUnit unit = null;
+			//in case it is a .aj file, we need to register it in the
+			// WorkingCopyManager
+			JavaUI.getWorkingCopyManager().connect(input);	
+			unit = CJCompilationUnitManager.INSTANCE
+					.getCJCompilationUnit(fInput.getFile());
+			if (unit != null){
+				IAnnotationModel annotationModel = getDocumentProvider().getAnnotationModel(input);
+				JavaModelManager.getJavaModelManager().discardPerWorkingCopyInfo((CompilationUnit)unit);
+				unit.becomeWorkingCopy((IProblemRequestor) annotationModel, null);
+				((IWorkingCopyManagerExtension)JavaUI.getWorkingCopyManager()).setWorkingCopy(input, unit);
+			}					
+			/*
+			IDocument document = getDocumentProvider().getDocument(fInput);
+			AspectJTextTools textTools = AspectJUIPlugin.getDefault()
+					.getAspectJTextTools(); 
+
+			textTools.setupJavaDocumentPartitioner(document,
+					IJavaPartitions.JAVA_PARTITIONING);
+			*/
+		}
 	}
 
 	public void dispose() {
