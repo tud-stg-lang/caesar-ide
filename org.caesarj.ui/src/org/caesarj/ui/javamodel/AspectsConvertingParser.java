@@ -332,7 +332,8 @@ public class AspectsConvertingParser implements TerminalTokens {
 			if (end == -1)
 				return;
 			String replace = "{ public " + String.valueOf(wrappeeName) + " wrappee;";
-			addReplacement(pos, end-pos+1, replace.toCharArray());
+			makeBlank(pos, end-1);
+			addReplacement(end, 1, replace.toCharArray());
 		}		
 		catch (InvalidInputException e) { }
 	}
