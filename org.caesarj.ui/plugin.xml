@@ -390,7 +390,7 @@
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-               class="org.caesarj.ui.CaesarProjectNature">
+               class="org.caesarj.ui.project.CaesarProjectNature">
          </run>
       </runtime>
    </extension>
