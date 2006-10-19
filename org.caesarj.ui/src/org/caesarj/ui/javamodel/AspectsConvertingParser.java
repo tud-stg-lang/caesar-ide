@@ -13,6 +13,7 @@ package org.caesarj.ui.javamodel;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jdt.core.compiler.CharOperation;
@@ -172,6 +173,9 @@ public class AspectsConvertingParser implements TerminalTokens {
 					usedIdentifiers.add(new String(name));
 				}
 				break;
+			case TokenNameextends:
+				eliminateMultipleInheritance();
+				break;				
 			case TokenNamefor:
 				insideFor=true;
 				break;
@@ -272,6 +276,51 @@ public class AspectsConvertingParser implements TerminalTokens {
 				.toCharArray();
 		addReplacement(pos, len, toInsert);
 
+	}
+	
+	private void eliminateMultipleInheritance() {
+		try {
+			/* get first parent */
+			scanner.getNextToken();
+			/* get symbol after parent (can be &) */
+			int tok = scanner.getNextToken();
+			int start = scanner.getCurrentTokenStartPosition();
+			int end = -1;
+			List parents = new ArrayList();
+			
+			if (tok == TokenNameAND) {
+				while (tok == TokenNameAND) {
+					/* get next parent */
+					scanner.getNextToken();
+					end = scanner.getCurrentTokenEndPosition();
+					char[] parent = scanner.getCurrentIdentifierSource();
+					parents.add(String.valueOf(parent));
+					/* get symbol after parent (can be &) */
+					tok = scanner.getNextToken();
+				}
+				
+				for (int i1 = 0; i1 < parents.size(); i1++) {
+					typeReferences.add(parents.get(i1));
+				}
+				makeBlank(start, end);				
+			}
+			
+			this.scanner.currentPosition = scanner.getCurrentTokenStartPosition();
+		}		
+		catch (InvalidInputException e) { }
+	}
+	
+	private void makeBlank(int start, int end) {
+		char[] blank = new char[end - start + 1];
+		for (int i1 = start; i1 <= end; i1++) {
+			if (Character.isWhitespace(content[i1])) {
+				blank[i1 - start] = content[i1];				
+			}
+			else {
+				blank[i1 - start] = ' ';
+			}
+		}
+		addReplacement(start, end-start+1, blank);
 	}
 	
 	private void replaceWrappee() {
@@ -526,7 +575,7 @@ public class AspectsConvertingParser implements TerminalTokens {
 	}
 
 	//adds references to all used type -> organize imports will work
-	void addReferences() {
+	public void addReferences() {
 		if (typeReferences == null)
 			return;
 
