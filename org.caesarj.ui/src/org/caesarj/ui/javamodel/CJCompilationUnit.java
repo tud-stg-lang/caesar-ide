@@ -30,18 +30,10 @@ public class CJCompilationUnit extends CompilationUnitExt {
 	
 	public CJCompilationUnit(PackageFragment parent, String name, WorkingCopyOwner owner) {
 		super(parent, name, owner);
-	/*	if (parent.getResource() instanceof IProject) {
-			IProject p = (IProject)parent.getResource();
-			this.cjFile = (IFile)p.findMember(name);
-		} else {
-			IFolder f = (IFolder)parent.getResource();
-			this.cjFile = (IFile)f.findMember(name);
-		} */	
 	}
 	
 	public CJCompilationUnit(IFile cjFile){
 		super(CJCompilationUnitTools.getParentPackage(cjFile), cjFile.getName(), DefaultWorkingCopyOwner.PRIMARY);
-		//this.cjFile = cjFile;
 	}
 	
 	public IBuffer getBuffer() throws JavaModelException {

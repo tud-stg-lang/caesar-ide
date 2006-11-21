@@ -68,10 +68,6 @@ public class CJCompilationUnitManager {
 			info.addChild(unit);
 			unit.openWhenClosed(unit.createElementInfo(), null);
 
-			//enable java search (experimental) - leads to exceptions when
-			// using
-			//AJIndexManager.addSource(unit);
-
 			compilationUnitStore.put(file, unit);
 		} catch (JavaModelException e) {
 		}
@@ -172,7 +168,6 @@ public class CJCompilationUnitManager {
 				}
 				JavaModelManager.getJavaModelManager().removeInfoAndChildren(
 						unit);
-
 			} catch (JavaModelException e) {
 			}
 			compilationUnitStore.remove(file);
