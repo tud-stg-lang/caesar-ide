@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarAdapter.java,v 1.36 2006-10-06 17:05:47 gasiunas Exp $
+ * $Id: CaesarAdapter.java,v 1.37 2006-11-21 11:54:20 gasiunas Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -144,7 +144,7 @@ public final class CaesarAdapter extends Main implements IWeaveRequestor {
 			success = run(args);
 		}
 		catch (RuntimeException e) {
-			e.printStackTrace();
+			logger.debug("internal compiler error:", e);
 			errors.add("Internal compiler error: " + e.toString());	
 		}
 		
