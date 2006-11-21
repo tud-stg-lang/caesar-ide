@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarEditor.java,v 1.30 2006-10-19 09:11:30 gasiunas Exp $
+ * $Id: CaesarEditor.java,v 1.31 2006-11-21 11:53:59 gasiunas Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IProblemRequestor;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.CompilationUnit;
 import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
@@ -145,10 +146,20 @@ public class CaesarEditor extends CompilationUnitEditor {
 	}
 
 	public void dispose() {
-		/* Fix TR35: must call super to free reference to the file */
-		super.dispose(); 
-		
-		log.debug("dispose"); //$NON-NLS-1$
+		log.debug("dispose"); 
+		IEditorInput input = getEditorInput();
+		if (input instanceof IFileEditorInput) {
+			IFileEditorInput fInput = (IFileEditorInput) input;			
+			JavaUI.getWorkingCopyManager().disconnect(input);
+			
+			try {
+				ICompilationUnit unit = CJCompilationUnitManager.INSTANCE.getCJCompilationUnitFromCache(fInput.getFile());
+				if (unit != null) {
+					unit.discardWorkingCopy();					
+				}
+			} catch (JavaModelException e) {
+			}
+		}
 		if(this.outlineView != null){
 			// Enable doesn't make sense anymore. For this reason the setEnabled above
 			// was removed. Now we call the static method to remove this instance from 
@@ -160,6 +171,7 @@ public class CaesarEditor extends CompilationUnitEditor {
 			aspectJEditorErrorTickUpdater.dispose();
 			aspectJEditorErrorTickUpdater = null;
 		}
+		super.dispose();
 	}
 	
 	/**
