@@ -76,7 +76,13 @@ public class CjStepFilterOptionManager implements IPropertyChangeListener {
 	 * @see IPropertyChangeListener#propertyChange(PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(IInternalDebugUIConstants.PREF_USE_STEP_FILTERS)) {
+		//if (event.getProperty().equals(IInternalDebugUIConstants.PREF_USE_STEP_FILTERS)) {
+		// We are using filters for ALL --- FIXME
+		String property = event.getProperty();
+		if (IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED.equals(property) ||
+				IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED.equals(property) ||
+				IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES.equals(property)) {
+			
 			Object newValue= event.getNewValue();
 			boolean newBoolValue = false;
 			if (newValue instanceof Boolean) {

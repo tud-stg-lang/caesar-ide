@@ -3,13 +3,15 @@
 <plugin
    id="org.caesarj"
    name="Caesar Plug-in"
-   version="0.8.7"
+   version="0.8.71"
    provider-name="TU Darmstadt"
    class="org.caesarj.ui.CaesarPlugin">
 
    <runtime>
-      <library name="caesar.jar">
-         <export name="*"/>
+      <library name="bin/">
+         <export
+               name="*">
+         </export>
       </library>
       <library name="caesar-compiler.jar">
          <export name="*"/>

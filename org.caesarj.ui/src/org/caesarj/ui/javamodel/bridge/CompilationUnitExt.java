@@ -9,6 +9,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IBuffer;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
@@ -187,7 +188,7 @@ public class CompilationUnitExt extends CompilationUnit {
 				if (problems == null) {
 					// report problems to the problem requestor
 					problems = new HashMap();
-					compilationUnitDeclaration = CompilationUnitProblemFinder.process(unit, this, contents, parser, this.owner, problems, createAST, true, pm);
+					compilationUnitDeclaration = CompilationUnitProblemFinder.process(unit, this, contents, parser, this.owner, problems, createAST, 0, pm);
 					try {
 						perWorkingCopyInfo.beginReporting();
 						for (Iterator iteraror = problems.values().iterator(); iteraror.hasNext();) {
@@ -202,13 +203,13 @@ public class CompilationUnitExt extends CompilationUnit {
 					}
 				} else {
 					// collect problems
-					compilationUnitDeclaration = CompilationUnitProblemFinder.process(unit, this, contents, parser, this.owner, problems, createAST, true, pm);
+					compilationUnitDeclaration = CompilationUnitProblemFinder.process(unit, this, contents, parser, this.owner, problems, createAST, 0, pm);
 				}
 			}
 			
 			if (createAST) {
 				int astLevel = ((ASTHolderCUInfoExt) info).astLevel;
-				org.eclipse.jdt.core.dom.CompilationUnit cu = AST.convertCompilationUnit(astLevel, unit, contents, options, computeProblems, this, pm);
+				org.eclipse.jdt.core.dom.CompilationUnit cu = AST.convertCompilationUnit(astLevel, unit, contents, options, computeProblems, this, 0, pm);
 				((ASTHolderCUInfoExt) info).ast = cu;
 			}
 		} finally {

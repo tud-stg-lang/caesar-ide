@@ -17,7 +17,7 @@ public class CJIndexManager extends IndexManager {
 		if (CaesarJProjectTools.isCJSource(resource)) {
 			SearchParticipant participant = SearchEngine.getDefaultSearchParticipant();
 			SearchDocument document = new CJSearchDocument(resource.getFullPath().toString(), participant);
-			String indexLocation = computeIndexLocation(containerPath);
+			IPath indexLocation = computeIndexLocation(containerPath);
 			scheduleDocumentIndexing(document, containerPath, indexLocation, participant);
 		}
 		else {

@@ -2,7 +2,7 @@
  * This source file is part of CaesarJ 
  * For the latest info, see http://caesarj.org/
  * 
- * Copyright © 2003-2005 
+ * Copyright ï¿½ 2003-2005 
  * Darmstadt University of Technology, Software Technology Group
  * Also see acknowledgements in readme.txt
  * 
@@ -74,7 +74,9 @@ public class CjBreakpointRulerAction extends Action {
 			ITextEditor editor, IEditorPart editorPart) {
 		
 		//super(ActionMessages.getString("ManageBreakpointRulerAction.label") );
-        super(ActionMessages.ManageBreakpointRulerAction_label);
+        //super(ActionMessages.ManageBreakpointRulerAction_label);
+        // This message may not make sense FIXME
+        super(ActionMessages.JavaBreakpointPropertiesRulerAction_Breakpoint__Properties_1);
         
 		fRuler = ruler;
 		fTextEditor = editor;
@@ -259,7 +261,9 @@ public class CjBreakpointRulerAction extends Action {
 			}
 		} catch (CoreException e) {
 			//JDIDebugUIPlugin.errorDialog(ActionMessages.getString("ManageBreakpointRulerAction.error.adding.message1"), e); //$NON-NLS-1$
-            JDIDebugUIPlugin.errorDialog(ActionMessages.ManageBreakpointRulerAction_error_adding_message1, e);
+            //JDIDebugUIPlugin.errorDialog(ActionMessages.ManageBreakpointRulerAction_error_adding_message1, e);
+            // This message may not make sense FIXME
+			JDIDebugUIPlugin.errorDialog(ActionMessages.ManageMethodBreakpointActionDelegate_methodNonAvailable, e);
 		}	
 	}
 	
