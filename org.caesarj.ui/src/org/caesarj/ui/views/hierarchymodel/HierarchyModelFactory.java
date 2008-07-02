@@ -70,12 +70,6 @@ public class HierarchyModelFactory {
 	protected CaesarJClassUtil util = null;
 	
 	/**
-	 * Private constructor to prevent instantiation
-	 */
-	private HierarchyModelFactory() {
-	}
-	
-	/**
 	 * Constructs a new Model Factory for building Tree models.
 	 * Initializes the CaesarJClassUtil instance;
 	 * 

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarEditor.java,v 1.31 2006-11-21 11:53:59 gasiunas Exp $
+ * $Id: CaesarEditor.java,v 1.32 2008-07-02 18:30:30 gasiunas Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IProblemRequestor;
+import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.core.CompilationUnit;
 import org.eclipse.jdt.internal.core.JavaModelManager;
@@ -47,7 +47,6 @@ import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.ProblemsLabelDecorator;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -92,6 +91,7 @@ public class CaesarEditor extends CompilationUnitEditor {
 		/* initialize auto annotation on/off switching */
 		CaesarPlugin.getDefault().initPluginUI();
 		aspectJEditorErrorTickUpdater = new CaesarJEditorTitleImageUpdater();
+		setDocumentProvider(CaesarPlugin.getDefault().getCompilationUnitDocumentProvider());
 	}
 	
     public void init(IEditorSite site, IEditorInput input)  throws PartInitException {
@@ -109,7 +109,7 @@ public class CaesarEditor extends CompilationUnitEditor {
 		}
     }
 	
-	public IJavaElement getInputJavaElement() {
+	public ITypeRoot getInputJavaElement() {
 		return super.getInputJavaElement();
 	}
 
@@ -133,13 +133,12 @@ public class CaesarEditor extends CompilationUnitEditor {
 			ICompilationUnit unit = null;
 			//in case it is a .aj file, we need to register it in the
 			// WorkingCopyManager
-			JavaUI.getWorkingCopyManager().connect(input);	
+			CaesarPlugin.getDefault().getCompilationUnitDocumentProvider().connect(input);	
 			unit = CJCompilationUnitManager.INSTANCE
 					.getCJCompilationUnit(fInput.getFile());
 			if (unit != null){
-				IAnnotationModel annotationModel = getDocumentProvider().getAnnotationModel(input);
 				JavaModelManager.getJavaModelManager().discardPerWorkingCopyInfo((CompilationUnit)unit);
-				unit.becomeWorkingCopy((IProblemRequestor) annotationModel, null);
+				unit.becomeWorkingCopy(null);
 				((IWorkingCopyManagerExtension)JavaUI.getWorkingCopyManager()).setWorkingCopy(input, unit);
 			}
 		}

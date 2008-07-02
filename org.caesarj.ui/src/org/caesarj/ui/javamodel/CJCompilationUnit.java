@@ -1,16 +1,17 @@
 package org.caesarj.ui.javamodel;
 
-import org.caesarj.ui.javamodel.bridge.CompilationUnitExt;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IBuffer;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.WorkingCopyOwner;
 import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.internal.core.BufferManager;
+import org.eclipse.jdt.internal.core.CompilationUnit;
 import org.eclipse.jdt.internal.core.DefaultWorkingCopyOwner;
 import org.eclipse.jdt.internal.core.PackageFragment;
 
-public class CJCompilationUnit extends CompilationUnitExt {
+public class CJCompilationUnit extends CompilationUnit {
 
 	//private IFile cjFile;
 	int originalContentMode = 0;
@@ -62,8 +63,7 @@ public class CJCompilationUnit extends CompilationUnitExt {
 			return buf;
 		
 		if (javaCompBuffer == null){
-			BufferManager bm = BufferManager.getDefaultBufferManager();
-			IBuffer myBuffer = bm.createBuffer(this);
+			IBuffer myBuffer = BufferManager.createBuffer(this);
 			javaCompBuffer = new JavaCompatibleBuffer(buf, myBuffer);
 		} else {
 			if (buf != javaCompBuffer)
@@ -71,5 +71,31 @@ public class CJCompilationUnit extends CompilationUnitExt {
 		}
 
 		return javaCompBuffer;
+	}
+	
+	public CompilationUnit cloneCachingContents() {
+		return new CJCompilationUnit((PackageFragment) this.parent, this.name, this.owner) {
+			private char[] cachedContents;
+			public char[] getContents() {
+				if (this.cachedContents == null)
+					this.cachedContents = CJCompilationUnit.this.getContents();
+				return this.cachedContents;
+			}
+			public CompilationUnit originalFromClone() {
+				return CJCompilationUnit.this;
+			}
+		};
+	}
+	
+	/**
+	 * Change visibility of several methods
+	 */
+	
+	public Object createElementInfo() {
+		return super.createElementInfo();
+	}
+	
+	public Object openWhenClosed(Object info, IProgressMonitor monitor) throws JavaModelException {
+		return super.openWhenClosed(info, monitor);
 	}
 }

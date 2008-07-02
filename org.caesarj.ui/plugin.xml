@@ -3,16 +3,11 @@
 <plugin
    id="org.caesarj"
    name="Caesar Plug-in"
-   version="0.8.71"
+   version="0.9.0"
    provider-name="TU Darmstadt"
    class="org.caesarj.ui.CaesarPlugin">
 
    <runtime>
-      <library name="bin/">
-         <export
-               name="*">
-         </export>
-      </library>
       <library name="caesar-compiler.jar">
          <export name="*"/>
       </library>
@@ -30,6 +25,11 @@
       </library>
       <library name="log4j-1.2.8.jar">
          <export name="*"/>
+      </library>
+      <library name="bin/">
+         <export
+               name="*">
+         </export>
       </library>
    </runtime>
               
@@ -153,7 +153,6 @@
        point="org.eclipse.ui.perspectiveExtensions">
     <perspectiveExtension targetID="org.caesarj.ui.perspective.CaesarPerspective">
        <perspectiveShortcut id="org.eclipse.jdt.ui.JavaPerspective"/>
-       <perspectiveShortcut id="org.caesarj.ui.perspectiveShortcut2"/>
        <perspectiveShortcut id="org.eclipse.ui.resourcePerspective"/>
     </perspectiveExtension>
     <perspectiveExtension targetID="org.eclipse.jdt.ui.JavaPerspective">
@@ -344,11 +343,6 @@
         label="Caesar Application"
         icon="icons/sample.gif"
         modes="run,debug">
-            <perspective id="org.eclipse.jdt.ui.JavaPerspective"/>
-            <perspective id="org.caesarj.ui.perspective.CaesarPerspective"/>
-            <perspective id="org.eclipse.jdt.ui.JavaHierarchyPerspective"/>
-            <perspective id="org.eclipse.jdt.ui.JavaBrowsingPerspective"/>
-            <perspective id="org.eclipse.debug.ui.DebugPerspective"/>
          <contextualLaunch>
            <enablement>
              <with variable="selection">

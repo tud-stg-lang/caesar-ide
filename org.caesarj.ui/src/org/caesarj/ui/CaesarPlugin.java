@@ -20,13 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarPlugin.java,v 1.30 2006-10-19 06:33:53 gasiunas Exp $
+ * $Id: CaesarPlugin.java,v 1.31 2008-07-02 18:30:30 gasiunas Exp $
  */
 
 package org.caesarj.ui;
 
 import org.caesarj.launching.CjStepFilterOptionManager;
 import org.caesarj.ui.editor.CJIndexManager;
+import org.caesarj.ui.javamodel.CJCompilationUnitDocumentProvider;
 import org.caesarj.ui.javamodel.CJCompilationUnitManager;
 import org.caesarj.ui.javamodel.ResourceChangeListener;
 import org.caesarj.ui.preferences.CaesarJPreferences;
@@ -39,6 +40,7 @@ import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
+import org.eclipse.jdt.internal.ui.javaeditor.ICompilationUnitDocumentProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Display;
@@ -249,4 +251,12 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(CjStepFilterOptionManager.getDefault());
         super.stop(context);
     }
+	
+	private CJCompilationUnitDocumentProvider fCompilationUnitDocumentProvider = null;
+	
+	public synchronized ICompilationUnitDocumentProvider getCompilationUnitDocumentProvider() {
+		if (fCompilationUnitDocumentProvider == null)
+			fCompilationUnitDocumentProvider= new CJCompilationUnitDocumentProvider();
+		return fCompilationUnitDocumentProvider;
+	}
 }

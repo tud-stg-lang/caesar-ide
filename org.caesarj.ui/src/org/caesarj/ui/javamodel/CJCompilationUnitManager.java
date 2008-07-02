@@ -69,6 +69,13 @@ public class CJCompilationUnitManager {
 			unit.openWhenClosed(unit.createElementInfo(), null);
 
 			compilationUnitStore.put(file, unit);
+			unit.becomeWorkingCopy(null);
+			
+			// create a permanent usage of the unit, so that it is not automatically disposed
+			JavaModelManager.getJavaModelManager().getPerWorkingCopyInfo(unit, 
+					true /*create if needed*/, 
+					true /*record usage*/, 
+					null /*no problem requestor needed*/);
 		} catch (JavaModelException e) {
 		}
 		return unit;

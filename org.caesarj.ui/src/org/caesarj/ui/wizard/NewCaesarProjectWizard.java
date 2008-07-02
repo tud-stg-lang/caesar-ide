@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: NewCaesarProjectWizard.java,v 1.12 2006-10-19 06:33:53 gasiunas Exp $
+ * $Id: NewCaesarProjectWizard.java,v 1.13 2008-07-02 18:30:30 gasiunas Exp $
  */
 
 package org.caesarj.ui.wizard;
@@ -39,15 +39,22 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.jdt.internal.ui.wizards.JavaProjectWizardFirstPage;
-import org.eclipse.jdt.internal.ui.wizards.JavaProjectWizardSecondPage;
 import org.eclipse.jdt.internal.ui.wizards.NewElementWizard;
 import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
+import org.eclipse.jdt.ui.IPackagesViewPart;
+import org.eclipse.jdt.ui.actions.ShowInPackageViewAction;
+import org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPageOne;
+import org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPageTwo;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 
 /**
@@ -59,8 +66,8 @@ public class NewCaesarProjectWizard extends NewElementWizard implements IExecuta
     
     private static Logger log = Logger.getLogger(NewCaesarProjectWizard.class);
     
-    protected JavaProjectWizardFirstPage fFirstPage;
-    protected JavaProjectWizardSecondPage fSecondPage;
+    protected NewJavaProjectWizardPageOne fFirstPage;
+    protected NewJavaProjectWizardPageTwo fSecondPage;
     private IConfigurationElement fConfigElement;
     
     /**
@@ -77,11 +84,11 @@ public class NewCaesarProjectWizard extends NewElementWizard implements IExecuta
      */	
     public void addPages() {
         super.addPages();
-        fFirstPage= new JavaProjectWizardFirstPage();
+        fFirstPage= new NewJavaProjectWizardPageOne();
         addPage(fFirstPage);
         fFirstPage.setTitle("Create a CaesarJ Project");
 		fFirstPage.setDescription("Create a CaesarJ project in the workspace.");
-		fSecondPage= new JavaProjectWizardSecondPage(fFirstPage);
+		fSecondPage= new NewJavaProjectWizardPageTwo(fFirstPage);
         fSecondPage.setTitle("Build Settings");
         fSecondPage.setDescription("Define the build settings");
         addPage(fSecondPage);
@@ -102,15 +109,39 @@ public class NewCaesarProjectWizard extends NewElementWizard implements IExecuta
     	
 		boolean res= super.performFinish();
 		if (res) {
-		    BasicNewProjectResourceWizard.updatePerspective(fConfigElement);
-		    IJavaProject javaProject = fSecondPage.getJavaProject();
-	 		IProject project = javaProject.getProject();
-	 		selectAndReveal(project);
-			boolean completed = finalizeNewProject(javaProject, fFirstPage.getDetect());
-			BasicNewProjectResourceWizard.updatePerspective(this.fConfigElement);
-			res = completed;			
+			final IJavaElement newElement= getCreatedElement();
+
+			IWorkingSet[] workingSets= fFirstPage.getWorkingSets();
+			if (workingSets.length > 0) {
+				PlatformUI.getWorkbench().getWorkingSetManager().addToWorkingSets(newElement, workingSets);
+			}
+
+			BasicNewProjectResourceWizard.updatePerspective(fConfigElement);
+			selectAndReveal(fSecondPage.getJavaProject().getProject());	
+			
+			finalizeNewProject(fSecondPage.getJavaProject(), false);
+
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					IWorkbenchPart activePart= getActivePart();
+					if (activePart instanceof IPackagesViewPart) {
+						(new ShowInPackageViewAction(activePart.getSite())).run(newElement);
+					}
+				}
+			});
 		}
 		return res;
+	}
+    
+    private IWorkbenchPart getActivePart() {
+		IWorkbenchWindow activeWindow= getWorkbench().getActiveWorkbenchWindow();
+		if (activeWindow != null) {
+			IWorkbenchPage activePage= activeWindow.getActivePage();
+			if (activePage != null) {
+				return activePage.getActivePart();
+			}
+		}
+		return null;
 	}
     
     protected void handleFinishException(Shell shell, InvocationTargetException e) {
@@ -143,7 +174,7 @@ public class NewCaesarProjectWizard extends NewElementWizard implements IExecuta
     }
 
 	public IJavaElement getCreatedElement() {
-		return JavaCore.create(fFirstPage.getProjectHandle());
+		return fSecondPage.getJavaProject();
 	}
     
     /**

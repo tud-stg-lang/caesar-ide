@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarElementImageDescriptor.java,v 1.9 2005-01-24 16:57:22 aracic Exp $
+ * $Id: CaesarElementImageDescriptor.java,v 1.10 2008-07-02 18:30:30 gasiunas Exp $
  */
 
 package org.caesarj.ui;
@@ -29,7 +29,7 @@ import org.caesarj.ui.views.hierarchymodel.RootNode;
 import org.eclipse.jdt.internal.ui.JavaPluginImages;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 
