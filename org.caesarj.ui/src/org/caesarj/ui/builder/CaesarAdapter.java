@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarAdapter.java,v 1.37 2006-11-21 11:54:20 gasiunas Exp $
+ * $Id: CaesarAdapter.java,v 1.38 2010-10-21 13:44:49 satabin Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -101,12 +101,12 @@ public final class CaesarAdapter extends Main implements IWeaveRequestor {
 		super.reportTrouble(error);
     }
 
-	public boolean compile(Collection sourceFiles, String classPath,
+	public boolean compile(Collection sourceFiles, String classPath,String inPath,
 			String outputPath, Collection errorsArg) {
-		return compile(sourceFiles, classPath, outputPath, errorsArg, null);
+		return compile(sourceFiles, classPath, inPath, outputPath, errorsArg, null);
 	}
 
-	public boolean compile(Collection sourceFiles, String classPath,
+	public boolean compile(Collection sourceFiles, String classPath, String inPath,
 			String outputPath, Collection errorsArg,
 			IProgressMonitor progressMonitorArg) {
 
@@ -115,7 +115,7 @@ public final class CaesarAdapter extends Main implements IWeaveRequestor {
 		//this.model = StructureModelManager.INSTANCE.getStructureModel();
 		
 		boolean success = false;
-		String args[] = new String[sourceFiles.size() + 6];
+		String args[] = new String[sourceFiles.size() + 8];
 
 		int i = 0;
 
@@ -127,6 +127,9 @@ public final class CaesarAdapter extends Main implements IWeaveRequestor {
 		
 		args[i++] = "-O"; // [mef] test compilation without optimization
 		args[i++] = "9";
+		
+		args[i++] = "-inpath"; // compiled class to be woven
+		args[i++] = inPath;
 
 		for (Iterator it = sourceFiles.iterator(); it.hasNext();) {
 			args[i++] = it.next().toString();

@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: ProjectProperties.java,v 1.16 2006-02-27 00:28:15 thiago Exp $
+ * $Id: ProjectProperties.java,v 1.17 2010-10-21 13:44:49 satabin Exp $
  */
 
 package org.caesarj.ui.util;
@@ -40,6 +40,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -67,6 +68,7 @@ public class ProjectProperties {
     private List<String> sourcePaths = null;
     private String projectLocation = null;
     private StringBuffer classPath = null;
+    private StringBuffer inPath = null;
     private List sourceFiles = null;
     private CaesarJAsmManager asmManager = null;
     private int worked = 0;
@@ -128,7 +130,7 @@ public class ProjectProperties {
         IClasspathEntry[] classPathEntries = javaProject.getResolvedClasspath(false);
 
         for(int i=0; i<classPathEntries.length; i++) {
-            if(classPathEntries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+        	if(classPathEntries[i].getEntryKind() == IClasspathEntry.CPE_SOURCE) {
                 // 1st segment of the path has to be removed because it is added
                 // again by findMember ending in duplicated first segment in the path
                 getAllSourceFiles(
@@ -153,6 +155,18 @@ public class ProjectProperties {
                         this.projectLocation + 
                         classPathEntries[i].getPath().toOSString();
                 }                
+                
+                // add the lib to inPath if specified in the .classpath file
+                // as an inpath resource
+                for(IClasspathAttribute attr : classPathEntries[i].getExtraAttributes()) {
+                	if(attr.getName().equals("inpath") && attr.getValue().equals("true")) {
+                		if(this.inPath.length()>0) {
+        					this.inPath.append(File.pathSeparator);
+        				}
+                		this.inPath.append(cp);
+                		break;
+                	}
+                }
 
                 this.classPath.append(cp);
             }
@@ -232,6 +246,16 @@ public class ProjectProperties {
      */
     public String getClassPath() {
         return this.classPath.toString();
+    }
+    
+    /**
+     * A colon seperated list of java resources, used as inpath for
+     * the compiler
+     * 
+     * @return
+     */
+    public String getInPath() {
+    	return this.inPath.toString();
     }
 
     /**
