@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarAdapter.java,v 1.38 2010-10-21 13:44:49 satabin Exp $
+ * $Id: CaesarAdapter.java,v 1.39 2010-10-21 15:53:16 satabin Exp $
  */
 
 package org.caesarj.ui.builder;
@@ -128,7 +128,7 @@ public final class CaesarAdapter extends Main implements IWeaveRequestor {
 		args[i++] = "-O"; // [mef] test compilation without optimization
 		args[i++] = "9";
 		
-		args[i++] = "-inpath"; // compiled class to be woven
+		args[i++] = "-i"; // compiled class to be woven
 		args[i++] = inPath;
 
 		for (Iterator it = sourceFiles.iterator(); it.hasNext();) {
