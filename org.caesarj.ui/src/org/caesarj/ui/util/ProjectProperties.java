@@ -20,21 +20,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: ProjectProperties.java,v 1.17 2010-10-21 13:44:49 satabin Exp $
+ * $Id: ProjectProperties.java,v 1.18 2010-10-21 16:50:40 satabin Exp $
  */
 
 package org.caesarj.ui.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.caesarj.compiler.KjcEnvironment;
 import org.caesarj.compiler.asm.CaesarJAsmManager;
 import org.eclipse.core.internal.resources.Container;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -112,6 +116,7 @@ public class ProjectProperties {
     public void refresh() throws JavaModelException, CoreException {
     	
     	classPath = new StringBuffer();
+    	inPath = new StringBuffer();
     	sourceFiles = new ArrayList();
     	
         javaProject = JavaCore.create(project);
@@ -158,19 +163,37 @@ public class ProjectProperties {
                 
                 // add the lib to inPath if specified in the .classpath file
                 // as an inpath resource
-                for(IClasspathAttribute attr : classPathEntries[i].getExtraAttributes()) {
-                	if(attr.getName().equals("inpath") && attr.getValue().equals("true")) {
-                		if(this.inPath.length()>0) {
-        					this.inPath.append(File.pathSeparator);
-        				}
-                		this.inPath.append(cp);
-                		break;
-                	}
-                }
+//                for(IClasspathAttribute attr : classPathEntries[i].getExtraAttributes()) {
+//                	if(attr.getName().equals("inpath") && attr.getValue().equals("true")) {
+//                		if(this.inPath.length()>0) {
+//        					this.inPath.append(File.pathSeparator);
+//        				}
+//                		this.inPath.append(cp);
+//                		break;
+//                	}
+//                }
 
                 this.classPath.append(cp);
             }
         }
+        
+        IFile inpathFile = project.getFile("inpath.properties");
+        if(inpathFile != null) {
+        	Properties inpathProp = new Properties();
+        	try {
+				inpathProp.load(inpathFile.getContents());
+				for(Object prop : inpathProp.keySet()) {
+					if(inPath.length() > 0) {
+						inPath.append(File.pathSeparator);
+					}
+					inPath.append(this.projectLocation).append(projectLocalPrefix).append(File.separator).append(inpathProp.get(prop));
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+        
     }
     
     /**
@@ -288,6 +311,7 @@ public class ProjectProperties {
         res.append("projectLocation\n\t"+getProjectLocation()); //$NON-NLS-1$
         res.append("\noutputPath\n\t"+getOutputPath()); //$NON-NLS-1$
         res.append("\nclasspath\n\t"+getClassPath()); //$NON-NLS-1$
+        res.append("\ninpath\n\t"+getInPath()); //$NON-NLS-1$
         res.append("\nsource files:\n"); //$NON-NLS-1$
         for(Iterator it=this.sourceFiles.iterator(); it.hasNext(); ) {
             res.append('\t');
