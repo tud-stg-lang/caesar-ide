@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: ProjectProperties.java,v 1.18 2010-10-21 16:50:40 satabin Exp $
+ * $Id: ProjectProperties.java,v 1.19 2010-10-22 17:44:00 satabin Exp $
  */
 
 package org.caesarj.ui.util;
@@ -163,36 +163,36 @@ public class ProjectProperties {
                 
                 // add the lib to inPath if specified in the .classpath file
                 // as an inpath resource
-//                for(IClasspathAttribute attr : classPathEntries[i].getExtraAttributes()) {
-//                	if(attr.getName().equals("inpath") && attr.getValue().equals("true")) {
-//                		if(this.inPath.length()>0) {
-//        					this.inPath.append(File.pathSeparator);
-//        				}
-//                		this.inPath.append(cp);
-//                		break;
-//                	}
-//                }
+                for(IClasspathAttribute attr : classPathEntries[i].getExtraAttributes()) {
+                	if(attr.getName().equals("inpath") && attr.getValue().equals("true")) {
+                		if(this.inPath.length()>0) {
+        					this.inPath.append(File.pathSeparator);
+        				}
+                		this.inPath.append(cp);
+                		break;
+                	}
+                }
 
                 this.classPath.append(cp);
             }
         }
         
-        IFile inpathFile = project.getFile("inpath.properties");
-        if(inpathFile != null) {
-        	Properties inpathProp = new Properties();
-        	try {
-				inpathProp.load(inpathFile.getContents());
-				for(Object prop : inpathProp.keySet()) {
-					if(inPath.length() > 0) {
-						inPath.append(File.pathSeparator);
-					}
-					inPath.append(this.projectLocation).append(projectLocalPrefix).append(File.separator).append(inpathProp.get(prop));
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        }
+//        IFile inpathFile = project.getFile("inpath.properties");
+//        if(inpathFile != null) {
+//        	Properties inpathProp = new Properties();
+//        	try {
+//				inpathProp.load(inpathFile.getContents());
+//				for(Object prop : inpathProp.keySet()) {
+//					if(inPath.length() > 0) {
+//						inPath.append(File.pathSeparator);
+//					}
+//					inPath.append(this.projectLocation).append(projectLocalPrefix).append(File.separator).append(inpathProp.get(prop));
+//				}
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//        }
         
     }
     
