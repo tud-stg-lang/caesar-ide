@@ -20,19 +20,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarPlugin.java,v 1.31 2008-07-02 18:30:30 gasiunas Exp $
+ * $Id: CaesarPlugin.java,v 1.32 2011-09-15 16:36:06 gasiunas Exp $
  */
 
 package org.caesarj.ui;
 
 import org.caesarj.launching.CjStepFilterOptionManager;
 import org.caesarj.ui.editor.CJIndexManager;
-import org.caesarj.ui.javamodel.CJCompilationUnitDocumentProvider;
-import org.caesarj.ui.javamodel.CJCompilationUnitManager;
-import org.caesarj.ui.javamodel.ResourceChangeListener;
 import org.caesarj.ui.preferences.CaesarJPreferences;
-import org.caesarj.ui.project.CaesarJProjectTools;
-import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -40,7 +35,6 @@ import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.core.search.indexing.IndexManager;
 import org.eclipse.jdt.internal.debug.ui.IJDIPreferencesConstants;
 import org.eclipse.jdt.internal.debug.ui.JDIDebugUIPlugin;
-import org.eclipse.jdt.internal.ui.javaeditor.ICompilationUnitDocumentProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Display;
@@ -117,19 +111,9 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 		super.start(context);
 		setStepFilter();
 		
-		CaesarPlugin.getWorkspace().addResourceChangeListener(
-				new ResourceChangeListener(),
-				IResourceChangeEvent.PRE_CLOSE
-						| IResourceChangeEvent.PRE_DELETE
-						| IResourceChangeEvent.POST_CHANGE
-						| IResourceChangeEvent.PRE_BUILD);
-		
 		IndexManager  indexManager = new CJIndexManager();
 		JavaModelManager.getJavaModelManager().indexManager = indexManager;
 		indexManager.reset();
-		
-		CJCompilationUnitManager.INSTANCE.initCompilationUnits(CaesarPlugin.getWorkspace());
-		CaesarJProjectTools.refreshPackageExplorer();
 	}
 	
 	public void initPluginUI() {
@@ -251,12 +235,4 @@ public class CaesarPlugin extends AbstractUIPlugin implements
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(CjStepFilterOptionManager.getDefault());
         super.stop(context);
     }
-	
-	private CJCompilationUnitDocumentProvider fCompilationUnitDocumentProvider = null;
-	
-	public synchronized ICompilationUnitDocumentProvider getCompilationUnitDocumentProvider() {
-		if (fCompilationUnitDocumentProvider == null)
-			fCompilationUnitDocumentProvider= new CJCompilationUnitDocumentProvider();
-		return fCompilationUnitDocumentProvider;
-	}
 }

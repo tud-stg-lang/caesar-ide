@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarEditor.java,v 1.32 2008-07-02 18:30:30 gasiunas Exp $
+ * $Id: CaesarEditor.java,v 1.33 2011-09-15 16:36:05 gasiunas Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -28,29 +28,21 @@ package org.caesarj.ui.editor;
 import org.apache.log4j.Logger;
 import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.CaesarPluginImages;
-import org.caesarj.ui.javamodel.CJCompilationUnitManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ITypeRoot;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.core.CompilationUnit;
-import org.eclipse.jdt.internal.core.JavaModelManager;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.internal.ui.viewsupport.ImageDescriptorRegistry;
-import org.eclipse.jdt.ui.IWorkingCopyManagerExtension;
-import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jdt.ui.ProblemsLabelDecorator;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -90,8 +82,7 @@ public class CaesarEditor extends CompilationUnitEditor {
 		setRulerContextMenuId("#CJCompilationUnitRulerContext");
 		/* initialize auto annotation on/off switching */
 		CaesarPlugin.getDefault().initPluginUI();
-		aspectJEditorErrorTickUpdater = new CaesarJEditorTitleImageUpdater();
-		setDocumentProvider(CaesarPlugin.getDefault().getCompilationUnitDocumentProvider());
+		aspectJEditorErrorTickUpdater = new CaesarJEditorTitleImageUpdater();		
 	}
 	
     public void init(IEditorSite site, IEditorInput input)  throws PartInitException {
@@ -125,40 +116,8 @@ public class CaesarEditor extends CompilationUnitEditor {
 		return super.getAdapter(key);
 	}
 
-	public void doSetInput(IEditorInput input) throws CoreException {
-		super.doSetInput(input);
-		
-		if (input instanceof IFileEditorInput) {
-			IFileEditorInput fInput = (IFileEditorInput) input;
-			ICompilationUnit unit = null;
-			//in case it is a .aj file, we need to register it in the
-			// WorkingCopyManager
-			CaesarPlugin.getDefault().getCompilationUnitDocumentProvider().connect(input);	
-			unit = CJCompilationUnitManager.INSTANCE
-					.getCJCompilationUnit(fInput.getFile());
-			if (unit != null){
-				JavaModelManager.getJavaModelManager().discardPerWorkingCopyInfo((CompilationUnit)unit);
-				unit.becomeWorkingCopy(null);
-				((IWorkingCopyManagerExtension)JavaUI.getWorkingCopyManager()).setWorkingCopy(input, unit);
-			}
-		}
-	}
-
 	public void dispose() {
 		log.debug("dispose"); 
-		IEditorInput input = getEditorInput();
-		if (input instanceof IFileEditorInput) {
-			IFileEditorInput fInput = (IFileEditorInput) input;			
-			JavaUI.getWorkingCopyManager().disconnect(input);
-			
-			try {
-				ICompilationUnit unit = CJCompilationUnitManager.INSTANCE.getCJCompilationUnitFromCache(fInput.getFile());
-				if (unit != null) {
-					unit.discardWorkingCopy();					
-				}
-			} catch (JavaModelException e) {
-			}
-		}
 		if(this.outlineView != null){
 			// Enable doesn't make sense anymore. For this reason the setEnabled above
 			// was removed. Now we call the static method to remove this instance from 

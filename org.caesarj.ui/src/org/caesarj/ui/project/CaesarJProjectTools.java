@@ -6,8 +6,6 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.caesarj.ui.CaesarPlugin;
-import org.caesarj.ui.javamodel.CJCompilationUnitManager;
-import org.caesarj.ui.javamodel.CJCompilationUnitTools;
 import org.caesarj.ui.marker.AdviceMarker;
 import org.caesarj.ui.util.ProjectProperties;
 import org.eclipse.core.resources.IFile;
@@ -76,8 +74,9 @@ public class CaesarJProjectTools {
 		
 		addClassPath(javaProject, caesarPlugin.getAspectJRuntimeClasspath());
         addClassPath(javaProject, caesarPlugin.getCaesarRuntimeClasspath());	
-        
-        CJCompilationUnitManager.INSTANCE.initCompilationUnits(project); 
+        /* TODO: remove
+        CJCompilationUnitManager.INSTANCE.initCompilationUnits(project);
+        */ 
 	
 		refreshPackageExplorer();
 	}
@@ -188,8 +187,6 @@ public class CaesarJProjectTools {
 		IProject project = javaProject.getProject();
 
 		deleteAllMarkers(project);
-		
-		CJCompilationUnitTools.removeCUsfromJavaModelAndCloseEditors(project);
 		
 		// remove the AspectJ Nature
 		IProjectDescription description = project.getDescription();

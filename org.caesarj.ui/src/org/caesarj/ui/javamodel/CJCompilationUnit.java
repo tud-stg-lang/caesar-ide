@@ -33,10 +33,6 @@ public class CJCompilationUnit extends CompilationUnit {
 		super(parent, name, owner);
 	}
 	
-	public CJCompilationUnit(IFile cjFile){
-		super(CJCompilationUnitTools.getParentPackage(cjFile), cjFile.getName(), DefaultWorkingCopyOwner.PRIMARY);
-	}
-	
 	public IBuffer getBuffer() throws JavaModelException {
 		return convertBuffer(super.getBuffer());
 	}
@@ -85,17 +81,5 @@ public class CJCompilationUnit extends CompilationUnit {
 				return CJCompilationUnit.this;
 			}
 		};
-	}
-	
-	/**
-	 * Change visibility of several methods
-	 */
-	
-	public Object createElementInfo() {
-		return super.createElementInfo();
-	}
-	
-	public Object openWhenClosed(Object info, IProgressMonitor monitor) throws JavaModelException {
-		return super.openWhenClosed(info, monitor);
 	}
 }
