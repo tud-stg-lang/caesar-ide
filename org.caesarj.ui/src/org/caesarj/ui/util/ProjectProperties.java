@@ -20,25 +20,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: ProjectProperties.java,v 1.19 2010-10-22 17:44:00 satabin Exp $
+ * $Id: ProjectProperties.java,v 1.20 2011-09-16 16:06:24 gasiunas Exp $
  */
 
 package org.caesarj.ui.util;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 
 import org.caesarj.compiler.KjcEnvironment;
 import org.caesarj.compiler.asm.CaesarJAsmManager;
 import org.eclipse.core.internal.resources.Container;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;

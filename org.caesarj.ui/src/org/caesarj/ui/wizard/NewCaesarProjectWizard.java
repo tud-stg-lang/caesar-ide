@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: NewCaesarProjectWizard.java,v 1.13 2008-07-02 18:30:30 gasiunas Exp $
+ * $Id: NewCaesarProjectWizard.java,v 1.14 2011-09-16 16:06:24 gasiunas Exp $
  */
 
 package org.caesarj.ui.wizard;
@@ -39,11 +39,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.internal.ui.packageview.PackageExplorerPart;
 import org.eclipse.jdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.jdt.internal.ui.wizards.NewElementWizard;
 import org.eclipse.jdt.internal.ui.wizards.NewWizardMessages;
 import org.eclipse.jdt.ui.IPackagesViewPart;
-import org.eclipse.jdt.ui.actions.ShowInPackageViewAction;
 import org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPageOne;
 import org.eclipse.jdt.ui.wizards.NewJavaProjectWizardPageTwo;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -125,7 +125,8 @@ public class NewCaesarProjectWizard extends NewElementWizard implements IExecuta
 				public void run() {
 					IWorkbenchPart activePart= getActivePart();
 					if (activePart instanceof IPackagesViewPart) {
-						(new ShowInPackageViewAction(activePart.getSite())).run(newElement);
+						PackageExplorerPart view= PackageExplorerPart.openInActivePerspective();
+						view.tryToReveal(newElement);						
 					}
 				}
 			});

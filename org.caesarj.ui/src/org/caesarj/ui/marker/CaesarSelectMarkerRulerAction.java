@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarSelectMarkerRulerAction.java,v 1.6 2006-10-10 17:00:37 gasiunas Exp $
+ * $Id: CaesarSelectMarkerRulerAction.java,v 1.7 2011-09-16 16:06:24 gasiunas Exp $
  */
 
 package org.caesarj.ui.marker;
@@ -99,11 +99,6 @@ public class CaesarSelectMarkerRulerAction extends SelectMarkerRulerAction {
 			return null;
 		}
 
-		//		boolean hasAssistLightbulb = PreferenceConstants.getPreferenceStore()
-		//				.getBoolean(
-		//						PreferenceConstants.APPEARANCE_QUICKASSIST_LIGHTBULB);
-		Annotation assistAnnotation = null;
-
 		Iterator iter = model.getAnnotationIterator();
 		while (iter.hasNext()) {
 			Annotation annotation = (Annotation) iter.next();
@@ -115,14 +110,6 @@ public class CaesarSelectMarkerRulerAction extends SelectMarkerRulerAction {
 						return position;
 				}
 			}
-		}
-		if (assistAnnotation != null) {
-			Position position = model.getPosition(assistAnnotation);
-			// no need to check 'JavaCorrectionProcessor.hasAssists': annotation
-			// only created when
-			// there are assists
-			if (includesRulerLine(position, document))
-				return position;
 		}
 		return null;
 	}

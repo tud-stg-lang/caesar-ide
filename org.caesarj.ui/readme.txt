@@ -1,7 +1,7 @@
-acknowledgements
-================
+Acknowledgments
+===============
 
-AspectJ - Caesar uses the aspectj weaver for weaving the advices. 
+AspectJ - CaesarJ uses the AspectJ weaver for weaving of advice. 
 AspectJ and parts of the Eclipse code are available under the terms of the 
 Common Public License version 1.0, see http://eclipse.org/legal/cpl-v10.html
 

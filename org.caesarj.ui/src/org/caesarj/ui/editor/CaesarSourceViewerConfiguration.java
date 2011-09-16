@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarSourceViewerConfiguration.java,v 1.5 2005-08-10 16:09:33 thiago Exp $
+ * $Id: CaesarSourceViewerConfiguration.java,v 1.6 2011-09-16 16:06:24 gasiunas Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -29,6 +29,8 @@ import org.eclipse.jdt.ui.text.IJavaPartitions;
 import org.eclipse.jdt.ui.text.JavaSourceViewerConfiguration;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.RuleBasedScanner;
+
+
 
 public class CaesarSourceViewerConfiguration extends JavaSourceViewerConfiguration {
 

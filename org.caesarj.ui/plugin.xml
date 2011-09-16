@@ -1,69 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="org.caesarj"
-   name="Caesar Plug-in"
-   version="0.9.1"
-   provider-name="TU Darmstadt"
-   class="org.caesarj.ui.CaesarPlugin">
+<plugin>
 
-   <runtime>
-      <library name="caesar-compiler.jar">
-         <export name="*"/>
-      </library>
-      <library name="caesar-runtime.jar">
-         <export name="*"/>
-      </library>
-      <library name="aspectjtools.jar">
-         <export name="*"/>
-      </library>
-      <library name="aspectjrt.jar">
-         <export name="*"/>
-      </library>
-      <library name="cj-rmic.jar">
-         <export name="*"/>
-      </library>
-      <library name="log4j-1.2.8.jar">
-         <export name="*"/>
-      </library>
-      <library name="bin/">
-         <export
-               name="*">
-         </export>
-      </library>
-   </runtime>
-              
-   <requires>
-      <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.debug.core"/>
-      <import plugin="org.eclipse.debug.ui"/>
-      <import plugin="org.eclipse.help"/>
-      <import plugin="org.eclipse.help.base"/>
-      <import plugin="org.eclipse.jdt.core"/>
-      <import plugin="org.eclipse.jdt.ui"/>
-      <import plugin="org.eclipse.jface"/>
-      <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.search"/>
-      <import plugin="org.eclipse.swt"/>
-      <import plugin="org.eclipse.text"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.ui.console"/>
-      <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="org.eclipse.ui.workbench"/>
-      <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.eclipse.jdt.debug.ui"/>
-      <import plugin="org.eclipse.jdt.debug"/>
-      <import plugin="org.eclipse.jdt.launching"/>
-      <import plugin="org.eclipse.core.variables"/>
-      <import plugin="org.eclipse.team.core"/>
-      <import plugin="org.eclipse.contribution.weaving.jdt" version="2.1.3"/>
-      <import plugin="org.aspectj.runtime" version="1.6.12"/>      
-   </requires>
-   
    <extension point="org.eclipse.contribution.weaving.jdt.cuprovider">
     <provider
       class="org.caesarj.ui.javamodel.CJCompilationUnitProvider"
@@ -232,10 +170,10 @@
          </action>
       </editorContribution>
    </extension>
- <extension
+  <extension
        point="org.eclipse.ui.startup">
     <startup class="org.caesarj.ui.CaesarStartup"/>
- </extension>
+  </extension>
  
  	<!-- Associates the caesarj ToggleBreakpoint action with the caesarj-editor. -->
  	<extension point="org.eclipse.core.runtime.adapters">
@@ -407,11 +345,11 @@
            natureId="org.caesarj.caesarprojectnature"/>
   </extension>
   <extension
-        point="org.eclipse.core.runtime.contentTypes">
+        point="org.eclipse.core.contenttype.contentTypes">
      <content-type
            base-type="org.eclipse.jdt.core.javaSource"
            file-extensions="cj"
-           id="cjSource"
+           id="org.caesarj.cjSource"
            name="%caesarJSource"/>
   </extension>
   <extension

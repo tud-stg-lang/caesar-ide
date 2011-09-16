@@ -20,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  * 
- * $Id: CaesarEditor.java,v 1.33 2011-09-15 16:36:05 gasiunas Exp $
+ * $Id: CaesarEditor.java,v 1.34 2011-09-16 16:06:24 gasiunas Exp $
  */
 
 package org.caesarj.ui.editor;
@@ -28,7 +28,6 @@ package org.caesarj.ui.editor;
 import org.apache.log4j.Logger;
 import org.caesarj.ui.CaesarPlugin;
 import org.caesarj.ui.CaesarPluginImages;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
