@@ -3,8 +3,12 @@
    <description url="http://caesarj.org/updatesite/latest">
       CaesarJ Update Site
    </description>
-   <feature url="features/org.caesarj.feature_0.9.0.jar" id="org.caesarj.feature" version="0.9.0">
+   <feature url="features/org.caesarj.feature_0.10.0.jar" id="org.caesarj.feature" version="0.10.0">
       <category name="CaesarJ"/>
    </feature>
-   <category-def name="CaesarJ" label="CaesarJ"/>
+   <feature url="features/org.caesarj.jdtweaving_1.0.0.jar" id="org.caesarj.jdtweaving" version="1.0.0">
+      <category name="external"/>
+   </feature>
+   <category-def name="CaesarJ" label="CaesarJ Development Tools (required)"/>
+   <category-def name="external" label="External Plug-ins (required)"/>
 </site>
